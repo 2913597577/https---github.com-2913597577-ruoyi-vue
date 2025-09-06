@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "ruoyi-vue-plus",
   "version": "5.4.0-2.4.0",
-  "description": "RuoYi-Vue-Plus多租户管理系统",
+  "description": "大成企业服务有限公司管理系统",
   "author": "LionLi",
   "license": "MIT",
   "type": "module",

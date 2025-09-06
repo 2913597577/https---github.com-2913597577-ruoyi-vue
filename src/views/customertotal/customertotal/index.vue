@@ -4,45 +4,25 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="意向客户ID" prop="intentionId">
+            <el-form-item label="意向客户" prop="intentionId" label-width="68">
               <el-input v-model="queryParams.intentionId" placeholder="请输入意向客户ID" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="最后跟进时间" prop="lastFollowTime">
-              <el-date-picker clearable
-                v-model="queryParams.lastFollowTime"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择最后跟进时间"
-              />
+            <el-form-item label="客户类型" prop="customerType" label-width="68">
+              <el-input v-model="queryParams.customerType" placeholder="请输入客户类型" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="合同存储路径" prop="contractUrl">
-              <el-input v-model="queryParams.contractUrl" placeholder="请输入合同存储路径" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="归档人" prop="archiveBy" label-width="68">
+              <el-input v-model="queryParams.archiveBy" placeholder="请输入归档人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="归档时间" prop="archiveTime">
+            <el-form-item label="归档人岗位" prop="archivePost" label-width="90" >
+              <el-input v-model="queryParams.archivePost" placeholder="请输入归档人岗位ID" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="归档时间" prop="archiveTime" label-width="68">
               <el-date-picker clearable
                 v-model="queryParams.archiveTime"
                 type="date"
                 value-format="YYYY-MM-DD"
                 placeholder="请选择归档时间"
               />
-            </el-form-item>
-            <el-form-item label="归档人" prop="archiveBy">
-              <el-input v-model="queryParams.archiveBy" placeholder="请输入归档人" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="归档/审批意见" prop="archiveRemark">
-              <el-input v-model="queryParams.archiveRemark" placeholder="请输入归档/审批意见" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="归档结果" prop="archiveResult">
-              <el-input v-model="queryParams.archiveResult" placeholder="请输入归档结果" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="归档人岗位ID" prop="archivePost">
-              <el-input v-model="queryParams.archivePost" placeholder="请输入归档人岗位ID" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="归档人角色ID" prop="archiveRole">
-              <el-input v-model="queryParams.archiveRole" placeholder="请输入归档人角色ID" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="归档来源" prop="archiveSource">
-              <el-input v-model="queryParams.archiveSource" placeholder="请输入归档来源" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -73,49 +53,55 @@
       </template>
 
       <el-table v-loading="loading" border :data="customertotalList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="意向客户ID" align="center" prop="intentionId" />
-        <el-table-column label="客户类型" align="center" prop="customerType" />
-        <el-table-column label="最后跟进时间" align="center" prop="lastFollowTime" width="180">
+        <el-table-column type="selection" width="55" align="center" show-overflow-tooltip/>
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
+        <el-table-column label="意向客户" align="center" prop="intentionId" width="100" show-overflow-tooltip/>
+        <el-table-column label="客户类型" align="center" prop="customerType" width="100" show-overflow-tooltip/>
+        <el-table-column label="法务状态" align="center" prop="legalStatus" width="100" show-overflow-tooltip/>
+        <el-table-column label="最后跟进时间" align="center" prop="lastFollowTime" width="180" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.lastFollowTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务状态" align="center" prop="legalStatus" />
-        <el-table-column label="合同存储路径" align="center" prop="contractUrl" />
-        <el-table-column label="归档时间" align="center" prop="archiveTime" width="180">
+        <el-table-column label="归档人" align="center" prop="archiveBy" width="100"/>
+        <el-table-column label="归档人岗位" align="center" prop="archivePost" width="120" show-overflow-tooltip/>
+        <el-table-column label="归档人角色" align="center" prop="archiveRole" width="120" show-overflow-tooltip/>
+        <el-table-column label="归档时间" align="center" prop="archiveTime" width="180" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.archiveTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="归档人" align="center" prop="archiveBy" />
-        <el-table-column label="归档/审批意见" align="center" prop="archiveRemark" />
-        <el-table-column label="归档结果" align="center" prop="archiveResult" />
-        <el-table-column label="归档人岗位ID" align="center" prop="archivePost" />
-        <el-table-column label="归档人角色ID" align="center" prop="archiveRole" />
-        <el-table-column label="归档来源" align="center" prop="archiveSource" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customertotal:customertotal:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customertotal:customertotal:remove']"></el-button>
-            </el-tooltip>
-          </template>
+        <el-table-column label="审批意见" align="center" prop="archiveRemark" width="200" show-overflow-tooltip/>
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
+        width="240" fixed="right">
+         <template #default="scope">
+          <el-button link type="success" icon="Operation" @click="handleProcess(scope.row)"
+            v-hasPermi="['medical:complaint:process']">处置</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+            v-hasPermi="['medical:complaint:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+            v-hasPermi="['medical:complaint:remove']">删除</el-button>
+        </template>
         </el-table-column>
       </el-table>
 
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改全部客户对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="50%" append-to-body>
       <el-form ref="customertotalFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="意向客户ID" prop="intentionId">
-          <el-input v-model="form.intentionId" placeholder="请输入意向客户ID" />
+        <el-form-item label="意向客户" prop="intentionId">
+          <el-input v-model="form.intentionId" placeholder="请输入意向客户" />
         </el-form-item>
-        <el-form-item label="最后跟进时间" prop="lastFollowTime">
+          <el-form-item label="客户类型" prop="customerType" label-width="80px"> 
+          <el-select v-model="form.customerType" placeholder="请选择客户类型"> 
+          </el-select>
+        </el-form-item>
+        <el-form-item label="法务状态" prop="legalStatus" label-width="80px"> 
+          <el-select v-model="form.legalStatus" placeholder="请选择法务状态"> 
+          </el-select>
+        </el-form-item>
+        <el-form-item label="最后跟进时间" prop="lastFollowTime" label-width="110px">
           <el-date-picker clearable
             v-model="form.lastFollowTime"
             type="datetime"
@@ -123,10 +109,16 @@
             placeholder="请选择最后跟进时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="合同存储路径" prop="contractUrl">
-          <el-input v-model="form.contractUrl" placeholder="请输入合同存储路径" />
+        <el-form-item label="归档人" prop="archiveBy" label-width="70px">
+          <el-input v-model="form.archiveBy" placeholder="请输入归档人" />
         </el-form-item>
-        <el-form-item label="归档时间" prop="archiveTime">
+        <el-form-item label="归档人岗位" prop="archivePost" label-width="100px">
+          <el-input v-model="form.archivePost" placeholder="请输入归档人岗位ID" />
+        </el-form-item>
+        <el-form-item label="归档人角色" prop="archiveRole" label-width="100px">
+          <el-input v-model="form.archiveRole" placeholder="请输入归档人角色ID" />
+        </el-form-item>
+        <el-form-item label="归档时间" prop="archiveTime" label-width="80px">
           <el-date-picker clearable
             v-model="form.archiveTime"
             type="datetime"
@@ -134,23 +126,11 @@
             placeholder="请选择归档时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="归档人" prop="archiveBy">
-          <el-input v-model="form.archiveBy" placeholder="请输入归档人" />
+        <el-form-item label="归档结果" prop="archiveResult" label-width="80px">
+          <el-input v-model="form.archiveResult" placeholder="请输入归档结果"></el-input>
         </el-form-item>
-        <el-form-item label="归档/审批意见" prop="archiveRemark">
+        <el-form-item label="审批意见" prop="archiveRemark" label-width="80px">
             <el-input v-model="form.archiveRemark" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="归档结果" prop="archiveResult">
-          <el-input v-model="form.archiveResult" placeholder="请输入归档结果" />
-        </el-form-item>
-        <el-form-item label="归档人岗位ID" prop="archivePost">
-          <el-input v-model="form.archivePost" placeholder="请输入归档人岗位ID" />
-        </el-form-item>
-        <el-form-item label="归档人角色ID" prop="archiveRole">
-          <el-input v-model="form.archiveRole" placeholder="请输入归档人角色ID" />
-        </el-form-item>
-        <el-form-item label="归档来源" prop="archiveSource">
-          <el-input v-model="form.archiveSource" placeholder="请输入归档来源" />
         </el-form-item>
       </el-form>
       <template #footer>
