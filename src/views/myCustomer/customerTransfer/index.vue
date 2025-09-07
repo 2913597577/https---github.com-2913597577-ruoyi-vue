@@ -10,19 +10,27 @@
             <el-form-item label="对接人" prop="contactPerson" label-width="68px">
               <el-input v-model="queryParams.contactPerson" placeholder="请输入公司对接人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="尾款情况" prop="balanceStatus" label-width="68px">
-              <el-input v-model="queryParams.balanceStatus" placeholder="请输入尾款情况" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            <el-form-item label="审核状态" prop="financeConfirmed">
+        <el-select v-model="queryParams.financeConfirmed" placeholder="审核状态" clearable style="width: 200px">
+          <el-option label="待审核" :value="0" />
+          <el-option label="审核通过" :value="1" />
+          <el-option label="审核驳回" :value="2" />
+        </el-select>
+      </el-form-item>
             <el-form-item label="签约类型" prop="signType" label-width="68px">
-              <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
+              <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable style="width: 200px">
+                <el-option label="常法" :value="1" />
+                <el-option label="单项" :value="2" />
+                <el-option label="律师费" :value="3" />
+                <el-option label="其他" :value="4" />
+              </el-select>
             </el-form-item>
-            <el-form-item label="开始时间" prop="serviceStart" label-width="68px">
-              <el-date-picker clearable
-                v-model="queryParams.serviceStart"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择服务周期开始时间"
-              />
+            <el-form-item label="常法签约" prop="serviceType" label-width="68px">
+              <el-select v-model="queryParams.serviceType" placeholder="请选择常法签约" clearable style="width: 200px">
+                <el-option label="升级版" :value="1" />
+                <el-option label="标准版" :value="2" />
+                <el-option label="其他" :value="3" />
+              </el-select>
             </el-form-item>
             <el-form-item label="结束时间" prop="serviceEnd" label-width="68px">
               <el-date-picker clearable
@@ -69,6 +77,14 @@
         <el-table-column label="对接人" align="center" prop="contactPerson" width="100" show-overflow-tooltip/>
         <el-table-column label="对接人电话" align="center" prop="contactInfo" width="120" show-overflow-tooltip/>
         <el-table-column label="对接人职务" align="center" prop="contactPosition" width="100" show-overflow-tooltip/>
+        <el-table-column prop="financeConfirmed" label="审核状态" width="100" align="center" show-overflow-tooltip>
+        <template #default="scope">
+          <el-tag v-if="scope.row.financeConfirmed === 0" type="danger">待审核</el-tag>
+          <el-tag v-else-if="scope.row.financeConfirmed === 1" type="success">审核通过</el-tag>
+          <el-tag v-else-if="scope.row.financeConfirmed === 2" type="warning">审核驳回</el-tag>
+          <el-tag v-else type="info">待审核</el-tag>
+        </template>
+      </el-table-column>
         <el-table-column label="开始时间" align="center" prop="serviceStart" width="150">
           <template #default="scope">
             <span>{{ parseTime(scope.row.serviceStart, '{y}-{m}-{d}') }}</span>
@@ -118,6 +134,7 @@
     <!-- 添加或修改客户信息录入对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="80%" append-to-body>
       <el-form ref="customerTransferFormRef" :model="form" :rules="rules" label-width="80px">
+        <div class="section-title">基本信息</div>
         <el-row :gutter="10">
           <el-col :span="12">
         <el-form-item label="公司名称" prop="companyName" label-width="90px">
@@ -137,11 +154,6 @@
         <el-col :span="12">
         <el-form-item label="员工人数" prop="employeeCount" label-width="90px">
           <el-input v-model="form.employeeCount" placeholder="请输入员工人数" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="24">
-        <el-form-item label="客户描述" prop="customerDescription" label-width="90px">
-            <el-input v-model="form.customerDescription" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -185,20 +197,14 @@
         </el-form-item>
         </el-col>
         <el-col :span="24">
-        <el-form-item label="咨询情况" prop="lawyerConsultation" label-width="90px">
-            <el-input v-model="form.lawyerConsultation" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="客户描述" prop="customerDescription" label-width="90px">
+            <el-input v-model="form.customerDescription" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         </el-col>
-        <el-col :span="12">
-        <el-form-item label="费用沟通" prop="otherFee" label-width="90px">
-            <el-input v-model="form.otherFee" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="欠款问题" prop="debtRemark" label-width="90px">
-            <el-input v-model="form.debtRemark" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        </el-col>
+        </el-row>
+
+        <div class="section-title">签约情况</div>
+        <el-row :gutter="10"> 
         <el-col :span="12">
         <el-form-item label="实付金额" prop="actualPayment" label-width="90px">
           <el-input v-model="form.actualPayment" placeholder="请输入实付金额" />
@@ -207,6 +213,25 @@
         <el-col :span="12">
         <el-form-item label="尾款情况" prop="balanceStatus" label-width="90px">
           <el-input v-model="form.balanceStatus" placeholder="请输入尾款情况" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="签约类型" prop="contractType">
+          <el-select v-model="form.contractType" placeholder="请选择签约类型">
+            <el-option label="常法" value="1" />
+            <el-option label="单项" value="2" />
+            <el-option label="律师费" value="3" />
+            <el-option label="其他" value="4" />
+          </el-select>
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="常法签约" prop="serviceType">
+          <el-select v-model="form.serviceType" placeholder="请选择版本">
+            <el-option label="升级版" :value="1" />
+            <el-option label="标准版" :value="2" />
+            <el-option label="其他" :value="3" />
+          </el-select>
         </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -230,23 +255,8 @@
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="合作公司" prop="preCompany" label-width="90px">
-          <el-input v-model="form.preCompany" placeholder="请输入以前合作公司名称" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="不合作原因" prop="preReason" label-width="90px">
-            <el-input v-model="form.preReason" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="24">
-        <el-form-item label="出现过的纠纷及解决方式" prop="preDiscuss" label-width="180px">
-            <el-input v-model="form.preDiscuss" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="待处理事项" prop="pendingRemark" label-width="90px">
-            <el-input v-model="form.pendingRemark" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="费用沟通" prop="otherFee" label-width="90px">
+            <el-input v-model="form.otherFee" type="textarea" placeholder="请输入律师咨询情况" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -254,8 +264,45 @@
             <el-input v-model="form.financeSignature" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         </el-col>
+        <el-col :span="24">
+        <el-form-item label="咨询情况" prop="lawyerConsultation" label-width="90px">
+            <el-input v-model="form.lawyerConsultation" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        </el-col>
+        </el-row>
+        <div class="section-title">客户情况概述</div>
+        <el-row :gutter="10"> 
+        <el-col :span="12">
+        <el-form-item label="是否有过公司法务" prop="preLegal" label-width="140px">
+          <el-radio-group v-model="form.preLegal">
+            <el-radio label="1">是</el-radio>
+            <el-radio label="0">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="不合作原因" prop="preReason" label-width="90px">
+            <el-input v-model="form.preReason" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="欠款问题" prop="debtRemark" label-width="90px">
+            <el-input v-model="form.debtRemark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="待处理事项" prop="pendingRemark" label-width="90px">
+            <el-input v-model="form.pendingRemark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="24">
+        <el-form-item label="出现过的纠纷及解决方式" prop="preDiscuss" label-width="180px">
+            <el-input v-model="form.preDiscuss" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        </el-col>
         </el-row>
       </el-form>
+      
       <template #footer>
         <div class="dialog-footer">
           <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
@@ -470,3 +517,15 @@ onMounted(() => {
   getList();
 });
 </script>
+
+<style scoped>
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #303133;
+  text-align: center;
+  margin: 24px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e4e7ed;
+}
+</style>
