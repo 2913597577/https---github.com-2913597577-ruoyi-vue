@@ -62,12 +62,12 @@
 
       <el-table v-loading="loading" border :data="customerTransferList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="公司名称" align="center" prop="companyName" width="150" show-overflow-tooltip/>
-        <el-table-column label="公司地址" align="center" prop="companyAddress" width="120" show-overflow-tooltip/>
+        <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip/>
+        <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip/>
         <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip/>
         <el-table-column label="所属行业" align="center" prop="companyIndustry" width="100" show-overflow-tooltip/>
         <el-table-column label="对接人" align="center" prop="contactPerson" width="100" show-overflow-tooltip/>
-        <el-table-column label="对接人电话" align="center" prop="contactInfo" width="100" show-overflow-tooltip/>
+        <el-table-column label="对接人电话" align="center" prop="contactInfo" width="120" show-overflow-tooltip/>
         <el-table-column label="对接人职务" align="center" prop="contactPosition" width="100" show-overflow-tooltip/>
         <el-table-column label="开始时间" align="center" prop="serviceStart" width="150">
           <template #default="scope">
@@ -87,7 +87,7 @@
         <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="120" show-overflow-tooltip/>
         <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip/>
         <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip/>
-        <el-table-column label="自然人电话" align="center" prop="additionalContact" width="100" show-overflow-tooltip/>
+        <el-table-column label="自然人电话" align="center" prop="additionalContact" width="120" show-overflow-tooltip/>
         <el-table-column label="自然人职务" align="center" prop="additionalPosition" width="100" show-overflow-tooltip/>
         <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip/>
         <el-table-column label="代账公司" align="center" prop="accountingCompany" width="80" show-overflow-tooltip/>
@@ -120,80 +120,97 @@
       <el-form ref="customerTransferFormRef" :model="form" :rules="rules" label-width="80px">
         <el-row :gutter="10">
           <el-col :span="12">
-        <el-form-item label="公司名称" prop="companyName">
+        <el-form-item label="公司名称" prop="companyName" label-width="90px">
           <el-input v-model="form.companyName" placeholder="请输入公司名称" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="对接人" prop="contactPerson">
-          <el-input v-model="form.contactPerson" placeholder="请输入公司对接人" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="对接人电话" prop="contactInfo">
-          <el-input v-model="form.contactInfo" placeholder="请输入公司对接人联系方式" />
-        </el-form-item>
-        </el-col>
-        <el-form-item label="对接人职务" prop="contactPosition">
-          <el-input v-model="form.contactPosition" placeholder="请输入对接人职务" />
-        </el-form-item>
-        <el-col :span="12">
-        <el-form-item label="对接人年龄" prop="contactAge">
-          <el-input v-model="form.contactAge" placeholder="请输入对接人年龄" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="附赠自然人" prop="additionalPerson">
-          <el-input v-model="form.additionalPerson" placeholder="请输入附赠自然人" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="自然人电话" prop="additionalContact">
-          <el-input v-model="form.additionalContact" placeholder="请输入附赠自然人联系方式" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="自然人职务" prop="additionalPosition">
-          <el-input v-model="form.additionalPosition" placeholder="请输入附赠自然人职务" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="自然人年龄" prop="additionalAge">
-          <el-input v-model="form.additionalAge" placeholder="请输入附赠自然人年龄" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="所属行业" prop="companyIndustry">
+        <el-form-item label="所属行业" prop="companyIndustry" label-width="90px">
           <el-input v-model="form.companyIndustry" placeholder="请输入公司所属行业" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="公司地址" prop="companyAddress">
+        <el-form-item label="公司地址" prop="companyAddress" label-width="90px">
           <el-input v-model="form.companyAddress" placeholder="请输入公司地址" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="员工人数" prop="employeeCount">
+        <el-form-item label="员工人数" prop="employeeCount" label-width="90px">
           <el-input v-model="form.employeeCount" placeholder="请输入员工人数" />
         </el-form-item>
         </el-col>
-        <el-col :span="12">
-        <el-form-item label="客户描述" prop="customerDescription">
+        <el-col :span="24">
+        <el-form-item label="客户描述" prop="customerDescription" label-width="90px">
             <el-input v-model="form.customerDescription" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="实付金额" prop="actualPayment">
+        <el-form-item label="对接人" prop="contactPerson" label-width="90px">
+          <el-input v-model="form.contactPerson" placeholder="请输入公司对接人" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="对接人电话" prop="contactInfo" label-width="90px">
+          <el-input v-model="form.contactInfo" placeholder="请输入公司对接人联系方式" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="对接人职务" prop="contactPosition" label-width="90px">
+          <el-input v-model="form.contactPosition" placeholder="请输入对接人职务" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="对接人年龄" prop="contactAge" label-width="90px">
+          <el-input v-model="form.contactAge" placeholder="请输入对接人年龄" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="附赠自然人" prop="additionalPerson" label-width="90px">
+          <el-input v-model="form.additionalPerson" placeholder="请输入附赠自然人" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="自然人电话" prop="additionalContact" label-width="90px">
+          <el-input v-model="form.additionalContact" placeholder="请输入附赠自然人联系方式" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="自然人职务" prop="additionalPosition" label-width="90px">
+          <el-input v-model="form.additionalPosition" placeholder="请输入附赠自然人职务" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="自然人年龄" prop="additionalAge" label-width="90px">
+          <el-input v-model="form.additionalAge" placeholder="请输入附赠自然人年龄" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="24">
+        <el-form-item label="咨询情况" prop="lawyerConsultation" label-width="90px">
+            <el-input v-model="form.lawyerConsultation" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="费用沟通" prop="otherFee" label-width="90px">
+            <el-input v-model="form.otherFee" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="欠款问题" prop="debtRemark" label-width="90px">
+            <el-input v-model="form.debtRemark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        </el-col>
+        <el-col :span="12">
+        <el-form-item label="实付金额" prop="actualPayment" label-width="90px">
           <el-input v-model="form.actualPayment" placeholder="请输入实付金额" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="尾款情况" prop="balanceStatus">
+        <el-form-item label="尾款情况" prop="balanceStatus" label-width="90px">
           <el-input v-model="form.balanceStatus" placeholder="请输入尾款情况" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="开始时间" prop="serviceStart">
+        <el-form-item label="开始时间" prop="serviceStart" label-width="90px">
           <el-date-picker clearable
             v-model="form.serviceStart"
             type="datetime"
@@ -203,7 +220,7 @@
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="结束时间" prop="serviceEnd">
+        <el-form-item label="结束时间" prop="serviceEnd" label-width="90px">
           <el-date-picker clearable
             v-model="form.serviceEnd"
             type="datetime"
@@ -213,43 +230,28 @@
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="咨询情况" prop="lawyerConsultation">
-            <el-input v-model="form.lawyerConsultation" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="费用沟通" prop="otherFee">
-            <el-input v-model="form.otherFee" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="财务签名" prop="financeSignature">
-            <el-input v-model="form.financeSignature" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        </el-col>
-        <el-col :span="12">
-        <el-form-item label="合作公司" prop="preCompany">
+        <el-form-item label="合作公司" prop="preCompany" label-width="90px">
           <el-input v-model="form.preCompany" placeholder="请输入以前合作公司名称" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="不合作原因" prop="preReason">
+        <el-form-item label="不合作原因" prop="preReason" label-width="90px">
             <el-input v-model="form.preReason" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         </el-col>
-        <el-col :span="12">
-        <el-form-item label="公司出现过的纠纷及解决方式" prop="preDiscuss">
+        <el-col :span="24">
+        <el-form-item label="出现过的纠纷及解决方式" prop="preDiscuss" label-width="180px">
             <el-input v-model="form.preDiscuss" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="待处理事项" prop="pendingRemark">
+        <el-form-item label="待处理事项" prop="pendingRemark" label-width="90px">
             <el-input v-model="form.pendingRemark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         </el-col>
         <el-col :span="12">
-        <el-form-item label="欠款问题" prop="debtRemark">
-            <el-input v-model="form.debtRemark" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="财务签名" prop="financeSignature" label-width="90px">
+            <el-input v-model="form.financeSignature" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         </el-col>
         </el-row>
@@ -416,13 +418,15 @@ const handleAdd = () => {
 }
 
 /** 修改按钮操作 */
+/** 修改按钮操作 */
 const handleUpdate = async (row?: CustomerTransferVO) => {
   reset();
   const _id = row?.id || ids.value[0]
   const res = await getCustomerTransfer(_id);
   Object.assign(form.value, res.data);
-  form.value.pendingMatters = form.value.pendingMatters.split(",");
-  form.value.debtDetails = form.value.debtDetails.split(",");
+  // 添加空值检查
+  form.value.pendingMatters = form.value.pendingMatters ? form.value.pendingMatters.split(",") : [];
+  form.value.debtDetails = form.value.debtDetails ? form.value.debtDetails.split(",") : [];
   dialog.visible = true;
   dialog.title = "修改客户信息录入";
 }
