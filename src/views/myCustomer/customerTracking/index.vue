@@ -4,8 +4,15 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="客户id" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="对接客户" prop="customerId">
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable>
+                <el-option
+                  v-for="item in customerList"
+                  :key="item.transfer_id"
+                  :label="item.customer_name"
+                  :value="item.transfer_id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="备注" prop="customerRemark">
               <el-input v-model="queryParams.customerRemark" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
@@ -88,7 +95,14 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="客户id" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户id" />
+          <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+            <el-option
+              v-for="item in customerList"
+              :key="item.transfer_id"
+              :label="item.customer_name"
+              :value="item.transfer_id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="customerRemark">
             <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
@@ -123,6 +137,7 @@
 <script setup name="CustomerTracking" lang="ts">
 import { listCustomerTracking, getCustomerTracking, delCustomerTracking, addCustomerTracking, updateCustomerTracking } from '@/api/myCustomer/customerTracking';
 import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from '@/api/myCustomer/customerTracking/types';
+import { getCustomerByUserId } from '@/api/common'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -134,6 +149,7 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
+const customerList = ref();
 
 const queryFormRef = ref<ElFormInstance>();
 const customerTrackingFormRef = ref<ElFormInstance>();
@@ -266,7 +282,18 @@ const handleExport = () => {
   }, `customerTracking_${new Date().getTime()}.xlsx`)
 }
 
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
+
 onMounted(() => {
   getList();
+  loadCustomerList();
 });
 </script>
