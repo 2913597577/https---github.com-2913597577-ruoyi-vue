@@ -14,7 +14,7 @@
         <el-select v-model="queryParams.financeConfirmed" placeholder="审核状态" clearable style="width: 200px">
           <el-option label="待审核" :value="0" />
           <el-option label="审核通过" :value="1" />
-          <el-option label="审核驳回" :value="2" />
+          <el-option label="审核不通过" :value="2" />
         </el-select>
       </el-form-item>
             <el-form-item label="签约类型" prop="signType" label-width="68px">
@@ -81,7 +81,7 @@
         <template #default="scope">
           <el-tag v-if="scope.row.financeConfirmed === 0" type="danger">待审核</el-tag>
           <el-tag v-else-if="scope.row.financeConfirmed === 1" type="success">审核通过</el-tag>
-          <el-tag v-else-if="scope.row.financeConfirmed === 2" type="warning">审核驳回</el-tag>
+          <el-tag v-else-if="scope.row.financeConfirmed === 2" type="warning">审核不通过</el-tag>
           <el-tag v-else type="info">待审核</el-tag>
         </template>
       </el-table-column>

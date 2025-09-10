@@ -105,7 +105,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="customerRemark">
-            <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
+            <el-input v-model="form.customerRemark" type="textarea"  :rows="6" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="跟踪时间" prop="trackingTime">
           <el-date-picker clearable
