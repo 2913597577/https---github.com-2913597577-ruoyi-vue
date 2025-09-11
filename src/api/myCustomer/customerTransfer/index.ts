@@ -61,3 +61,16 @@ export const delCustomerTransfer = (id: string | number | Array<string | number>
     method: 'delete'
   });
 };
+
+/**
+ * 流转单财务审核
+ * @param id
+ * @param query
+ */
+export const audit = (data: { id: string | number, auditStatus: string, pictureUrl: string }) => {
+  return request({
+    url: '/myCustomer/customerTransfer/audit',
+    method: 'put',
+    params: data,
+  });
+};
