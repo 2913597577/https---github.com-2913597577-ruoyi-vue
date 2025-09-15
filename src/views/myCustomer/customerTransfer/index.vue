@@ -270,19 +270,22 @@
 
         <!-- 上传签名：仅在通过时显示 -->
         <el-form-item v-if="auditForm.auditStatus === '1'" label="电子签名">
-          <fileUpload v-model="auditForm.pictureUrl" :limit="1" :file-size="2" :file-type="['png', 'jpg', 'jpeg']"
-            :is-show-tip="false" />
-            
+          <fileUpload v-model="localFileList" :limit="1" :file-size="2" :file-type="['png', 'jpg', 'jpeg']"
+            :is-show-tip="false" @success="handleUploadSuccess" />
+          <div v-if="auditForm.pictureUrl" style="margin-top: 8px;">
+            <img :src="auditForm.pictureUrl" class="signature-preview" />
+          </div>
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="auditDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitAudit">确定</el-button>
+        <div class="dialog-footer" style="text-align: right;">
+          <el-button @click="auditCancel" :disabled="submitting">取消</el-button>
+          <el-button type="primary" :loading="submitting" @click="submitAudit">确定</el-button>
         </div>
       </template>
     </el-dialog>
+
   </div>
 </template>
 
@@ -450,13 +453,21 @@ const handleUpdate = async (row?: CustomerTransferVO) => {
   dialog.visible = true;
   dialog.title = "修改客户信息录入";
 }
+
+// 弹窗显示
 const auditDialogVisible = ref(false)
+// 当前行
 const currentRow = ref<any>(null)
+// 提交状态
+const submitting = ref(false)
 
 const auditForm = ref({
-  auditStatus: '1', // 默认通过
-  pictureUrl: ''    // fileUpload 组件会自动填充这里
+  auditStatus: '1',
+  pictureUrl: ''
 })
+
+// 上传相关
+const localFileList = ref(null)
 
 // 打开审核弹窗
 const handleProcess = (row?: any) => {
@@ -465,34 +476,61 @@ const handleProcess = (row?: any) => {
     auditStatus: '1',
     pictureUrl: ''
   }
+  localFileList.value = []
   auditDialogVisible.value = true
 }
 
-const submitAudit = async () => {
+// 上传成功：保存后端返回的 url
+function handleUploadSuccess(res: any) {
+  if (res?.data?.url) {
+    auditForm.value.pictureUrl = res.data.url
+  }
+}
+
+// 点击取消
+function auditCancel() {
+  auditDialogVisible.value = false
+}
+
+// 提交审核
+async function submitAudit() {
+  if (submitting.value) return
+  // 如果审核通过，必须上传签名图片
+
+  auditForm.value.pictureUrl = localFileList.value[0].url
+
+  if (auditForm.value.auditStatus === '1' && !auditForm.value.pictureUrl) {
+    ElMessage.warning('请先上传签名图片')
+    return
+  }
+
+  submitting.value = true
   try {
-    const res = await audit({
-      id: currentRow.value?.id,
-      auditStatus: auditForm.value.auditStatus,
-      pictureUrl: auditForm.value.auditStatus === '1' ? auditForm.value.pictureUrl : ''
-    })
 
-    if (res.code === 200) {
-      // 用返回的真实 url 更新表单
-      if (res.data?.url) {
-        auditForm.value.pictureUrl = res.data.url
-      }
+    // 构造 FormData 或普通对象都行，这里用 FormData 保持通用性
+    const formData = new FormData()
+    formData.append('id', currentRow.value?.id || '')
+    formData.append('auditStatus', auditForm.value.auditStatus)
 
+    formData.append('pictureUrl', auditForm.value.auditStatus === '1' ? auditForm.value.pictureUrl : '')
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value)
+    }
+    const res = await audit(formData)
+
+    if (res && res.code === 200) {
       ElMessage.success('操作成功')
       auditDialogVisible.value = false
     } else {
-      ElMessage.error(res.msg || '操作失败')
+      ElMessage.error(res?.msg || '操作失败')
     }
   } catch (err) {
     console.error(err)
     ElMessage.error('请求出错，请稍后再试')
+  } finally {
+    submitting.value = false
   }
 }
-
 /** 提交按钮 */
 const submitForm = () => {
   customerTransferFormRef.value?.validate(async (valid: boolean) => {
@@ -532,3 +570,14 @@ onMounted(() => {
   getList();
 });
 </script>
+<style scoped>
+.signature-preview {
+  width: 160px;
+  height: 120px;
+  object-fit: contain;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 4px;
+  background: #fff;
+}
+</style>

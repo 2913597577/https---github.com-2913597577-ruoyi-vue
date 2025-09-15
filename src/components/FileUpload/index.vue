@@ -1,21 +1,9 @@
 <template>
   <div class="upload-file">
-    <el-upload
-      ref="fileUploadRef"
-      multiple
-      :action="uploadFileUrl"
-      :before-upload="handleBeforeUpload"
-      :file-list="fileList"
-      :limit="limit"
-      :accept="fileAccept"
-      :on-error="handleUploadError"
-      :on-exceed="handleExceed"
-      :on-success="handleUploadSuccess"
-      :show-file-list="false"
-      :headers="headers"
-      class="upload-file-uploader"
-      v-if="!disabled"
-    >
+    <el-upload ref="fileUploadRef" multiple :action="uploadFileUrl" :before-upload="handleBeforeUpload"
+      :file-list="fileList" :limit="limit" :accept="fileAccept" :on-error="handleUploadError" :on-exceed="handleExceed"
+      :on-success="handleUploadSuccess" :show-file-list="false" :headers="headers" class="upload-file-uploader"
+      v-if="!disabled">
       <!-- 上传按钮 -->
       <el-button type="primary">选取文件</el-button>
     </el-upload>
@@ -188,7 +176,8 @@ const uploadedSuccessfully = () => {
     fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value);
     uploadList.value = [];
     number.value = 0;
-    emit('update:modelValue', listToString(fileList.value));
+    console.log(fileList.value)
+    emit('update:modelValue', fileList.value);
     proxy?.$modal.closeLoading();
   }
 };

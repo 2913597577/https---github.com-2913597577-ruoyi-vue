@@ -67,10 +67,10 @@ export const delCustomerTransfer = (id: string | number | Array<string | number>
  * @param id
  * @param query
  */
-export const audit = (data: { id: string | number, auditStatus: string, pictureUrl: string }) => {
+export function audit(data: FormData) {
   return request({
     url: '/myCustomer/customerTransfer/audit',
-    method: 'put',
-    params: data,
-  });
-};
+    method: 'post',
+    data
+  })
+}
