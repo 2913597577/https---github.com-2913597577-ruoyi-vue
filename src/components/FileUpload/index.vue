@@ -150,7 +150,8 @@ const handleUploadSuccess = (res: any, file: UploadFile) => {
     uploadList.value.push({
       name: res.data.fileName,
       url: res.data.url,
-      ossId: res.data.ossId
+      ossId: res.data.ossId,
+      raw: file.raw   // ✅ 保存原始 File 对象
     });
     uploadedSuccessfully();
   } else {
@@ -161,6 +162,8 @@ const handleUploadSuccess = (res: any, file: UploadFile) => {
     uploadedSuccessfully();
   }
 };
+
+
 
 // 删除文件
 const handleDelete = (index: number) => {
@@ -173,11 +176,18 @@ const handleDelete = (index: number) => {
 // 上传结束处理
 const uploadedSuccessfully = () => {
   if (number.value > 0 && uploadList.value.length === number.value) {
-    fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value);
+    fileList.value = fileList.value
+      .filter((f) => f.url !== undefined)
+      .concat(uploadList.value);
+
     uploadList.value = [];
     number.value = 0;
-    console.log(fileList.value)
+
+    console.log('最终上传 fileList:', fileList.value);
+
+    // ✅ 这里 emit 的时候带上 raw
     emit('update:modelValue', fileList.value);
+
     proxy?.$modal.closeLoading();
   }
 };

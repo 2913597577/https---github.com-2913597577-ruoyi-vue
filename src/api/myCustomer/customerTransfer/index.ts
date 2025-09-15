@@ -65,12 +65,20 @@ export const delCustomerTransfer = (id: string | number | Array<string | number>
 /**
  * 流转单财务审核
  * @param id
- * @param query
+ * @param auditStatus
+ * @param pictureFile
  */
-export function audit(data: FormData) {
+export const audit = (id: string | number, auditStatus: string, pictureFile:  File | string) => {
+  const formData = new FormData();
+  formData.append('id', id.toString());
+  formData.append('auditStatus', auditStatus);
+  formData.append('pictureUrl', pictureFile || '');
+
   return request({
     url: '/myCustomer/customerTransfer/audit',
     method: 'post',
-    data
-  })
-}
+    data: formData,
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+};
+
