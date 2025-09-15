@@ -469,28 +469,39 @@ const handleProcess = (row?: any) => {
 }
 
 const submitAudit = async () => {
-  try {
-    const res = await audit({
-      id: currentRow.value?.id,
-      auditStatus: auditForm.value.auditStatus,
-      pictureUrl: auditForm.value.auditStatus === '1' ? auditForm.value.pictureUrl : ''
-    })
+
+    // 参数校验
+    if (!currentRow.value?.id) {
+      ElMessage.error('客户信息ID不能为空')
+      return
+    }
+    
+    // 如果是通过审核但没有上传图片
+    if (auditForm.value.auditStatus === '1' && !auditForm.value.pictureUrl) {
+      ElMessage.error('通过审核时必须上传签名')
+      return
+    }
+    console.log('auditForm.value', auditForm.value)
+    const res = await audit(
+      currentRow.value.id,
+      auditForm.value.auditStatus,
+      auditForm.value.pictureUrl || '' // 确保始终传递该字段
+    )
 
     if (res.code === 200) {
       // 用返回的真实 url 更新表单
-      if (res.data?.url) {
-        auditForm.value.pictureUrl = res.data.url
+      if (res.data?.imgUrl) {  // 注意这里是 imgUrl 而不是 url
+        auditForm.value.pictureUrl = res.data.imgUrl
       }
 
       ElMessage.success('操作成功')
       auditDialogVisible.value = false
+      // 可以在这里触发刷新列表等操作
+      // emit('success') 或 getList()
     } else {
       ElMessage.error(res.msg || '操作失败')
     }
-  } catch (err) {
-    console.error(err)
-    ElMessage.error('请求出错，请稍后再试')
-  }
+
 }
 
 /** 提交按钮 */
