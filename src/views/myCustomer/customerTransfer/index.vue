@@ -270,19 +270,23 @@
 
         <!-- 上传签名：仅在通过时显示 -->
         <el-form-item v-if="auditForm.auditStatus === '1'" label="电子签名">
-          <fileUpload v-model="auditForm.pictureUrl" :limit="1" :file-size="2" :file-type="['png', 'jpg', 'jpeg']"
+          <fileUpload v-model="localFileList" :limit="1" :file-size="2" :file-type="['png', 'jpg', 'jpeg']"
             :is-show-tip="false" />
-            
+          <div v-if="localFileList.length > 0 && localFileList[0].url" style="margin-top: 8px;">
+            <img :src="localFileList[0].url" class="signature-preview" />
+          </div>
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="auditDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitAudit">确定</el-button>
+        <div class="dialog-footer" style="text-align: right;">
+          <el-button @click="auditCancel" :disabled="submitting">取消</el-button>
+          <el-button type="primary" :loading="submitting" @click="submitAudit">确定</el-button>
         </div>
       </template>
     </el-dialog>
+
+
   </div>
 </template>
 
@@ -450,60 +454,68 @@ const handleUpdate = async (row?: CustomerTransferVO) => {
   dialog.visible = true;
   dialog.title = "修改客户信息录入";
 }
+// 弹窗显示
 const auditDialogVisible = ref(false)
+// 当前行
 const currentRow = ref<any>(null)
+// 提交状态
+const submitting = ref(false)
 
-const auditForm = ref({
-  auditStatus: '1', // 默认通过
-  pictureUrl: ''    // fileUpload 组件会自动填充这里
-})
-
+// 上传相关
+const localFileList = ref([])
+const auditForm = ref({ auditStatus: '1', pictureUrl: '' })
 // 打开审核弹窗
 const handleProcess = (row?: any) => {
   currentRow.value = row || null
-  auditForm.value = {
-    auditStatus: '1',
-    pictureUrl: ''
-  }
+  localFileList.value = []
   auditDialogVisible.value = true
 }
 
-const submitAudit = async () => {
-
-    // 参数校验
-    if (!currentRow.value?.id) {
-      ElMessage.error('客户信息ID不能为空')
-      return
-    }
-    
-    // 如果是通过审核但没有上传图片
-    if (auditForm.value.auditStatus === '1' && !auditForm.value.pictureUrl) {
-      ElMessage.error('通过审核时必须上传签名')
-      return
-    }
-    console.log('auditForm.value', auditForm.value)
-    const res = await audit(
-      currentRow.value.id,
-      auditForm.value.auditStatus,
-      auditForm.value.pictureUrl || '' // 确保始终传递该字段
-    )
-
-    if (res.code === 200) {
-      // 用返回的真实 url 更新表单
-      if (res.data?.imgUrl) {  // 注意这里是 imgUrl 而不是 url
-        auditForm.value.pictureUrl = res.data.imgUrl
-      }
-
-      ElMessage.success('操作成功')
-      auditDialogVisible.value = false
-      // 可以在这里触发刷新列表等操作
-      // emit('success') 或 getList()
-    } else {
-      ElMessage.error(res.msg || '操作失败')
-    }
-
+// 点击取消
+function auditCancel() {
+  auditDialogVisible.value = false
 }
 
+// 提交审核
+async function submitAudit() {
+  if (submitting.value) return
+  console.log(localFileList.value[0])
+  // 如果审核通过，必须上传签名图片
+  if (auditForm.value.auditStatus === '1') {
+    if (localFileList.value.length === 0 || !(localFileList.value[0].raw instanceof File)) {
+      ElMessage.warning('请先上传签名图片（必须是文件）')
+      return
+    }
+  }
+
+  submitting.value = true
+  try {
+    let pictureFile: File | string = ''
+    if (auditForm.value.auditStatus === '1') {
+      pictureFile = localFileList.value[0].raw
+    }
+
+    const res = await audit(
+      currentRow.value?.id || '',
+      auditForm.value.auditStatus,
+      pictureFile
+    )
+
+    if (res && res.code === 200) {
+      ElMessage.success('操作成功')
+      auditDialogVisible.value = false
+      // 刷新列表
+      // emit('success') 或 getList()
+    } else {
+      ElMessage.error(res?.msg || '操作失败')
+    }
+  } catch (err) {
+    console.error(err)
+    ElMessage.error('请求出错，请稍后再试')
+  } finally {
+    submitting.value = false
+  }
+}
 /** 提交按钮 */
 const submitForm = () => {
   customerTransferFormRef.value?.validate(async (valid: boolean) => {
@@ -522,7 +534,6 @@ const submitForm = () => {
     }
   });
 }
-
 /** 删除按钮操作 */
 const handleDelete = async (row?: CustomerTransferVO) => {
   const _ids = row?.id || ids.value;
@@ -543,3 +554,14 @@ onMounted(() => {
   getList();
 });
 </script>
+<style scoped>
+.signature-preview {
+  width: 160px;
+  height: 120px;
+  object-fit: contain;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 4px;
+  background: #fff;
+}
+</style>

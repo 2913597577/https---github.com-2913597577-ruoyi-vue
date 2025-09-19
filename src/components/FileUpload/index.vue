@@ -1,21 +1,9 @@
 <template>
   <div class="upload-file">
-    <el-upload
-      ref="fileUploadRef"
-      multiple
-      :action="uploadFileUrl"
-      :before-upload="handleBeforeUpload"
-      :file-list="fileList"
-      :limit="limit"
-      :accept="fileAccept"
-      :on-error="handleUploadError"
-      :on-exceed="handleExceed"
-      :on-success="handleUploadSuccess"
-      :show-file-list="false"
-      :headers="headers"
-      class="upload-file-uploader"
-      v-if="!disabled"
-    >
+    <el-upload ref="fileUploadRef" multiple :action="uploadFileUrl" :before-upload="handleBeforeUpload"
+      :file-list="fileList" :limit="limit" :accept="fileAccept" :on-error="handleUploadError" :on-exceed="handleExceed"
+      :on-success="handleUploadSuccess" :show-file-list="false" :headers="headers" class="upload-file-uploader"
+      v-if="!disabled">
       <!-- 上传按钮 -->
       <el-button type="primary">选取文件</el-button>
     </el-upload>
@@ -162,7 +150,8 @@ const handleUploadSuccess = (res: any, file: UploadFile) => {
     uploadList.value.push({
       name: res.data.fileName,
       url: res.data.url,
-      ossId: res.data.ossId
+      ossId: res.data.ossId,
+      raw: file.raw   // ✅ 保存原始 File 对象
     });
     uploadedSuccessfully();
   } else {
@@ -173,6 +162,8 @@ const handleUploadSuccess = (res: any, file: UploadFile) => {
     uploadedSuccessfully();
   }
 };
+
+
 
 // 删除文件
 const handleDelete = (index: number) => {
@@ -185,10 +176,18 @@ const handleDelete = (index: number) => {
 // 上传结束处理
 const uploadedSuccessfully = () => {
   if (number.value > 0 && uploadList.value.length === number.value) {
-    fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value);
+    fileList.value = fileList.value
+      .filter((f) => f.url !== undefined)
+      .concat(uploadList.value);
+
     uploadList.value = [];
     number.value = 0;
-    emit('update:modelValue', listToString(fileList.value));
+
+    console.log('最终上传 fileList:', fileList.value);
+
+    // ✅ 这里 emit 的时候带上 raw
+    emit('update:modelValue', fileList.value);
+
     proxy?.$modal.closeLoading();
   }
 };
