@@ -128,13 +128,13 @@
           <el-input v-model="form.legalSupportId" placeholder="请输入法务支持id" />
         </el-form-item>
         <el-form-item label="源合同地址" prop="preContractAddress">
-          <file-upload :limit="1" v-model="preFile"/>
+          <file-upload :limit="1" :fileSize="10" v-model="preFile"/>
         </el-form-item>
         <el-form-item label="源合同文件名" prop="preContractName">
           <el-input v-model="form.preContractName" placeholder="请输入源合同文件名" />
         </el-form-item>
         <el-form-item label="新合同地址" prop="newContractAddress">
-          <file-upload :limit="1" v-model="newFile"/>
+          <file-upload :limit="1" :fileSize="10" v-model="newFile"/>
         </el-form-item>
         <el-form-item label="新合同文件名" prop="newContractName">
           <el-input v-model="form.newContractName" placeholder="请输入新合同文件名" />
