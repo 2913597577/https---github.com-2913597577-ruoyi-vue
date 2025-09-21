@@ -10,9 +10,14 @@ export interface CustomerTrackingVO {
   customerId: string | number;
 
   /**
-   * 备注
+   * 跟踪记录
    */
   customerRemark: string;
+
+  /**
+   * 跟踪类型
+   */
+  trackingType: number;
 
   /**
    * 跟踪状态
@@ -25,9 +30,29 @@ export interface CustomerTrackingVO {
   trackingTime: string;
 
   /**
+   * 提交状态
+   */
+  submitStatus: number;
+
+  /**
    * 下次跟踪时间
    */
   nextTime: string;
+
+  /**
+   * 备注1
+   */
+  remark1: string;
+
+  /**
+   * 备注2
+   */
+  remark2: string;
+
+  /**
+   * 备注3
+   */
+  remark3: string;
 
 }
 
@@ -43,9 +68,14 @@ export interface CustomerTrackingForm extends BaseEntity {
   customerId?: string | number;
 
   /**
-   * 备注
+   * 跟踪记录
    */
   customerRemark?: string;
+
+  /**
+   * 跟踪类型
+   */
+  trackingType?: number;
 
   /**
    * 跟踪状态
@@ -58,9 +88,29 @@ export interface CustomerTrackingForm extends BaseEntity {
   trackingTime?: string;
 
   /**
+   * 提交状态
+   */
+  submitStatus?: number;
+
+  /**
    * 下次跟踪时间
    */
   nextTime?: string;
+
+  /**
+   * 备注1
+   */
+  remark1?: string;
+
+  /**
+   * 备注2
+   */
+  remark2?: string;
+
+  /**
+   * 备注3
+   */
+  remark3?: string;
 
 }
 
@@ -72,9 +122,14 @@ export interface CustomerTrackingQuery extends PageQuery {
   customerId?: string | number;
 
   /**
-   * 备注
+   * 跟踪记录
    */
   customerRemark?: string;
+
+  /**
+   * 跟踪类型
+   */
+  trackingType?: number;
 
   /**
    * 跟踪状态
@@ -87,9 +142,29 @@ export interface CustomerTrackingQuery extends PageQuery {
   trackingTime?: string;
 
   /**
+   * 提交状态
+   */
+  submitStatus?: number;
+
+  /**
    * 下次跟踪时间
    */
   nextTime?: string;
+
+  /**
+   * 备注1
+   */
+  remark1?: string;
+
+  /**
+   * 备注2
+   */
+  remark2?: string;
+
+  /**
+   * 备注3
+   */
+  remark3?: string;
 
     /**
      * 日期范围参数

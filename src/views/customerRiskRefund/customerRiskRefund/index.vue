@@ -200,6 +200,7 @@
 <script setup name="CustomerRiskRefund" lang="ts">
 import { listCustomerRiskRefund, getCustomerRiskRefund, delCustomerRiskRefund, addCustomerRiskRefund, updateCustomerRiskRefund } from '@/api/customerRiskRefund/customerRiskRefund';
 import { CustomerRiskRefundVO, CustomerRiskRefundQuery, CustomerRiskRefundForm } from '@/api/customerRiskRefund/customerRiskRefund/types';
+import { useRoute } from 'vue-router'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -211,6 +212,7 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
+const route = useRoute()
 
 const queryFormRef = ref<ElFormInstance>();
 const customerRiskRefundFormRef = ref<ElFormInstance>();
@@ -377,6 +379,11 @@ const handleExport = () => {
 }
 
 onMounted(() => {
+
+  // 获取路由参数
+  console.log('Query params:', route.query)
+  console.log('Route params:', route.params)
+  
   getList();
 });
 </script>

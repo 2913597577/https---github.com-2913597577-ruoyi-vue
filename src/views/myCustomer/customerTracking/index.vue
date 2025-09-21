@@ -1,7 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
-      :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
@@ -12,16 +11,40 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="备注" prop="customerRemark">
-              <el-input v-model="queryParams.customerRemark" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="跟踪状态" prop="cumtomerStatus">
+              <el-select v-model="queryParams.cumtomerStatus" placeholder="请选择跟踪状态" clearable >
+                <el-option v-for="dict in cumtomer_status" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
             </el-form-item>
             <el-form-item label="跟踪时间" prop="trackingTime">
-              <el-date-picker clearable v-model="queryParams.trackingTime" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择跟踪时间" />
+              <el-date-picker clearable
+                v-model="queryParams.trackingTime"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="请选择跟踪时间"
+              />
+            </el-form-item>
+            <el-form-item label="提交状态" prop="submitStatus">
+              <el-select v-model="queryParams.submitStatus" placeholder="请选择提交状态" clearable >
+                <el-option v-for="dict in submit_status" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
             </el-form-item>
             <el-form-item label="下次跟踪时间" prop="nextTime">
-              <el-date-picker clearable v-model="queryParams.nextTime" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择下次跟踪时间" />
+              <el-date-picker clearable
+                v-model="queryParams.nextTime"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="请选择下次跟踪时间"
+              />
+            </el-form-item>
+            <el-form-item label="备注1" prop="remark1">
+              <el-input v-model="queryParams.remark1" placeholder="请输入备注1" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="备注2" prop="remark2">
+              <el-input v-model="queryParams.remark2" placeholder="请输入备注2" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="备注3" prop="remark3">
+              <el-input v-model="queryParams.remark3" placeholder="请输入备注3" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -36,20 +59,16 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd"
-              v-hasPermi="['myCustomer:customerTracking:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['myCustomer:customerTracking:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
-              v-hasPermi="['myCustomer:customerTracking:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['myCustomer:customerTracking:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
-              v-hasPermi="['myCustomer:customerTracking:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['myCustomer:customerTracking:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport"
-              v-hasPermi="['myCustomer:customerTracking:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['myCustomer:customerTracking:export']">导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -59,11 +78,25 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
         <el-table-column label="客户id" align="center" prop="customerId" />
-        <el-table-column label="备注" align="center" prop="customerRemark" />
-        <el-table-column label="跟踪状态" align="center" prop="cumtomerStatus" />
+        <el-table-column label="跟踪记录" align="center" prop="customerRemark" />
+        <el-table-column label="跟踪类型" align="center" prop="trackingType">
+          <template #default="scope">
+            <dict-tag :options="customer_tracking_type" :value="scope.row.trackingType"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="跟踪状态" align="center" prop="cumtomerStatus">
+          <template #default="scope">
+            <dict-tag :options="cumtomer_status" :value="scope.row.cumtomerStatus"/>
+          </template>
+        </el-table-column>
         <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="提交状态" align="center" prop="submitStatus">
+          <template #default="scope">
+            <dict-tag :options="submit_status" :value="scope.row.submitStatus"/>
           </template>
         </el-table-column>
         <el-table-column label="下次跟踪时间" align="center" prop="nextTime" width="180">
@@ -71,45 +104,90 @@
             <span>{{ parseTime(scope.row.nextTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="备注1" align="center" prop="remark1" />
+        <el-table-column label="备注2" align="center" prop="remark2" />
+        <el-table-column label="备注3" align="center" prop="remark3" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['myCustomer:customerTracking:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['myCustomer:customerTracking:edit']"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['myCustomer:customerTracking:remove']"></el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['myCustomer:customerTracking:remove']"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改客户跟踪对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="客户id" prop="customerId">
           <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
-            <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
-              :value="item.transfer_id">
-            </el-option>
+                <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
+                  :value="item.transfer_id">
+                </el-option>
+              </el-select>
+        </el-form-item>
+        <el-form-item label="跟踪记录" prop="customerRemark">
+            <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="跟踪类型" prop="trackingType">
+          <el-select v-model="form.trackingType" placeholder="请选择跟踪类型">
+            <el-option
+                v-for="dict in customer_tracking_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
+            ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注" prop="customerRemark">
-          <el-input v-model="form.customerRemark" type="textarea" :rows="6" placeholder="请输入内容" />
+        <el-form-item label="跟踪状态" prop="cumtomerStatus">
+          <el-select v-model="form.cumtomerStatus" placeholder="请选择跟踪状态">
+            <el-option
+                v-for="dict in cumtomer_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="跟踪时间" prop="trackingTime">
-          <el-date-picker clearable v-model="form.trackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable
+            v-model="form.trackingTime"
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择跟踪时间">
           </el-date-picker>
         </el-form-item>
+        <el-form-item label="提交状态" prop="submitStatus">
+          <el-select v-model="form.submitStatus" placeholder="请选择提交状态">
+            <el-option
+                v-for="dict in submit_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="下次跟踪时间" prop="nextTime">
-          <el-date-picker clearable v-model="form.nextTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable
+            v-model="form.nextTime"
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择下次跟踪时间">
           </el-date-picker>
+        </el-form-item>
+        <el-form-item label="备注1" prop="remark1">
+            <el-input v-model="form.remark1" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="备注2" prop="remark2">
+            <el-input v-model="form.remark2" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="备注3" prop="remark3">
+            <el-input v-model="form.remark3" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -123,11 +201,12 @@
 </template>
 
 <script setup name="CustomerTracking" lang="ts">
+import { getCustomerByUserId } from '@/api/common';
 import { listCustomerTracking, getCustomerTracking, delCustomerTracking, addCustomerTracking, updateCustomerTracking } from '@/api/myCustomer/customerTracking';
 import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from '@/api/myCustomer/customerTracking/types';
-import { getCustomerByUserId } from '@/api/common'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { customer_tracking_type, cumtomer_status, submit_status } = toRefs<any>(proxy?.useDict('customer_tracking_type', 'cumtomer_status', 'submit_status'));
 
 const customerTrackingList = ref<CustomerTrackingVO[]>([]);
 const buttonLoading = ref(false);
@@ -137,8 +216,8 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
-const customerList = ref();
 
+const customerList = ref<any[]>([]);
 const queryFormRef = ref<ElFormInstance>();
 const customerTrackingFormRef = ref<ElFormInstance>();
 
@@ -151,20 +230,30 @@ const initFormData: CustomerTrackingForm = {
   id: undefined,
   customerId: undefined,
   customerRemark: undefined,
+  trackingType: undefined,
   cumtomerStatus: undefined,
   trackingTime: undefined,
+  submitStatus: undefined,
   nextTime: undefined,
+  remark1: undefined,
+  remark2: undefined,
+  remark3: undefined,
 }
 const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
-  form: { ...initFormData },
+  form: {...initFormData},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
     customerId: undefined,
     customerRemark: undefined,
+    trackingType: undefined,
     cumtomerStatus: undefined,
     trackingTime: undefined,
+    submitStatus: undefined,
     nextTime: undefined,
+    remark1: undefined,
+    remark2: undefined,
+    remark3: undefined,
     params: {
     }
   },
@@ -197,7 +286,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = { ...initFormData };
+  form.value = {...initFormData};
   customerTrackingFormRef.value?.resetFields();
 }
 
@@ -243,9 +332,9 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateCustomerTracking(form.value).finally(() => buttonLoading.value = false);
+        await updateCustomerTracking(form.value).finally(() =>  buttonLoading.value = false);
       } else {
-        await addCustomerTracking(form.value).finally(() => buttonLoading.value = false);
+        await addCustomerTracking(form.value).finally(() =>  buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;
@@ -281,7 +370,7 @@ const loadCustomerList = async () => {
 }
 
 onMounted(() => {
-  getList();
   loadCustomerList();
+  getList();
 });
 </script>

@@ -99,7 +99,12 @@
         <el-table-column label="法务法务支持" align="center" prop="lawyerId" />
         <el-table-column label="甩单人" align="center" prop="transferPerson" />
         <el-table-column label="杀单手" align="center" prop="closer" />
-        <el-table-column label="签约类型" align="center" prop="contractType" />
+        <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
+        <el-table-column label="签约类型" align="center" prop="contractType">
+          <template #default="scope">
+            <dict-tag :options="contract_type" :value="scope.row.contractType"/>
+          </template>
+        </el-table-column>
         <el-table-column label="套餐类型" align="center" prop="packageType" />
         <el-table-column label="实收金额" align="center" prop="actualReceipt" />
         <el-table-column label="尾款金额" align="center" prop="balance" />
@@ -196,7 +201,9 @@
 import { listCustomerInfo, getCustomerInfo, delCustomerInfo, addCustomerInfo, updateCustomerInfo } from '@/api/customerInfo/customerInfo';
 import { CustomerInfoVO, CustomerInfoQuery, CustomerInfoForm } from '@/api/customerInfo/customerInfo/types';
 
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { contract_type } = toRefs<any>(proxy?.useDict('contract_type'));
 
 const customerInfoList = ref<CustomerInfoVO[]>([]);
 const buttonLoading = ref(false);
