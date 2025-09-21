@@ -26,7 +26,7 @@ export default defineConfig(({ mode, command }) => {
         [env.VITE_APP_BASE_API]: {
           // target: 'http://localhost:8080',
           // target: "http://192.168.251.186:8080",
-          target: 'http://g8c476c2.natappfree.cc',
+          target: 'http://dd96a6c2.natappfree.cc',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp('^' + env.VITE_APP_BASE_API), '')

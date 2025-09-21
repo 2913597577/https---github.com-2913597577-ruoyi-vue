@@ -179,7 +179,6 @@ const uploadedSuccessfully = () => {
     fileList.value = fileList.value
       .filter((f) => f.url !== undefined)
       .concat(uploadList.value);
-
     uploadList.value = [];
     number.value = 0;
 
