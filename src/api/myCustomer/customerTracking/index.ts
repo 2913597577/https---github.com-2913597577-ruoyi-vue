@@ -61,3 +61,16 @@ export const delCustomerTracking = (id: string | number | Array<string | number>
     method: 'delete'
   });
 };
+
+/**
+ * 提交客户跟踪
+ * @param id 
+ * @param status 
+ */
+export const submitCustomerTracking = (id: string | number, submitStatus: string | number) => {
+  return request({
+    url: '/myCustomer/customerTracking/submit',
+    method: 'post',
+    data: { id, submitStatus }
+  });
+};
