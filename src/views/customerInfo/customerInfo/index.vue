@@ -87,7 +87,7 @@
 
       <el-table v-loading="loading" border :data="customerInfoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="签约日期" align="center" prop="signDate" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
@@ -304,6 +304,51 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 添加客户意向登记对话框 -->
+    <el-dialog :title="intentionDialog.title" v-model="intentionDialog.visible" width="500px" append-to-body>
+      <el-form ref="customerIntentionFormRef" :model="intentionForm" :rules="intentionRules" label-width="120px">
+        <el-form-item label="提报日期" prop="submissionDate">
+          <el-date-picker clearable v-model="intentionForm.submissionDate" type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择提报日期" required />
+        </el-form-item>
+        <el-form-item label="法务支持" prop="legalSupport">
+          <el-input v-model="intentionForm.legalSupport" placeholder="请输入法务支持姓名" required />
+        </el-form-item>
+        <el-form-item label="法务支持ID" prop="legalSupportId">
+          <el-input v-model="intentionForm.legalSupportId" placeholder="请输入法务支持ID" required />
+        </el-form-item>
+        <el-form-item label="意向客户名称" prop="intendedCustomer">
+          <el-input v-model="intentionForm.intendedCustomer" placeholder="请输入意向客户名称" required readonly />
+        </el-form-item>
+        <el-form-item label="意向客户ID" prop="intendedCustomerId">
+          <el-input v-model="intentionForm.intendedCustomerId" placeholder="请输入意向客户ID" required readonly />
+        </el-form-item>
+        <el-form-item label="意向类型" prop="type">
+          <el-select v-model="intentionForm.type" placeholder="请选择意向类型" required>
+            <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="客户来源" prop="source">
+          <el-input v-model="intentionForm.source" placeholder="请输入客户来源（如：转介绍/官网）" required />
+        </el-form-item>
+        <el-form-item label="预计金额" prop="expectedAmount">
+          <el-input v-model="intentionForm.expectedAmount" placeholder="请输入预计合作金额" type="number" required />
+        </el-form-item>
+        <el-form-item label="介绍人" prop="introducer">
+          <el-input v-model="intentionForm.introducer" placeholder="请输入介绍人（无则填无）" />
+        </el-form-item>
+        <el-form-item label="跟进结果" prop="followUpResult">
+          <el-input v-model="intentionForm.followUpResult" type="textarea" placeholder="请输入当前跟进结果（如：初步沟通，待二次跟进）"
+            required />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="intentionDialog.visible = false">取消</el-button>
+          <el-button type="primary" :loading="intentionLoading" @click="submitIntentionForm">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -312,9 +357,13 @@ import { listCustomerInfo, getCustomerInfo, delCustomerInfo, addCustomerInfo, up
 import { CustomerInfoVO, CustomerInfoQuery, CustomerInfoForm } from '@/api/customerInfo/customerInfo/types';
 import { CustomerRiskRefundQuery, CustomerRiskRefundForm } from '@/api/customerRiskRefund/customerRiskRefund/types';
 import { addCustomerRiskRefund } from '@/api/customerRiskRefund/customerRiskRefund';
+import { addIntention } from '@/api/customerIntention/customerIntention';
+import { CustomerIntentionForm, CustomerIntentionQuery, CustomerIntentionVO } from '@/api/customerIntention/customerIntention/types';
+
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { contract_type } = toRefs<any>(proxy?.useDict('contract_type'));
-
+const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
 const customerInfoList = ref<CustomerInfoVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -509,72 +558,6 @@ const riskRefundLoading = ref(false);
 // });
 
 // ---------------------- 3. 完善流转确认逻辑 ----------------------
-const handleTransferConfirm = async () => {
-  // 1. 表单验证（确保选择了流转类型）
-  const valid = await transferFormRef.value?.validate();
-  if (!valid) return;
-
-  // 2. 校验当前客户数据是否存在
-  if (!transferDialog.currentRow?.id) {
-    proxy?.$modal.msgError('获取客户数据失败，请刷新页面后重试');
-    return;
-  }
-
-  try {
-    transferLoading.value = true;
-    const currentCustomer = transferDialog.currentRow;
-
-    // 3. 根据流转类型分支处理
-    switch (transferForm.transferType) {
-      //  case 1：选择「风险客户」→ 打开风险/退费弹窗并设置类型为1
-      case '1':
-        resetRiskRefundForm(); // 重置表单
-        CRRform.value.customerType = 1; // 标记为风险客户
-        // 自动填充客户基础信息（从原客户数据获取，减少手动输入）
-        CRRform.value.customerId = currentCustomer.transferId;
-        CRRform.value.customerName = currentCustomer.customerName;
-        CRRform.value.principal = currentCustomer.principal;
-        CRRform.value.principalPhone = currentCustomer.principalPhone;
-        CRRform.value.signDate = currentCustomer.signDate;
-        CRRform.value.expireDate = currentCustomer.expireDate;
-        // 设置弹窗标题
-        riskRefundDialog.title = '转为风险客户';
-        // 关闭流转弹窗，打开风险/退费弹窗
-        transferDialog.visible = false;
-        riskRefundDialog.visible = true;
-        break;
-
-      //  case 2：选择「退费客户」→ 打开风险/退费弹窗并设置类型为2
-      case '2':
-        resetRiskRefundForm(); // 重置表单
-        CRRform.value.customerType = 2; // 标记为退费客户
-        // 自动填充客户基础信息
-        CRRform.value.customerId = currentCustomer.transferId;
-        CRRform.value.customerName = currentCustomer.customerName;
-        CRRform.value.principal = currentCustomer.principal;
-        CRRform.value.principalPhone = currentCustomer.principalPhone;
-        CRRform.value.signDate = currentCustomer.signDate;
-        CRRform.value.expireDate = currentCustomer.expireDate;
-        // 设置弹窗标题
-        riskRefundDialog.title = '转为退费客户';
-        // 关闭流转弹窗，打开风险/退费弹窗
-        transferDialog.visible = false;
-        riskRefundDialog.visible = true;
-        break;
-
-      //  case 3：选择「意向客户」→ 暂不处理，提示功能未开发
-      case '3':
-        transferDialog.visible = false;
-        proxy?.$modal.msgInfo('意向客户流转功能暂未开发，敬请期待');
-        break;
-    }
-  } catch (error) {
-    proxy?.$modal.msgError('流转操作异常，请稍后重试');
-    console.error('流转异常：', error);
-  } finally {
-    transferLoading.value = false;
-  }
-};
 
 // ---------------------- 4. 风险/退费表单重置（避免数据残留） ----------------------
 const resetRiskRefundForm = () => {
@@ -609,8 +592,165 @@ const submitRiskRefundForm = async () => {
     riskRefundLoading.value = false;
   }
 };
+const initIntentionForm: CustomerIntentionForm = {
+  submissionDate: undefined,
+  legalSupport: undefined,
+  legalSupportId: undefined,
+  intendedCustomer: undefined,
+  intendedCustomerId: undefined,
+  type: undefined,
+  source: undefined,
+  expectedAmount: undefined,
+  introducer: undefined,
+  followUpResult: undefined,
+}
 
+// 意向表单响应式数据
+const intentionData = reactive<PageData<CustomerIntentionForm, CustomerIntentionQuery>>({
+  form: { ...initIntentionForm },
+  queryParams: {
+    pageNum: 1,
+    pageSize: 10,
+    submissionDate: undefined,
+    legalSupport: undefined,
+    legalSupportId: undefined,
+    intendedCustomer: undefined,
+    intendedCustomerId: undefined,
+    type: undefined,
+    source: undefined,
+    introducer: undefined,
+    followUpResult: undefined,
+    params: {}
+  },
+  rules: {
+    submissionDate: [
+      { required: true, message: "请选择提报日期", trigger: "blur" }
+    ],
+    legalSupport: [
+      { required: true, message: "请输入法务支持", trigger: "blur" }
+    ],
+    legalSupportId: [
+      { required: true, message: "请输入法务支持ID", trigger: "blur" }
+    ],
+    intendedCustomer: [
+      { required: true, message: "请输入意向客户", trigger: "blur" }
+    ],
+    intendedCustomerId: [
+      { required: true, message: "请输入意向客户id", trigger: "blur" }
+    ],
+    type: [
+      { required: true, message: "请选择类型", trigger: "change" }
+    ],
+    source: [
+      { required: true, message: "请输入来源", trigger: "blur" }
+    ],
+    expectedAmount: [
+      { required: true, message: "请输入预计金额", trigger: "blur" },
+      { pattern: /^\d+(\.\d{1,2})?$/, message: "请输入正确的金额格式（最多2位小数）", trigger: "blur" }
+    ],
+    followUpResult: [
+      { required: true, message: "请输入跟进结果", trigger: "blur" }
+    ]
+  }
+});
 
+// 解构意向表单数据
+const {
+  form: intentionForm,
+  queryParams: intentionQueryParams,
+  rules: intentionRules
+} = toRefs(intentionData);
+
+// ---------------------- 意向客户弹窗相关 ----------------------
+const intentionDialog = reactive<DialogOption>({
+  visible: false,
+  title: "客户意向登记"
+});
+
+// 意向表单引用
+const customerIntentionFormRef = ref<ElFormInstance>();
+
+// 意向表单加载状态
+const intentionLoading = ref(false);
+
+// ---------------------- 意向表单方法 ----------------------
+/** 重置意向表单 */
+const resetIntentionForm = () => {
+  intentionForm.value = { ...initFormData };
+  customerIntentionFormRef.value?.resetFields();
+};
+
+/** 提交意向表单 */
+const submitIntentionForm = async () => {
+  // 表单验证
+  const valid = await customerIntentionFormRef.value?.validate();
+  if (!valid) return;
+
+  try {
+    intentionLoading.value = true;
+
+    // 调用新增意向客户接口
+    await addIntention(intentionForm.value);
+
+    // 操作成功处理
+    proxy?.$modal.msgSuccess('客户意向登记成功');
+    intentionDialog.visible = false;
+    resetIntentionForm();
+
+    // 刷新客户列表
+    await getList();
+  } catch (error) {
+    proxy?.$modal.msgError('意向登记失败，请稍后重试');
+    console.error('意向登记异常：', error);
+  } finally {
+    intentionLoading.value = false;
+  }
+};
+
+// ---------------------- 修改流转确认逻辑 ----------------------
+// 在原有handleTransferConfirm函数的switch语句中添加case '3'的处理
+const handleTransferConfirm = async () => {
+  const valid = await transferFormRef.value?.validate();
+  if (!valid) return;
+
+  if (!transferDialog.currentRow?.id) {
+    proxy?.$modal.msgError('获取客户数据失败，请刷新页面后重试');
+    return;
+  }
+
+  try {
+    transferLoading.value = true;
+    const currentCustomer = transferDialog.currentRow;
+
+    switch (transferForm.transferType) {
+      case '1':
+        // 风险客户处理逻辑（保持不变）
+        break;
+      case '2':
+        // 退费客户处理逻辑（保持不变）
+        break;
+      case '3':
+        // 意向客户处理逻辑
+        resetIntentionForm();
+        // 从原客户数据自动填充表单
+        intentionForm.value.intendedCustomer = currentCustomer.customerName;
+        intentionForm.value.intendedCustomerId = currentCustomer.transferId;
+        intentionForm.value.legalSupport = String(currentCustomer.lawyerId);
+        // 设置当前日期为默认提报日期
+        intentionForm.value.submissionDate = new Date().toISOString().slice(0, 19);
+
+        // 关闭流转弹窗，打开意向登记弹窗
+        transferDialog.visible = false;
+        intentionDialog.visible = true;
+        break;
+    }
+  } catch (error) {
+    proxy?.$modal.msgError('流转操作异常，请稍后重试');
+    console.error('流转异常：', error);
+  } finally {
+    transferLoading.value = false;
+  }
+};
 /** 取消按钮 */
 const cancel = () => {
   reset();

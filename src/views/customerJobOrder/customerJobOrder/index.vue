@@ -1,6 +1,7 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
@@ -8,37 +9,40 @@
               <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="法务支持id" prop="legalSupportId">
-              <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="源合同文件名" prop="preContractName">
-              <el-input v-model="queryParams.preContractName" placeholder="请输入源合同文件名" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.preContractName" placeholder="请输入源合同文件名" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="新合同文件名" prop="newContractName">
-              <el-input v-model="queryParams.newContractName" placeholder="请输入新合同文件名" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.newContractName" placeholder="请输入新合同文件名" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="客户要求" prop="customerRequirements">
-              <el-input v-model="queryParams.customerRequirements" placeholder="请输入客户要求" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.customerRequirements" placeholder="请输入客户要求" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="交付时间" prop="deliveryTime">
-              <el-date-picker clearable
-                v-model="queryParams.deliveryTime"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择交付时间"
-              />
+              <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择交付时间" />
             </el-form-item>
             <el-form-item label="跟踪记录id" prop="trackingId">
               <el-input v-model="queryParams.trackingId" placeholder="请输入跟踪记录id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="处理人id" prop="contractHandler">
-              <el-input v-model="queryParams.contractHandler" placeholder="请输入处理人id" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.contractHandler" placeholder="请输入处理人id" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="处理人" prop="contractHandlerName">
-              <el-input v-model="queryParams.contractHandlerName" placeholder="请输入处理人" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.contractHandlerName" placeholder="请输入处理人" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="工单处理状态" prop="processingStatus">
-              <el-select v-model="queryParams.processingStatus" placeholder="请选择工单处理状态" clearable >
-                <el-option v-for="dict in processing_status" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.processingStatus" placeholder="请选择工单处理状态" clearable>
+                <el-option v-for="dict in processing_status" :key="dict.value" :label="dict.label"
+                  :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="备注1" prop="remark1">
@@ -63,16 +67,20 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerJobOrder:customerJobOrder:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['customerJobOrder:customerJobOrder:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerJobOrder:customerJobOrder:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
+              v-hasPermi="['customerJobOrder:customerJobOrder:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['customerJobOrder:customerJobOrder:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['customerJobOrder:customerJobOrder:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['customerJobOrder:customerJobOrder:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['customerJobOrder:customerJobOrder:export']">导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -98,7 +106,7 @@
         <el-table-column label="处理人" align="center" prop="contractHandlerName" />
         <el-table-column label="工单处理状态" align="center" prop="processingStatus">
           <template #default="scope">
-            <dict-tag :options="processing_status" :value="scope.row.processingStatus"/>
+            <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
           </template>
         </el-table-column>
         <el-table-column label="备注1" align="center" prop="remark1" />
@@ -107,16 +115,23 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerJobOrder:customerJobOrder:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                v-hasPermi="['customerJobOrder:customerJobOrder:edit']"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerJobOrder:customerJobOrder:remove']"></el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['customerJobOrder:customerJobOrder:remove']"></el-button>
+            </el-tooltip>
+            <el-tooltip content="处理" placement="top">
+              <el-button link type="primary" icon="Download" @click="handleProcess(scope.row)"
+                v-hasPermi="['customerJobOrder:customerJobOrder:process']"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改工单管理对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
@@ -128,25 +143,22 @@
           <el-input v-model="form.legalSupportId" placeholder="请输入法务支持id" />
         </el-form-item>
         <el-form-item label="源合同地址" prop="preContractAddress">
-          <file-upload :limit="1" :fileSize="10" v-model="preFile"/>
+          <file-upload :limit="1" :fileSize="10" v-model="preFile" />
         </el-form-item>
         <el-form-item label="源合同文件名" prop="preContractName">
           <el-input v-model="form.preContractName" placeholder="请输入源合同文件名" />
         </el-form-item>
         <el-form-item label="新合同地址" prop="newContractAddress">
-          <file-upload :limit="1" :fileSize="10" v-model="newFile"/>
+          <file-upload :limit="1" :fileSize="10" v-model="newFile" />
         </el-form-item>
         <el-form-item label="新合同文件名" prop="newContractName">
           <el-input v-model="form.newContractName" placeholder="请输入新合同文件名" />
         </el-form-item>
         <el-form-item label="客户要求" prop="customerRequirements">
-            <el-input v-model="form.customerRequirements" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.customerRequirements" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="交付时间" prop="deliveryTime">
-          <el-date-picker clearable
-            v-model="form.deliveryTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.deliveryTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择交付时间">
           </el-date-picker>
         </el-form-item>
@@ -161,12 +173,8 @@
         </el-form-item>
         <el-form-item label="工单处理状态" prop="processingStatus">
           <el-select v-model="form.processingStatus" placeholder="请选择工单处理状态">
-            <el-option
-                v-for="dict in processing_status"
-                :key="dict.value"
-                :label="dict.label"
-                :value="parseInt(dict.value)"
-            ></el-option>
+            <el-option v-for="dict in processing_status" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注1" prop="remark1">
@@ -234,7 +242,7 @@ const initFormData: CustomerJobOrderForm = {
   remark3: undefined,
 }
 const data = reactive<PageData<CustomerJobOrderForm, CustomerJobOrderQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -285,7 +293,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   customerJobOrderFormRef.value?.resetFields();
 }
 
@@ -331,15 +339,15 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       console.log(preFile.value);
-      if(preFile.value){
+      if (preFile.value) {
         console.log("存在文件");
         form.value.preContractAddress = preFile.value[0].ossId;
         form.value.preContractName = preFile.value[0].name;
       }
       if (form.value.id) {
-        await updateCustomerJobOrder(form.value).finally(() =>  buttonLoading.value = false);
+        await updateCustomerJobOrder(form.value).finally(() => buttonLoading.value = false);
       } else {
-        await addCustomerJobOrder(form.value).finally(() =>  buttonLoading.value = false);
+        await addCustomerJobOrder(form.value).finally(() => buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;
@@ -363,7 +371,9 @@ const handleExport = () => {
     ...queryParams.value
   }, `customerJobOrder_${new Date().getTime()}.xlsx`)
 }
-
+const handleProcess = (row: CustomerJobOrderVO) => {
+  proxy?.$download.oss(row.preContractAddress);
+}
 onMounted(() => {
   getList();
 });

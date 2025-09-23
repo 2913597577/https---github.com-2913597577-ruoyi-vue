@@ -73,7 +73,7 @@
 
       <el-table v-loading="loading" border :data="customerTrackingList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="客户id" align="center" prop="customerId" />
         <el-table-column label="跟踪记录" align="center" prop="customerRemark" />
         <el-table-column label="跟踪类型" align="center" prop="trackingType">

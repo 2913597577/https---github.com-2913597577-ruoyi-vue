@@ -61,3 +61,11 @@ export const delCustomerIntention = (id: string | number | Array<string | number
     method: 'delete'
   });
 };
+
+export const addIntention = (data) => {
+  return request({
+    url: '/customerIntention/customerIntention/addIntention',
+    method: 'post',
+    data,
+  })
+};

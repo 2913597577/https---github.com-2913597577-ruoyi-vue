@@ -90,7 +90,7 @@
 
       <el-table v-loading="loading" border :data="customerRiskRefundList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="法务支持" align="center" prop="lawyerId" />
         <el-table-column label="客户id" align="center" prop="customerId" />
         <el-table-column label="客户名称" align="center" prop="customerName" />
