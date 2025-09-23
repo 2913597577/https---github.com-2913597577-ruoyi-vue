@@ -724,10 +724,38 @@ const handleTransferConfirm = async () => {
 
     switch (transferForm.transferType) {
       case '1':
-        // 风险客户处理逻辑（保持不变）
+        resetRiskRefundForm(); // 重置表单
+        CRRform.value.customerType = 1; // 标记为风险客户
+        // 自动填充客户基础信息（从原客户数据获取，减少手动输入）
+        CRRform.value.customerId = currentCustomer.transferId;
+        CRRform.value.customerName = currentCustomer.customerName;
+        CRRform.value.principal = currentCustomer.principal;
+        CRRform.value.principalPhone = currentCustomer.principalPhone;
+        CRRform.value.signDate = currentCustomer.signDate;
+        CRRform.value.expireDate = currentCustomer.expireDate;
+        // 设置弹窗标题
+        riskRefundDialog.title = '转为风险客户';
+        // 关闭流转弹窗，打开风险/退费弹窗
+        transferDialog.visible = false;
+        riskRefundDialog.visible = true;
         break;
+
+      //  case 2：选择「退费客户」→ 打开风险/退费弹窗并设置类型为2
       case '2':
-        // 退费客户处理逻辑（保持不变）
+        resetRiskRefundForm(); // 重置表单
+        CRRform.value.customerType = 2; // 标记为退费客户
+        // 自动填充客户基础信息
+        CRRform.value.customerId = currentCustomer.transferId;
+        CRRform.value.customerName = currentCustomer.customerName;
+        CRRform.value.principal = currentCustomer.principal;
+        CRRform.value.principalPhone = currentCustomer.principalPhone;
+        CRRform.value.signDate = currentCustomer.signDate;
+        CRRform.value.expireDate = currentCustomer.expireDate;
+        // 设置弹窗标题
+        riskRefundDialog.title = '转为退费客户';
+        // 关闭流转弹窗，打开风险/退费弹窗
+        transferDialog.visible = false;
+        riskRefundDialog.visible = true;
         break;
       case '3':
         // 意向客户处理逻辑
