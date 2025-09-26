@@ -61,3 +61,23 @@ export const delCustomerInfo = (id: string | number | Array<string | number>) =>
     method: 'delete'
   });
 };
+
+export const listLawyerSupport = () => {
+  return request({
+    url: '/system/user/listByDept',
+    method: 'get',
+    params: {
+      pageNum: 1,
+      pageSize: 1000,
+      deptId: '1969581806504747009',
+    }
+  });
+};
+
+export function assign(id: string | number, userId: string | number): AxiosPromise<any> {
+  return request({
+    url: '/customerInfo/customerInfo/assign',
+    method: 'get',
+    params: { id, userId }
+  });
+}

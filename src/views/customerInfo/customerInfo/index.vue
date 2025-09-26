@@ -150,6 +150,10 @@
                 <el-button link type="primary" icon="RefreshRight" size="default" @click="handleTransfer(scope.row)"
                   v-hasPermi="['customerInfo:customerInfo:transfer']" style="padding: 0 6px;"></el-button>
               </el-tooltip>
+              <el-tooltip content="分配法务支持" placement="top">
+                <el-button link type="primary" icon="UserAssign" size="default" @click="handleAssign(scope.row)"
+                  v-hasPermi="['customerInfo:customerInfo:assign']" style="padding: 0 6px;"></el-button>
+              </el-tooltip>
             </div>
           </template>
         </el-table-column>
@@ -349,11 +353,33 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 新增分配法务支持弹窗 -->
+    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="400px" append-to-body>
+      <el-form ref="assignFormRef" :model="assignForm" :rules="assignRules" label-width="120px" class="mt-4">
+
+        <el-form-item label="法务支持人员" prop="lawyerId">
+          <el-select filterable v-model="assignForm.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 隐藏字段：当前客户ID（从表格行数据获取） -->
+        <el-form-item v-show="false" prop="customerId">
+          <el-input v-model="assignForm.customerId" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="assignDialog.visible = false">取消</el-button>
+          <el-button type="primary" :loading="assignLoading" @click="submitAssignForm()">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="CustomerInfo" lang="ts">
-import { listCustomerInfo, getCustomerInfo, delCustomerInfo, addCustomerInfo, updateCustomerInfo } from '@/api/customerInfo/customerInfo';
+import { listCustomerInfo, getCustomerInfo, delCustomerInfo, addCustomerInfo, updateCustomerInfo, listLawyerSupport, assign } from '@/api/customerInfo/customerInfo';
 import { CustomerInfoVO, CustomerInfoQuery, CustomerInfoForm } from '@/api/customerInfo/customerInfo/types';
 import { CustomerRiskRefundQuery, CustomerRiskRefundForm } from '@/api/customerRiskRefund/customerRiskRefund/types';
 import { addCustomerRiskRefund } from '@/api/customerRiskRefund/customerRiskRefund';
@@ -895,6 +921,91 @@ const handleTransferClose = () => {
   transferForm.transferType = '';
   transferForm.remark = '';
 };
+
+
+
+// 1. 法务支持人员列表（加载接口数据）
+const lawyerList = ref([]);
+// 2. 分配弹窗状态
+const assignDialog = reactive({
+  visible: false,
+  currentRow: null as CustomerInfoVO | null // 当前操作的客户行数据
+});
+// 3. 分配表单数据
+const assignForm = reactive({
+  lawyerId: undefined,
+  customerId: undefined,
+  id: undefined
+});
+// 4. 分配表单验证规则
+const assignRules = reactive({
+  lawyerId: [
+    { required: true, message: "请选择法务支持人员", trigger: "change" }
+  ],
+  customerId: [
+    { required: true, message: "客户ID不能为空", trigger: "blur" }
+  ]
+});
+// 5. 表单引用和加载状态
+const assignFormRef = ref<ElFormInstance>();
+const assignLoading = ref(false);
+
+// ---------------------- 分配相关方法 ----------------------
+/** 1. 打开分配弹窗（点击表格“分配”按钮触发） */
+const handleAssign = async (row: CustomerInfoVO) => {
+  // 记录当前客户行数据
+  assignDialog.currentRow = row;
+  // 初始化表单：填充当前客户ID
+  assignForm.customerId = row.transferId; // 客户ID（与表格row.transferId匹配）
+  assignForm.lawyerId = undefined; // 清空上次选择的法务人员
+  assignForm.id = row.id; // 当前客户记录的主键ID（用于分配接口）
+  // 加载法务支持人员列表（调用接口）
+  await loadLawyerSupportList();
+  // 显示弹窗
+  assignDialog.visible = true;
+};
+
+/** 2. 加载法务支持人员列表（调用用户提供的接口） */
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+
+/** 3. 提交分配表单（调用分配接口） */
+const submitAssignForm = async () => {
+  // 表单验证
+  const valid = await assignFormRef.value?.validate();
+  if (!valid) return;
+
+  try {
+    assignLoading.value = true;
+    await assign(
+      assignForm.id, // 当前客户ID
+      assignForm.lawyerId   // 选中的法务人员ID
+    );
+
+    // 操作成功反馈
+    proxy?.$modal.msgSuccess('法务支持人员分配成功');
+    // 关闭弹窗并重置表单
+    assignDialog.visible = false;
+    assignForm.lawyerId = undefined;
+    // 可选：刷新客户列表（更新已分配的法务信息）
+    await getList();
+  } catch (error) {
+    proxy?.$modal.msgError('分配失败，请稍后重试');
+    console.error('法务分配异常：', error);
+  } finally {
+    assignLoading.value = false;
+  }
+};
+
 
 
 onMounted(() => {
