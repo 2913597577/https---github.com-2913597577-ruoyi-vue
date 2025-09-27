@@ -71,8 +71,8 @@
         <el-table-column label="职位id" align="center" prop="positionId" />
         <el-table-column label="职务" align="center" prop="positionName" />
         <el-table-column label="职级" align="center" prop="positionRank" />
-        <el-table-column label="员工类型:0未设置,1正式,2试用,3实习" align="center" prop="type" />
-        <el-table-column label="身份类型:0未设置,1企业员工,2劳务派遣,3兼职员工" align="center" prop="isStaff" />
+        <el-table-column label="员工类型" align="center" prop="type" />
+        <el-table-column label="身份类型" align="center" prop="isStaff" />
         <el-table-column label="工号" align="center" prop="jobNumber" />
         <el-table-column label="生日" align="center" prop="birthday" width="180">
           <template #default="scope">
@@ -93,7 +93,7 @@
         <el-table-column label="现居地址" align="center" prop="currentAddress" />
         <el-table-column label="紧急联系人" align="center" prop="contact" />
         <el-table-column label="紧急联系人电话" align="center" prop="contactMobile" />
-        <el-table-column label="户口性质:0未设置,1农村户口,2城镇户口" align="center" prop="residentType" />
+        <el-table-column label="户口性质" align="center" prop="residentType" />
         <el-table-column label="户口所在地" align="center" prop="residentPlace" />
         <el-table-column label="毕业学校" align="center" prop="graduateSchool" />
         <el-table-column label="毕业日期" align="center" prop="graduateDay" width="180">
@@ -101,8 +101,8 @@
             <span>{{ parseTime(scope.row.graduateDay, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="政治面貌:0未设置,1中共党员,2团员" align="center" prop="political" />
-        <el-table-column label="婚姻状况:0未设置,1未婚,2已婚,3离异" align="center" prop="maritalStatus" />
+        <el-table-column label="政治面貌" align="center" prop="political" />
+        <el-table-column label="婚姻状况" align="center" prop="maritalStatus" />
         <el-table-column label="身份证" align="center" prop="idcard" />
         <el-table-column label="学位" align="center" prop="education" />
         <el-table-column label="专业" align="center" prop="speciality" />
@@ -123,7 +123,7 @@
             <span>{{ parseTime(scope.row.levelTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="状态：-1待入职,1正常,2离职" align="center" prop="status" />
+        <el-table-column label="状态" align="center" prop="status" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
