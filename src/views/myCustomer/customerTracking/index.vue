@@ -221,8 +221,11 @@
 import { getCustomerByUserId } from '@/api/common';
 import { listCustomerTracking, getCustomerTracking, delCustomerTracking, addCustomerTracking, updateCustomerTracking } from '@/api/myCustomer/customerTracking';
 import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from '@/api/myCustomer/customerTracking/types';
-import { listCustomerJobOrder, getCustomerJobOrder, delCustomerJobOrder, addCustomerJobOrder, updateCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
+import { addCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
+import { useRoute } from 'vue-router';  // 用于接收路由参数
 
+
+const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { customer_tracking_type, cumtomer_status, submit_status } = toRefs<any>(proxy?.useDict('customer_tracking_type', 'cumtomer_status', 'submit_status'));
 
@@ -234,10 +237,11 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
-
 const customerList = ref<any[]>([]);
 const queryFormRef = ref<ElFormInstance>();
 const customerTrackingFormRef = ref<ElFormInstance>();
+
+const CustomerId = route.query.customerId;
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -355,6 +359,9 @@ const handleSelectionChange = (selection: CustomerTrackingVO[]) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
+  if (CustomerId) {
+    form.value.customerId = CustomerId;
+  }
   dialog.visible = true;
   dialog.title = "添加客户跟踪";
 }
@@ -442,9 +449,22 @@ const submitJobOrderForm = async () => {
 
   await addCustomerJobOrder(jobOrderForm.value).finally(() => buttonLoading.value = false);
 }
+onMounted(async () => {
+  // 1. 优先加载客户下拉框（无论是否有CustomerId，表单都需要）
+  await loadCustomerList();
 
-onMounted(() => {
-  loadCustomerList();
-  getList();
+  if (CustomerId) {
+    // 2. 有CustomerId：查询该客户的单条跟踪记录，并渲染到表格
+    try {
+      queryParams.value.customerId = CustomerId;
+      handleQuery();
+    } catch (error) {
+      console.error('获取客户跟踪记录失败:', error);
+      proxy?.$modal.msgError('获取客户跟踪记录失败');
+    }
+  } else {
+    // 3. 无CustomerId：加载默认的所有客户跟踪记录列表
+    await getList();
+  }
 });
 </script>

@@ -119,6 +119,15 @@
         <el-table-column label="备注" align="center" prop="remarks" />
         <el-table-column label="续费/尾款动作(1-续费 2-付尾款 3-其他)" align="center" prop="actionType" />
         <el-table-column label="客户id" align="center" prop="transferId" />
+        <el-table-column label="跟踪记录" align="center" width="120">
+          <template #default="scope">
+            <!-- 详情按钮：点击携带当前行id跳转 -->
+            <el-button link type="primary" icon="View" size="default" @click="handleTrackingDetail(scope.row.transferId)"
+              style="padding: 0 6px;">
+              详情
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="是否转为风险客户" align="center" prop="isRisk">
           <template #default="scope">
             <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
@@ -135,7 +144,7 @@
             <span>{{ scope.row.isIntention ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="operation-column" width="220">
+        <el-table-column label="操作" align="center" class-name="operation-column" width="220" fixed="right">
           <template #default="scope">
             <div style="display: flex; gap: 8px; justify-content: center;">
               <el-tooltip content="修改" placement="top">
@@ -385,6 +394,7 @@ import { CustomerRiskRefundQuery, CustomerRiskRefundForm } from '@/api/customerR
 import { addCustomerRiskRefund } from '@/api/customerRiskRefund/customerRiskRefund';
 import { addIntention } from '@/api/customerIntention/customerIntention';
 import { CustomerIntentionForm, CustomerIntentionQuery, CustomerIntentionVO } from '@/api/customerIntention/customerIntention/types';
+import { useRouter } from 'vue-router';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -398,7 +408,7 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
-
+const router = useRouter();
 const queryFormRef = ref<ElFormInstance>();
 const customerInfoFormRef = ref<ElFormInstance>();
 
@@ -1005,8 +1015,14 @@ const submitAssignForm = async () => {
     assignLoading.value = false;
   }
 };
-
-
+//  新增：跟踪记录详情跳转函数
+const handleTrackingDetail = (id: number | string) => {
+  // 跳转到目标路由，并通过query参数传递id
+  router.push({
+    path: '/legalSupport/customerTracking',  // 目标路由路径（需与实际路由配置一致）
+    query: { customerId: id }  // 传递id参数（键名可自定义，如customerId）
+  });
+};
 
 onMounted(() => {
   getList();
