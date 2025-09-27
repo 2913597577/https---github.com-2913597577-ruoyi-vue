@@ -181,6 +181,10 @@ export interface CustomerInfoForm extends BaseEntity {
    * 客户id（流转单id）
    */
   transferId?: string | number;
+  /**
+   * 客户类型
+   */
+  customerType?: string | number;
 
 }
 

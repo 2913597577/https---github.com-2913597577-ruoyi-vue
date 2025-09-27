@@ -94,6 +94,11 @@
           </template>
         </el-table-column>
         <el-table-column label="编号" align="center" prop="contractNo" />
+        <el-table-column label="客户类型" align="center" prop="customerType" >
+         <template #default="scope">
+            <dict-tag :options="dc_customer_type" :value="scope.row.customerType" />
+          </template>
+        </el-table-column>
         <el-table-column label="客户名称" align="center" prop="customerName" />
         <el-table-column label="负责人" align="center" prop="principal" />
         <el-table-column label="负责人电话" align="center" prop="principalPhone" />
@@ -184,6 +189,12 @@
         </el-form-item>
         <el-form-item label="客户名称" prop="customerName">
           <el-input v-model="form.customerName" placeholder="请输入客户名称" />
+        </el-form-item>
+        <el-form-item label="客户类型"  prop="customerType" >
+          <el-select v-model="form.customerType" placeholder="请选择客户类型">
+            <el-option v-for="dict in dc_customer_type" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="负责人" prop="principal">
           <el-input v-model="form.principal" placeholder="请输入负责人" />
@@ -400,6 +411,7 @@ import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { contract_type } = toRefs<any>(proxy?.useDict('contract_type'));
 const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
+const { dc_customer_type } = toRefs<any>(proxy?.useDict('dc_customer_type'));
 const customerInfoList = ref<CustomerInfoVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -436,6 +448,7 @@ const initFormData: CustomerInfoForm = {
   remarks: undefined,
   actionType: undefined,
   transferId: undefined,
+  customerType: undefined,
 }
 const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
   form: { ...initFormData },
@@ -459,6 +472,7 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
     remarks: undefined,
     actionType: undefined,
     transferId: undefined,
+    customerType: undefined,
     params: {
     }
   },

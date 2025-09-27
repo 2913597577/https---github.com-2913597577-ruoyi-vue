@@ -6,7 +6,7 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="对接客户" prop="customerId">
-              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable>
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
                   :value="item.transfer_id">
                 </el-option>
@@ -30,15 +30,13 @@
               <el-date-picker clearable v-model="queryParams.nextTime" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择下次跟踪时间" />
             </el-form-item>
-            <el-form-item label="备注1" prop="remark1">
-              <el-input v-model="queryParams.remark1" placeholder="请输入备注1" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="日志类型" prop="isReturn">
+               <el-select v-model="queryParams.isReturn" placeholder="请选择日志类型" clearable>
+                <el-option :key=0 label="普通日志" value=0></el-option>
+                <el-option :key=1 label="回访日志" value=1></el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="备注2" prop="remark2">
-              <el-input v-model="queryParams.remark2" placeholder="请输入备注2" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="备注3" prop="remark3">
-              <el-input v-model="queryParams.remark3" placeholder="请输入备注3" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -101,8 +99,8 @@
             <span>{{ parseTime(scope.row.nextTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="备注1" align="center" prop="remark1" />
-        <el-table-column label="备注2" align="center" prop="remark2" />
+        <el-table-column label="风险提示" align="center" prop="remark1" />
+        <el-table-column label="处理进度" align="center" prop="remark2" />
         <el-table-column label="备注3" align="center" prop="remark3" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
           width="240" fixed="right">
@@ -170,15 +168,21 @@
             placeholder="请选择下次跟踪时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="备注1" prop="remark1">
+        <el-form-item label="风险提示" prop="remark1">
           <el-input v-model="form.remark1" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="备注2" prop="remark2">
+        <el-form-item label="处理进度" prop="remark2">
           <el-input v-model="form.remark2" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="备注3" prop="remark3">
-          <el-input v-model="form.remark3" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="日志类型" prop="isReturn">
+          <el-radio-group v-model="form.isReturn">
+          <el-radio :label=0>普通记录</el-radio>
+          <el-radio :label=1>回访记录</el-radio>
+          </el-radio-group>
         </el-form-item>
+        <!-- <el-form-item label="备注3" prop="remark3">
+          <el-input v-model="form.remark3" type="textarea" placeholder="请输入内容" />
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -264,6 +268,7 @@ const initFormData: CustomerTrackingForm = {
   remark1: undefined,
   remark2: undefined,
   remark3: undefined,
+  isReturn: 0,
 }
 
 const preFile = ref(null);
@@ -282,6 +287,10 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
     remark1: undefined,
     remark2: undefined,
     remark3: undefined,
+    isReturn: undefined,
+      /**
+   * 是否回访记录
+   */
     params: {
     }
   },

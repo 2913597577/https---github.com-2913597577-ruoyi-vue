@@ -112,6 +112,11 @@ export interface CustomerTrackingForm extends BaseEntity {
    */
   remark3?: string;
 
+  /**
+   * 是否回访记录
+   */
+  isReturn?: number;
+
 }
 
 export interface CustomerTrackingQuery extends PageQuery {
@@ -170,6 +175,11 @@ export interface CustomerTrackingQuery extends PageQuery {
      * 日期范围参数
      */
     params?: any;
+
+      /**
+   * 是否回访记录
+   */
+  isReturn?: number;
 }
 
 
