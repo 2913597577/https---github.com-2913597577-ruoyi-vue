@@ -4,8 +4,8 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="客户id(客户编号)" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户id(客户编号)" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="客户id" prop="customerId">
+              <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="欠款人" prop="debtorName">
               <el-input v-model="queryParams.debtorName" placeholder="请输入欠款人" clearable @keyup.enter="handleQuery" />
