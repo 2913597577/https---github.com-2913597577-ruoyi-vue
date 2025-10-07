@@ -4,7 +4,7 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="意向客户表id" prop="inentionId">
+            <el-form-item label="意向客户" prop="inentionId">
               <el-input v-model="queryParams.inentionId" placeholder="请输入意向客户表id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="意向客户id" prop="customerId">

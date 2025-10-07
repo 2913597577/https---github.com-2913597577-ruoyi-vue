@@ -351,7 +351,7 @@ const handleUpdate = async (row?: CustomerRiskRefundVO) => {
   const _id = row?.id || ids.value[0]
   const res = await getCustomerRiskRefund(_id);
   Object.assign(form.value, res.data);
-  form.value.customerType = form.value.customerType.split(",");
+  //form.value.customerType = form.value.customerType.split(",");
   dialog.visible = true;
   const title = customerTypeLabel.value;
   dialog.title = `修改客户${title}`;
