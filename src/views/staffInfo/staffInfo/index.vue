@@ -60,6 +60,11 @@
 
       <el-table v-loading="loading" border :data="staffInfoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="员工档案详情" align="center" class-name="small-padding fixed-width">
+          <template #default="scope">
+            <el-button link type="primary" icon="View" @click="handleViewDetail(scope.row)">查看详情</el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="员工姓名" align="center" prop="name" />
         <el-table-column label="电子邮箱" align="center" prop="email" />
         <el-table-column label="手机号码" align="center" prop="mobile" />
@@ -79,6 +84,7 @@
             <span>{{ parseTime(scope.row.birthday, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
+
         <el-table-column label="年龄" align="center" prop="age" />
         <el-table-column label="开始工作时间" align="center" prop="workDate" width="180">
           <template #default="scope">
@@ -482,6 +488,270 @@
         </div>
       </template>
     </el-dialog>
+
+
+    <el-dialog :title="detailDialog.title" v-model="detailDialog.visible" width="800px" append-to-body>
+      <el-card class="detail-card">
+        <!-- 基本信息分组 -->
+        <div class="detail-group">
+          <h3 class="detail-group-title">基本信息</h3>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">员工姓名：</span>
+                <span>{{ detailForm.name || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">员工性别：</span>
+                <span>{{ detailForm.sex || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">头像：</span>
+                <img v-if="detailForm.thumb" :src="detailForm.thumb" alt="头像" style="width: 80px; height: 80px;" />
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">出生日期：</span>
+                <span>{{ parseTime(detailForm.birthday, '{y}-{m}-{d}') || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">身份证号码：</span>
+                <span>{{ detailForm.idcard || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">政治面貌：</span>
+                <span>
+                  {{ detailForm.political === '1' ? '中共党员'
+                    : detailForm.political === '2' ? '团员'
+                      : detailForm.political === '3' ? '群众'
+                        : '未设置' }}
+                </span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">婚姻状况：</span>
+                <span>{{ detailForm.maritalStatus || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">民族：</span>
+                <span>{{ detailForm.nation || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">籍贯：</span>
+                <span>{{ detailForm.nativePlace || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">户口性质：</span>
+                <span>{{ detailForm.residentType || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">户口所在地：</span>
+                <span>{{ detailForm.residentPlace || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">毕业院校：</span>
+                <span>{{ detailForm.graduateSchool || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">毕业日期：</span>
+                <span>{{ parseTime(detailForm.graduateDay, '{y}-{m}-{d}') || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">最高学位：</span>
+                <span>{{ detailForm.education || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">专业：</span>
+                <span>{{ detailForm.speciality || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">参加工作时间：</span>
+                <span>{{ parseTime(detailForm.workDate, '{y}-{m}-{d}') || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">家庭住址：</span>
+                <span>{{ detailForm.homeAddress || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">手机号码：</span>
+                <span>{{ detailForm.mobile || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">电子邮箱：</span>
+                <span>{{ detailForm.email || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">现住地址：</span>
+                <span>{{ detailForm.currentAddress || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">紧急联系人：</span>
+                <span>{{ detailForm.contact || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">紧急联系电话：</span>
+                <span>{{ detailForm.contactMobile || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="24">
+              <div class="detail-item">
+                <span class="detail-label">员工简介：</span>
+                <span>{{ detailForm.desc || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+
+        <!-- 入职信息分组 -->
+        <div class="detail-group mt-4">
+          <h3 class="detail-group-title">入职信息</h3>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">所在部门：</span>
+                <span>{{ detailForm.deptName || '无' }}</span> <!-- 若接口无deptName，需调整为实际字段 -->
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">上级主管：</span>
+                <span>{{ detailForm.pidName || '无' }}</span> <!-- 若接口无pidName，需调整为实际字段 -->
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">岗位：</span>
+                <span>{{ detailForm.positionName || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">入职日期：</span>
+                <span>{{ parseTime(detailForm.entryTime, '{y}-{m}-{d}') || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">职务：</span>
+                <span>{{ detailForm.positionName || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">职级：</span>
+                <span>{{ detailForm.positionRank || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">员工类型：</span>
+                <span>{{ detailForm.type || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">员工工号：</span>
+                <span>{{ detailForm.jobNumber || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">社保号：</span>
+                <span>{{ detailForm.socialAccount || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" class="detail-row">
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">工资卡开户行：</span>
+                <span>{{ detailForm.bankInfo || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">工资卡帐号：</span>
+                <span>{{ detailForm.bankAccount || '无' }}</span>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="detail-item">
+                <span class="detail-label">公积金号：</span>
+                <span>{{ detailForm.providentAccount || '无' }}</span>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+      </el-card>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="detailDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -674,7 +944,20 @@ const handleExport = () => {
     ...queryParams.value
   }, `staffInfo_${new Date().getTime()}.xlsx`)
 }
+// 详情弹窗控制
+const detailDialog = reactive({
+  visible: false,
+  title: '员工档案详情'
+});
+// 详情数据存储
+const detailForm = ref<StaffInfoVO>({} as StaffInfoVO);
 
+// 点击“查看详情”时触发：加载数据并显示弹窗
+const handleViewDetail = async (row: StaffInfoVO) => {
+  const res = await getStaffInfo(row.id); // 调用“获取单条员工信息”的接口
+  detailForm.value = res.data;
+  detailDialog.visible = true;
+};
 onMounted(() => {
   getList();
 });
@@ -749,5 +1032,38 @@ onMounted(() => {
 /* 按钮样式优化：最小宽度保证一致性 */
 .dialog-footer .el-button {
   min-width: 90px;
+}
+
+
+.detail-card {
+  padding: 16px;
+}
+
+.detail-group {
+  margin-bottom: 24px;
+}
+
+.detail-group-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-row {
+  margin-bottom: 10px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+}
+
+.detail-label {
+  font-weight: 500;
+  margin-right: 6px;
+  color: #666;
 }
 </style>

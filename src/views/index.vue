@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container home">
+  <div class="app-container home" style="background-image: url('@/assets/images/logoBackgroud.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
     <el-row :gutter="10">
       <el-col :sm="12" :lg="12" style="padding-left: 10px">
         <h2>大成企业服务有限公司</h2>
@@ -172,6 +172,12 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .home {
+  background-image: url('@/assets/images/logoBackgroud.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+
   blockquote {
     padding: 5px 10px;
     margin: 0 0 10px;

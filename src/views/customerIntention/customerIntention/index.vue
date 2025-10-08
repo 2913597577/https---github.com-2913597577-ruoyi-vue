@@ -1,6 +1,7 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
@@ -8,26 +9,24 @@
               <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="意向客户" prop="intendedCustomer" label-width="68px">
-              <el-input v-model="queryParams.intendedCustomer" placeholder="请输入意向客户" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.intendedCustomer" placeholder="请输入意向客户" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="类型" prop="type" label-width="68px">
-              <el-select v-model="queryParams.type" placeholder="请选择类型" clearable >
-                <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.type" placeholder="请选择类型" clearable>
+                <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="介绍人" prop="introducer" label-width="68px">
               <el-input v-model="queryParams.introducer" placeholder="请输入介绍人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="跟进结果" prop="followUpResult" label-width="68px">
-              <el-input v-model="queryParams.followUpResult" placeholder="请输入跟进结果" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.followUpResult" placeholder="请输入跟进结果" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="提报日期" prop="submissionDate" label-width="68px">
-              <el-date-picker clearable
-                v-model="queryParams.submissionDate"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择提报日期"
-              />
+              <el-date-picker clearable v-model="queryParams.submissionDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择提报日期" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -42,16 +41,20 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerIntention:customerIntention:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['customerIntention:customerIntention:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerIntention:customerIntention:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
+              v-hasPermi="['customerIntention:customerIntention:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['customerIntention:customerIntention:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['customerIntention:customerIntention:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['customerIntention:customerIntention:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['customerIntention:customerIntention:export']">导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -59,34 +62,35 @@
 
       <el-table v-loading="loading" border :data="customerIntentionList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="提报日期" align="center" prop="submissionDate" width="160" show-overflow-tooltip >
+        <el-table-column label="提报日期" align="center" prop="submissionDate" width="160" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.submissionDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="法务支持" align="center" prop="legalSupport" width="120" show-overflow-tooltip />
         <el-table-column label="意向客户" align="center" prop="intendedCustomer" width="120" show-overflow-tooltip />
-        <el-table-column label="类型" align="center" prop="type"  width="130" show-overflow-tooltip >
+        <el-table-column label="类型" align="center" prop="type" width="130" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="intention_type" :value="scope.row.type"/>
+            <dict-tag :options="intention_type" :value="scope.row.type" />
           </template>
         </el-table-column>
-        <el-table-column label="来源" align="center" prop="source"  width="160" show-overflow-tooltip />
-        <el-table-column label="预计金额" align="center" prop="expectedAmount"  width="110" show-overflow-tooltip />
-        <el-table-column label="介绍人" align="center" prop="introducer"  width="120" show-overflow-tooltip />
-        <el-table-column label="跟进结果" align="center" prop="followUpResult"  width="110" show-overflow-tooltip />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip 
-        width="180" fixed="right">
+        <el-table-column label="来源" align="center" prop="source" width="160" show-overflow-tooltip />
+        <el-table-column label="预计金额" align="center" prop="expectedAmount" width="110" show-overflow-tooltip />
+        <el-table-column label="介绍人" align="center" prop="introducer" width="120" show-overflow-tooltip />
+        <el-table-column label="跟进结果" align="center" prop="followUpResult" width="110" show-overflow-tooltip />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
+          width="180" fixed="right">
           <template #default="scope">
-              <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
+            <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
               v-hasPermi="['customerIntention:customerIntention:edit']">修改</el-button>
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" 
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
               v-hasPermi="['customerIntention:customerIntention:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改客户意向登记对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
@@ -105,12 +109,8 @@
         </el-form-item>
         <el-form-item label="签约类型" prop="type" label-width="90px">
           <el-select v-model="form.type" placeholder="请选择类型">
-            <el-option
-                v-for="dict in intention_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="parseInt(dict.value)"
-            ></el-option>
+            <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="预计金额" prop="expectedAmount" label-width="90px">
@@ -120,10 +120,7 @@
           <el-input v-model="form.followUpResult" placeholder="请输入跟进结果" />
         </el-form-item>
         <el-form-item label="提报日期" prop="submissionDate">
-          <el-date-picker clearable
-            v-model="form.submissionDate"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.submissionDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择提报日期">
           </el-date-picker>
         </el-form-item>
@@ -175,7 +172,7 @@ const initFormData: CustomerIntentionForm = {
   followUpResult: undefined,
 }
 const data = reactive<PageData<CustomerIntentionForm, CustomerIntentionQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -214,7 +211,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   customerIntentionFormRef.value?.resetFields();
 }
 
@@ -260,9 +257,9 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateCustomerIntention(form.value).finally(() =>  buttonLoading.value = false);
+        await updateCustomerIntention(form.value).finally(() => buttonLoading.value = false);
       } else {
-        await addCustomerIntention(form.value).finally(() =>  buttonLoading.value = false);
+        await addCustomerIntention(form.value).finally(() => buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;

@@ -6,26 +6,26 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="合同编号" prop="contractCode">
-              <el-input v-model="queryParams.contractCode" placeholder="请输入合同编号" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="客户名称" prop="customerName">
-              <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="客户类型" prop="customerType">
-              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable>
-                <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
+            <el-input v-model="queryParams.contractCode" placeholder="请输入合同编号" clearable @keyup.enter="handleQuery" />
+          </el-form-item>
+          <el-form-item label="客户名称" prop="customerName">
+            <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
+          </el-form-item>
+          <el-form-item label="客户类型" prop="customerType">
+            <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable>
+              <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
             <el-form-item label="负责人" prop="principal">
               <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="签约类型" prop="contractType">
-              <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
-                <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
+          <el-form-item label="签约类型" prop="contractType">
+            <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
+              <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" />
@@ -70,90 +70,85 @@
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <<<<<<< HEAD <el-table-column label="编号" align="center" prop="contractNo" />
-        <el-table-column label="客户类型" align="center" prop="customerType">
+        <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip />
+        <el-table-column label="客户类型" align="center" width="100" prop="customerType" >
+         <template #default="scope">
+            <dict-tag :options="dc_customer_type" :value="scope.row.customerType" />
+          </template>
+        </el-table-column>
+        <el-table-column label="客户名称" align="center" width="100" prop="customerName" />
+        <el-table-column label="负责人" align="center" width="100" prop="principal" />
+        <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
+        <el-table-column label="法务法务支持" align="center" width="120" prop="lawyerId" show-overflow-tooltip />
+        <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" />
+        <el-table-column label="杀单手" align="center" width="100" prop="closer" />
+        <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
+        <el-table-column label="签约类型" align="center" width="100" prop="contractType">
           <template #default="scope">
-            =======
-            <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip />
-            <el-table-column label="客户类型" align="center" width="100" prop="customerType">
-              <template #default="scope">
-                >>>>>>> f6bb4c50b3326e195704f34618f92fde77dabd63
-                <dict-tag :options="dc_customer_type" :value="scope.row.customerType" />
-              </template>
-            </el-table-column>
-            <el-table-column label="客户名称" align="center" width="100" prop="customerName" />
-            <el-table-column label="负责人" align="center" width="100" prop="principal" />
-            <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
-            <el-table-column label="法务法务支持" align="center" width="120" prop="lawyerId" show-overflow-tooltip />
-            <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" />
-            <el-table-column label="杀单手" align="center" width="100" prop="closer" />
-            <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
-            <el-table-column label="签约类型" align="center" width="100" prop="contractType">
-              <template #default="scope">
-                <dict-tag :options="contract_type" :value="scope.row.contractType" />
-              </template>
-            </el-table-column>
-            <el-table-column label="套餐类型" width="100" align="center" prop="packageType" />
-            <el-table-column label="实收金额" width="100" align="center" prop="actualReceipt" show-overflow-tooltip />
-            <el-table-column label="尾款金额" width="100" align="center" prop="balance" show-overflow-tooltip />
-            <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
-              <template #default="scope">
-                <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip />
-            <el-table-column label="备注" align="center" prop="remarks" width="140" show-overflow-tooltip />
-            <el-table-column label="续费/尾款" align="center" prop="actionType" width="100" show-overflow-tooltip />
-            <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
-              <template #default="scope">
-                <!-- 详情按钮：点击携带当前行id跳转 -->
-                <el-button link type="primary" icon="View" size="default"
-                  @click="handleTrackingDetail(scope.row.transferId)" style="padding: 0 6px;">
-                  详情
-                </el-button>
-              </template>
-            </el-table-column>
-            <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
-              <template #default="scope">
-                <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
-                <span>{{ scope.row.isRisk ? '是' : '否' }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="退费客户" align="center" prop="isRefund" width="100">
-              <template #default="scope">
-                <span>{{ scope.row.isRefund ? '是' : '否' }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="意向客户" align="center" prop="isIntention" width="100">
-              <template #default="scope">
-                <span>{{ scope.row.isIntention ? '是' : '否' }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="280"
-              fixed="right">
-              <template #default="scope">
-                <!-- 处置按钮 -->
-                <el-button link type="success" icon="Operation" @click="handleTransfer(scope.row)"
-                  v-hasPermi="['customerInfo:customerInfo:transfer']">
-                  处置
-                </el-button>
-                <!-- 修改按钮 -->
-                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                  v-hasPermi="['customerInfo:customerInfo:edit']">
-                  修改
-                </el-button>
-                <!-- 删除按钮 -->
-                <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
-                  v-hasPermi="['customerInfo:customerInfo:remove']">
-                  删除
-                </el-button>
-                <!-- 分配法务支持按钮 -->
-                <el-button link type="warning" icon="Menu" @click="handleAssign(scope.row)"
-                  v-hasPermi="['customerInfo:customerInfo:assign']">
-                  分配
-                </el-button>
-              </template>
-            </el-table-column>
+            <dict-tag :options="contract_type" :value="scope.row.contractType" />
+          </template>
+        </el-table-column>
+        <el-table-column label="套餐类型" width="100" align="center" prop="packageType" />
+        <el-table-column label="实收金额" width="100" align="center" prop="actualReceipt" show-overflow-tooltip />
+        <el-table-column label="尾款金额" width="100" align="center" prop="balance" show-overflow-tooltip />
+        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip >
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="合同编号" align="center" prop="contractCode"  width="120" show-overflow-tooltip />
+        <el-table-column label="备注" align="center" prop="remarks"  width="140" show-overflow-tooltip />
+        <el-table-column label="续费/尾款" align="center" prop="actionType" width="100" show-overflow-tooltip />
+        <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip >
+          <template #default="scope">
+            <!-- 详情按钮：点击携带当前行id跳转 -->
+            <el-button link type="primary" icon="View" size="default"
+              @click="handleTrackingDetail(scope.row.transferId)" style="padding: 0 6px;">
+              详情
+            </el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
+          <template #default="scope">
+            <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
+            <span>{{ scope.row.isRisk ? '是' : '否' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="退费客户" align="center" prop="isRefund" width="100">
+          <template #default="scope">
+            <span>{{ scope.row.isRefund ? '是' : '否' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="意向客户" align="center" prop="isIntention" width="100">
+          <template #default="scope">
+            <span>{{ scope.row.isIntention ? '是' : '否' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
+         width="280" fixed="right">
+          <template #default="scope">
+              <!-- 处置按钮 -->
+              <el-button link type="success" icon="Operation" @click="handleTransfer(scope.row)"
+                v-hasPermi="['customerInfo:customerInfo:transfer']">
+                处置
+              </el-button>
+              <!-- 修改按钮 -->
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                v-hasPermi="['customerInfo:customerInfo:edit']">
+                修改
+              </el-button>
+              <!-- 删除按钮 -->
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['customerInfo:customerInfo:remove']">
+                删除
+              </el-button>
+              <!-- 分配法务支持按钮 -->
+              <el-button link type="warning" icon="Menu" @click="handleAssign(scope.row)"
+                v-hasPermi="['customerInfo:customerInfo:assign']">
+                分配
+              </el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
