@@ -5,56 +5,28 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="法务支持" prop="lawyerId">
-              <el-input v-model="queryParams.lawyerId" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="客户id" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="客户名称" prop="customerName">
+            <el-form-item label="客户名称" prop="customerName" label-width="68px">
               <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="对接人" prop="principal">
+            <el-form-item label="对接人" prop="principal" label-width="68px">
               <el-input v-model="queryParams.principal" placeholder="请输入客户对接人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="对接人联系方式" prop="principalPhone" label-width="120px"
-              :style="{ '--el-form-label-font-size': '14px' }">
-              <el-input v-model="queryParams.principalPhone" placeholder="请输入客户对接人联系方式" clearable
-                @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="大成负责人" prop="inviterId" label-width="100px"
+            <el-form-item label="负责人" prop="inviterId" label-width="68px"
               :style="{ '--el-form-label-font-size': '14px' }">
               <el-input v-model="queryParams.inviterId" placeholder="请输入大成负责人id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="签约日期" prop="signDate">
-              <el-date-picker clearable v-model="queryParams.signDate" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择签约日期" />
-            </el-form-item>
-            <el-form-item label="到期时间" prop="expireDate">
+            <el-form-item label="到期时间" prop="expireDate" label-width="68px">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" />
             </el-form-item>
-            <el-form-item label="签单金额" prop="contractAmount">
-              <el-input v-model="queryParams.contractAmount" placeholder="请输入签单金额" clearable
-                @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="服务时长" prop="serviceHours">
+            <el-form-item label="服务时长" prop="serviceHours" label-width="68px">
               <el-input v-model="queryParams.serviceHours" placeholder="请输入服务时长" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item :label="customerTypeLabel + '原因'" prop="reasons">
-              <el-input v-model="form.reasons" :placeholder="'请输入' + customerTypeLabel + '原因'" />
-            </el-form-item>
-            <el-form-item label="退款金额" prop="refundAmount">
-              <el-input v-model="queryParams.refundAmount" placeholder="请输入退款金额" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="备注" prop="remark1">
-              <el-input v-model="queryParams.remark1" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="备注" prop="remark2">
-              <el-input v-model="queryParams.remark2" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="备注" prop="remark3">
-              <el-input v-model="queryParams.remark3" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="风险" prop="customerTypeLabel" label-width="68px">
+              <el-select v-model="queryParams.customerTypeLabel" placeholder="请选择风险" clearable>
+                <el-option label="风险" value="1"></el-option>
+                <el-option label="退费" value="2"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -91,40 +63,34 @@
       <el-table v-loading="loading" border :data="customerRiskRefundList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="法务支持" align="center" prop="lawyerId" />
-        <el-table-column label="客户id" align="center" prop="customerId" />
-        <el-table-column label="客户名称" align="center" prop="customerName" />
-        <el-table-column label="客户对接人" align="center" prop="principal" />
-        <el-table-column label="客户对接人联系方式" align="center" prop="principalPhone" />
-        <el-table-column label="大成负责人id" align="center" prop="inviterId" />
-        <el-table-column label="签约日期" align="center" prop="signDate" width="180">
+        <el-table-column label="法务支持" align="center" prop="lawyerId" width="80" show-overflow-tooltip />
+        <el-table-column label="客户名称" align="center" prop="customerName" width="100" show-overflow-tooltip />
+        <el-table-column label="客户对接人" align="center" prop="principal" width="90" show-overflow-tooltip />
+        <el-table-column label="对接人电话" align="center" prop="principalPhone" width="120" show-overflow-tooltip />
+        <el-table-column label="大成负责人" align="center" prop="inviterId" width="90" show-overflow-tooltip />
+        <el-table-column label="签约日期" align="center" prop="signDate" width="120" show-overflow-tooltip >
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="到期时间" align="center" prop="expireDate" width="180">
+        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip >
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="签单金额" align="center" prop="contractAmount" />
-        <el-table-column label="服务时长" align="center" prop="serviceHours" />
-        <el-table-column :label="customerTypeLabel" align="center" prop="customerType" />
-        <el-table-column :label="customerTypeLabel + '原因'" align="center" prop="reasons" />
-        <el-table-column label="退款金额" align="center" prop="refundAmount" />
-        <el-table-column label="备注" align="center" prop="remark1" />
-        <el-table-column label="备注" align="center" prop="remark2" />
-        <el-table-column label="备注" align="center" prop="remark3" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="签单金额" align="center" prop="contractAmount" width="90" show-overflow-tooltip />
+        <el-table-column label="服务时长" align="center" prop="serviceHours" width="80" show-overflow-tooltip />
+        <el-table-column :label="customerTypeLabel" align="center" prop="customerType" width="80" show-overflow-tooltip />
+        <el-table-column :label="customerTypeLabel + '原因'" align="center" prop="reasons" width="120" show-overflow-tooltip />
+        <el-table-column label="退款金额" align="center" prop="refundAmount" width="90" show-overflow-tooltip />
+        <el-table-column label="备注" align="center" prop="remark1" width="140" show-overflow-tooltip />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
+          width="180" fixed="right">
           <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['customerRiskRefund:customerRiskRefund:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
+              <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
+                v-hasPermi="['customerRiskRefund:customerRiskRefund:edit']">修改</el-button>
               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['customerRiskRefund:customerRiskRefund:remove']"></el-button>
-            </el-tooltip>
+                v-hasPermi="['customerRiskRefund:customerRiskRefund:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -135,54 +101,45 @@
     <!-- 添加或修改客户风险/退费对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerRiskRefundFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="法务支持" prop="lawyerId">
+        <el-form-item label="法务支持" prop="lawyerId" label-width="90px">
           <el-input v-model="form.lawyerId" placeholder="请输入法务支持" />
         </el-form-item>
-        <el-form-item label="客户id" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户id" />
-        </el-form-item>
-        <el-form-item label="客户名称" prop="customerName">
+        <el-form-item label="客户名称" prop="customerName" label-width="90px">
           <el-input v-model="form.customerName" placeholder="请输入客户名称" />
         </el-form-item>
-        <el-form-item label="客户对接人" prop="principal">
+        <el-form-item label="对接人" prop="principal" label-width="90px">
           <el-input v-model="form.principal" placeholder="请输入客户对接人" />
         </el-form-item>
-        <el-form-item label="客户对接人联系方式" prop="principalPhone">
-          <el-input v-model="form.principalPhone" placeholder="请输入客户对接人联系方式" />
+        <el-form-item label="对接人电话" prop="principalPhone" label-width="90px">
+          <el-input v-model="form.principalPhone" placeholder="请输入对接人联系方式" />
         </el-form-item>
-        <el-form-item label="大成负责人id" prop="inviterId">
-          <el-input v-model="form.inviterId" placeholder="请输入大成负责人id" />
+        <el-form-item label="大成负责人" prop="inviterId" label-width="90px">
+          <el-input v-model="form.inviterId" placeholder="请输入大成负责人" />
         </el-form-item>
-        <el-form-item label="签约日期" prop="signDate">
+        <el-form-item label="签单金额" prop="contractAmount" label-width="90px">
+          <el-input v-model="form.contractAmount" placeholder="请输入签单金额" />
+        </el-form-item>
+        <el-form-item label="服务时长" prop="serviceHours" label-width="90px">
+          <el-input v-model="form.serviceHours" placeholder="请输入服务时长" />
+        </el-form-item>
+        <el-form-item label="签约日期" prop="signDate" label-width="90px">
           <el-date-picker clearable v-model="form.signDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择签约日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="到期时间" prop="expireDate">
+        <el-form-item label="到期时间" prop="expireDate" label-width="90px">
           <el-date-picker clearable v-model="form.expireDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择到期时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="签单金额" prop="contractAmount">
-          <el-input v-model="form.contractAmount" placeholder="请输入签单金额" />
-        </el-form-item>
-        <el-form-item label="服务时长" prop="serviceHours">
-          <el-input v-model="form.serviceHours" placeholder="请输入服务时长" />
-        </el-form-item>
-        <el-form-item :label="customerTypeLabel + '原因'" prop="reasons">
+        <el-form-item :label="customerTypeLabel + '原因'" prop="reasons" label-width="90px">
           <el-input v-model="form.reasons" placeholder="请输入风险/退费原因" />
         </el-form-item>
-        <el-form-item label="退款金额" prop="refundAmount">
+        <el-form-item label="退款金额" prop="refundAmount" label-width="90px">
           <el-input v-model="form.refundAmount" placeholder="请输入退款金额" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark1">
+        <el-form-item label="备注" prop="remark1" label-width="90px">
           <el-input v-model="form.remark1" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark2">
-          <el-input v-model="form.remark2" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark3">
-          <el-input v-model="form.remark3" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -351,7 +308,7 @@ const handleUpdate = async (row?: CustomerRiskRefundVO) => {
   const _id = row?.id || ids.value[0]
   const res = await getCustomerRiskRefund(_id);
   Object.assign(form.value, res.data);
-  form.value.customerType = form.value.customerType.split(",");
+  //form.value.customerType = form.value.customerType.split(",");
   dialog.visible = true;
   const title = customerTypeLabel.value;
   dialog.title = `修改客户${title}`;
