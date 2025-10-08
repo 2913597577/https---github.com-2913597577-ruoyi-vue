@@ -22,8 +22,8 @@
             <el-form-item label="服务时长" prop="serviceHours" label-width="68px">
               <el-input v-model="queryParams.serviceHours" placeholder="请输入服务时长" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="风险" prop="customerTypeLabel" label-width="68px">
-              <el-select v-model="queryParams.customerTypeLabel" placeholder="请选择风险" clearable>
+            <el-form-item label="风险" prop="customerType" label-width="68px">
+              <el-select v-model="queryParams.customerType" placeholder="请选择风险" clearable>
                 <el-option label="风险" value="1"></el-option>
                 <el-option label="退费" value="2"></el-option>
               </el-select>

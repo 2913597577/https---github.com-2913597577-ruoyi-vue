@@ -4,39 +4,30 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="提报日期" prop="submissionDate">
+            <el-form-item label="法务支持" prop="legalSupport" label-width="68px">
+              <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="意向客户" prop="intendedCustomer" label-width="68px">
+              <el-input v-model="queryParams.intendedCustomer" placeholder="请输入意向客户" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="类型" prop="type" label-width="68px">
+              <el-select v-model="queryParams.type" placeholder="请选择类型" clearable >
+                <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="介绍人" prop="introducer" label-width="68px">
+              <el-input v-model="queryParams.introducer" placeholder="请输入介绍人" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="跟进结果" prop="followUpResult" label-width="68px">
+              <el-input v-model="queryParams.followUpResult" placeholder="请输入跟进结果" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="提报日期" prop="submissionDate" label-width="68px">
               <el-date-picker clearable
                 v-model="queryParams.submissionDate"
                 type="date"
                 value-format="YYYY-MM-DD"
                 placeholder="请选择提报日期"
               />
-            </el-form-item>
-            <el-form-item label="法务支持" prop="legalSupport">
-              <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="法务支持ID" prop="legalSupportId">
-              <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持ID" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="意向客户" prop="intendedCustomer">
-              <el-input v-model="queryParams.intendedCustomer" placeholder="请输入意向客户" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="意向客户id" prop="intendedCustomerId">
-              <el-input v-model="queryParams.intendedCustomerId" placeholder="请输入意向客户id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="类型" prop="type">
-              <el-select v-model="queryParams.type" placeholder="请选择类型" clearable >
-                <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="来源" prop="source">
-              <el-input v-model="queryParams.source" placeholder="请输入来源" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="介绍人" prop="introducer">
-              <el-input v-model="queryParams.introducer" placeholder="请输入介绍人" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="跟进结果" prop="followUpResult">
-              <el-input v-model="queryParams.followUpResult" placeholder="请输入跟进结果" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -68,31 +59,29 @@
 
       <el-table v-loading="loading" border :data="customerIntentionList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
-        <el-table-column label="提报日期" align="center" prop="submissionDate" width="180">
+        <el-table-column label="提报日期" align="center" prop="submissionDate" width="160" show-overflow-tooltip >
           <template #default="scope">
             <span>{{ parseTime(scope.row.submissionDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupport" />
-        <el-table-column label="意向客户" align="center" prop="intendedCustomer" />
-        <el-table-column label="类型" align="center" prop="type">
+        <el-table-column label="法务支持" align="center" prop="legalSupport" width="120" show-overflow-tooltip />
+        <el-table-column label="意向客户" align="center" prop="intendedCustomer" width="120" show-overflow-tooltip />
+        <el-table-column label="类型" align="center" prop="type"  width="130" show-overflow-tooltip >
           <template #default="scope">
             <dict-tag :options="intention_type" :value="scope.row.type"/>
           </template>
         </el-table-column>
-        <el-table-column label="来源" align="center" prop="source" />
-        <el-table-column label="预计金额" align="center" prop="expectedAmount" />
-        <el-table-column label="介绍人" align="center" prop="introducer" />
-        <el-table-column label="跟进结果" align="center" prop="followUpResult" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="来源" align="center" prop="source"  width="160" show-overflow-tooltip />
+        <el-table-column label="预计金额" align="center" prop="expectedAmount"  width="110" show-overflow-tooltip />
+        <el-table-column label="介绍人" align="center" prop="introducer"  width="120" show-overflow-tooltip />
+        <el-table-column label="跟进结果" align="center" prop="followUpResult"  width="110" show-overflow-tooltip />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip 
+        width="180" fixed="right">
           <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerIntention:customerIntention:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerIntention:customerIntention:remove']"></el-button>
-            </el-tooltip>
+              <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
+              v-hasPermi="['customerIntention:customerIntention:edit']">修改</el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" 
+              v-hasPermi="['customerIntention:customerIntention:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -102,27 +91,19 @@
     <!-- 添加或修改客户意向登记对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerIntentionFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="提报日期" prop="submissionDate">
-          <el-date-picker clearable
-            v-model="form.submissionDate"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择提报日期">
-          </el-date-picker>
+        <el-form-item label="来源" prop="source" label-width="90px">
+          <el-input v-model="form.source" placeholder="请输入来源" />
         </el-form-item>
-        <el-form-item label="法务支持" prop="legalSupport">
+        <el-form-item label="介绍人" prop="introducer" label-width="90px">
+          <el-input v-model="form.introducer" placeholder="请输入介绍人" />
+        </el-form-item>
+        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
           <el-input v-model="form.legalSupport" placeholder="请输入法务支持" />
         </el-form-item>
-        <el-form-item label="法务支持ID" prop="legalSupportId">
-          <el-input v-model="form.legalSupportId" placeholder="请输入法务支持ID" />
-        </el-form-item>
-        <el-form-item label="意向客户" prop="intendedCustomer">
+        <el-form-item label="意向客户" prop="intendedCustomer" label-width="90px">
           <el-input v-model="form.intendedCustomer" placeholder="请输入意向客户" />
         </el-form-item>
-        <el-form-item label="意向客户id" prop="intendedCustomerId">
-          <el-input v-model="form.intendedCustomerId" placeholder="请输入意向客户id" />
-        </el-form-item>
-        <el-form-item label="类型" prop="type">
+        <el-form-item label="签约类型" prop="type" label-width="90px">
           <el-select v-model="form.type" placeholder="请选择类型">
             <el-option
                 v-for="dict in intention_type"
@@ -132,17 +113,19 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="来源" prop="source">
-          <el-input v-model="form.source" placeholder="请输入来源" />
-        </el-form-item>
-        <el-form-item label="预计金额" prop="expectedAmount">
+        <el-form-item label="预计金额" prop="expectedAmount" label-width="90px">
           <el-input v-model="form.expectedAmount" placeholder="请输入预计金额" />
         </el-form-item>
-        <el-form-item label="介绍人" prop="introducer">
-          <el-input v-model="form.introducer" placeholder="请输入介绍人" />
-        </el-form-item>
-        <el-form-item label="跟进结果" prop="followUpResult">
+        <el-form-item label="跟进结果" prop="followUpResult" label-width="90px">
           <el-input v-model="form.followUpResult" placeholder="请输入跟进结果" />
+        </el-form-item>
+        <el-form-item label="提报日期" prop="submissionDate">
+          <el-date-picker clearable
+            v-model="form.submissionDate"
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择提报日期">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <template #footer>
