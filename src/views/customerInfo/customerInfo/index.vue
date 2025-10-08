@@ -42,14 +42,14 @@
     <el-card shadow="never">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerInfo:customerInfo:add']">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
+          </el-col> -->
+          <!-- <el-col :span="1.5">
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
               v-hasPermi="['customerInfo:customerInfo:edit']">修改</el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
               v-hasPermi="['customerInfo:customerInfo:remove']">删除</el-button>
@@ -79,7 +79,13 @@
         <el-table-column label="客户名称" align="center" width="100" prop="customerName" />
         <el-table-column label="负责人" align="center" width="100" prop="principal" />
         <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
-        <el-table-column label="法务法务支持" align="center" width="120" prop="lawyerId" show-overflow-tooltip />
+        <el-table-column label="法务法务支持" align="center" width="120" prop="lawyerId" show-overflow-tooltip>
+          <template #default="scope">
+            <span v-if="scope.row.lawyerId">
+              {{ getLawyerNameById(scope.row.lawyerId) }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" />
         <el-table-column label="杀单手" align="center" width="100" prop="closer" />
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
@@ -1025,7 +1031,7 @@ const handleAssign = async (row: CustomerInfoVO) => {
   assignDialog.currentRow = row;
   // 初始化表单：填充当前客户ID
   assignForm.customerId = row.transferId; // 客户ID（与表格row.transferId匹配）
-  assignForm.lawyerId = undefined; // 清空上次选择的法务人员
+  assignForm.lawyerId = row.lawyerId; // 清空上次选择的法务人员
   assignForm.id = row.id; // 当前客户记录的主键ID（用于分配接口）
   // 加载法务支持人员列表（调用接口）
   await loadLawyerSupportList();
@@ -1082,7 +1088,17 @@ const handleTrackingDetail = (id: number | string) => {
   });
 };
 
+// 添加获取法务人员姓名的方法
+const getLawyerNameById = (lawyerId: string | number) => {
+  console.log('lawyerId:', lawyerId);
+  if (!lawyerId) return '';
+  const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
+  console.log('lawyer:', lawyer);
+  return lawyer ? `${lawyer.userName}` : '';
+};
+
 onMounted(() => {
+  loadLawyerSupportList();
   getList();
 });
 </script>

@@ -4,8 +4,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="意向客户" prop="customerName" label-width="68px">
-              <el-input v-model="queryParams.customerName" placeholder="请输入意向客户" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="意向客户" prop="customerId" label-width="68px">
+              <el-select v-model="queryParams.customerId" placeholder="请输入意向客户" filterable clearable>
+                  <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                    :value="item.customer_id">
+                  </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -22,9 +26,9 @@
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:add']">新增</el-button>
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:edit']">修改</el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:remove']">删除</el-button>
           </el-col>
@@ -56,7 +60,11 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerIntentionTrackingFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="意向客户" prop="customerName">
-          <el-input v-model="form.customerName" placeholder="请输入意向客户" />
+          <el-select v-model="form.customerId" placeholder="请输入意向客户" filterable clearable  @change="handleChange">
+                  <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                    :value="item.customer_id">
+                  </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="customerRemark">
             <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
@@ -73,6 +81,7 @@
 </template>
 
 <script setup name="CustomerIntentionTracking" lang="ts">
+import { getIntentionCustomerByUserId } from '@/api/common';
 import { listCustomerIntentionTracking, getCustomerIntentionTracking, delCustomerIntentionTracking, addCustomerIntentionTracking, updateCustomerIntentionTracking } from '@/api/customerIntentionTracking/customerIntentionTracking';
 import { CustomerIntentionTrackingVO, CustomerIntentionTrackingQuery, CustomerIntentionTrackingForm } from '@/api/customerIntentionTracking/customerIntentionTracking/types';
 
@@ -221,7 +230,33 @@ const handleExport = () => {
   }, `customerIntentionTracking_${new Date().getTime()}.xlsx`)
 }
 
+const customerList = ref<any[]>([]);
+const loadIntentionCustomerList = async () => {
+  try {
+    const res = await getIntentionCustomerByUserId();
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取意向客户列表失败:', error);
+    proxy?.$modal.msgError('获取意向客户列表失败');
+  }
+}
+
+const handleChange = (customerId: string) => {
+  if (customerId) {
+    // 获取选中的意向客户信息
+    const selectedCustomer = customerList.value.find(customerList => customerList.customer_id === customerId);
+    if (selectedCustomer) {
+      // 设置法务支持名称到 legalSupport 字段
+      form.value.customerName = selectedCustomer.customerName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.customerName = undefined;
+  }
+}
+
 onMounted(() => {
+  loadIntentionCustomerList();
   getList();
 });
 </script>

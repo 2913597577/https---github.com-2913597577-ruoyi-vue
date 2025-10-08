@@ -8,6 +8,14 @@ export const getCustomerByUserId = () => {
   })
 }
 
+// 获取客户意向列表
+export const getIntentionCustomerByUserId = () => {
+  return request({
+    url: '/common/getIntentionCustomerByUserId',
+    method: 'get'
+  })
+}
+
 // 获取客户类型
 export const getCustomerType = () => {
   return request({
