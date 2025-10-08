@@ -4,22 +4,8 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="意向客户" prop="inentionId">
-              <el-input v-model="queryParams.inentionId" placeholder="请输入意向客户表id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="意向客户id" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入意向客户id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="意向客户" prop="customerName">
+            <el-form-item label="意向客户" prop="customerName" label-width="68px">
               <el-input v-model="queryParams.customerName" placeholder="请输入意向客户" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="创建时间" prop="createTime">
-              <el-date-picker clearable
-                v-model="queryParams.createTime"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择创建时间"
-              />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -51,18 +37,15 @@
 
       <el-table v-loading="loading" border :data="customerIntentionTrackingList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
-        <el-table-column label="意向客户id" align="center" prop="customerId" />
         <el-table-column label="意向客户" align="center" prop="customerName" />
         <el-table-column label="备注" align="center" prop="customerRemark" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
+        width="240" fixed="right">
           <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:remove']"></el-button>
-            </el-tooltip>
+              <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
+              v-hasPermi="['customerIntentionTracking:customerIntentionTracking:edit']">修改</el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" 
+              v-hasPermi="['customerIntentionTracking:customerIntentionTracking:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -72,12 +55,6 @@
     <!-- 添加或修改意向客户跟踪记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerIntentionTrackingFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="意向客户表id" prop="inentionId">
-          <el-input v-model="form.inentionId" placeholder="请输入意向客户表id" />
-        </el-form-item>
-        <el-form-item label="意向客户id" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入意向客户id" />
-        </el-form-item>
         <el-form-item label="意向客户" prop="customerName">
           <el-input v-model="form.customerName" placeholder="请输入意向客户" />
         </el-form-item>

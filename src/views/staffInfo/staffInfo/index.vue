@@ -112,7 +112,7 @@
         <el-table-column label="银行卡号" align="center" prop="bankAccount" />
         <el-table-column label="开户行" align="center" prop="bankInfo" />
         <el-table-column label="档案附件" align="center" prop="fileIds" />
-        <el-table-column label="员工个人简介" align="center" prop="desc" />
+        <el-table-column label="员工个人简介" align="center" prop="description" />
         <el-table-column label="员工入职日期" align="center" prop="entryTime" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.entryTime, '{y}-{m}-{d}') }}</span>
@@ -551,7 +551,7 @@ const initFormData: StaffInfoForm = {
   bankAccount: undefined,
   bankInfo: undefined,
   fileIds: undefined,
-  desc: undefined,
+  description: undefined,
   entryTime: undefined,
   levelTime: undefined,
   status: undefined,
