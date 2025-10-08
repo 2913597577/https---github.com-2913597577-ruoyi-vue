@@ -4,7 +4,7 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="客户id" prop="customerId">
+            <el-form-item label="客户" prop="customerId">
               <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="欠款人" prop="debtorName">
@@ -114,13 +114,13 @@
         <el-table-column label="0-未处理 1-推进中 2-无法推进 3 -已办结" align="center" prop="caseStatus" />
         <el-table-column label="法官" align="center" prop="judgeName" />
         <el-table-column label="法官电话" align="center" prop="judgePhone" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="200px">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['caseDetail:caseDetail:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['caseDetail:caseDetail:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['caseDetail:caseDetail:remove']"></el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['caseDetail:caseDetail:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>

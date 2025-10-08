@@ -8,51 +8,31 @@
             <el-form-item label="法务支持" prop="legalSupport">
               <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="法务支持id" prop="legalSupportId">
+            <!-- <el-form-item label="法务支持id" prop="legalSupportId">
               <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable
                 @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="源合同文件名" prop="preContractName">
-              <el-input v-model="queryParams.preContractName" placeholder="请输入源合同文件名" clearable
-                @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="新合同文件名" prop="newContractName">
-              <el-input v-model="queryParams.newContractName" placeholder="请输入新合同文件名" clearable
-                @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="客户要求" prop="customerRequirements">
-              <el-input v-model="queryParams.customerRequirements" placeholder="请输入客户要求" clearable
-                @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
+        
             <el-form-item label="交付时间" prop="deliveryTime">
               <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择交付时间" />
             </el-form-item>
-            <el-form-item label="跟踪记录id" prop="trackingId">
+            <el-form-item label="跟踪记录" prop="trackingId">
               <el-input v-model="queryParams.trackingId" placeholder="请输入跟踪记录id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="处理人id" prop="contractHandler">
+            <!-- <el-form-item label="处理人id" prop="contractHandler">
               <el-input v-model="queryParams.contractHandler" placeholder="请输入处理人id" clearable
                 @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="处理人" prop="contractHandlerName">
               <el-input v-model="queryParams.contractHandlerName" placeholder="请输入处理人" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="工单处理状态" prop="processingStatus">
+            <el-form-item label="处理状态" prop="processingStatus">
               <el-select v-model="queryParams.processingStatus" placeholder="请选择工单处理状态" clearable>
                 <el-option v-for="dict in processing_status" :key="dict.value" :label="dict.label"
                   :value="dict.value" />
               </el-select>
-            </el-form-item>
-            <el-form-item label="备注1" prop="remark1">
-              <el-input v-model="queryParams.remark1" placeholder="请输入备注1" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="备注2" prop="remark2">
-              <el-input v-model="queryParams.remark2" placeholder="请输入备注2" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="备注3" prop="remark3">
-              <el-input v-model="queryParams.remark3" placeholder="请输入备注3" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -88,7 +68,7 @@
 
       <el-table v-loading="loading" border :data="customerJobOrderList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="法务支持" align="center" prop="legalSupport" />
         <el-table-column label="法务支持id" align="center" prop="legalSupportId" />
         <el-table-column label="源合同地址" align="center" prop="preContractAddress" />
@@ -109,22 +89,22 @@
             <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="备注1" align="center" prop="remark1" />
+        <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
-        <el-table-column label="备注3" align="center" prop="remark3" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="备注3" align="center" prop="remark3" /> -->
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="240px">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['customerJobOrder:customerJobOrder:edit']"></el-button>
+                v-hasPermi="['customerJobOrder:customerJobOrder:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['customerJobOrder:customerJobOrder:remove']"></el-button>
+                v-hasPermi="['customerJobOrder:customerJobOrder:remove']">删除</el-button>
             </el-tooltip>
             <el-tooltip content="处理" placement="top">
               <el-button link type="primary" icon="Download" @click="handleProcess(scope.row)"
-                v-hasPermi="['customerJobOrder:customerJobOrder:process']"></el-button>
+                v-hasPermi="['customerJobOrder:customerJobOrder:process']">处理</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -177,7 +157,7 @@
               :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="备注1" prop="remark1">
+        <!-- <el-form-item label="备注1" prop="remark1">
           <el-input v-model="form.remark1" placeholder="请输入备注1" />
         </el-form-item>
         <el-form-item label="备注2" prop="remark2">
@@ -185,7 +165,7 @@
         </el-form-item>
         <el-form-item label="备注3" prop="remark3">
           <el-input v-model="form.remark3" placeholder="请输入备注3" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">

@@ -4,7 +4,7 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="客户id(客户编号)" prop="customerId">
+            <el-form-item label="客户" prop="customerId">
               <el-input v-model="queryParams.customerId" placeholder="请输入客户id(客户编号)" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="下单日期" prop="orderDate">
@@ -18,10 +18,10 @@
             <el-form-item label="工单号" prop="insuranceNumber">
               <el-input v-model="queryParams.insuranceNumber" placeholder="请输入工单号" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="法务支持id" prop="legalSupportId">
+            <!-- <el-form-item label="法务支持id" prop="legalSupportId">
               <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="法务支持姓名" prop="legalSupportName">
+            </el-form-item> -->
+            <el-form-item label="法务支持" prop="legalSupportName">
               <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="原告方" prop="plaintiff">
@@ -36,7 +36,7 @@
             <el-form-item label="案由" prop="caseReason">
               <el-input v-model="queryParams.caseReason" placeholder="请输入案由" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="管辖权法院" prop="jurisdictionCourt">
+            <el-form-item label="法院" prop="jurisdictionCourt">
               <el-input v-model="queryParams.jurisdictionCourt" placeholder="请输入管辖权法院" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="保费" prop="premium">
@@ -72,7 +72,7 @@
 
       <el-table v-loading="loading" border :data="insuranceCaseList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="自增主键" align="center" prop="id" v-if="true" />
+        <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="客户id(客户编号)" align="center" prop="customerId" />
         <el-table-column label="下单日期" align="center" prop="orderDate" width="180">
           <template #default="scope">

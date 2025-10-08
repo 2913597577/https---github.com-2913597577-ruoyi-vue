@@ -4,10 +4,7 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="用户id" prop="userId">
-              <el-input v-model="queryParams.userId" placeholder="请输入用户id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="员工姓名" prop="name">
+            <el-form-item label="姓名" prop="name">
               <el-input v-model="queryParams.name" placeholder="请输入员工姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="部门id" prop="deptId">
@@ -58,12 +55,10 @@
 
       <el-table v-loading="loading" border :data="staffInfoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="自增主键" align="center" prop="id" v-if="true" />
-        <el-table-column label="用户id" align="center" prop="userId" />
         <el-table-column label="员工姓名" align="center" prop="name" />
         <el-table-column label="电子邮箱" align="center" prop="email" />
         <el-table-column label="手机号码" align="center" prop="mobile" />
-        <el-table-column label="性别:1男,2女,0未知" align="center" prop="sex" />
+        <el-table-column label="性别" align="center" prop="sex" />
         <el-table-column label="别名" align="center" prop="nickname" />
         <el-table-column label="员工照片" align="center" prop="thumb" />
         <el-table-column label="部门id" align="center" prop="deptId" />
@@ -112,7 +107,7 @@
         <el-table-column label="银行卡号" align="center" prop="bankAccount" />
         <el-table-column label="开户行" align="center" prop="bankInfo" />
         <el-table-column label="档案附件" align="center" prop="fileIds" />
-        <el-table-column label="员工个人简介" align="center" prop="desc" />
+        <el-table-column label="员工个人简介" align="center" prop="description" />
         <el-table-column label="员工入职日期" align="center" prop="entryTime" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.entryTime, '{y}-{m}-{d}') }}</span>
@@ -124,7 +119,7 @@
           </template>
         </el-table-column>
         <el-table-column label="状态" align="center" prop="status" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['staffInfo:staffInfo:edit']"></el-button>
@@ -139,161 +134,332 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改员工档案对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
-      <el-form ref="staffInfoFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="用户id" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户id" />
-        </el-form-item>
+    <!-- 替换原有的 el-dialog 部分 -->
+<el-dialog :title="dialog.title" v-model="dialog.visible" width="800px" append-to-body>
+  <el-form ref="staffInfoFormRef" :model="form" :rules="rules" label-width="120px" inline-message>
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="员工姓名" prop="name">
           <el-input v-model="form.name" placeholder="请输入员工姓名" />
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="用户id" prop="userId">
+          <el-input v-model="form.userId" placeholder="请输入用户id" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="电子邮箱" prop="email">
           <el-input v-model="form.email" placeholder="请输入电子邮箱" />
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="手机号码" prop="mobile">
           <el-input v-model="form.mobile" placeholder="请输入手机号码" />
         </el-form-item>
-        <el-form-item label="别名" prop="nickname">
-          <el-input v-model="form.nickname" placeholder="请输入别名" />
-        </el-form-item>
-        <el-form-item label="员工照片" prop="thumb">
-          <el-input v-model="form.thumb" placeholder="请输入员工照片" />
-        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="部门id" prop="deptId">
           <el-input v-model="form.deptId" placeholder="请输入部门id" />
         </el-form-item>
-        <el-form-item label="上级主管id" prop="pid">
-          <el-input v-model="form.pid" placeholder="请输入上级主管id" />
-        </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="职位id" prop="positionId">
           <el-input v-model="form.positionId" placeholder="请输入职位id" />
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="职务" prop="positionName">
           <el-input v-model="form.positionName" placeholder="请输入职务" />
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="职级" prop="positionRank">
           <el-input v-model="form.positionRank" placeholder="请输入职级" />
         </el-form-item>
-        <el-form-item label="身份类型:0未设置,1企业员工,2劳务派遣,3兼职员工" prop="isStaff">
-          <el-input v-model="form.isStaff" placeholder="请输入身份类型:0未设置,1企业员工,2劳务派遣,3兼职员工" />
-        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="工号" prop="jobNumber">
           <el-input v-model="form.jobNumber" placeholder="请输入工号" />
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="性别" prop="sex">
+          <el-input v-model="form.sex" placeholder="请输入性别" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="别名" prop="nickname">
+          <el-input v-model="form.nickname" placeholder="请输入别名" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="员工类型" prop="type">
+          <el-input v-model="form.type" placeholder="请输入员工类型" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="生日" prop="birthday">
-          <el-date-picker clearable
+          <el-date-picker 
+            clearable
             v-model="form.birthday"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择生日">
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择生日"
+            style="width: 100%">
           </el-date-picker>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="年龄" prop="age">
-          <el-input v-model="form.age" placeholder="请输入年龄" />
+          <el-input-number v-model="form.age" placeholder="请输入年龄" :min="0" controls-position="right" style="width: 100%" />
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="开始工作时间" prop="workDate">
-          <el-date-picker clearable
+          <el-date-picker 
+            clearable
             v-model="form.workDate"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择开始工作时间">
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择开始工作时间"
+            style="width: 100%">
           </el-date-picker>
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="工作地点" prop="workLocation">
           <el-input v-model="form.workLocation" placeholder="请输入工作地点" />
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="工作团队" prop="team">
           <el-input v-model="form.team" placeholder="请输入工作团队" />
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="籍贯" prop="nativePlace">
           <el-input v-model="form.nativePlace" placeholder="请输入籍贯" />
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="民族" prop="nation">
           <el-input v-model="form.nation" placeholder="请输入民族" />
         </el-form-item>
-        <el-form-item label="家庭地址" prop="homeAddress">
-          <el-input v-model="form.homeAddress" placeholder="请输入家庭地址" />
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="政治面貌" prop="political">
+          <el-select v-model="form.political" placeholder="请选择政治面貌" style="width: 100%">
+            <el-option label="未设置" value="0"></el-option>
+            <el-option label="中共党员" value="1"></el-option>
+            <el-option label="团员" value="2"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="现居地址" prop="currentAddress">
-          <el-input v-model="form.currentAddress" placeholder="请输入现居地址" />
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="婚姻状况" prop="maritalStatus">
+          <el-input v-model="form.maritalStatus" placeholder="请输入婚姻状况" />
         </el-form-item>
-        <el-form-item label="紧急联系人" prop="contact">
-          <el-input v-model="form.contact" placeholder="请输入紧急联系人" />
-        </el-form-item>
-        <el-form-item label="紧急联系人电话" prop="contactMobile">
-          <el-input v-model="form.contactMobile" placeholder="请输入紧急联系人电话" />
-        </el-form-item>
-        <el-form-item label="户口所在地" prop="residentPlace">
-          <el-input v-model="form.residentPlace" placeholder="请输入户口所在地" />
-        </el-form-item>
-        <el-form-item label="毕业学校" prop="graduateSchool">
-          <el-input v-model="form.graduateSchool" placeholder="请输入毕业学校" />
-        </el-form-item>
-        <el-form-item label="毕业日期" prop="graduateDay">
-          <el-date-picker clearable
-            v-model="form.graduateDay"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择毕业日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="政治面貌:0未设置,1中共党员,2团员" prop="political">
-          <el-input v-model="form.political" placeholder="请输入政治面貌:0未设置,1中共党员,2团员" />
-        </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="身份证" prop="idcard">
           <el-input v-model="form.idcard" placeholder="请输入身份证" />
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="学位" prop="education">
           <el-input v-model="form.education" placeholder="请输入学位" />
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="专业" prop="speciality">
           <el-input v-model="form.speciality" placeholder="请输入专业" />
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="毕业学校" prop="graduateSchool">
+          <el-input v-model="form.graduateSchool" placeholder="请输入毕业学校" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="毕业日期" prop="graduateDay">
+          <el-date-picker 
+            clearable
+            v-model="form.graduateDay"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择毕业日期"
+            style="width: 100%">
+          </el-date-picker>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="家庭地址" prop="homeAddress">
+          <el-input v-model="form.homeAddress" placeholder="请输入家庭地址" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="现居地址" prop="currentAddress">
+          <el-input v-model="form.currentAddress" placeholder="请输入现居地址" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="紧急联系人" prop="contact">
+          <el-input v-model="form.contact" placeholder="请输入紧急联系人" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="紧急联系人电话" prop="contactMobile">
+          <el-input v-model="form.contactMobile" placeholder="请输入紧急联系人电话" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-form-item label="户口性质" prop="residentType">
+          <el-input v-model="form.residentType" placeholder="请输入户口性质" />
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="户口所在地" prop="residentPlace">
+          <el-input v-model="form.residentPlace" placeholder="请输入户口所在地" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="社保账号" prop="socialAccount">
           <el-input v-model="form.socialAccount" placeholder="请输入社保账号" />
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="医保账号" prop="medicalAccount">
           <el-input v-model="form.medicalAccount" placeholder="请输入医保账号" />
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="公积金账号" prop="providentAccount">
           <el-input v-model="form.providentAccount" placeholder="请输入公积金账号" />
         </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="银行卡号" prop="bankAccount">
           <el-input v-model="form.bankAccount" placeholder="请输入银行卡号" />
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="开户行" prop="bankInfo">
           <el-input v-model="form.bankInfo" placeholder="请输入开户行" />
         </el-form-item>
-        <el-form-item label="档案附件" prop="fileIds">
-          <el-input v-model="form.fileIds" placeholder="请输入档案附件" />
-        </el-form-item>
-        <el-form-item label="员工个人简介" prop="desc">
-            <el-input v-model="form.desc" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
+      </el-col>
+      <el-col :span="12">
         <el-form-item label="员工入职日期" prop="entryTime">
-          <el-date-picker clearable
+          <el-date-picker 
+            clearable
             v-model="form.entryTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择员工入职日期">
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择员工入职日期"
+            style="width: 100%">
           </el-date-picker>
         </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="12">
         <el-form-item label="员工离职日期" prop="levelTime">
-          <el-date-picker clearable
+          <el-date-picker 
+            clearable
             v-model="form.levelTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择员工离职日期">
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择员工离职日期"
+            style="width: 100%">
           </el-date-picker>
         </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="身份类型" prop="isStaff">
+          <el-select v-model="form.isStaff" placeholder="请选择身份类型" style="width: 100%">
+            <el-option label="未设置" value="0"></el-option>
+            <el-option label="企业员工" value="1"></el-option>
+            <el-option label="劳务派遣" value="2"></el-option>
+            <el-option label="兼职员工" value="3"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+    </el-row>
+    
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <el-form-item label="员工个人简介" prop="description">
+          <el-input 
+            v-model="form.description" 
+            type="textarea" 
+            placeholder="请输入员工个人简介" 
+            :rows="3" />
+        </el-form-item>
+      </el-col>
+    </el-row>
+  </el-form>
+  <template #footer>
+    <div class="dialog-footer">
+      <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
+      <el-button @click="cancel">取 消</el-button>
+    </div>
+  </template>
+</el-dialog>
   </div>
 </template>
 
@@ -363,7 +529,7 @@ const initFormData: StaffInfoForm = {
   bankAccount: undefined,
   bankInfo: undefined,
   fileIds: undefined,
-  desc: undefined,
+  description: undefined,
   entryTime: undefined,
   levelTime: undefined,
   status: undefined,

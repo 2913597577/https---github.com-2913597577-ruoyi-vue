@@ -109,15 +109,15 @@
 
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['myCustomer:customerTracking:edit']"></el-button>
+                v-hasPermi="['myCustomer:customerTracking:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['myCustomer:customerTracking:remove']"></el-button>
+                v-hasPermi="['myCustomer:customerTracking:remove']">删除</el-button>
             </el-tooltip>
             <el-tooltip content="提交" placement="top">
-              <el-button link type="primary" icon="Upload" @click="handleSubmit(scope.row)"
-                v-hasPermi="['myCustomer:customerTracking:submit']"></el-button>
+              <el-button link type="success" icon="Upload" @click="handleSubmit(scope.row)"
+                v-hasPermi="['myCustomer:customerTracking:submit']" v-if="scope.row.submitStatus == 0 && scope.row.trackingType==2">提交</el-button>
             </el-tooltip>
 
           </template>
@@ -227,6 +227,7 @@ import { listCustomerTracking, getCustomerTracking, delCustomerTracking, addCust
 import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from '@/api/myCustomer/customerTracking/types';
 import { addCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { useRoute } from 'vue-router';  // 用于接收路由参数
+import { VueScopedPlugin } from 'unocss/vite';
 
 
 const route = useRoute();
