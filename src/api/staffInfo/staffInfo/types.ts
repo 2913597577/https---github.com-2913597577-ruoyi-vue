@@ -212,7 +212,7 @@ export interface StaffInfoVO {
   /**
    * 员工个人简介
    */
-  desc: string;
+  description: string;
 
   /**
    * 员工入职日期
@@ -445,7 +445,7 @@ export interface StaffInfoForm extends BaseEntity {
   /**
    * 员工个人简介
    */
-  desc?: string;
+  description?: string;
 
   /**
    * 员工入职日期
