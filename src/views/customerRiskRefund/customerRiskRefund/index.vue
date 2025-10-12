@@ -40,14 +40,14 @@
     <el-card shadow="never">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerRiskRefund:customerRiskRefund:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
               v-hasPermi="['customerRiskRefund:customerRiskRefund:edit']">修改</el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
               v-hasPermi="['customerRiskRefund:customerRiskRefund:remove']">删除</el-button>

@@ -5,8 +5,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="法务支持" prop="legalSupport" label-width="68px">
-              <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+              <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+                style="width: 100%;" @change="handleLegalSupportChange">
+                <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+                  :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="意向客户" prop="intendedCustomer" label-width="68px">
               <el-input v-model="queryParams.intendedCustomer" placeholder="请输入意向客户" clearable
@@ -44,10 +48,9 @@
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerIntention:customerIntention:add']">新增</el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
-              v-hasPermi="['customerIntention:customerIntention:edit']">修改</el-button>
-          </el-col>
+          <!-- <el-col :span="1.5">
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerIntention:customerIntention:edit']">修改</el-button>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
               v-hasPermi="['customerIntention:customerIntention:remove']">删除</el-button>
@@ -102,7 +105,11 @@
           <el-input v-model="form.introducer" placeholder="请输入介绍人" />
         </el-form-item>
         <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
-          <el-input v-model="form.legalSupport" placeholder="请输入法务支持" />
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="意向客户" prop="intendedCustomer" label-width="90px">
           <el-input v-model="form.intendedCustomer" placeholder="请输入意向客户" />
@@ -138,6 +145,7 @@
 <script setup name="CustomerIntention" lang="ts">
 import { listCustomerIntention, getCustomerIntention, delCustomerIntention, addCustomerIntention, updateCustomerIntention } from '@/api/customerIntention/customerIntention';
 import { CustomerIntentionVO, CustomerIntentionQuery, CustomerIntentionForm } from '@/api/customerIntention/customerIntention/types';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
@@ -150,6 +158,35 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
+const lawyerList = ref([]);
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+      form.value.legalSupport = selectedLawyer.userName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.legalSupport = undefined;
+  }
+}
 
 const queryFormRef = ref<ElFormInstance>();
 const customerIntentionFormRef = ref<ElFormInstance>();
@@ -246,7 +283,9 @@ const handleUpdate = async (row?: CustomerIntentionVO) => {
   reset();
   const _id = row?.id || ids.value[0]
   const res = await getCustomerIntention(_id);
+  console.log('修改的客户意向登记：', res.data);
   Object.assign(form.value, res.data);
+
   dialog.visible = true;
   dialog.title = "修改客户意向登记";
 }
@@ -285,6 +324,7 @@ const handleExport = () => {
 }
 
 onMounted(() => {
+  loadLawyerSupportList();
   getList();
 });
 </script>
