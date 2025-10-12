@@ -37,6 +37,7 @@ export const getServiceData = (params?: {
   year?: number
   month?: number
   day?: number
+  lawyerId?: string
 }) => {
   return request({
     url: '/common/getServiceData',

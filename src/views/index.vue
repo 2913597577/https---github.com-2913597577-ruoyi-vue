@@ -33,18 +33,29 @@
 
           <!-- 数据表格 -->
           <el-row :gutter="20">
-            <el-col :span="4">
+            <el-col :span="24">
               <el-table :data="serviceData" style="width: 100%" border size="small">
-                <el-table-column prop="name" label="服务数据" width="120" />
-                <el-table-column prop="count" label="数量" width="120" />
+                <el-table-column prop="trackingCount" label="服务数量" width="120" />
+                <el-table-column prop="customerCount" label="客户数量" width="120" />
+                <el-table-column prop="insuranceCount" label="保单数量" width="120" />
+                <el-table-column prop="riskDataCount" label="风险客户数量" width="120" />
+                <el-table-column prop="refundDataCount" label="退费客户数量" width="120" />
+                <el-table-column prop="refundAmountSum" label="退费金额" width="120" />
+                <el-table-column prop="returnTrackingCount" label="回访次数" width="120" />
+                <el-table-column prop="visitTrackingCount" label="出访次数" width="120" />
+                <el-table-column prop="referralCount" label="转介绍客户数量" width="120" />
+                <el-table-column prop="caseTrackingCount" label="案件总数" width="120" />
+                <el-table-column prop="undoTrackingCount" label="待处理数量" width="120" />
+                <el-table-column prop="doingTrackingCount" label="跟进中数量" width="120" />
+                <el-table-column prop="didTrackingCount" label="已完结数量" width="120" />
               </el-table>
             </el-col>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <el-table :data="riskRefundData" style="width: 100%" border size="small">
                 <el-table-column prop="name" label="风险退费数据" width="120" />
                 <el-table-column prop="count" label="数量/金额" width="120" />
               </el-table>
-            </el-col>
+            </el-col> -->
           </el-row>
         </el-card>
       </el-col>
@@ -85,6 +96,14 @@
             />
           </el-select>
         </el-form-item>
+
+        <el-form-item label="法务支持">
+              <el-select filterable v-model="filterForm.lawyerId" placeholder="请选择法务支持人员" clearable
+                style="width: 100%;">
+                <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+                  :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+              </el-select>
+            </el-form-item>
       </el-form>
 
       <template #footer>
@@ -128,6 +147,7 @@ import { onMounted, ref, reactive, computed } from 'vue'
 import * as echarts from 'echarts'
 import { getCustomerType, getCustomerCategory, getRiskRefundData } from '@/api/common'
 import { getServiceData } from '@/api/common'
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo'
 
 
 const chartRef = ref()
@@ -136,20 +156,18 @@ const totalCustomers = ref(0)
 const showFilterDialog = ref(false) // 控制筛选弹窗显示
 let chartInstance: any = null
 let barChartInstance: any = null
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 // 数据统计筛选表单
 const filterForm = reactive({
   year: undefined as number | undefined,
   month: undefined as number | undefined,
-  day: undefined as number | undefined
+  day: undefined as number | undefined,
+  lawyerId: undefined as string | undefined
 })
 
 // 数据统计表格数据
-const serviceData = ref([
-  { name: '客户数量', count: 0, type: 'customer' },
-  { name: '服务数量', count: 0, type: 'tracking' },
-  { name: '保单数量', count: 0, type: 'insurance' }
-])
+const serviceData = ref([])
 
 // 退费风险数据数据
 const riskRefundData = ref([
@@ -180,13 +198,10 @@ const fetchServiceData = async () => {
     const res = await getServiceData({
       year: filterForm.year,
       month: filterForm.month,
-      day: filterForm.day
+      day: filterForm.day,
+      lawyerId:filterForm.lawyerId
     })
-
-    // 更新表格数据
-    serviceData.value[0].count = res.data.customerCount || 0
-    serviceData.value[1].count = res.data.trackingCount || 0
-    serviceData.value[2].count = res.data.insuranceCount || 0
+    serviceData.value=res.data
   } catch (error) {
     console.error('获取数据失败:', error)
   }
@@ -215,14 +230,15 @@ const resetFilter = () => {
   filterForm.year = undefined
   filterForm.month = undefined
   filterForm.day = undefined
+  filterForm.lawyerId = undefined
   fetchServiceData()
-  fetchRiskRefundData()
+  //fetchRiskRefundData()
 }
 
 // 筛选确认
 const handleFilterConfirm = () => {
   fetchServiceData()
-  fetchRiskRefundData()
+ // fetchRiskRefundData()
   showFilterDialog.value = false
 }
 
@@ -304,7 +320,18 @@ const initBarChart = () => {
    }
  });
 
-
+const lawyerList = ref([]);
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
 
 const loadCustomerCategoryData = () => {
   getCustomerCategory().then(res => {
@@ -348,8 +375,9 @@ onMounted(() => {
   initBarChart()
   loadCustomerTypeData()
   loadCustomerCategoryData()
+  loadLawyerSupportList()
   fetchServiceData() // 加载服务数据
-  fetchRiskRefundData() // 加载退费风险数据
+  //fetchRiskRefundData() // 加载退费风险数据
 })
 </script>
 
