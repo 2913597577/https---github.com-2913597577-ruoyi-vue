@@ -102,7 +102,8 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="300" fixed="right">
           <template #default="scope">
             <div class="table-action-buttons">
-              <el-button link type="success" icon="Operation" @click="handleProcess(scope.row)">处置</el-button>
+              <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
+                @click="handleProcess(scope.row)">处置</el-button>
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
               <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
             </div>
@@ -114,182 +115,294 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
-    <!-- 添加或修改客户信息录入对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="80%" append-to-body>
-      <!-- 外层卡片：增加整体边框与阴影 -->
-      <el-card class="transfer-form-card" shadow="always" border>
-        <el-form ref="customerTransferFormRef" :model="form" :rules="rules" label-width="90px" size="medium">
-          <!-- 1. 公司信息分组 -->
-          <div class="form-group">
-            <h3 class="group-title">公司信息</h3>
-            <el-row :gutter="16">
-              <el-col :span="12">
-                <el-form-item label="公司名称" prop="companyName">
-                  <el-input v-model="form.companyName" placeholder="请输入公司名称" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="所属行业" prop="companyIndustry">
-                  <el-input v-model="form.companyIndustry" placeholder="请输入公司所属行业" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="公司地址" prop="companyAddress">
-                  <el-input v-model="form.companyAddress" placeholder="请输入公司地址" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="员工人数" prop="employeeCount">
-                  <el-input v-model="form.employeeCount" placeholder="请输入员工人数" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="24">
-                <el-form-item label="客户描述" prop="customerDescription">
-                  <el-input v-model="form.customerDescription" type="textarea" placeholder="请输入内容" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
 
-          <!-- 2. 对接人信息分组 -->
-          <div class="form-group">
-            <h3 class="group-title">对接人信息</h3>
-            <el-row :gutter="16">
-              <el-col :span="12">
-                <el-form-item label="对接人" prop="contactPerson">
-                  <el-input v-model="form.contactPerson" placeholder="请输入公司对接人" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="对接人电话" prop="contactInfo">
-                  <el-input v-model="form.contactInfo" placeholder="请输入公司对接人联系方式" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="对接人职务" prop="contactPosition">
-                  <el-input v-model="form.contactPosition" placeholder="请输入对接人职务" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="对接人年龄" prop="contactAge">
-                  <el-input v-model="form.contactAge" placeholder="请输入对接人年龄" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
 
-          <!-- 3. 附赠自然人信息分组 -->
-          <div class="form-group">
-            <h3 class="group-title">附赠自然人信息</h3>
-            <el-row :gutter="16">
-              <el-col :span="12">
-                <el-form-item label="附赠自然人" prop="additionalPerson">
-                  <el-input v-model="form.additionalPerson" placeholder="请输入附赠自然人" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="自然人电话" prop="additionalContact">
-                  <el-input v-model="form.additionalContact" placeholder="请输入附赠自然人联系方式" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="自然人职务" prop="additionalPosition">
-                  <el-input v-model="form.additionalPosition" placeholder="请输入附赠自然人职务" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="自然人年龄" prop="additionalAge">
-                  <el-input v-model="form.additionalAge" placeholder="请输入附赠自然人年龄" />
-                </el-form-item>
-              </el-col>
-            </el-row>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="90%" append-to-body>
+      <div class="min-h-[800px] bg-white p-4">
+        <!-- 头部区域 -->
+        <div class="border-b-2 border-black p-4 flex justify-between items-start mb-2">
+          <div class="flex items-center gap-2">
+            <div class="w-12 h-12 bg-gray-800 rounded flex items-center justify-center text-white font-bold">DC</div>
+            <div>
+              <div class="font-bold text-lg">大成正服</div>
+              <div class="text-xs">DACHENGZHIFU</div>
+            </div>
           </div>
+          <div class="text-right text-sm">让每一家公司都拥有自己的法务部</div>
+        </div>
 
-          <!-- 4. 费用与服务信息分组 -->
-          <div class="form-group">
-            <h3 class="group-title">费用与服务信息</h3>
-            <el-row :gutter="16">
-              <el-col :span="12">
-                <el-form-item label="咨询情况" prop="lawyerConsultation">
-                  <el-input v-model="form.lawyerConsultation" type="textarea" placeholder="请输入内容" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="费用沟通" prop="otherFee">
-                  <el-input v-model="form.otherFee" type="textarea" placeholder="请输入内容" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="欠款问题" prop="debtRemark">
-                  <el-input v-model="form.debtRemark" type="textarea" placeholder="请输入内容" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="实付金额" prop="actualPayment">
-                  <el-input v-model="form.actualPayment" placeholder="请输入实付金额" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="尾款情况" prop="balanceStatus">
-                  <el-input v-model="form.balanceStatus" placeholder="请输入尾款情况" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="开始时间" prop="serviceStart">
-                  <el-date-picker clearable v-model="form.serviceStart" type="datetime"
-                    value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择服务周期开始时间"></el-date-picker>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="结束时间" prop="serviceEnd">
-                  <el-date-picker clearable v-model="form.serviceEnd" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
-                    placeholder="请选择服务周期结束时间"></el-date-picker>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
+        <!-- 流转单标题 -->
+        <div class="text-center py-4 border-b border-black mb-2">
+          <h1 class="text-2xl font-bold">成交客户内部流转单</h1>
+        </div>
 
-          <!-- 5. 历史合作与纠纷分组 -->
-          <div class="form-group">
-            <h3 class="group-title">历史合作与纠纷</h3>
-            <el-row :gutter="16">
-              <el-col :span="12">
-                <el-form-item label="合作公司" prop="preCompany">
-                  <el-input v-model="form.preCompany" placeholder="请输入以前合作公司名称" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="不合作原因" prop="preReason">
-                  <el-input v-model="form.preReason" type="textarea" placeholder="请输入内容" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="24">
-                <el-form-item label="出现过的纠纷及解决方式" prop="preDiscuss">
-                  <el-input v-model="form.preDiscuss" type="textarea" placeholder="请输入内容" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
+        <!-- 交易日期与人员信息 -->
+        <div class="border-b border-black mb-2">
+          <table class="w-full border-collapse">
+            <tr>
+              <td class="border-r border-black p-2 w-32 bg-gray-50">交易日期：</td>
+              <td class="p-2">
+                <el-date-picker clearable v-model="form.transactionDate" type="date" value-format="YYYY-MM-DD"
+                  placeholder="选择日期" size="small"></el-date-picker>
+              </td>
+              <td class="border-l border-black p-2 w-32 bg-gray-50">邀约人：</td>
+              <td class="p-2">
+                <el-input v-model="form.inviter" placeholder="请输入邀约人" size="small"></el-input>
+              </td>
+              <td class="border-l border-black p-2 w-32 bg-gray-50">客户经理：</td>
+              <td class="p-2">
+                <el-input v-model="form.customerManager" placeholder="请输入客户经理" size="small"></el-input>
+              </td>
+            </tr>
+          </table>
+        </div>
 
-          <!-- 6. 其他事项分组 -->
-          <div class="form-group">
-            <h3 class="group-title">其他事项</h3>
-            <el-row :gutter="16">
-              <el-col :span="12">
-                <el-form-item label="待处理事项" prop="pendingRemark">
-                  <el-input v-model="form.pendingRemark" type="textarea" placeholder="请输入内容" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="财务签名" prop="financeSignature">
-                  <el-input v-model="form.financeSignature" type="textarea" placeholder="请输入内容" />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-        </el-form>
-      </el-card>
+        <!-- 公司信息区域 -->
+        <div class="border-b border-black mb-2">
+          <table class="w-full border-collapse">
+            <!-- 公司名称 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 w-32 bg-gray-50">公司名称：</td>
+              <td colspan="7" class="p-2">
+                <el-input v-model="form.companyName" placeholder="请输入公司名称" size="small"
+                  :rules="[{ required: true, message: '请输入公司名称', trigger: 'blur' }]"></el-input>
+              </td>
+            </tr>
 
+            <!-- 公司对接人信息 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 bg-gray-50">公司对接人<br>姓名：</td>
+              <td class="border-r border-black p-2 w-40">
+                <el-input v-model="form.contactPerson" placeholder="对接人姓名" size="small"></el-input>
+              </td>
+              <td class="border-r border-black p-2 w-32 bg-gray-50">联系方式：<br>（微信）</td>
+              <td class="border-r border-black p-2 w-40">
+                <el-input v-model="form.contactInfo" placeholder="联系方式" size="small"></el-input>
+              </td>
+              <td class="border-r border-black p-2 w-24 bg-gray-50">职务：</td>
+              <td class="border-r border-black p-2 w-32">
+                <el-input v-model="form.contactPosition" placeholder="职务" size="small"></el-input>
+              </td>
+              <td class="border-r border-black p-2 w-24 bg-gray-50">年龄：</td>
+              <td class="p-2">
+                <el-input v-model="form.contactAge" placeholder="年龄" size="small" type="number"></el-input>
+              </td>
+            </tr>
+
+            <!-- 附赠自然人信息 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 bg-gray-50">附赠自然人：</td>
+              <td class="border-r border-black p-2">
+                <el-input v-model="form.additionalPerson" placeholder="自然人姓名" size="small"></el-input>
+              </td>
+              <td class="border-r border-black p-2 bg-gray-50">联系方式：<br>（微信）</td>
+              <td class="border-r border-black p-2">
+                <el-input v-model="form.additionalContact" placeholder="联系方式" size="small"></el-input>
+              </td>
+              <td class="border-r border-black p-2 bg-gray-50">职务：</td>
+              <td class="border-r border-black p-2">
+                <el-input v-model="form.additionalPosition" placeholder="职务" size="small"></el-input>
+              </td>
+              <td class="border-r border-black p-2 bg-gray-50">年龄：</td>
+              <td class="p-2">
+                <el-input v-model="form.additionalAge" placeholder="年龄" size="small" type="number"></el-input>
+              </td>
+            </tr>
+
+            <!-- 公司行业与地址 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 bg-gray-50">公司所属行业：</td>
+              <td colspan="3" class="border-r border-black p-2">
+                <el-input v-model="form.companyIndustry" placeholder="请输入所属行业" size="small"></el-input>
+              </td>
+              <td class="border-r border-black p-2 bg-gray-50">公司地址：</td>
+              <td colspan="3" class="p-2">
+                <el-input v-model="form.companyAddress" placeholder="请输入公司地址" size="small"></el-input>
+              </td>
+            </tr>
+
+            <!-- 员工人数与代账公司 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 bg-gray-50">员工人数：</td>
+              <td class="border-r border-black p-2">
+                <el-input v-model="form.employeeCount" placeholder="员工人数" size="small" type="number"></el-input>
+              </td>
+              <td colspan="2" class="border-r border-black p-2 bg-gray-50">是否有代账公司：</td>
+              <td colspan="4" class="p-2">
+                <el-radio-group v-model="form.accountingCompany" size="small">
+                  <el-radio label="是">是</el-radio>
+                  <el-radio label="否">否</el-radio>
+                  <el-radio label="不确定">不确定</el-radio>
+                </el-radio-group>
+              </td>
+            </tr>
+
+            <!-- 客户性格描述 -->
+            <tr>
+              <td colspan="8" class="p-2 bg-gray-50">客户性格及工作习惯描述：</td>
+            </tr>
+            <tr>
+              <td colspan="8" class="p-2 border-b border-black">
+                <el-input v-model="form.customerDescription" type="textarea" placeholder="请描述客户性格及工作习惯" size="small"
+                  rows="2"></el-input>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 签约情况区域 -->
+        <div class="text-center py-2 border-b border-black bg-gray-50 mb-2">
+          <h2 class="text-lg font-bold">签约情况</h2>
+        </div>
+        <div class="border-b border-black mb-2">
+          <table class="w-full border-collapse">
+            <!-- 金额与签约类型 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 w-32 bg-gray-50">支付金额：</td>
+              <td class="border-r border-black p-2 w-40">
+                <el-input v-model="form.actualPayment" placeholder="实付金额" size="small" type="number"></el-input>
+              </td>
+              <td class="border-r border-black p-2 w-32 bg-gray-50">尾款情况：</td>
+              <td class="border-r border-black p-2 flex-1">
+                <el-input v-model="form.balanceStatus" placeholder="尾款情况描述" size="small"></el-input>
+              </td>
+              <td class="border-r border-black p-2 w-48 bg-gray-50">签约类型：</td>
+              <td class="p-2">
+                <el-select v-model="form.contractType" placeholder="选择类型" size="small">
+                  <el-option label="常法" value="常法"></el-option>
+                  <el-option label="单项" value="单项"></el-option>
+                  <el-option label="律师费" value="律师费"></el-option>
+                  <el-option label="其他" value="其他"></el-option>
+                </el-select>
+              </td>
+            </tr>
+
+            <!-- 常法版本与服务周期 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 bg-gray-50">常法签约：</td>
+              <td class="border-r border-black p-2">
+                <el-radio-group v-model="form.serviceType" size="small">
+                  <el-radio label="升级版">升级版</el-radio>
+                  <el-radio label="标准版">标准版</el-radio>
+                </el-radio-group>
+              </td>
+              <td class="border-r border-black p-2 bg-gray-50">服务周期：</td>
+              <td class="border-r border-black p-2">
+                <div class="flex gap-2 items-center">
+                  <el-date-picker clearable v-model="form.serviceStart" type="date" value-format="YYYY-MM-DD"
+                    placeholder="开始日期" size="small"></el-date-picker>
+                  <span class="text-gray-500">至</span>
+                  <el-date-picker clearable v-model="form.serviceEnd" type="date" value-format="YYYY-MM-DD"
+                    placeholder="结束日期" size="small"></el-date-picker>
+                </div>
+              </td>
+              <td class="border-r border-black p-2 bg-gray-50">财务确<br>认状态：</td>
+              <td class="p-2">
+                <el-select v-model="form.financeConfirmed" placeholder="选择状态" size="small">
+                  <el-option label="已确认" value="已确认"></el-option>
+                  <el-option label="未确认" value="未确认"></el-option>
+                </el-select>
+              </td>
+            </tr>
+
+            <!-- 财务签字 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 bg-gray-50">财务签字：</td>
+              <td colspan="5" class="p-2">
+                <el-input v-model="form.financeSignature" placeholder="请输入财务签字信息" size="small"></el-input>
+              </td>
+            </tr>
+
+            <!-- 律师咨询情况 -->
+            <tr class="border-b border-black">
+              <td class="border-r border-black p-2 bg-gray-50">律师咨询情况：</td>
+              <td colspan="5" class="p-2">
+                <el-input v-model="form.lawyerConsultation" type="textarea" placeholder="请描述咨询情况" size="small"
+                  rows="2"></el-input>
+              </td>
+            </tr>
+
+            <!-- 其他费用沟通 -->
+            <tr>
+              <td class="border-r border-black p-2 bg-gray-50">其他费用沟通：</td>
+              <td colspan="5" class="p-2">
+                <el-input v-model="form.otherFee" type="textarea" placeholder="请描述其他费用沟通情况" size="small"
+                  rows="2"></el-input>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 客户情况概述区域 -->
+        <div class="text-center py-2 border-b border-black bg-gray-50 mb-2">
+          <h2 class="text-lg font-bold">客户情况概述</h2>
+        </div>
+        <div class="border-b border-black mb-2">
+          <table class="w-full border-collapse">
+            <!-- 以前是否有法务 -->
+            <tr class="border-b border-black">
+              <td class="p-3">
+                <div class="flex items-center gap-4 flex-wrap">
+                  <span class="whitespace-nowrap">以前是否有过公司法务：</span>
+                  <el-radio-group v-model="form.preLegal" size="small">
+                    <el-radio label="是">是</el-radio>
+                    <el-radio label="否">否</el-radio>
+                  </el-radio-group>
+                  <span class="ml-4 whitespace-nowrap">合作公司名称：</span>
+                  <el-input v-model="form.preCompany" placeholder="合作公司名称" size="small" style="width: 200px"></el-input>
+                  <span class="ml-4 whitespace-nowrap">不合作原因：</span>
+                  <el-input v-model="form.preReason" placeholder="不合作原因" size="small"
+                    style="flex: 1; min-width: 200px"></el-input>
+                </div>
+              </td>
+            </tr>
+
+            <!-- 以前纠纷及解决方式 -->
+            <tr class="border-b border-black">
+              <td class="p-3">
+                <div class="flex items-start gap-2">
+                  <span class="whitespace-nowrap">公司以前出现过的纠纷及解决方式：</span>
+                  <el-input v-model="form.preDiscuss" type="textarea" placeholder="请详细描述纠纷及解决方式" size="small" rows="2"
+                    style="flex: 1"></el-input>
+                </div>
+              </td>
+            </tr>
+
+            <!-- 待处理事项登记 -->
+            <tr class="border-b border-black">
+              <td class="p-3">
+                <div class="leading-relaxed">
+                  <span>待处理事项登记：</span>
+                  <el-input v-model="form.pendingRemark" type="textarea" placeholder="劳资纠纷、合同纠纷、借贷纠纷等" size="small"
+                    rows="2" style="width: 100%; margin-top: 8px"></el-input>
+                  <!-- 待处理事项列表可根据需要添加 -->
+                </div>
+              </td>
+            </tr>
+
+            <!-- 欠款问题登记 -->
+            <tr>
+              <td class="p-3">
+                <div class="leading-relaxed">
+                  <span>欠款问题请详细登记：</span>
+                  <el-input v-model="form.debtRemark" type="textarea" placeholder="相关主体、已知债务人信息、标的额等" size="small"
+                    rows="2" style="width: 100%; margin-top: 8px"></el-input>
+                  <!-- 欠款详情列表可根据需要添加 -->
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 备注大文本区域 -->
+        <div class="min-h-[150px] border-b border-black p-4 mb-4">
+          <div class="font-medium mb-2">其他备注信息：</div>
+          <el-input v-model="form.otherRemark" type="textarea" placeholder="请输入其他需要补充的备注信息" size="small" rows="4"
+            style="width: 100%"></el-input>
+        </div>
+      </div>
+
+      <!-- 对话框底部按钮 -->
       <template #footer>
         <div class="dialog-footer">
           <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
@@ -297,6 +410,7 @@
         </div>
       </template>
     </el-dialog>
+
 
     <el-dialog v-model="auditDialogVisible" title="审核" width="500px" append-to-body>
       <el-form :model="auditForm" label-width="100px">
@@ -387,6 +501,7 @@ const initFormData: CustomerTransferForm = {
   pendingRemark: undefined,
   debtDetails: [],
   debtRemark: undefined,
+
 }
 const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   form: { ...initFormData },
@@ -591,6 +706,7 @@ const handleExport = () => {
 }
 
 onMounted(() => {
+ 
   getList();
 });
 </script>
