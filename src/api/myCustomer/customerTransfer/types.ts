@@ -159,6 +159,9 @@ export interface CustomerTransferVO {
    */
   debtRemark: string;
 
+
+  remark: string;
+
 }
 
 export interface CustomerTransferForm extends BaseEntity {
