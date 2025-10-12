@@ -31,3 +31,28 @@ export const getCustomerCategory = () => {
     method: 'get'
   })
 }
+
+// 获取服务数据统计
+export const getServiceData = (params?: {
+  year?: number
+  month?: number
+  day?: number
+}) => {
+  return request({
+    url: '/common/getServiceData',
+    method: 'get',
+    params
+  })
+}
+
+export const getRiskRefundData = (params?: {
+  year?: number
+  month?: number
+  day?: number
+}) => {
+  return request({
+    url: '/common/getRiskRefundData',
+    method: 'get',
+    params
+  })
+}

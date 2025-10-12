@@ -227,7 +227,6 @@ import { listCustomerTracking, getCustomerTracking, delCustomerTracking, addCust
 import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from '@/api/myCustomer/customerTracking/types';
 import { addCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { useRoute } from 'vue-router';  // 用于接收路由参数
-import { VueScopedPlugin } from 'unocss/vite';
 
 
 const route = useRoute();

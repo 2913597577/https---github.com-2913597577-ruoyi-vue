@@ -6,20 +6,96 @@
       </el-col>
 
       <el-col :sm="12" :lg="12" style="padding-left: 10px">
-        <!-- <el-col :sm="8" :lg="6"> -->
-              <div class="total-card">
-                <div class="total-content">
-                  <i class="el-icon-user-solid" style="font-size: 24px; color: #409EFF;"></i>
-                  <div class="total-info">
-                    <div class="total-label">客户总数量</div>
-                    <div class="total-number">{{ totalCustomers }}</div>
-                  </div>
-                </div>
-              </div>
-            <!-- </el-col> -->
+        <div class="total-card">
+          <div class="total-content">
+            <i class="el-icon-user-solid" style="font-size: 24px; color: #409EFF;"></i>
+            <div class="total-info">
+              <div class="total-label">客户总数量</div>
+              <div class="total-number">{{ totalCustomers }}</div>
+            </div>
+          </div>
+        </div>
       </el-col>
     </el-row>
-    
+
+    <!-- 数据统计区域 -->
+    <el-row :gutter="10" class="mb-4">
+      <el-col :span="24">
+        <el-card>
+          <template #header>
+            <div class="card-header">
+              <span>{{ statisticsTitle }}</span>
+              <el-button type="primary" size="small" @click="showFilterDialog = true" style="margin-left: 10px;">
+                筛选
+              </el-button>
+            </div>
+          </template>
+
+          <!-- 数据表格 -->
+          <el-row :gutter="20">
+            <el-col :span="4">
+              <el-table :data="serviceData" style="width: 100%" border size="small">
+                <el-table-column prop="name" label="服务数据" width="120" />
+                <el-table-column prop="count" label="数量" width="120" />
+              </el-table>
+            </el-col>
+            <el-col :span="4">
+              <el-table :data="riskRefundData" style="width: 100%" border size="small">
+                <el-table-column prop="name" label="风险退费数据" width="120" />
+                <el-table-column prop="count" label="数量/金额" width="120" />
+              </el-table>
+            </el-col>
+          </el-row>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <!-- 筛选弹窗 -->
+    <el-dialog v-model="showFilterDialog" title="数据筛选" width="500px" append-to-body>
+      <el-form :model="filterForm" label-width="60px" size="small">
+        <el-form-item label="年份">
+          <el-select v-model="filterForm.year" placeholder="请选择年份" clearable style="width: 100%">
+            <el-option
+              v-for="item in years"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="月份">
+          <el-select v-model="filterForm.month" placeholder="请选择月份" clearable style="width: 100%">
+            <el-option
+              v-for="item in 12"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="日期">
+          <el-select v-model="filterForm.day" placeholder="请选择日期" clearable style="width: 100%">
+            <el-option
+              v-for="item in daysInMonth"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="showFilterDialog = false">取消</el-button>
+          <el-button @click="resetFilter">重置</el-button>
+          <el-button type="primary" @click="handleFilterConfirm">确定</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
     <!-- 客户总览区域 -->
     <el-row :gutter="10">
       <el-col :sm="24" :lg="24">
@@ -42,23 +118,113 @@
         </el-card>
       </el-col>
     </el-row>
-    
+
     <el-divider style="margin: 10px 0;" />
   </div>
 </template>
 
 <script setup name="Index" lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive, computed } from 'vue'
 import * as echarts from 'echarts'
-import { getCustomerType, getCustomerCategory } from '@/api/common'
+import { getCustomerType, getCustomerCategory, getRiskRefundData } from '@/api/common'
+import { getServiceData } from '@/api/common'
 
 
 const chartRef = ref()
-const barChartRef = ref() // 新增柱状图引用
+const barChartRef = ref()
 const totalCustomers = ref(0)
+const showFilterDialog = ref(false) // 控制筛选弹窗显示
 let chartInstance: any = null
-let barChartInstance: any = null // 新增柱状图实例
+let barChartInstance: any = null
 
+// 数据统计筛选表单
+const filterForm = reactive({
+  year: undefined as number | undefined,
+  month: undefined as number | undefined,
+  day: undefined as number | undefined
+})
+
+// 数据统计表格数据
+const serviceData = ref([
+  { name: '客户数量', count: 0, type: 'customer' },
+  { name: '服务数量', count: 0, type: 'tracking' },
+  { name: '保单数量', count: 0, type: 'insurance' }
+])
+
+// 退费风险数据数据
+const riskRefundData = ref([
+  { name: '风险客户数量', count: 0, type: 'riskDataCount' },
+  { name: '退费客户数量', count: 0, type: 'refundDataCount' },
+  { name: '退费金额', count: 0, type: 'refundAmount' }
+])
+
+// 年份选项（近10年）
+const years = computed(() => {
+  const currentYear = new Date().getFullYear()
+  return Array.from({ length: 10 }, (_, i) => currentYear - i)
+})
+
+// 月份天数
+const daysInMonth = computed(() => {
+  if (!filterForm.year || !filterForm.month) {
+    return Array.from({ length: 31 }, (_, i) => i + 1)
+  }
+
+  const date = new Date(filterForm.year, filterForm.month, 0)
+  return Array.from({ length: date.getDate() }, (_, i) => i + 1)
+})
+
+// 获取服务数据
+const fetchServiceData = async () => {
+  try {
+    const res = await getServiceData({
+      year: filterForm.year,
+      month: filterForm.month,
+      day: filterForm.day
+    })
+
+    // 更新表格数据
+    serviceData.value[0].count = res.data.customerCount || 0
+    serviceData.value[1].count = res.data.trackingCount || 0
+    serviceData.value[2].count = res.data.insuranceCount || 0
+  } catch (error) {
+    console.error('获取数据失败:', error)
+  }
+}
+
+// 获取退费风险数据
+const fetchRiskRefundData = async () => {
+  try {
+    const res = await getRiskRefundData({
+      year: filterForm.year,
+      month: filterForm.month,
+      day: filterForm.day
+    })
+
+    // 更新表格数据
+    riskRefundData.value[0].count = res.data.riskDataCount || 0
+    riskRefundData.value[1].count = res.data.refundDataCount || 0
+    riskRefundData.value[2].count = res.data.refundAmountSum || 0
+  } catch (error) {
+    console.error('获取数据失败:', error)
+  }
+}
+
+// 重置筛选
+const resetFilter = () => {
+  filterForm.year = undefined
+  filterForm.month = undefined
+  filterForm.day = undefined
+  fetchServiceData()
+  fetchRiskRefundData()
+}
+
+// 筛选确认
+const handleFilterConfirm = () => {
+  fetchServiceData()
+  fetchRiskRefundData()
+  showFilterDialog.value = false
+}
 
 // 客户类型映射
 const customerTypeMap: Record<number, string> = {
@@ -76,12 +242,12 @@ const loadCustomerTypeData = () => {
   getCustomerType().then(res => {
     // 计算客户总数量
     totalCustomers.value = res.data.reduce((total: number, item: any) => total + item.count, 0)
-    
+
     const data = res.data.map((item: any) => ({
       value: item.count,
       name: customerTypeMap[item.customer_type]
     }))
-    
+
     const option = {
       title: {
         text: '客户类型分布',
@@ -110,7 +276,7 @@ const loadCustomerTypeData = () => {
         }
       ]
     }
-    
+
     chartInstance.setOption(option)
   })
 }
@@ -122,6 +288,23 @@ const goTarget = (url: string) => {
 const initBarChart = () => {
   barChartInstance = echarts.init(barChartRef.value)
 }
+
+ const statisticsTitle = computed(() => {
+   if (filterForm.year || filterForm.month || filterForm.day) {
+     let title = '';
+     if (filterForm.year) title += `${filterForm.year}年`;
+     if (filterForm.month) title += `${filterForm.month}月`;
+     if (filterForm.day) title += `${filterForm.day}日`;
+     return `${title}数据统计`;
+   } else {
+     // 默认显示当前年月
+     const now = new Date();
+     //return `${now.getFullYear()}年${now.getMonth() + 1}月数据统计`;
+     return `${now.getFullYear()}年数据统计`;
+   }
+ });
+
+
 
 const loadCustomerCategoryData = () => {
   getCustomerCategory().then(res => {
@@ -155,19 +338,19 @@ const loadCustomerCategoryData = () => {
         }
       ]
     }
-    
+
     barChartInstance.setOption(option)
   })
 }
 
 onMounted(() => {
   initChart()
-  initBarChart() // 初始化柱状图
+  initBarChart()
   loadCustomerTypeData()
-  loadCustomerCategoryData() // 加载客户分类数据
+  loadCustomerCategoryData()
+  fetchServiceData() // 加载服务数据
+  fetchRiskRefundData() // 加载退费风险数据
 })
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -224,27 +407,27 @@ onMounted(() => {
       padding-inline-start: 20px;
     }
   }
-  
+
   // 调整客户总数量卡片样式
   .total-card {
     height: 100%;
     display: flex;
     align-items: center;
-    
+
     .total-content {
       display: flex;
       align-items: center;
       width: 100%;
-      
+
       .total-info {
         margin-left: 5px;
-        
+
         .total-label {
           font-size: 12px;
           color: #666;
           margin-bottom: 2px;
         }
-        
+
         .total-number {
           font-size: 18px;
           font-weight: bold;
@@ -252,6 +435,15 @@ onMounted(() => {
         }
       }
     }
+  }
+
+  .card-header {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .mb-4 {
+    margin-bottom: 1rem;
   }
 }
 </style>
