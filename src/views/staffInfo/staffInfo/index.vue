@@ -490,268 +490,329 @@
     </el-dialog>
 
 
-    <el-dialog :title="detailDialog.title" v-model="detailDialog.visible" width="800px" append-to-body>
-      <el-card class="detail-card">
-        <!-- 基本信息分组 -->
-        <div class="detail-group">
-          <h3 class="detail-group-title">基本信息</h3>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">员工姓名：</span>
-                <span>{{ detailForm.name || '无' }}</span>
+<!-- 员工档案详情 -->
+    <el-dialog :title="detailDialog.title" v-model="detailDialog.visible" width="80%" append-to-body
+      :close-on-click-modal="false" :destroy-on-close="true" class="employee-detail-dialog"
+      style="--el-dialog-padding: 0">
+      <!-- 容器：控制内边距、宽度与居中 -->
+      <div class="dialog-container">
+        <!-- 1. 基本信息卡片（含头像区） -->
+        <el-card class="detail-card basic-info-card">
+          <div class="card-header">
+            <h2 class="card-title">基本信息</h2>
+            <div class="avatar-wrapper">
+              <el-image v-if="detailForm.thumb" :src="detailForm.thumb" class="employee-avatar"
+                preview-src-list="[detailForm.thumb]" fit="cover" />
+              <div v-else class="avatar-placeholder">
+                <el-icon class="avatar-icon">
+                  <UserFilled />
+                </el-icon>
+                <span class="placeholder-text">暂无头像</span>
               </div>
+            </div>
+          </div>
+          <el-row :gutter="24" class="info-row">
+            <!-- 员工姓名 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">员工姓名</label>
+              <div class="info-value">{{ detailForm.name || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">员工性别：</span>
-                <span>{{ detailForm.sex || '无' }}</span>
-              </div>
+            <!-- 用户id -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">用户ID</label>
+              <div class="info-value">{{ detailForm.userId || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">头像：</span>
-                <img v-if="detailForm.thumb" :src="detailForm.thumb" alt="头像" style="width: 80px; height: 80px;" />
-              </div>
+            <!-- 电子邮箱 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">电子邮箱</label>
+              <div class="info-value">{{ detailForm.email || '—' }}</div>
             </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">出生日期：</span>
-                <span>{{ parseTime(detailForm.birthday, '{y}-{m}-{d}') || '无' }}</span>
-              </div>
+            <!-- 手机号码 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">手机号码</label>
+              <div class="info-value">{{ detailForm.mobile || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">身份证号码：</span>
-                <span>{{ detailForm.idcard || '无' }}</span>
-              </div>
+            <!-- 性别 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">性别</label>
+              <div class="info-value">{{ detailForm.sex || '—' }}</div>
             </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">政治面貌：</span>
-                <span>
-                  {{ detailForm.political === '1' ? '中共党员'
-                    : detailForm.political === '2' ? '团员'
-                      : detailForm.political === '3' ? '群众'
-                        : '未设置' }}
-                </span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">婚姻状况：</span>
-                <span>{{ detailForm.maritalStatus || '无' }}</span>
-              </div>
+            <!-- 别名 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">别名</label>
+              <div class="info-value">{{ detailForm.nickname || '—' }}</div>
             </el-col>
           </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">民族：</span>
-                <span>{{ detailForm.nation || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">籍贯：</span>
-                <span>{{ detailForm.nativePlace || '无' }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">户口性质：</span>
-                <span>{{ detailForm.residentType || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">户口所在地：</span>
-                <span>{{ detailForm.residentPlace || '无' }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">毕业院校：</span>
-                <span>{{ detailForm.graduateSchool || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">毕业日期：</span>
-                <span>{{ parseTime(detailForm.graduateDay, '{y}-{m}-{d}') || '无' }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">最高学位：</span>
-                <span>{{ detailForm.education || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">专业：</span>
-                <span>{{ detailForm.speciality || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">参加工作时间：</span>
-                <span>{{ parseTime(detailForm.workDate, '{y}-{m}-{d}') || '无' }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">家庭住址：</span>
-                <span>{{ detailForm.homeAddress || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">手机号码：</span>
-                <span>{{ detailForm.mobile || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">电子邮箱：</span>
-                <span>{{ detailForm.email || '无' }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">现住地址：</span>
-                <span>{{ detailForm.currentAddress || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">紧急联系人：</span>
-                <span>{{ detailForm.contact || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">紧急联系电话：</span>
-                <span>{{ detailForm.contactMobile || '无' }}</span>
-              </div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="24">
-              <div class="detail-item">
-                <span class="detail-label">员工简介：</span>
-                <span>{{ detailForm.desc || '无' }}</span>
-              </div>
-            </el-col>
-          </el-row>
-        </div>
+        </el-card>
 
-        <!-- 入职信息分组 -->
-        <div class="detail-group mt-4">
-          <h3 class="detail-group-title">入职信息</h3>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">所在部门：</span>
-                <span>{{ detailForm.deptName || '无' }}</span> <!-- 若接口无deptName，需调整为实际字段 -->
-              </div>
+        <!-- 2. 工作信息卡片 -->
+        <el-card class="detail-card">
+          <div class="card-header">
+            <h2 class="card-title">工作信息</h2>
+          </div>
+          <el-row :gutter="24" class="info-row">
+            <!-- 部门id -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">部门ID</label>
+              <div class="info-value">{{ detailForm.deptId || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">上级主管：</span>
-                <span>{{ detailForm.pidName || '无' }}</span> <!-- 若接口无pidName，需调整为实际字段 -->
-              </div>
+            <!-- 上级主管id -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">上级主管ID</label>
+              <div class="info-value">{{ detailForm.pid || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">岗位：</span>
-                <span>{{ detailForm.positionName || '无' }}</span>
-              </div>
+            <!-- 职位id -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">职位ID</label>
+              <div class="info-value">{{ detailForm.positionId || '—' }}</div>
             </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">入职日期：</span>
-                <span>{{ parseTime(detailForm.entryTime, '{y}-{m}-{d}') || '无' }}</span>
-              </div>
+            <!-- 职务 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">职务</label>
+              <div class="info-value">{{ detailForm.positionName || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">职务：</span>
-                <span>{{ detailForm.positionName || '无' }}</span>
-              </div>
+            <!-- 职级 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">职级</label>
+              <div class="info-value">{{ detailForm.positionRank || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">职级：</span>
-                <span>{{ detailForm.positionRank || '无' }}</span>
-              </div>
+            <!-- 员工类型 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">员工类型</label>
+              <div class="info-value">{{ detailForm.type || '—' }}</div>
             </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">员工类型：</span>
-                <span>{{ detailForm.type || '无' }}</span>
-              </div>
+            <!-- 身份类型 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">身份类型</label>
+              <div class="info-value">{{ detailForm.isStaff || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">员工工号：</span>
-                <span>{{ detailForm.jobNumber || '无' }}</span>
-              </div>
+            <!-- 工号 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">工号</label>
+              <div class="info-value">{{ detailForm.jobNumber || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">社保号：</span>
-                <span>{{ detailForm.socialAccount || '无' }}</span>
-              </div>
+            <!-- 开始工作时间 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">开始工作时间</label>
+              <div class="info-value">{{ detailForm.workDate ? formatDate(detailForm.workDate) : '—' }}</div>
             </el-col>
-          </el-row>
-          <el-row :gutter="20" class="detail-row">
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">工资卡开户行：</span>
-                <span>{{ detailForm.bankInfo || '无' }}</span>
-              </div>
+            <!-- 工作地点 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">工作地点</label>
+              <div class="info-value">{{ detailForm.workLocation || '—' }}</div>
             </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">工资卡帐号：</span>
-                <span>{{ detailForm.bankAccount || '无' }}</span>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="detail-item">
-                <span class="detail-label">公积金号：</span>
-                <span>{{ detailForm.providentAccount || '无' }}</span>
-              </div>
+            <!-- 工作团队 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">工作团队</label>
+              <div class="info-value">{{ detailForm.team || '—' }}</div>
             </el-col>
           </el-row>
-        </div>
-      </el-card>
+        </el-card>
 
-      <template #footer>
+        <!-- 3. 入职离职信息卡片 -->
+        <el-card class="detail-card">
+          <div class="card-header">
+            <h2 class="card-title">入职离职信息</h2>
+          </div>
+          <el-row :gutter="24" class="info-row">
+            <!-- 员工入职日期 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">入职日期</label>
+              <div class="info-value">{{ detailForm.entryTime ? formatDate(detailForm.entryTime) : '—' }}</div>
+            </el-col>
+            <!-- 员工离职日期 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">离职日期</label>
+              <div class="info-value">{{ detailForm.levelTime ? formatDate(detailForm.levelTime) : '—' }}</div>
+            </el-col>
+            <!-- 员工状态 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">员工状态</label>
+              <div class="info-value">
+                <el-tag
+                  :type="detailForm.status === '在职' ? 'success' : (detailForm.status === '离职' ? 'danger' : 'info')"
+                  size="small">
+                  {{ detailForm.status || '—' }}
+                </el-tag>
+              </div>
+            </el-col>
+          </el-row>
+        </el-card>
+
+        <!-- 4. 个人详情卡片 -->
+        <el-card class="detail-card">
+          <div class="card-header">
+            <h2 class="card-title">个人详情</h2>
+          </div>
+          <el-row :gutter="24" class="info-row">
+            <!-- 生日 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">生日</label>
+              <div class="info-value">{{ detailForm.birthday ? formatDate(detailForm.birthday) : '—' }}</div>
+            </el-col>
+            <!-- 年龄 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">年龄</label>
+              <div class="info-value">{{ detailForm.age || '—' }}</div>
+            </el-col>
+            <!-- 籍贯 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">籍贯</label>
+              <div class="info-value">{{ detailForm.nativePlace || '—' }}</div>
+            </el-col>
+            <!-- 民族 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">民族</label>
+              <div class="info-value">{{ detailForm.nation || '—' }}</div>
+            </el-col>
+            <!-- 政治面貌 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">政治面貌</label>
+              <div class="info-value">{{ detailForm.political || '—' }}</div>
+            </el-col>
+            <!-- 婚姻状况 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">婚姻状况</label>
+              <div class="info-value">{{ detailForm.maritalStatus || '—' }}</div>
+            </el-col>
+            <!-- 身份证号 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">身份证号</label>
+              <div class="info-value">{{ formatIdCard(detailForm.idcard) || '—' }}</div>
+            </el-col>
+            <!-- 家庭地址 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">家庭地址</label>
+              <div class="info-value">{{ detailForm.homeAddress || '—' }}</div>
+            </el-col>
+            <!-- 现居地址 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">现居地址</label>
+              <div class="info-value">{{ detailForm.currentAddress || '—' }}</div>
+            </el-col>
+            <!-- 紧急联系人 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">紧急联系人</label>
+              <div class="info-value">{{ detailForm.contact || '—' }}</div>
+            </el-col>
+            <!-- 紧急联系人电话 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">紧急联系人电话</label>
+              <div class="info-value">{{ formatMobile(detailForm.contactMobile) || '—' }}</div>
+            </el-col>
+            <!-- 户口性质 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">户口性质</label>
+              <div class="info-value">{{ detailForm.residentType || '—' }}</div>
+            </el-col>
+            <!-- 户口所在地 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">户口所在地</label>
+              <div class="info-value">{{ detailForm.residentPlace || '—' }}</div>
+            </el-col>
+          </el-row>
+        </el-card>
+
+        <!-- 5. 学历信息卡片 -->
+        <el-card class="detail-card">
+          <div class="card-header">
+            <h2 class="card-title">学历信息</h2>
+          </div>
+          <el-row :gutter="24" class="info-row">
+            <!-- 毕业学校 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">毕业学校</label>
+              <div class="info-value">{{ detailForm.graduateSchool || '—' }}</div>
+            </el-col>
+            <!-- 毕业日期 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">毕业日期</label>
+              <div class="info-value">{{ detailForm.graduateDay ? formatDate(detailForm.graduateDay) : '—' }}</div>
+            </el-col>
+            <!-- 学位 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">学位</label>
+              <div class="info-value">{{ detailForm.education || '—' }}</div>
+            </el-col>
+            <!-- 专业 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">专业</label>
+              <div class="info-value">{{ detailForm.speciality || '—' }}</div>
+            </el-col>
+          </el-row>
+        </el-card>
+
+        <!-- 6. 证件与账号信息卡片 -->
+        <el-card class="detail-card">
+          <div class="card-header">
+            <h2 class="card-title">证件与账号信息</h2>
+          </div>
+          <el-row :gutter="24" class="info-row">
+            <!-- 社保账号 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">社保账号</label>
+              <div class="info-value">{{ formatSecretInfo(detailForm.socialAccount) || '—' }}</div>
+            </el-col>
+            <!-- 医保账号 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">医保账号</label>
+              <div class="info-value">{{ formatSecretInfo(detailForm.medicalAccount) || '—' }}</div>
+            </el-col>
+            <!-- 公积金账号 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">公积金账号</label>
+              <div class="info-value">{{ formatSecretInfo(detailForm.providentAccount) || '—' }}</div>
+            </el-col>
+            <!-- 银行卡号 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">银行卡号</label>
+              <div class="info-value">{{ formatBankCard(detailForm.bankAccount) || '—' }}</div>
+            </el-col>
+            <!-- 开户行 -->
+            <el-col :xs="24" :md="12" class="info-col">
+              <label class="info-label">开户行</label>
+              <div class="info-value">{{ detailForm.bankInfo || '—' }}</div>
+            </el-col>
+            <!-- 档案附件 -->
+            <el-col :xs="24" class="info-col">
+              <label class="info-label">档案附件</label>
+              <div class="info-value attachment-list">
+                <el-tag v-if="detailForm.fileIds" class="attachment-tag"
+                  v-for="(file, idx) in (detailForm.fileIds.split(',') || [])" :key="idx">
+                  {{ file }}
+                  <el-icon class="tag-close-icon" @click.stop>
+                    <Close />
+                  </el-icon>
+                </el-tag>
+                <span v-else class="empty-text">暂无附件</span>
+              </div>
+            </el-col>
+          </el-row>
+        </el-card>
+
+        <!-- 7. 个人简介卡片 -->
+        <el-card class="detail-card">
+          <div class="card-header">
+            <h2 class="card-title">个人简介</h2>
+          </div>
+          <el-row :gutter="24" class="info-row">
+            <el-col :xs="24" class="info-col">
+              <div class="info-value intro-content">
+                {{ detailForm.description || '—' }}
+              </div>
+            </el-col>
+          </el-row>
+        </el-card>
+
+        <!-- 底部操作按钮 -->
         <div class="dialog-footer">
-          <el-button @click="detailDialog.visible = false">关 闭</el-button>
+          <el-button @click="detailDialog.visible = false" class="close-btn" size="medium">
+            关闭
+          </el-button>
         </div>
-      </template>
+      </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -958,11 +1019,54 @@ const handleViewDetail = async (row: StaffInfoVO) => {
   detailForm.value = res.data;
   detailDialog.visible = true;
 };
+
+// 5. 辅助方法：格式化日期（统一显示为“YYYY-MM-DD”）
+const formatDate = (dateStr?: string) => {
+  if (!dateStr) return '—';
+  try {
+    const date = new Date(dateStr);
+    // 处理无效日期
+    if (isNaN(date.getTime())) return '—';
+    return date.toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/\//g, '-');
+  } catch (error) {
+    return '—';
+  }
+};
+const formatSecretInfo = (info) => {
+  if (!info) return ''
+  const len = info.length
+  if (len <= 4) return info
+  return info.slice(0, 4) + '****' + info.slice(-4)
+}
+
+// 银行卡号格式化（4位分隔+脱敏）
+const formatBankCard = (cardNo) => {
+  if (!cardNo) return ''
+  const reg = /(\d{4})(?=\d)/g
+  const masked = cardNo.slice(0, 6) + '********' + cardNo.slice(-4)
+  return masked.replace(reg, '$1 ')
+}
+
+// 身份证号格式化（脱敏）
+const formatIdCard = (idCard) => {
+  if (!idCard) return ''
+  return idCard.slice(0, 6) + '********' + idCard.slice(-4)
+}
+
+// 手机号格式化（中间脱敏）
+const formatMobile = (mobile) => {
+  if (!mobile) return ''
+  return mobile.slice(0, 3) + '****' + mobile.slice(-4)
+}
 onMounted(() => {
   getList();
 });
 </script>
-<style scoped>
+<style scoped lang="scss">
 /* 外层卡片样式：边框、阴影、内边距 */
 .staff-form-card {
   border-radius: 8px;
@@ -1065,5 +1169,194 @@ onMounted(() => {
   font-weight: 500;
   margin-right: 6px;
   color: #666;
+}
+
+
+.employee-detail-dialog {
+  .dialog-container {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  // 卡片通用样式
+  .detail-card {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--el-border-color-lighter);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--el-text-color-primary);
+      margin: 0;
+    }
+
+    .info-row {
+      margin-bottom: 8px;
+    }
+
+    .info-col {
+      margin-bottom: 16px;
+    }
+
+    .info-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: var(--el-text-color-placeholder);
+    }
+
+    .info-value {
+      padding: 10px 12px;
+      border-radius: 8px;
+      background-color: var(--el-fill-color-light);
+      font-size: 14px;
+      color: var(--el-text-color-primary);
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: var(--el-fill-color);
+      }
+    }
+  }
+
+  // 基本信息卡片特殊样式（含头像）
+  .basic-info-card {
+    .avatar-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .employee-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--el-color-primary-light-3);
+    }
+
+    .avatar-placeholder {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: var(--el-fill-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed var(--el-border-color);
+
+      .avatar-icon {
+        font-size: 24px;
+        color: var(--el-text-color-placeholder);
+        margin-bottom: 4px;
+      }
+
+      .placeholder-text {
+        font-size: 12px;
+        color: var(--el-text-color-placeholder);
+      }
+    }
+  }
+
+  // 附件列表样式
+  .attachment-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+    padding: 8px 12px;
+  }
+
+  .attachment-tag {
+    padding: 6px 12px;
+    border-radius: 20px;
+    background-color: var(--el-color-primary-light-9);
+    color: var(--el-color-primary);
+    cursor: default;
+
+    .tag-close-icon {
+      margin-left: 6px;
+      cursor: pointer;
+      font-size: 12px;
+
+      &:hover {
+        color: var(--el-color-danger);
+      }
+    }
+  }
+
+  // 个人简介样式
+  .intro-content {
+    min-height: 100px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+
+  // 底部按钮样式
+  .dialog-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  .close-btn {
+    min-width: 100px;
+    padding: 8px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: var(--el-color-primary-light-9);
+      color: var(--el-color-primary);
+    }
+  }
+
+  // 空文本样式
+  .empty-text {
+    color: var(--el-text-color-placeholder);
+    font-size: 14px;
+  }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .employee-detail-dialog {
+    width: 95% !important;
+
+    .detail-card {
+      padding: 16px;
+
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .basic-info-card .avatar-wrapper {
+        align-self: flex-start;
+      }
+    }
+  }
 }
 </style>
