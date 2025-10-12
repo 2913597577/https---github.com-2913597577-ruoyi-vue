@@ -74,6 +74,18 @@ export const listLawyerSupport = () => {
   });
 };
 
+export const listUser = () => {
+  return request({
+    url: '/system/user/listByDept',
+    method: 'get',
+    params: {
+      pageNum: 1,
+      pageSize: 1000,
+      deptId: '101',
+    }
+  });
+};
+
 export function assign(id: string | number, userId: string | number): AxiosPromise<any> {
   return request({
     url: '/customerInfo/customerInfo/assign',

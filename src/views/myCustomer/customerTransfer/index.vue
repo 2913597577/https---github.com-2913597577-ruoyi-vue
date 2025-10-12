@@ -41,19 +41,23 @@
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
-              v-hasPermi="['myCustomer:customerTransfer:add']">新增</el-button>
+              v-hasPermi="['myCustomer:customerTransfer:add']">新增
+            </el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
-              v-hasPermi="['myCustomer:customerTransfer:edit']">修改</el-button>
+              v-hasPermi="['myCustomer:customerTransfer:edit']">修改
+            </el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
-              v-hasPermi="['myCustomer:customerTransfer:remove']">删除</el-button>
+              v-hasPermi="['myCustomer:customerTransfer:remove']">删除
+            </el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport"
-              v-hasPermi="['myCustomer:customerTransfer:export']">导出</el-button>
+              v-hasPermi="['myCustomer:customerTransfer:export']">导出
+            </el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -80,18 +84,34 @@
         </el-table-column>
         <el-table-column label="实付金额" align="center" prop="actualPayment" width="100" show-overflow-tooltip />
         <el-table-column label="尾款情况" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
-        <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip />
-        <el-table-column label="常法签约" align="center" prop="serviceType" width="100" show-overflow-tooltip />
+        <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="contract_type" :value="scope.row.contractType" />
+          </template>
+        </el-table-column>
+        <el-table-column label="常法签约" align="center" prop="serviceType" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_service_type" :value="scope.row.serviceType" />
+          </template>
+        </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
         <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="120" show-overflow-tooltip />
         <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
-        <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip />
+        <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed" />
+          </template>
+        </el-table-column>
         <el-table-column label="自然人电话" align="center" prop="additionalContact" width="120" show-overflow-tooltip />
         <el-table-column label="自然人职务" align="center" prop="additionalPosition" width="100" show-overflow-tooltip />
         <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip />
         <el-table-column label="代账公司" align="center" prop="accountingCompany" width="80" show-overflow-tooltip />
         <el-table-column label="客户描述" align="center" prop="customerDescription" width="120" show-overflow-tooltip />
-        <el-table-column label="有过法务" align="center" prop="preLegal" width="80" show-overflow-tooltip />
+        <el-table-column label="是否有过法务" align="center" prop="preLegal" width="80" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="[{ label: '否', value: '0' }, { label: '是', value: '1' }]" :value="scope.row.preLegal" />
+          </template>
+        </el-table-column>
         <el-table-column label="合作公司名称" align="center" prop="preCompany" width="120" show-overflow-tooltip />
         <el-table-column label="不合作原因" align="center" prop="preReason" width="100" show-overflow-tooltip />
         <el-table-column label="公司纠纷及解决方式" align="center" prop="preDiscuss" width="150" show-overflow-tooltip />
@@ -109,7 +129,6 @@
             </div>
           </template>
         </el-table-column>
-
       </el-table>
 
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
@@ -147,11 +166,11 @@
               </td>
               <td class="border-l border-black p-2 w-32 bg-gray-50">邀约人：</td>
               <td class="p-2">
-                <el-input v-model="form.inviter" placeholder="请输入邀约人" size="small"></el-input>
+                <el-input v-model="form.inviterId" placeholder="请输入邀约人" size="small"></el-input>
               </td>
               <td class="border-l border-black p-2 w-32 bg-gray-50">客户经理：</td>
               <td class="p-2">
-                <el-input v-model="form.customerManager" placeholder="请输入客户经理" size="small"></el-input>
+                <el-input v-model="form.accountManagerId" placeholder="请输入客户经理" size="small"></el-input>
               </td>
             </tr>
           </table>
@@ -397,7 +416,7 @@
         <!-- 备注大文本区域 -->
         <div class="min-h-[150px] border-b border-black p-4 mb-4">
           <div class="font-medium mb-2">其他备注信息：</div>
-          <el-input v-model="form.otherRemark" type="textarea" placeholder="请输入其他需要补充的备注信息" size="small" rows="4"
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入其他需要补充的备注信息" size="small" rows="4"
             style="width: 100%"></el-input>
         </div>
       </div>
@@ -445,9 +464,18 @@
 </template>
 
 <script setup name="CustomerTransfer" lang="ts">
-import { listCustomerTransfer, getCustomerTransfer, delCustomerTransfer, addCustomerTransfer, updateCustomerTransfer, audit } from '@/api/myCustomer/customerTransfer';
-import { CustomerTransferVO, CustomerTransferQuery, CustomerTransferForm } from '@/api/myCustomer/customerTransfer/types';
+import { listUser } from '@/api/customerInfo/customerInfo';
+import {
+  addCustomerTransfer,
+  audit,
+  delCustomerTransfer,
+  getCustomerTransfer,
+  listCustomerTransfer,
+  updateCustomerTransfer
+} from '@/api/myCustomer/customerTransfer';
+import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const customerTransferList = ref<CustomerTransferVO[]>([]);
@@ -458,6 +486,13 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
+const userList = ref([]); // 用户列表
+const {
+  contract_type,
+  dc_service_type,
+  finance_confirmed
+} = toRefs<any>(proxy?.useDict('contract_type', 'dc_service_type', 'finance_confirmed'));
+
 
 const queryFormRef = ref<ElFormInstance>();
 const customerTransferFormRef = ref<ElFormInstance>();
@@ -501,7 +536,9 @@ const initFormData: CustomerTransferForm = {
   pendingRemark: undefined,
   debtDetails: [],
   debtRemark: undefined,
-
+  accountManagerId: undefined,
+  inviterId: undefined,
+  remark: undefined,
 }
 const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   form: { ...initFormData },
@@ -531,8 +568,8 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     lawyerConsultation: undefined,
     otherFee: undefined,
     financeConfirmed: undefined,
-    params: {
-    }
+
+    params: {}
   },
   rules: {
     id: [
@@ -557,6 +594,17 @@ const getList = async () => {
   total.value = res.total;
   loading.value = false;
 }
+
+const loadUserList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listUser();
+    userList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载人员失败，请稍后重试');
+    console.error('人员列表加载异常：', error);
+  }
+};
 
 /** 取消按钮 */
 const cancel = () => {
@@ -671,6 +719,7 @@ async function submitAudit() {
     submitting.value = false
   }
 }
+
 /** 提交按钮 */
 const submitForm = () => {
   customerTransferFormRef.value?.validate(async (valid: boolean) => {
@@ -706,7 +755,11 @@ const handleExport = () => {
 }
 
 onMounted(() => {
- 
+<<<<<<< HEAD
+
+=======
+  loadUserList();
+>>>>>>> 114b17ed90f540c4367ac5ae62773c95fec67ce2
   getList();
 });
 </script>

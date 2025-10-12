@@ -327,6 +327,16 @@ export interface CustomerTransferForm extends BaseEntity {
    */
   debtRemark?: string;
 
+  /**
+   * 客户经理id
+   */
+  accountManagerId?: string | number;
+
+  /**
+   * 邀约人id
+   */
+  inviterId?: string | number;
+
 }
 
 export interface CustomerTransferQuery extends PageQuery {
@@ -345,6 +355,15 @@ export interface CustomerTransferQuery extends PageQuery {
    * 公司对接人联系方式
    */
   contactInfo?: string;
+
+  /**
+   * 客户经理id
+   */
+  accountManagerId?: string | number;
+  /**
+   * 邀约人id
+   */
+  inviterId?: string | number;
 
   /**
    * 对接人职务
