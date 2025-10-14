@@ -4,8 +4,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="客户" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="对接客户" prop="customerId">
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+                <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
+                  :value="item.transfer_id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="欠款人" prop="debtorName">
               <el-input v-model="queryParams.debtorName" placeholder="请输入欠款人" clearable @keyup.enter="handleQuery" />
@@ -85,8 +89,13 @@
 
       <el-table v-loading="loading" border :data="caseDetailList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="自增主键" align="center" prop="id" v-if="true" />
-        <el-table-column label="客户id(客户编号)" align="center" prop="customerId" />
+        <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" />
+        <el-table-column label="客户id(客户编号)" align="center" prop="customerId" /> -->
+        <el-table-column label="客户名称" align="center" prop="customerId">
+          <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="欠款人" align="center" prop="debtorName" />
         <el-table-column label="欠款金额" align="center" prop="debtAmount" />
         <el-table-column label="剩余欠款" align="center" prop="remainingAmount" />
@@ -131,8 +140,15 @@
     <!-- 添加或修改欠款案件表对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="caseDetailFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="客户id(客户编号)" prop="customerId">
+        <!-- <el-form-item label="客户id(客户编号)" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id(客户编号)" />
+        </el-form-item> -->
+        <el-form-item label="客户" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+            <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
+              :value="item.transfer_id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="欠款人" prop="debtorName">
           <el-input v-model="form.debtorName" placeholder="请输入欠款人" />
@@ -205,6 +221,7 @@
 <script setup name="CaseDetail" lang="ts">
 import { listCaseDetail, getCaseDetail, delCaseDetail, addCaseDetail, updateCaseDetail } from '@/api/caseDetail/caseDetail';
 import { CaseDetailVO, CaseDetailQuery, CaseDetailForm } from '@/api/caseDetail/caseDetail/types';
+import { getCustomerByUserId } from '@/api/common';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
@@ -277,6 +294,26 @@ const data = reactive<PageData<CaseDetailForm, CaseDetailQuery>>({
 
 const { queryParams, form, rules } = toRefs(data);
 
+
+const customerList = ref<any[]>([]);
+
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
+
+// 根据客户ID获取客户名称
+const getCustomerNameById = (customerId: string | number) => {
+  if (!customerId) return '';
+  const customer = customerList.value.find(item => item.transfer_id === customerId);
+  return customer ? customer.customer_realName : '';
+};
+
 /** 查询欠款案件表列表 */
 const getList = async () => {
   loading.value = true;
@@ -285,6 +322,7 @@ const getList = async () => {
   total.value = res.total;
   loading.value = false;
 }
+
 
 /** 取消按钮 */
 const cancel = () => {
@@ -368,6 +406,7 @@ const handleExport = () => {
 }
 
 onMounted(() => {
+  loadCustomerList();
   getList();
 });
 </script>

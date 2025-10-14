@@ -5,13 +5,20 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="法务支持" prop="legalSupport">
+            <!-- <el-form-item label="法务支持" prop="legalSupport">
               <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <!-- <el-form-item label="法务支持id" prop="legalSupportId">
               <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item> -->
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+              <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+                style="width: 100%;" @change="handleLegalSupportChange">
+                <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+                  :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+              </el-select>
+            </el-form-item>
         
             <el-form-item label="交付时间" prop="deliveryTime">
               <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD"
@@ -68,27 +75,28 @@
 
       <el-table v-loading="loading" border :data="customerJobOrderList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="工单处理状态" align="center" prop="processingStatus">
+          <template #default="scope">
+            <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
+          </template>
+        </el-table-column>
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="法务支持" align="center" prop="legalSupport" />
-        <el-table-column label="法务支持id" align="center" prop="legalSupportId" />
-        <el-table-column label="源合同地址" align="center" prop="preContractAddress" />
-        <el-table-column label="源合同文件名" align="center" prop="preContractName" />
-        <el-table-column label="新合同地址" align="center" prop="newContractAddress" />
-        <el-table-column label="新合同文件名" align="center" prop="newContractName" />
+        <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
+        <!-- <el-table-column label="源合同地址" align="center" prop="preContractAddress" /> -->
+        <el-table-column label="原合同" align="center" prop="preContractName" />
+        <!-- <el-table-column label="新合同地址" align="center" prop="newContractAddress" /> -->
+        <el-table-column label="新合同" align="center" prop="newContractName" />
         <el-table-column label="客户要求" align="center" prop="customerRequirements" />
         <el-table-column label="交付时间" align="center" prop="deliveryTime" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.deliveryTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="跟踪记录id" align="center" prop="trackingId" />
-        <el-table-column label="处理人id" align="center" prop="contractHandler" />
+        <!-- <el-table-column label="跟踪记录id" align="center" prop="trackingId" />
+        <el-table-column label="处理人id" align="center" prop="contractHandler" /> -->
         <el-table-column label="处理人" align="center" prop="contractHandlerName" />
-        <el-table-column label="工单处理状态" align="center" prop="processingStatus">
-          <template #default="scope">
-            <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
-          </template>
-        </el-table-column>
+        
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
         <el-table-column label="备注3" align="center" prop="remark3" /> -->
@@ -102,10 +110,22 @@
               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:remove']">删除</el-button>
             </el-tooltip>
-            <el-tooltip content="处理" placement="top">
+            <!-- <el-tooltip content="处理" placement="top">
               <el-button link type="primary" icon="Download" @click="handleProcess(scope.row)"
-                v-hasPermi="['customerJobOrder:customerJobOrder:process']">处理</el-button>
-            </el-tooltip>
+                v-hasPermi="['customerJobOrder:customerJobOrder:process']">下载</el-button>
+            </el-tooltip> -->
+          <el-tooltip content="处理" placement="top">
+          <el-dropdown @command="(command) => handleProcessCommand({ row: scope.row, type: command })">
+            <el-button link type="primary" icon="Download"
+              v-hasPermi="['customerJobOrder:customerJobOrder:process']">合同下载</el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="pre">原合同</el-dropdown-item>
+                <el-dropdown-item command="new">新合同</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -115,12 +135,13 @@
     </el-card>
     <!-- 添加或修改工单管理对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
-      <el-form ref="customerJobOrderFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="法务支持" prop="legalSupport">
-          <el-input v-model="form.legalSupport" placeholder="请输入法务支持" />
-        </el-form-item>
-        <el-form-item label="法务支持id" prop="legalSupportId">
-          <el-input v-model="form.legalSupportId" placeholder="请输入法务支持id" />
+      <el-form ref="customerJobOrderFormRef" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="源合同地址" prop="preContractAddress">
           <file-upload :limit="1" :fileSize="10" v-model="preFile" />
@@ -178,6 +199,7 @@
 </template>
 
 <script setup name="CustomerJobOrder" lang="ts">
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listCustomerJobOrder, getCustomerJobOrder, delCustomerJobOrder, addCustomerJobOrder, updateCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { CustomerJobOrderVO, CustomerJobOrderQuery, CustomerJobOrderForm } from '@/api/customerJobOrder/customerJobOrder/types';
 
@@ -318,11 +340,13 @@ const submitForm = () => {
   customerJobOrderFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
-      console.log(preFile.value);
       if (preFile.value) {
-        console.log("存在文件");
         form.value.preContractAddress = preFile.value[0].ossId;
         form.value.preContractName = preFile.value[0].name;
+      }
+      if (newFile.value) {
+        form.value.newContractAddress = newFile.value[0].ossId;
+        form.value.newContractName = newFile.value[0].name;
       }
       if (form.value.id) {
         await updateCustomerJobOrder(form.value).finally(() => buttonLoading.value = false);
@@ -336,6 +360,44 @@ const submitForm = () => {
   });
 }
 
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+      form.value.legalSupport = selectedLawyer.userName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.legalSupport = undefined;
+  }
+}
+// 修改处理方法，支持选择下载原合同或新合同
+const handleProcessCommand = ({ row, type }: { row: CustomerJobOrderVO, type: 'pre' | 'new' }) => {
+  if (type === 'pre' && row.preContractAddress) {
+    proxy?.$download.oss(row.preContractAddress);
+  } else if (type === 'new' && row.newContractAddress) {
+    proxy?.$download.oss(row.newContractAddress);
+  } else {
+    proxy?.$modal.msgWarning(`无${type === 'pre' ? '原' : '新'}合同文件可下载`);
+  }
+};
+const lawyerList = ref([]);
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
 /** 删除按钮操作 */
 const handleDelete = async (row?: CustomerJobOrderVO) => {
   const _ids = row?.id || ids.value;
@@ -355,6 +417,7 @@ const handleProcess = (row: CustomerJobOrderVO) => {
   proxy?.$download.oss(row.preContractAddress);
 }
 onMounted(() => {
+  loadLawyerSupportList();
   getList();
 });
 </script>

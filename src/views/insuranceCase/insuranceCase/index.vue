@@ -4,8 +4,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="客户" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户id(客户编号)" clearable @keyup.enter="handleQuery" />
+           <el-form-item label="对接客户" prop="customerId">
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+                <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
+                  :value="item.transfer_id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="下单日期" prop="orderDate">
               <el-date-picker clearable
@@ -73,7 +77,12 @@
       <el-table v-loading="loading" border :data="insuranceCaseList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="客户id(客户编号)" align="center" prop="customerId" />
+        <!-- <el-table-column label="客户id(客户编号)" align="center" prop="customerId" /> -->
+        <el-table-column label="客户名称" align="center" prop="customerId">
+          <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="下单日期" align="center" prop="orderDate" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
@@ -106,8 +115,15 @@
     <!-- 添加或修改保险记录表对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="insuranceCaseFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="客户id(客户编号)" prop="customerId">
+        <!-- <el-form-item label="客户id(客户编号)" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id(客户编号)" />
+        </el-form-item> -->
+        <el-form-item label="客户" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+            <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
+              :value="item.transfer_id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="下单日期" prop="orderDate">
           <el-date-picker clearable
@@ -159,6 +175,7 @@
 </template>
 
 <script setup name="InsuranceCase" lang="ts">
+import { getCustomerByUserId } from '@/api/common';
 import { listInsuranceCase, getInsuranceCase, delInsuranceCase, addInsuranceCase, updateInsuranceCase } from '@/api/insuranceCase/insuranceCase';
 import { InsuranceCaseVO, InsuranceCaseQuery, InsuranceCaseForm } from '@/api/insuranceCase/insuranceCase/types';
 
@@ -236,6 +253,18 @@ const getList = async () => {
   loading.value = false;
 }
 
+const customerList = ref<any[]>([]);
+
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
+
 /** 取消按钮 */
 const cancel = () => {
   reset();
@@ -301,6 +330,14 @@ const submitForm = () => {
   });
 }
 
+
+// 根据客户ID获取客户名称
+const getCustomerNameById = (customerId: string | number) => {
+  if (!customerId) return '';
+  const customer = customerList.value.find(item => item.transfer_id === customerId);
+  return customer ? customer.customer_realName : '';
+};
+
 /** 删除按钮操作 */
 const handleDelete = async (row?: InsuranceCaseVO) => {
   const _ids = row?.id || ids.value;
@@ -318,6 +355,7 @@ const handleExport = () => {
 }
 
 onMounted(() => {
+  loadCustomerList();
   getList();
 });
 </script>
