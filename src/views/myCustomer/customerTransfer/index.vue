@@ -86,12 +86,12 @@
         <el-table-column label="尾款情况" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
         <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="contract_type" :value="scope.row.contractType" />
+            <dict-tag :options="contract_type" :value="scope.row.contractType || ''" />
           </template>
         </el-table-column>
         <el-table-column label="常法签约" align="center" prop="serviceType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="dc_service_type" :value="scope.row.serviceType" />
+            <dict-tag :options="dc_service_type" :value="scope.row.serviceType || ''" />
           </template>
         </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
@@ -99,7 +99,7 @@
         <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
         <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed" />
+            <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed || ''" />
           </template>
         </el-table-column>
         <el-table-column label="自然人电话" align="center" prop="additionalContact" width="120" show-overflow-tooltip />
@@ -109,7 +109,8 @@
         <el-table-column label="客户描述" align="center" prop="customerDescription" width="120" show-overflow-tooltip />
         <el-table-column label="是否有过法务" align="center" prop="preLegal" width="80" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="[{ label: '否', value: '0' }, { label: '是', value: '1' }]" :value="scope.row.preLegal" />
+            <dict-tag :options="[{ label: '否', value: '0' }, { label: '是', value: '1' }]"
+              :value="scope.row.preLegal || ''" />
           </template>
         </el-table-column>
         <el-table-column label="合作公司名称" align="center" prop="preCompany" width="120" show-overflow-tooltip />
@@ -139,338 +140,345 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="80%" append-to-body
       :custom-class="'native-style-dialog'">
       <div class="min-h-[800px] bg-white p-4">
-        <!-- 1. 头部区域（保留原结构） -->
-        <div class="border-b-2 border-black p-4 flex justify-between items-start mb-1">
-          <div class="flex items-center gap-2">
-            <img src="@/assets/images/logo.jpg" alt="logo" class="w-30 h-8" />
+        <el-form ref="customerTransferFormRef" :model="form" :rules="rules" label-width="0" hide-required-asterisk>
+          <!-- 1. 头部区域（保留原结构） -->
+          <div class="border-b-2 border-black p-4 flex justify-between items-start mb-1">
+            <div class="flex items-center gap-2">
+              <img src="@/assets/images/logo.jpg" alt="logo" class="w-30 h-8" />
+            </div>
+            <div class="text-right text-sm text-gray-600">
+              <div>让每一家公司都拥有自己的法务部</div>
+            </div>
           </div>
-          <div class="text-right text-sm text-gray-600">
-            <div>让每一家公司都拥有自己的法务部</div>
+
+          <!-- 2. 流转单标题（上移后与头部紧凑衔接） -->
+          <div class="text-center py-3 border-b border-black mb-1 mt-0">
+            <h1 class="text-2xl font-bold text-blue-700">成交客户内部流转单</h1>
           </div>
-        </div>
 
-        <!-- 2. 流转单标题（上移后与头部紧凑衔接） -->
-        <div class="text-center py-3 border-b border-black mb-1 mt-0">
-          <h1 class="text-2xl font-bold text-blue-700">成交客户内部流转单</h1>
-        </div>
+          <!-- 3. 交易日期与人员信息（必填标注：公司名称/邀约人/客户经理） -->
+          <div class="border-b border-black mb-1 mt-0">
+            <table class="w-full border-collapse">
+              <tr>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：</td>
+                <td class="p-2 w-64">
+                  <input type="date"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：</td>
+                <td class="p-2 w-64">
+                  <input type="text" v-model="form.inviterId" placeholder="请输入邀约人"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-l border-black p-2 w-32 bg-blue-50">客户经理：</td>
+                <td class="p-2">
+                  <input type="text" v-model="form.accountManagerId" placeholder="请输入客户经理"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+            </table>
+          </div>
 
-        <!-- 3. 交易日期与人员信息（必填标注：公司名称/邀约人/客户经理） -->
-        <div class="border-b border-black mb-1 mt-0">
-          <table class="w-full border-collapse">
-            <tr>
-              <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：</td>
-              <td class="p-2 w-64">
-                <input type="date"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
-              <td class="p-2 w-64">
-                <input type="text" v-model="form.inviterId" placeholder="请输入邀约人（必填）"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-l border-black p-2 w-32 bg-blue-50">客户经理：<span class="text-red-500">*</span></td>
-              <td class="p-2">
-                <input type="text" v-model="form.accountManagerId" placeholder="请输入客户经理（必填）"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-            </tr>
-          </table>
-        </div>
+          <!-- 4. 公司信息区域（必填标注：公司名称/对接人/联系方式/行业/地址） -->
+          <div class="border-b border-black mb-1 mt-0">
+            <table class="w-full border-collapse">
+              <!-- 公司名称（必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">公司名称：<span class="text-red-500">*</span></td>
+                <td colspan="7" class="p-2">
+                  <el-form-item prop="companyName" style="margin-bottom: 0;" :show-message="false">
+                    <el-input v-model="form.companyName" placeholder="请输入公司名称" />
+                  </el-form-item>
+                </td>
+              </tr>
 
-        <!-- 4. 公司信息区域（必填标注：公司名称/对接人/联系方式/行业/地址） -->
-        <div class="border-b border-black mb-1 mt-0">
-          <table class="w-full border-collapse">
-            <!-- 公司名称（必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">公司名称：<span class="text-red-500">*</span></td>
-              <td colspan="7" class="p-2">
-                <input type="text" v-model="form.companyName" placeholder="请输入公司名称（必填）"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                  required>
-              </td>
-            </tr>
+              <!-- 公司对接人信息（对接人/联系方式必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">公司对接人<br>姓名：<span class="text-red-500">*</span>
+                </td>
+                <td class="border-r border-black p-2 w-40">
+                  <el-form-item prop="contactPerson" style="margin-bottom: 0;" :show-message="false"
+                    hide-required-asterisk>
+                    <el-input v-model="form.contactPerson" placeholder="对接人姓名" />
+                  </el-form-item>
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）
+                </td>
+                <td class="border-r border-black p-2 w-40">
+                  <input type="text" v-model="form.contactInfo" placeholder="联系方式"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-24 bg-blue-50">职务：</td>
+                <td class="border-r border-black p-2 w-32">
+                  <input type="text" v-model="form.contactPosition" placeholder="职务"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-24 bg-blue-50">年龄：</td>
+                <td class="p-2">
+                  <input type="number" v-model="form.contactAge" placeholder="年龄"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
 
-            <!-- 公司对接人信息（对接人/联系方式必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">公司对接人<br>姓名：<span class="text-red-500">*</span></td>
-              <td class="border-r border-black p-2 w-40">
-                <input type="text" v-model="form.contactPerson" placeholder="对接人姓名（必填）"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）<span class="text-red-500">*</span>
-              </td>
-              <td class="border-r border-black p-2 w-40">
-                <input type="text" v-model="form.contactInfo" placeholder="联系方式（必填）"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-24 bg-blue-50">职务：</td>
-              <td class="border-r border-black p-2 w-32">
-                <input type="text" v-model="form.contactPosition" placeholder="职务"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-24 bg-blue-50">年龄：</td>
-              <td class="p-2">
-                <input type="number" v-model="form.contactAge" placeholder="年龄"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-            </tr>
+              <!-- 附赠自然人信息（非必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">附赠自然人：</td>
+                <td class="border-r border-black p-2 w-40">
+                  <input type="text" v-model="form.additionalPerson" placeholder="自然人姓名"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）</td>
+                <td class="border-r border-black p-2 w-40">
+                  <input type="text" v-model="form.additionalContact" placeholder="联系方式"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-24 bg-blue-50">职务：</td>
+                <td class="border-r border-black p-2 w-32">
+                  <input type="text" v-model="form.additionalPosition" placeholder="职务"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-24 bg-blue-50">年龄：</td>
+                <td class="p-2">
+                  <input type="number" v-model="form.additionalAge" placeholder="年龄"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
 
-            <!-- 附赠自然人信息（非必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">附赠自然人：</td>
-              <td class="border-r border-black p-2 w-40">
-                <input type="text" v-model="form.additionalPerson" placeholder="自然人姓名"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）</td>
-              <td class="border-r border-black p-2 w-40">
-                <input type="text" v-model="form.additionalContact" placeholder="联系方式"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-24 bg-blue-50">职务：</td>
-              <td class="border-r border-black p-2 w-32">
-                <input type="text" v-model="form.additionalPosition" placeholder="职务"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-24 bg-blue-50">年龄：</td>
-              <td class="p-2">
-                <input type="number" v-model="form.additionalAge" placeholder="年龄"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-            </tr>
+              <!-- 公司行业与地址（必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">公司所属行业：</td>
+                <td colspan="3" class="border-r border-black p-2">
+                  <input type="text" v-model="form.companyIndustry" placeholder="请输入所属行业"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">公司地址：</td>
+                <td colspan="3" class="p-2">
+                  <input type="text" v-model="form.companyAddress" placeholder="请输入公司地址"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
 
-            <!-- 公司行业与地址（必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">公司所属行业：<span class="text-red-500">*</span></td>
-              <td colspan="3" class="border-r border-black p-2">
-                <input type="text" v-model="form.companyIndustry" placeholder="请输入所属行业（必填）"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-32 bg-blue-50">公司地址：<span class="text-red-500">*</span></td>
-              <td colspan="3" class="p-2">
-                <input type="text" v-model="form.companyAddress" placeholder="请输入公司地址（必填）"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-            </tr>
+              <!-- 员工人数与代账公司（非必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">员工人数：</td>
+                <td class="border-r border-black p-2 w-40">
+                  <input type="number" v-model="form.employeeCount" placeholder="员工人数"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td colspan="2" class="border-r border-black p-2 w-64 bg-blue-50">是否有代账公司：</td>
+                <td colspan="4" class="p-2">
+                  <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
+                      <input type="radio" name="accountingCompany" value="0" v-model="form.accountingCompany"
+                        class="w-4 h-4 cursor-pointer accent-blue-500">
+                      <span>是</span>
+                    </label>
+                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
+                      <input type="radio" name="accountingCompany" value="1" v-model="form.accountingCompany"
+                        class="w-4 h-4 cursor-pointer accent-blue-500">
+                      <span>否</span>
+                    </label>
+                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
+                      <input type="radio" name="accountingCompany" value="2" v-model="form.accountingCompany"
+                        class="w-4 h-4 cursor-pointer accent-blue-500">
+                      <span>不确定</span>
+                    </label>
+                  </div>
+                </td>
+              </tr>
 
-            <!-- 员工人数与代账公司（非必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">员工人数：</td>
-              <td class="border-r border-black p-2 w-40">
-                <input type="number" v-model="form.employeeCount" placeholder="员工人数"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td colspan="2" class="border-r border-black p-2 w-64 bg-blue-50">是否有代账公司：</td>
-              <td colspan="4" class="p-2">
-                <div class="flex items-center gap-4">
-                  <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                    <input type="radio" name="accountingCompany" value="是" v-model="form.accountingCompany"
-                      class="w-4 h-4 cursor-pointer accent-blue-500">
-                    <span>是</span>
-                  </label>
-                  <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                    <input type="radio" name="accountingCompany" value="否" v-model="form.accountingCompany"
-                      class="w-4 h-4 cursor-pointer accent-blue-500">
-                    <span>否</span>
-                  </label>
-                  <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                    <input type="radio" name="accountingCompany" value="不确定" v-model="form.accountingCompany"
-                      class="w-4 h-4 cursor-pointer accent-blue-500">
-                    <span>不确定</span>
-                  </label>
-                </div>
-              </td>
-            </tr>
-
-            <!-- 客户性格描述（非必填） -->
-            <tr>
-              <td colspan="8" class="p-2 bg-blue-50">客户性格及工作习惯描述：</td>
-            </tr>
-            <tr>
-              <td colspan="8" class="p-2 border-b border-black">
-                <textarea v-model="form.customerDescription" placeholder="请描述客户性格及工作习惯"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                  rows="2"></textarea>
-              </td>
-            </tr>
-          </table>
-        </div>
-
-        <!-- 5. 签约情况区域（必填标注：支付金额/签约类型/服务周期/财务确认） -->
-        <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
-          <h2 class="text-lg font-bold text-blue-800">签约情况</h2>
-        </div>
-        <div class="border-b border-black mb-1 mt-0">
-          <table class="w-full border-collapse">
-            <!-- 金额与签约类型（必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">支付金额：<span class="text-red-500">*</span></td>
-              <td class="border-r border-black p-2 w-40">
-                <input type="number" v-model="form.actualPayment" placeholder="实付金额（必填）"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-32 bg-blue-50">尾款情况：</td>
-              <td class="border-r border-black p-2 flex-1">
-                <input type="text" v-model="form.balanceStatus" placeholder="尾款情况描述"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-r border-black p-2 w-48 bg-blue-50">签约类型：<span class="text-red-500">*</span></td>
-              <td class="p-2">
-                <select v-model="form.contractType"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  <option value="">选择类型（必填）</option>
-                  <option value="常法">常法</option>
-                  <option value="单项">单项</option>
-                  <option value="律师费">律师费</option>
-                  <option value="其他">其他</option>
-                </select>
-              </td>
-            </tr>
-
-            <!-- 常法版本与服务周期（服务周期必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">常法签约：</td>
-              <td class="border-r border-black p-2 w-40">
-                <div class="flex items-center gap-4">
-                  <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                    <input type="radio" name="serviceType" value="升级版" v-model="form.serviceType"
-                      class="w-4 h-4 cursor-pointer accent-blue-500">
-                    <span>升级版</span>
-                  </label>
-                  <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                    <input type="radio" name="serviceType" value="标准版" v-model="form.serviceType"
-                      class="w-4 h-4 cursor-pointer accent-blue-500">
-                    <span>标准版</span>
-                  </label>
-                </div>
-              </td>
-              <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：<span class="text-red-500">*</span></td>
-              <td colspan="2" class="border-r border-black p-2">
-                <div class="flex gap-2">
-                  <input type="date" v-model="form.serviceStart" placeholder="开始日期（必填）"
-                    class="w-1/3 p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  <span class="self-center text-gray-500">至</span>
-                  <input type="date" v-model="form.serviceEnd" placeholder="结束日期（必填）"
-                    class="w-1/3 p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </div>
-              </td>
-              <td class="p-2 w-48 bg-blue-50">财务确<br>认状态：<span class="text-red-500">*</span></td>
-              <td class="p-2">
-                <select v-model="form.financeConfirmed"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  <option value="">选择状态（必填）</option>
-                  <option value="已确认">已确认</option>
-                  <option value="未确认">未确认</option>
-                </select>
-              </td>
-            </tr>
-
-            <!-- 财务签字（非必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">财务签字：</td>
-              <td colspan="5" class="p-2">
-                <input type="text" v-model="form.financeSignature" placeholder="请输入财务签字信息"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-            </tr>
-
-            <!-- 律师咨询情况（非必填） -->
-            <tr class="border-b border-black">
-              <td class="border-r border-black p-2 w-32 bg-blue-50">律师咨询情况：</td>
-              <td colspan="5" class="p-2">
-                <textarea v-model="form.lawyerConsultation" placeholder="请描述咨询情况"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                  rows="2"></textarea>
-              </td>
-            </tr>
-
-            <!-- 其他费用沟通（非必填） -->
-            <tr>
-              <td class="border-r border-black p-2 w-32 bg-blue-50">其他费用沟通：</td>
-              <td colspan="5" class="p-2">
-                <textarea v-model="form.otherFee" placeholder="请描述其他费用沟通情况"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                  rows="2"></textarea>
-              </td>
-            </tr>
-          </table>
-        </div>
-
-        <!-- 6. 客户情况概述（非必填，标题栏配色优化） -->
-        <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
-          <h2 class="text-lg font-bold text-blue-800">客户情况概述</h2>
-        </div>
-        <div class="border-b border-black mb-1 mt-0">
-          <table class="w-full border-collapse">
-            <!-- 以前是否有法务（非必填） -->
-            <tr class="border-b border-black">
-              <td class="p-3">
-                <div class="flex items-center gap-4 flex-wrap">
-                  <span class="whitespace-nowrap text-gray-700">以前是否有过公司法务：</span>
-                  <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                    <input type="radio" name="preLegal" value="是" v-model="form.preLegal"
-                      class="w-4 h-4 cursor-pointer accent-blue-500">
-                    <span>是</span>
-                  </label>
-                  <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                    <input type="radio" name="preLegal" value="否" v-model="form.preLegal"
-                      class="w-4 h-4 cursor-pointer accent-blue-500">
-                    <span>否</span>
-                  </label>
-                  <span class="ml-4 whitespace-nowrap text-gray-700">合作公司名称：</span>
-                  <input type="text" v-model="form.preCompany" placeholder="合作公司名称"
-                    class="flex-1 p-1 border-b border-gray-400 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  <span class="ml-4 whitespace-nowrap text-gray-700">不合作原因：</span>
-                  <input type="text" v-model="form.preReason" placeholder="不合作原因"
-                    class="flex-1 p-1 border-b border-gray-400 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </div>
-              </td>
-            </tr>
-
-            <!-- 以前纠纷及解决方式（非必填） -->
-            <tr class="border-b border-black">
-              <td class="p-3">
-                <div class="flex items-start gap-2">
-                  <span class="whitespace-nowrap pt-1 text-gray-700">公司以前出现过的纠纷及解决方式：</span>
-                  <textarea v-model="form.preDiscuss" placeholder="请详细描述纠纷及解决方式"
-                    class="flex-1 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+              <!-- 客户性格描述（非必填） -->
+              <tr>
+                <td colspan="8" class="p-2 bg-blue-50">客户性格及工作习惯描述：</td>
+              </tr>
+              <tr>
+                <td colspan="8" class="p-2 border-b border-black">
+                  <textarea v-model="form.customerDescription" placeholder="请描述客户性格及工作习惯"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                     rows="2"></textarea>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
+            </table>
+          </div>
 
-            <!-- 待处理事项登记（非必填） -->
-            <tr class="border-b border-black">
-              <td class="p-3">
-                <div class="leading-relaxed">
-                  <span class="text-gray-700">待处理事项登记：劳资纠纷、合同纠纷、借贷纠纷、承揽纠纷、财税问题、执行案件等</span>
-                  <textarea v-model="form.pendingRemark"
-                    class="w-full mt-2 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+          <!-- 5. 签约情况区域（必填标注：支付金额/签约类型/服务周期/财务确认） -->
+          <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
+            <h2 class="text-lg font-bold text-blue-800">签约情况</h2>
+          </div>
+          <div class="border-b border-black mb-1 mt-0">
+            <table class="w-full border-collapse">
+              <!-- 金额与签约类型（必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">支付金额：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2 w-40">
+                  <el-form-item prop="actualPayment" style="margin-bottom: 0;" :show-message="false"
+                    hide-required-asterisk>
+                    <el-input v-model="form.actualPayment" placeholder="实付金额" type="number" />
+                  </el-form-item>
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">尾款情况：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text" v-model="form.balanceStatus" placeholder="尾款情况描述"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">签约类型：</td>
+                <td class="p-2">
+                  <select v-model="form.contractType"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                    <option value="">选择类型</option>
+                    <option value="0">常法</option>
+                    <option value="1">单项</option>
+                    <option value="2">律师费</option>
+                    <option value="3">其他</option>
+                  </select>
+                </td>
+              </tr>
+
+              <!-- 常法版本与服务周期（服务周期必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">常法签约：</td>
+                <td class="border-r border-black p-2 w-40">
+                  <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
+                      <input type="radio" name="serviceType" value="0" v-model="form.serviceType"
+                        class="w-4 h-4 cursor-pointer accent-blue-500">
+                      <span>升级版</span>
+                    </label>
+                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
+                      <input type="radio" name="serviceType" value="1" v-model="form.serviceType"
+                        class="w-4 h-4 cursor-pointer accent-blue-500">
+                      <span>标准版</span>
+                    </label>
+                  </div>
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：</td>
+                <td colspan="2" class="border-r border-black p-2">
+                  <div class="flex gap-2">
+                    <input type="date" v-model="form.serviceStart" placeholder="开始日期"
+                      class="w-1/3 p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                    <span class="self-center text-gray-500">至</span>
+                    <input type="date" v-model="form.serviceEnd" placeholder="结束日期"
+                      class="w-1/3 p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                  </div>
+                </td>
+                <td class="p-2 w-48 bg-blue-50">财务确<br>认状态：</td>
+                <td class="p-2">
+                  <select v-model="form.financeConfirmed"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                    <option value="">选择状态</option>
+                    <option value="已确认">已确认</option>
+                    <option value="未确认">未确认</option>
+                  </select>
+                </td>
+              </tr>
+
+              <!-- 财务签字（非必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">财务签字：</td>
+                <td colspan="5" class="p-2">
+                  <input type="text" v-model="form.financeSignature" placeholder="请输入财务签字信息"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+
+              <!-- 律师咨询情况（非必填） -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">律师咨询情况：</td>
+                <td colspan="5" class="p-2">
+                  <textarea v-model="form.lawyerConsultation" placeholder="请描述咨询情况"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                     rows="2"></textarea>
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
 
-            <!-- 欠款问题登记（非必填） -->
-            <tr>
-              <td class="p-3">
-                <div class="leading-relaxed">
-                  <span class="text-gray-700">欠款问题请详细登记：相关主体、已知债务人信息、标的额、证据情况、案件处理要求等</span>
-                  <textarea v-model="form.debtRemark"
-                    class="w-full mt-2 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+              <!-- 其他费用沟通（非必填） -->
+              <tr>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">其他费用沟通：</td>
+                <td colspan="5" class="p-2">
+                  <textarea v-model="form.otherFee" placeholder="请描述其他费用沟通情况"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                     rows="2"></textarea>
-                </div>
-              </td>
-            </tr>
-          </table>
-        </div>
+                </td>
+              </tr>
+            </table>
+          </div>
 
-        <!-- 7. 备注大文本区域（非必填） -->
-        <div class="min-h-[400px] border-b border-black p-4 mb-4 mt-0">
-          <div class="font-medium mb-2 text-blue-800">其他备注信息：</div>
-          <textarea v-model="form.remark" placeholder="请输入其他需要补充的备注信息"
-            class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[350px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300"></textarea>
-        </div>
+          <!-- 6. 客户情况概述（非必填，标题栏配色优化） -->
+          <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
+            <h2 class="text-lg font-bold text-blue-800">客户情况概述</h2>
+          </div>
+          <div class="border-b border-black mb-1 mt-0">
+            <table class="w-full border-collapse">
+              <!-- 以前是否有法务（非必填） -->
+              <tr class="border-b border-black">
+                <td class="p-3">
+                  <div class="flex items-center gap-4 flex-wrap">
+                    <span class="whitespace-nowrap text-gray-700">以前是否有过公司法务：</span>
+                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
+                      <input type="radio" name="preLegal" value="1" v-model="form.preLegal"
+                        class="w-4 h-4 cursor-pointer accent-blue-500">
+                      <span>是</span>
+                    </label>
+                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
+                      <input type="radio" name="preLegal" value="0" v-model="form.preLegal"
+                        class="w-4 h-4 cursor-pointer accent-blue-500">
+                      <span>否</span>
+                    </label>
+                    <span class="ml-4 whitespace-nowrap text-gray-700">合作公司名称：</span>
+                    <input type="text" v-model="form.preCompany" placeholder="合作公司名称"
+                      class="flex-1 p-1 border-b border-gray-400 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                    <span class="ml-4 whitespace-nowrap text-gray-700">不合作原因：</span>
+                    <input type="text" v-model="form.preReason" placeholder="不合作原因"
+                      class="flex-1 p-1 border-b border-gray-400 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                  </div>
+                </td>
+              </tr>
+
+              <!-- 以前纠纷及解决方式（非必填） -->
+              <tr class="border-b border-black">
+                <td class="p-3">
+                  <div class="flex items-start gap-2">
+                    <span class="whitespace-nowrap pt-1 text-gray-700">公司以前出现过的纠纷及解决方式：</span>
+                    <textarea v-model="form.preDiscuss" placeholder="请详细描述纠纷及解决方式"
+                      class="flex-1 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+                      rows="2"></textarea>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- 待处理事项登记（非必填） -->
+              <tr class="border-b border-black">
+                <td class="p-3">
+                  <div class="leading-relaxed">
+                    <span class="text-gray-700">待处理事项登记：劳资纠纷、合同纠纷、借贷纠纷、承揽纠纷、财税问题、执行案件等</span>
+                    <textarea v-model="form.pendingRemark"
+                      class="w-full mt-2 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+                      rows="2"></textarea>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- 欠款问题登记（非必填） -->
+              <tr>
+                <td class="p-3">
+                  <div class="leading-relaxed">
+                    <span class="text-gray-700">欠款问题请详细登记：相关主体、已知债务人信息、标的额、证据情况、案件处理要求等</span>
+                    <textarea v-model="form.debtRemark"
+                      class="w-full mt-2 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+                      rows="2"></textarea>
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- 7. 备注大文本区域（非必填） -->
+          <div class="min-h-[400px] border-b border-black p-4 mb-4 mt-0">
+            <div class="font-medium mb-2 text-blue-800">其他备注信息：</div>
+            <textarea v-model="form.remark" placeholder="请输入其他需要补充的备注信息"
+              class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[350px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300"></textarea>
+          </div>
+        </el-form>
       </div>
 
       <!-- 对话框底部按钮（配色优化） -->
@@ -632,14 +640,14 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     params: {}
   },
   rules: {
-    id: [
-      { required: true, message: "主键ID不能为空", trigger: "blur" }
-    ],
     companyName: [
       { required: true, message: "公司名称不能为空", trigger: "blur" }
     ],
     contactPerson: [
       { required: true, message: "公司对接人不能为空", trigger: "blur" }
+    ],
+    actualPayment: [
+      { required: true, message: "支付金额不能为空", trigger: "blur" }
     ],
   }
 });
@@ -782,19 +790,49 @@ async function submitAudit() {
 
 /** 提交按钮 */
 const submitForm = () => {
-  customerTransferFormRef.value?.validate(async (valid: boolean) => {
+  console.log('submitForm called');
+  console.log('Form ref:', customerTransferFormRef.value);
+  console.log('Form data:', form.value);
+
+  if (!customerTransferFormRef.value) {
+    console.error('Form ref is null');
+    proxy?.$modal.msgError("表单初始化失败，请刷新页面重试");
+    return;
+  }
+
+  customerTransferFormRef.value.validate(async (valid: boolean) => {
+    console.log('Form validation result:', valid);
     if (valid) {
       buttonLoading.value = true;
-      form.value.pendingMatters = form.value.pendingMatters.join(",");
-      form.value.debtDetails = form.value.debtDetails.join(",");
-      if (form.value.id) {
-        await updateCustomerTransfer(form.value).finally(() => buttonLoading.value = false);
-      } else {
-        await addCustomerTransfer(form.value).finally(() => buttonLoading.value = false);
+      try {
+        // 处理数组字段
+        if (Array.isArray(form.value.pendingMatters)) {
+          form.value.pendingMatters = form.value.pendingMatters.join(",");
+        }
+        if (Array.isArray(form.value.debtDetails)) {
+          form.value.debtDetails = form.value.debtDetails.join(",");
+        }
+
+        console.log('Form data after processing:', form.value);
+
+        if (form.value.id) {
+          await updateCustomerTransfer(form.value);
+        } else {
+          await addCustomerTransfer(form.value);
+        }
+
+        proxy?.$modal.msgSuccess("操作成功");
+        dialog.visible = false;
+        await getList();
+      } catch (error) {
+        console.error('Submit error:', error);
+        proxy?.$modal.msgError("操作失败，请重试");
+      } finally {
+        buttonLoading.value = false;
       }
-      proxy?.$modal.msgSuccess("操作成功");
-      dialog.visible = false;
-      await getList();
+    } else {
+      console.log('Form validation failed');
+      proxy?.$modal.msgError("请填写必填项");
     }
   });
 }
