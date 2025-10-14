@@ -129,7 +129,7 @@
     </el-card>
     <!-- 添加或修改客户跟踪对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
-      <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="客户id" prop="customerId">
           <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
             <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
@@ -163,7 +163,7 @@
               :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="下次跟踪时间" prop="nextTime">
+        <el-form-item label="下次跟踪时间" prop="nextTime" >
           <el-date-picker clearable v-model="form.nextTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择下次跟踪时间">
           </el-date-picker>

@@ -80,7 +80,11 @@
         <el-table-column label="来源" align="center" prop="source" width="160" show-overflow-tooltip />
         <el-table-column label="预计金额" align="center" prop="expectedAmount" width="110" show-overflow-tooltip />
         <el-table-column label="介绍人" align="center" prop="introducer" width="120" show-overflow-tooltip />
-        <el-table-column label="跟进结果" align="center" prop="followUpResult" width="110" show-overflow-tooltip />
+        <el-table-column label="跟进结果" align="center" prop="followUpResult" width="110" show-overflow-tooltip >
+            <template #default="scope">
+                <dict-tag :options="cumtomer_status" :value="scope.row.followUpResult" />
+            </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
           width="180" fixed="right">
           <template #default="scope">
@@ -124,7 +128,10 @@
           <el-input v-model="form.expectedAmount" placeholder="请输入预计金额" />
         </el-form-item>
         <el-form-item label="跟进结果" prop="followUpResult" label-width="90px">
-          <el-input v-model="form.followUpResult" placeholder="请输入跟进结果" />
+          <el-select v-model="form.followUpResult" placeholder="请选择跟进结果">
+            <el-option v-for="dict in cumtomer_status" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="提报日期" prop="submissionDate">
           <el-date-picker clearable v-model="form.submissionDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
@@ -149,6 +156,7 @@ import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
+const { cumtomer_status } = toRefs<any>(proxy?.useDict('cumtomer_status'));
 
 const customerIntentionList = ref<CustomerIntentionVO[]>([]);
 const buttonLoading = ref(false);

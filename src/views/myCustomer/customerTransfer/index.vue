@@ -65,6 +65,11 @@
 
       <el-table v-loading="loading" border :data="customerTransferList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed || ''" />
+          </template>
+        </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip />
         <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip />
@@ -97,11 +102,7 @@
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
         <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="120" show-overflow-tooltip />
         <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
-        <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
-          <template #default="scope">
-            <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed || ''" />
-          </template>
-        </el-table-column>
+        
         <el-table-column label="自然人电话" align="center" prop="additionalContact" width="120" show-overflow-tooltip />
         <el-table-column label="自然人职务" align="center" prop="additionalPosition" width="100" show-overflow-tooltip />
         <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip />
@@ -123,6 +124,7 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="300" fixed="right">
           <template #default="scope">
             <div class="table-action-buttons">
+              <el-button link type="primary" icon="View" @click="handleView(scope.row)">查看</el-button>
               <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
                 @click="handleProcess(scope.row)">处置</el-button>
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
@@ -563,6 +565,265 @@
     </el-dialog>
 
 
+    <el-dialog v-model="viewDialogVisible" title="查看详情" width="80%" append-to-body>
+    <div class="min-h-[600px] bg-white p-4">
+      <!-- 头部区域 -->
+      <div class="border-b-2 border-black p-4 flex justify-between items-start mb-1">
+        <div class="flex items-center gap-2">
+          <img src="@/assets/images/logo.jpg" alt="logo" class="w-30 h-8" />
+        </div>
+        <div class="text-right text-sm text-gray-600">
+          <div>让每一家公司都拥有自己的法务部</div>
+        </div>
+      </div>
+
+      <!-- 流转单标题 -->
+      <div class="text-center py-3 border-b border-black mb-1 mt-0">
+        <h1 class="text-2xl font-bold text-blue-700">成交客户内部流转单</h1>
+      </div>
+
+      <!-- 交易日期与人员信息 -->
+      <div class="border-b border-black mb-1 mt-0">
+        <table class="w-full border-collapse">
+          <tr>
+            <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：</td>
+            <td class="p-2 w-64">
+              {{ parseTime(viewForm.transactionDate, '{y}-{m}-{d}') }}
+            </td>
+            <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：</td>
+            <td class="p-2 w-64">
+              {{ getUserNameById(viewForm.inviterId) }}
+            </td>
+            <td class="border-l border-black p-2 w-32 bg-blue-50">客户经理：</td>
+            <td class="p-2">
+              {{ getUserNameById(viewForm.accountManagerId) }}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 公司信息区域 -->
+      <div class="border-b border-black mb-1 mt-0">
+        <table class="w-full border-collapse">
+          <!-- 公司名称 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">公司名称：</td>
+            <td colspan="7" class="p-2">
+              {{ viewForm.companyName }}
+            </td>
+          </tr>
+
+          <!-- 公司对接人信息 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">公司对接人<br>姓名：</td>
+            <td class="border-r border-black p-2 w-40">
+              {{ viewForm.contactPerson }}
+            </td>
+            <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）</td>
+            <td class="border-r border-black p-2 w-40">
+              {{ viewForm.contactInfo }}
+            </td>
+            <td class="border-r border-black p-2 w-24 bg-blue-50">职务：</td>
+            <td class="border-r border-black p-2 w-32">
+              {{ viewForm.contactPosition }}
+            </td>
+            <td class="border-r border-black p-2 w-24 bg-blue-50">年龄：</td>
+            <td class="p-2">
+              {{ viewForm.contactAge }}
+            </td>
+          </tr>
+
+          <!-- 附赠自然人信息 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">附赠自然人：</td>
+            <td class="border-r border-black p-2 w-40">
+              {{ viewForm.additionalPerson }}
+            </td>
+            <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）</td>
+            <td class="border-r border-black p-2 w-40">
+              {{ viewForm.additionalContact }}
+            </td>
+            <td class="border-r border-black p-2 w-24 bg-blue-50">职务：</td>
+            <td class="border-r border-black p-2 w-32">
+              {{ viewForm.additionalPosition }}
+            </td>
+            <td class="border-r border-black p-2 w-24 bg-blue-50">年龄：</td>
+            <td class="p-2">
+              {{ viewForm.additionalAge }}
+            </td>
+          </tr>
+
+          <!-- 公司行业与地址 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">公司所属行业：</td>
+            <td colspan="3" class="border-r border-black p-2">
+              {{ viewForm.companyIndustry }}
+            </td>
+            <td class="border-r border-black p-2 w-32 bg-blue-50">公司地址：</td>
+            <td colspan="3" class="p-2">
+              {{ viewForm.companyAddress }}
+            </td>
+          </tr>
+
+          <!-- 员工人数与代账公司 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">员工人数：</td>
+            <td class="border-r border-black p-2 w-40">
+              {{ viewForm.employeeCount }}
+            </td>
+            <td colspan="2" class="border-r border-black p-2 w-64 bg-blue-50">是否有代账公司：</td>
+            <td colspan="4" class="p-2">
+              <span v-if="viewForm.accountingCompany === '0'">是</span>
+              <span v-else-if="viewForm.accountingCompany === '1'">否</span>
+              <span v-else-if="viewForm.accountingCompany === '2'">不确定</span>
+            </td>
+          </tr>
+
+          <!-- 客户性格描述 -->
+          <tr>
+            <td colspan="8" class="p-2 bg-blue-50">客户性格及工作习惯描述：</td>
+          </tr>
+          <tr>
+            <td colspan="8" class="p-2 border-b border-black">
+              {{ viewForm.customerDescription }}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 签约情况区域 -->
+      <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
+        <h2 class="text-lg font-bold text-blue-800">签约情况</h2>
+      </div>
+      <div class="border-b border-black mb-1 mt-0">
+        <table class="w-full border-collapse">
+          <!-- 金额与签约类型 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">支付金额：</td>
+            <td class="border-r border-black p-2 w-40">
+              {{ viewForm.actualPayment }}
+            </td>
+            <td class="border-r border-black p-2 w-32 bg-blue-50">尾款情况：</td>
+            <td class="border-r border-black p-2 flex-1">
+              {{ viewForm.balanceStatus }}
+            </td>
+            <td class="border-r border-black p-2 w-48 bg-blue-50">签约类型：</td>
+            <td class="p-2">
+              <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
+            </td>
+          </tr>
+
+          <!-- 常法版本与服务周期 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">常法签约：</td>
+            <td class="border-r border-black p-2 w-40">
+              <dict-tag :options="dc_service_type" :value="viewForm.serviceType || ''" />
+            </td>
+            <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：</td>
+            <td colspan="2" class="border-r border-black p-2">
+              {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}') }}
+            </td>
+            <td class="p-2 w-48 bg-blue-50">财务确<br>认状态：</td>
+            <td class="p-2">
+              <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed || ''" />
+            </td>
+          </tr>
+
+          <!-- 财务签字 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">财务签字：</td>
+            <td colspan="5" class="p-2">
+              {{ viewForm.financeSignature }}
+            </td>
+          </tr>
+
+          <!-- 律师咨询情况 -->
+          <tr class="border-b border-black">
+            <td class="border-r border-black p-2 w-32 bg-blue-50">律师咨询情况：</td>
+            <td colspan="5" class="p-2">
+              {{ viewForm.lawyerConsultation }}
+            </td>
+          </tr>
+
+          <!-- 其他费用沟通 -->
+          <tr>
+            <td class="border-r border-black p-2 w-32 bg-blue-50">其他费用沟通：</td>
+            <td colspan="5" class="p-2">
+              {{ viewForm.otherFee }}
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 客户情况概述 -->
+      <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
+        <h2 class="text-lg font-bold text-blue-800">客户情况概述</h2>
+      </div>
+      <div class="border-b border-black mb-1 mt-0">
+        <table class="w-full border-collapse">
+          <!-- 以前是否有法务 -->
+          <tr class="border-b border-black">
+            <td class="p-3">
+              <div class="flex items-center gap-4 flex-wrap">
+                <span class="whitespace-nowrap text-gray-700">以前是否有过公司法务：</span>
+                <span>{{ viewForm.preLegal === '1' ? '是' : '否' }}</span>
+                <span class="ml-4 whitespace-nowrap text-gray-700">合作公司名称：</span>
+                <span>{{ viewForm.preCompany }}</span>
+                <span class="ml-4 whitespace-nowrap text-gray-700">不合作原因：</span>
+                <span>{{ viewForm.preReason }}</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- 以前纠纷及解决方式 -->
+          <tr class="border-b border-black">
+            <td class="p-3">
+              <div class="flex items-start gap-2">
+                <span class="whitespace-nowrap pt-1 text-gray-700">公司以前出现过的纠纷及解决方式：</span>
+                <span class="flex-1">{{ viewForm.preDiscuss }}</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- 待处理事项登记 -->
+          <tr class="border-b border-black">
+            <td class="p-3">
+              <div class="leading-relaxed">
+                <span class="text-gray-700">待处理事项登记：劳资纠纷、合同纠纷、借贷纠纷、承揽纠纷、财税问题、执行案件等</span>
+                <div class="w-full mt-2">{{ viewForm.pendingRemark }}</div>
+              </div>
+            </td>
+          </tr>
+
+          <!-- 欠款问题登记 -->
+          <tr>
+            <td class="p-3">
+              <div class="leading-relaxed">
+                <span class="text-gray-700">欠款问题请详细登记：相关主体、已知债务人信息、标的额、证据情况、案件处理要求等</span>
+                <div class="w-full mt-2">{{ viewForm.debtRemark }}</div>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 备注大文本区域 -->
+      <div class="min-h-[300px] border-b border-black p-4 mb-4 mt-0">
+        <div class="font-medium mb-2 text-blue-800">其他备注信息：</div>
+        <div class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[250px]">
+          {{ viewForm.remark }}
+        </div>
+      </div>
+    </div>
+
+    <template #footer>
+      <div class="dialog-footer flex justify-end gap-4">
+        <el-button @click="viewDialogVisible = false">关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+
   </div>
 </template>
 
@@ -886,6 +1147,23 @@ const handleExport = () => {
   proxy?.download('myCustomer/customerTransfer/export', {
     ...queryParams.value
   }, `customerTransfer_${new Date().getTime()}.xlsx`)
+}
+
+// 查看对话框相关变量
+const viewDialogVisible = ref(false)
+const viewForm = ref<CustomerTransferVO>({} as CustomerTransferVO)
+
+// 查看按钮处理函数
+const handleView = (row: CustomerTransferVO) => {
+  viewForm.value = { ...row }
+  viewDialogVisible.value = true
+}
+
+// 根据用户ID获取用户名
+const getUserNameById = (userId: string) => {
+  if (!userId) return ''
+  const user = userList.value.find((item: any) => item.userId === userId)
+  return user ? `${user.nickName}(${user.userName})` : ''
 }
 
 onMounted(() => {
