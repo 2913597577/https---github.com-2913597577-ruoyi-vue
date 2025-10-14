@@ -80,9 +80,10 @@
         </el-table-column>
         <el-table-column label="签单金额" align="center" prop="contractAmount" width="90" show-overflow-tooltip />
         <el-table-column label="服务时长" align="center" prop="serviceHours" width="80" show-overflow-tooltip />
-        <el-table-column :label="customerTypeLabel" align="center" prop="customerType" width="80" show-overflow-tooltip />
+        <!-- <el-table-column :label="customerTypeLabel" align="center" prop="customerType" width="80" show-overflow-tooltip /> -->
         <el-table-column :label="customerTypeLabel + '原因'" align="center" prop="reasons" width="120" show-overflow-tooltip />
-        <el-table-column label="退款金额" align="center" prop="refundAmount" width="90" show-overflow-tooltip />
+        <el-table-column label="退款金额" align="center" prop="refundAmount" width="90" show-overflow-tooltip 
+                 v-if="customerTypeLabel=='退费'"/>
         <el-table-column label="备注" align="center" prop="remark1" width="140" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
           width="180" fixed="right">
@@ -135,7 +136,7 @@
         <el-form-item :label="customerTypeLabel + '原因'" prop="reasons" label-width="90px">
           <el-input v-model="form.reasons" placeholder="请输入风险/退费原因" />
         </el-form-item>
-        <el-form-item label="退款金额" prop="refundAmount" label-width="90px">
+        <el-form-item v-if="form.customerType==2" label="退款金额" prop="refundAmount" label-width="90px">
           <el-input v-model="form.refundAmount" placeholder="请输入退款金额" />
         </el-form-item>
         <el-form-item label="备注" prop="remark1" label-width="90px">
