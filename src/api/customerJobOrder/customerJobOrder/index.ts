@@ -61,3 +61,12 @@ export const delCustomerJobOrder = (id: string | number | Array<string | number>
     method: 'delete'
   });
 };
+
+// 接工单接口
+export function acceptCustomerJobOrder(id: string) {
+  return request({
+    url: '/customerJobOrder/customerJobOrder/accept',
+    method: 'get',
+    params: { id }
+  })
+};

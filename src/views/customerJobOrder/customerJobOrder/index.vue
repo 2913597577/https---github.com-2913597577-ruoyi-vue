@@ -102,6 +102,10 @@
         <el-table-column label="备注3" align="center" prop="remark3" /> -->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="240px">
           <template #default="scope">
+            <el-tooltip content="接工单" placement="top">
+            <el-button v-if="scope.row.processingStatus==0" link type="primary"  @click="handleAccept(scope.row)"
+                v-hasPermi="['customerJobOrder:customerJobOrder:edit']">接工单</el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']">修改</el-button>
@@ -200,7 +204,7 @@
 
 <script setup name="CustomerJobOrder" lang="ts">
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
-import { listCustomerJobOrder, getCustomerJobOrder, delCustomerJobOrder, addCustomerJobOrder, updateCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
+import { listCustomerJobOrder, getCustomerJobOrder, delCustomerJobOrder, addCustomerJobOrder, updateCustomerJobOrder, acceptCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { CustomerJobOrderVO, CustomerJobOrderQuery, CustomerJobOrderForm } from '@/api/customerJobOrder/customerJobOrder/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -287,6 +291,23 @@ const getList = async () => {
   loading.value = false;
 }
 
+const handleAccept = async (row: CustomerJobOrderVO) => {
+  // 检查工单是否已被接收
+  if (row.processingStatus === 1) {
+    proxy?.$modal.msgWarning("该工单已被接收，不能重复接收");
+    return;
+  }
+  
+  // 调用后端接工单接口
+ 
+    const res = await acceptCustomerJobOrder(row.id.toString());
+    if (res.code === 200) {
+      proxy?.$modal.msgSuccess("工单接收成功");
+      await getList(); // 刷新列表
+    } else {
+      proxy?.$modal.msgWarning(res.msg || "接工单失败");
+    }
+}
 /** 取消按钮 */
 const cancel = () => {
   reset();
