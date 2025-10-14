@@ -141,7 +141,7 @@
       :custom-class="'native-style-dialog'">
       <div class="min-h-[800px] bg-white p-4">
         <el-form ref="customerTransferFormRef" :model="form" :rules="rules" label-width="0" hide-required-asterisk>
-          <!-- 1. 头部区域（保留原结构） -->
+          <!-- 头部区域 -->
           <div class="border-b-2 border-black p-4 flex justify-between items-start mb-1">
             <div class="flex items-center gap-2">
               <img src="@/assets/images/logo.jpg" alt="logo" class="w-30 h-8" />
@@ -151,12 +151,12 @@
             </div>
           </div>
 
-          <!-- 2. 流转单标题（上移后与头部紧凑衔接） -->
+          <!-- 流转单标题 -->
           <div class="text-center py-3 border-b border-black mb-1 mt-0">
             <h1 class="text-2xl font-bold text-blue-700">成交客户内部流转单</h1>
           </div>
 
-          <!-- 3. 交易日期与人员信息（必填标注：公司名称/邀约人/客户经理） -->
+          <!-- 交易日期与人员信息 -->
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
               <tr>
@@ -165,69 +165,37 @@
                   <input type="date"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-                <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：</td>
+                <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
                 <td class="p-2 w-64">
-                  <input type="text" v-model="form.inviterId" placeholder="请输入邀约人"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                  <el-select v-model="form.inviterId" placeholder="请选择邀约人" filterable>
+                    <el-option v-for="user in userList" :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
+                  </el-select>
                 </td>
-                <td class="border-l border-black p-2 w-32 bg-blue-50">客户经理：</td>
+                <td class="border-l border-black p-2 w-32 bg-blue-50">客户经理：<span class="text-red-500">*</span></td>
                 <td class="p-2">
-                  <input type="text" v-model="form.accountManagerId" placeholder="请输入客户经理"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                  <el-select v-model="form.accountManagerId" placeholder="请选择客户经理" filterable>
+                    <el-option v-for="user in userList" :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
+                  </el-select>
                 </td>
               </tr>
             </table>
           </div>
 
-<<<<<<< HEAD
-          <!-- 4. 公司信息区域（必填标注：公司名称/对接人/联系方式/行业/地址） -->
+          <!-- 公司对接人/自然人信息 -->
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
               <!-- 公司名称（必填） -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">公司名称：<span class="text-red-500">*</span></td>
                 <td colspan="7" class="p-2">
-                  <el-form-item prop="companyName" style="margin-bottom: 0;" :show-message="false">
-                    <el-input v-model="form.companyName" placeholder="请输入公司名称" />
-                  </el-form-item>
+                  <input type="text" v-model="form.companyName" placeholder="请输入公司名称（必填）"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+                    required>
                 </td>
               </tr>
-=======
-        <!-- 3. 交易日期与人员信息（必填标注：公司名称/邀约人/客户经理） -->
-        <div class="border-b border-black mb-1 mt-0">
-          <table class="w-full border-collapse">
-            <tr>
-              <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：</td>
-              <td class="p-2 w-64">
-                <input type="date"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-              </td>
-              <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
-              <td class="p-2 w-64">
-                <el-select v-model="form.inviterId" placeholder="请选择邀约人" filterable>
-                    <el-option v-for="user in userList"
-                               :key="user.userId"
-                               :label="user.nickName + '(' + user.userName + ')'"
-                               :value="user.userId">
-                    </el-option>
-                  </el-select>
-              </td>
-              <td class="border-l border-black p-2 w-32 bg-blue-50">客户经理：<span class="text-red-500">*</span></td>
-              <td class="p-2">
-               <el-select v-model="form.accountManagerId" placeholder="请选择客户经理" filterable>
-                    <el-option v-for="user in userList"
-                               :key="user.userId"
-                               :label="user.nickName + '(' + user.userName + ')'"
-                               :value="user.userId">
-                    </el-option>
-                  </el-select>
-              </td>
-            </tr>
-          </table>
-        </div>
->>>>>>> 773861f75ad51e4dada597addac14fadbf5b252c
-
-              <!-- 公司对接人信息（对接人/联系方式必填） -->
+              <!-- 公司对接人信息 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">公司对接人<br>姓名：<span class="text-red-500">*</span>
                 </td>
@@ -237,8 +205,7 @@
                     <el-input v-model="form.contactPerson" placeholder="对接人姓名" />
                   </el-form-item>
                 </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）
-                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）</td>
                 <td class="border-r border-black p-2 w-40">
                   <input type="text" v-model="form.contactInfo" placeholder="联系方式"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
@@ -255,7 +222,7 @@
                 </td>
               </tr>
 
-              <!-- 附赠自然人信息（非必填） -->
+              <!-- 附赠自然人信息 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">附赠自然人：</td>
                 <td class="border-r border-black p-2 w-40">
@@ -279,7 +246,7 @@
                 </td>
               </tr>
 
-              <!-- 公司行业与地址（必填） -->
+              <!-- 公司行业与地址 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">公司所属行业：</td>
                 <td colspan="3" class="border-r border-black p-2">
@@ -293,7 +260,7 @@
                 </td>
               </tr>
 
-              <!-- 员工人数与代账公司（非必填） -->
+              <!-- 员工人数与代账公司 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">员工人数：</td>
                 <td class="border-r border-black p-2 w-40">
@@ -322,7 +289,7 @@
                 </td>
               </tr>
 
-              <!-- 客户性格描述（非必填） -->
+              <!-- 客户性格描述 -->
               <tr>
                 <td colspan="8" class="p-2 bg-blue-50">客户性格及工作习惯描述：</td>
               </tr>
@@ -336,13 +303,13 @@
             </table>
           </div>
 
-          <!-- 5. 签约情况区域（必填标注：支付金额/签约类型/服务周期/财务确认） -->
+          <!-- 签约情况区域 -->
           <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
             <h2 class="text-lg font-bold text-blue-800">签约情况</h2>
           </div>
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
-              <!-- 金额与签约类型（必填） -->
+              <!-- 金额与签约类型 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">支付金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 w-40">
@@ -369,7 +336,7 @@
                 </td>
               </tr>
 
-              <!-- 常法版本与服务周期（服务周期必填） -->
+              <!-- 常法版本与服务周期 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">常法签约：</td>
                 <td class="border-r border-black p-2 w-40">
@@ -401,13 +368,13 @@
                   <select v-model="form.financeConfirmed"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                     <option value="">选择状态</option>
-                    <option value="已确认">已确认</option>
-                    <option value="未确认">未确认</option>
+                    <option value="1">已确认</option>
+                    <option value="0">未确认</option>
                   </select>
                 </td>
               </tr>
 
-              <!-- 财务签字（非必填） -->
+              <!-- 财务签字 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">财务签字：</td>
                 <td colspan="5" class="p-2">
@@ -416,7 +383,7 @@
                 </td>
               </tr>
 
-              <!-- 律师咨询情况（非必填） -->
+              <!-- 律师咨询情况 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">律师咨询情况：</td>
                 <td colspan="5" class="p-2">
@@ -426,7 +393,7 @@
                 </td>
               </tr>
 
-              <!-- 其他费用沟通（非必填） -->
+              <!-- 其他费用沟通 -->
               <tr>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">其他费用沟通：</td>
                 <td colspan="5" class="p-2">
@@ -438,13 +405,13 @@
             </table>
           </div>
 
-          <!-- 6. 客户情况概述（非必填，标题栏配色优化） -->
+          <!-- 客户情况概述 -->
           <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
             <h2 class="text-lg font-bold text-blue-800">客户情况概述</h2>
           </div>
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
-              <!-- 以前是否有法务（非必填） -->
+              <!-- 以前是否有法务 -->
               <tr class="border-b border-black">
                 <td class="p-3">
                   <div class="flex items-center gap-4 flex-wrap">
@@ -469,7 +436,7 @@
                 </td>
               </tr>
 
-              <!-- 以前纠纷及解决方式（非必填） -->
+              <!-- 以前纠纷及解决方式 -->
               <tr class="border-b border-black">
                 <td class="p-3">
                   <div class="flex items-start gap-2">
@@ -481,7 +448,7 @@
                 </td>
               </tr>
 
-              <!-- 待处理事项登记（非必填） -->
+              <!-- 待处理事项登记 -->
               <tr class="border-b border-black">
                 <td class="p-3">
                   <div class="leading-relaxed">
@@ -493,7 +460,7 @@
                 </td>
               </tr>
 
-              <!-- 欠款问题登记（非必填） -->
+              <!-- 欠款问题登记 -->
               <tr>
                 <td class="p-3">
                   <div class="leading-relaxed">
@@ -507,7 +474,7 @@
             </table>
           </div>
 
-          <!-- 7. 备注大文本区域（非必填） -->
+          <!-- 备注大文本区域 -->
           <div class="min-h-[400px] border-b border-black p-4 mb-4 mt-0">
             <div class="font-medium mb-2 text-blue-800">其他备注信息：</div>
             <textarea v-model="form.remark" placeholder="请输入其他需要补充的备注信息"
@@ -516,7 +483,7 @@
         </el-form>
       </div>
 
-      <!-- 对话框底部按钮（配色优化） -->
+      <!-- 对话框底部按钮 -->
       <template #footer>
         <div class="dialog-footer flex justify-end gap-4">
           <button
@@ -532,6 +499,7 @@
         </div>
       </template>
     </el-dialog>
+
 
 
     <el-dialog v-model="auditDialogVisible" title="审核" width="500px" append-to-body>
@@ -744,7 +712,7 @@ const handleSelectionChange = (selection: CustomerTransferVO[]) => {
 const handleAdd = () => {
   reset();
   dialog.visible = true;
-  dialog.title = "添加客户信息录入";
+  dialog.title = "";
 }
 
 /** 修改按钮操作 */
