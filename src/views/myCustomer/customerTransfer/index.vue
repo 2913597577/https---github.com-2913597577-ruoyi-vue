@@ -179,6 +179,7 @@
             </table>
           </div>
 
+<<<<<<< HEAD
           <!-- 4. 公司信息区域（必填标注：公司名称/对接人/联系方式/行业/地址） -->
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
@@ -191,6 +192,40 @@
                   </el-form-item>
                 </td>
               </tr>
+=======
+        <!-- 3. 交易日期与人员信息（必填标注：公司名称/邀约人/客户经理） -->
+        <div class="border-b border-black mb-1 mt-0">
+          <table class="w-full border-collapse">
+            <tr>
+              <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：</td>
+              <td class="p-2 w-64">
+                <input type="date"
+                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+              </td>
+              <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
+              <td class="p-2 w-64">
+                <el-select v-model="form.inviterId" placeholder="请选择邀约人" filterable>
+                    <el-option v-for="user in userList"
+                               :key="user.userId"
+                               :label="user.nickName + '(' + user.userName + ')'"
+                               :value="user.userId">
+                    </el-option>
+                  </el-select>
+              </td>
+              <td class="border-l border-black p-2 w-32 bg-blue-50">客户经理：<span class="text-red-500">*</span></td>
+              <td class="p-2">
+               <el-select v-model="form.accountManagerId" placeholder="请选择客户经理" filterable>
+                    <el-option v-for="user in userList"
+                               :key="user.userId"
+                               :label="user.nickName + '(' + user.userName + ')'"
+                               :value="user.userId">
+                    </el-option>
+                  </el-select>
+              </td>
+            </tr>
+          </table>
+        </div>
+>>>>>>> 773861f75ad51e4dada597addac14fadbf5b252c
 
               <!-- 公司对接人信息（对接人/联系方式必填） -->
               <tr class="border-b border-black">
@@ -749,6 +784,7 @@ function auditCancel() {
 
 // 提交审核
 async function submitAudit() {
+  console.log('提交审核')
   if (submitting.value) return
   console.log(localFileList.value[0])
   // 如果审核通过，必须上传签名图片
