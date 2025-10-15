@@ -63,7 +63,13 @@
       <el-table v-loading="loading" border :data="customerRiskRefundList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="法务支持" align="center" prop="lawyerId" width="80" show-overflow-tooltip />
+        <el-table-column label="法务支持员工" align="center" width="120" prop="lawyerId" show-overflow-tooltip>
+          <template #default="scope">
+            <span v-if="scope.row.lawyerId">
+              {{ getLawyerNameById(scope.row.lawyerId) }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column label="客户名称" align="center" prop="customerName" width="100" show-overflow-tooltip />
         <el-table-column label="客户对接人" align="center" prop="principal" width="90" show-overflow-tooltip />
         <el-table-column label="对接人电话" align="center" prop="principalPhone" width="120" show-overflow-tooltip />
@@ -387,6 +393,15 @@ const handleLegalSupportChange = (userId: string) => {
     form.value.lawyerId = undefined;
   }
 }
+
+// 添加获取法务人员姓名的方法
+const getLawyerNameById = (lawyerId: string | number) => {
+  console.log('lawyerId:', lawyerId);
+  if (!lawyerId) return '';
+  const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
+  console.log('lawyer:', lawyer);
+  return lawyer ? `${lawyer.userName}` : '';
+};
 onMounted(() => {
   loadLawyerSupportList();
   getList();
