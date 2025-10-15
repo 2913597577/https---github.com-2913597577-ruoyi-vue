@@ -68,12 +68,12 @@
         <el-table-column label="客户对接人" align="center" prop="principal" width="90" show-overflow-tooltip />
         <el-table-column label="对接人电话" align="center" prop="principalPhone" width="120" show-overflow-tooltip />
         <el-table-column label="大成负责人" align="center" prop="inviterId" width="90" show-overflow-tooltip />
-        <el-table-column label="签约日期" align="center" prop="signDate" width="120" show-overflow-tooltip >
+        <el-table-column label="签约日期" align="center" prop="signDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip >
+        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
@@ -81,17 +81,18 @@
         <el-table-column label="签单金额" align="center" prop="contractAmount" width="90" show-overflow-tooltip />
         <el-table-column label="服务时长" align="center" prop="serviceHours" width="80" show-overflow-tooltip />
         <!-- <el-table-column :label="customerTypeLabel" align="center" prop="customerType" width="80" show-overflow-tooltip /> -->
-        <el-table-column :label="customerTypeLabel + '原因'" align="center" prop="reasons" width="120" show-overflow-tooltip />
-        <el-table-column label="退款金额" align="center" prop="refundAmount" width="90" show-overflow-tooltip 
-                 v-if="customerTypeLabel=='退费'"/>
+        <el-table-column :label="customerTypeLabel + '原因'" align="center" prop="reasons" width="120"
+          show-overflow-tooltip />
+        <el-table-column label="退款金额" align="center" prop="refundAmount" width="90" show-overflow-tooltip
+          v-if="customerTypeLabel == '退费'" />
         <el-table-column label="备注" align="center" prop="remark1" width="140" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
           width="180" fixed="right">
           <template #default="scope">
-              <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['customerRiskRefund:customerRiskRefund:edit']">修改</el-button>
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['customerRiskRefund:customerRiskRefund:remove']">删除</el-button>
+            <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
+              v-hasPermi="['customerRiskRefund:customerRiskRefund:edit']">修改</el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+              v-hasPermi="['customerRiskRefund:customerRiskRefund:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -102,8 +103,15 @@
     <!-- 添加或修改客户风险/退费对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerRiskRefundFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="法务支持" prop="lawyerId" label-width="90px">
+        <!-- <el-form-item label="法务支持" prop="lawyerId" label-width="90px">
           <el-input v-model="form.lawyerId" placeholder="请输入法务支持" />
+        </el-form-item> -->
+        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+          <el-select filterable v-model="form.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="客户名称" prop="customerName" label-width="90px">
           <el-input v-model="form.customerName" placeholder="请输入客户名称" />
@@ -136,7 +144,7 @@
         <el-form-item :label="customerTypeLabel + '原因'" prop="reasons" label-width="90px">
           <el-input v-model="form.reasons" placeholder="请输入风险/退费原因" />
         </el-form-item>
-        <el-form-item v-if="form.customerType==2" label="退款金额" prop="refundAmount" label-width="90px">
+        <el-form-item v-if="form.customerType == 2" label="退款金额" prop="refundAmount" label-width="90px">
           <el-input v-model="form.refundAmount" placeholder="请输入退款金额" />
         </el-form-item>
         <el-form-item label="备注" prop="remark1" label-width="90px">
@@ -154,6 +162,7 @@
 </template>
 
 <script setup name="CustomerRiskRefund" lang="ts">
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listCustomerRiskRefund, getCustomerRiskRefund, delCustomerRiskRefund, addCustomerRiskRefund, updateCustomerRiskRefund } from '@/api/customerRiskRefund/customerRiskRefund';
 import { CustomerRiskRefundVO, CustomerRiskRefundQuery, CustomerRiskRefundForm } from '@/api/customerRiskRefund/customerRiskRefund/types';
 import { useRoute } from 'vue-router'
@@ -353,8 +362,33 @@ const handleExport = () => {
     ...queryParams.value
   }, `customerRiskRefund_${new Date().getTime()}.xlsx`)
 }
+const lawyerList = ref([]);
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
 
+    form.value.lawyerId = userId;
+
+  } else {
+    // 清空选择时重置相关字段
+    form.value.lawyerId = undefined;
+  }
+}
 onMounted(() => {
+  loadLawyerSupportList();
   getList();
 });
 </script>
