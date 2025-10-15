@@ -105,6 +105,21 @@
         <el-table-column label="客户名称" align="center" width="100" prop="customerName" />
         <el-table-column label="负责人" align="center" width="100" prop="principal" />
         <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
+        <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip>
+            <template #default="scope">
+              <div class="contract-cell">
+                <span v-if="scope.row.contractCode" class="contract-code" @click="handleViewContract(scope.row)" style="cursor: pointer; color: red;" >{{ scope.row.contractCode }}</span>
+                <el-button 
+                  v-if="!scope.row.contractCode" 
+                  link 
+                  type="primary" 
+                  icon="Upload"  
+                  @click="handleUpload(scope.row)">
+                  上传合同
+                </el-button>
+              </div>
+            </template>
+          </el-table-column>
         <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" />
         <el-table-column label="杀单手" align="center" width="100" prop="closer" />
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
@@ -115,7 +130,6 @@
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="合同编号" align="center" prop="contractCode"  width="120" show-overflow-tooltip />
         <el-table-column label="备注" align="center" prop="remarks"  width="140" show-overflow-tooltip />
         <el-table-column label="续费/尾款" align="center" prop="actionType" width="100" show-overflow-tooltip />
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
@@ -468,6 +482,21 @@
     </template>
   </el-dialog>
 
+      <el-dialog :title="customerInfoDialog.title" v-model="customerInfoDialog.visible" width="500px" append-to-body>
+          <el-form ref="customerintentionFormRef" :model="customerInfoForm" :rules="rules" label-width="80px">
+            <el-form-item label="合同文件" prop="contractCode">
+              <file-upload :limit="1" :fileSize="10" v-model="contract" />
+            </el-form-item>
+          </el-form>
+
+          <template #footer>
+            <div class="dialog-footer">
+              <el-button :loading="buttonLoading" type="primary" @click="submitintentionForm">确 定</el-button>
+              <el-button @click="customerInfoDialogCancel">取 消</el-button>
+            </div>
+          </template>
+        </el-dialog>
+
   </div>
 </template>
 
@@ -479,6 +508,7 @@ import { addCustomerRiskRefund } from '@/api/customerRiskRefund/customerRiskRefu
 import { addIntention } from '@/api/customerIntention/customerIntention';
 import { CustomerIntentionForm, CustomerIntentionQuery, CustomerIntentionVO } from '@/api/customerIntention/customerIntention/types';
 import { useRouter } from 'vue-router';
+
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -497,6 +527,11 @@ const total = ref(0);
 const router = useRouter();
 const queryFormRef = ref<ElFormInstance>();
 const customerInfoFormRef = ref<ElFormInstance>();
+const customerInfoDialog = reactive<DialogOption>({
+  visible: false,
+  title: ''
+});
+const contract = ref(null);
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -801,6 +836,20 @@ const intentionDialog = reactive<DialogOption>({
   visible: false,
   title: "客户意向登记"
 });
+
+const customerInfoForm = ref({
+  submissionDate: undefined,
+  legalSupport: undefined,
+  legalSupportId: undefined,
+  intendedCustomer: undefined,
+  intendedCustomerId: undefined,
+  type: undefined,
+  source: undefined,
+  expectedAmount: undefined,
+  introducer: undefined,
+  followUpResult: undefined,
+  contractCode: undefined,
+})
 
 // 意向表单引用
 const customerIntentionFormRef = ref<ElFormInstance>();
@@ -1130,6 +1179,46 @@ const getLawyerNameById = (lawyerId: string | number) => {
   const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
   console.log('lawyer:', lawyer);
   return lawyer ? `${lawyer.userName}` : '';
+};
+
+
+const handleUpload = async (row: CustomerInfoVO) => {
+  reset();
+  const _id = row?.id;
+  if (!_id) {
+    proxy?.$modal.msgWarning('请选择要上传合同的客户');
+    return;
+  }
+  
+  const res = await getCustomerInfo(_id);
+  Object.assign(customerInfoForm.value, res.data);
+  customerInfoDialog.visible = true;
+  customerInfoDialog.title = "上传合同";
+};
+
+const customerInfoDialogCancel = () => {
+  customerInfoDialog.visible = false;
+};
+
+// 替换原有的 submitintentionForm 方法为以下代码：
+const submitintentionForm = async () => {
+  // 使用正确的表单引用
+  if (contract.value) {
+    customerInfoForm.value.contractCode = contract.value[0].ossId;
+  }
+
+  await updateCustomerInfo(customerInfoForm.value).finally(() => buttonLoading.value = false);
+  proxy?.$modal.msgSuccess("操作成功");
+  customerInfoDialog.visible = false;
+
+};
+
+const handleViewContract =  (row: CustomerInfoVO) => {
+  if ( row.contractCode) {
+    proxy?.$download.oss(row.contractCode);
+  }  else {
+    proxy?.$modal.msgWarning(`无合同文件可下载`);
+  }
 };
 
 onMounted(() => {

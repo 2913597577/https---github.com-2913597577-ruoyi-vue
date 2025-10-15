@@ -95,7 +95,7 @@
         </el-table-column>
         <!-- <el-table-column label="跟踪记录id" align="center" prop="trackingId" />
         <el-table-column label="处理人id" align="center" prop="contractHandler" /> -->
-        <el-table-column label="处理人" align="center" prop="contractHandlerName" />
+        <el-table-column label="法务中心接单人" align="center" prop="contractHandlerName" />
         
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
@@ -140,7 +140,7 @@
     <!-- 添加或修改工单管理对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerJobOrderFormRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+        <!-- <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
@@ -152,29 +152,32 @@
         </el-form-item>
         <el-form-item label="源合同文件名" prop="preContractName">
           <el-input v-model="form.preContractName" placeholder="请输入源合同文件名" />
-        </el-form-item>
-        <el-form-item label="新合同地址" prop="newContractAddress">
+        </el-form-item> -->
+        <el-form-item label="新合同" prop="newContractAddress">
           <file-upload :limit="1" :fileSize="10" v-model="newFile" />
         </el-form-item>
-        <el-form-item label="新合同文件名" prop="newContractName">
+        <!-- <el-form-item label="新合同文件名" prop="newContractName">
           <el-input v-model="form.newContractName" placeholder="请输入新合同文件名" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="客户要求" prop="customerRequirements">
-          <el-input v-model="form.customerRequirements" type="textarea" placeholder="请输入内容" />
+          {{ form.customerRequirements }}
+          <!-- <el-input v-model="form.customerRequirements" type="textarea" placeholder="请输入内容" /> -->
         </el-form-item>
         <el-form-item label="交付时间" prop="deliveryTime">
-          <el-date-picker clearable v-model="form.deliveryTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          {{ form.deliveryTime ? parseTime(form.deliveryTime, '{y}-{m}-{d} {h}:{i}:{s}') : '' }}
+          <!-- <el-date-picker clearable v-model="form.deliveryTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择交付时间">
-          </el-date-picker>
+          </el-date-picker> -->
         </el-form-item>
-        <el-form-item label="跟踪记录id" prop="trackingId">
+        <!-- <el-form-item label="跟踪记录id" prop="trackingId">
           <el-input v-model="form.trackingId" placeholder="请输入跟踪记录id" />
         </el-form-item>
         <el-form-item label="处理人id" prop="contractHandler">
           <el-input v-model="form.contractHandler" placeholder="请输入处理人id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="处理人" prop="contractHandlerName">
-          <el-input v-model="form.contractHandlerName" placeholder="请输入处理人" />
+          {{ form.contractHandlerName}}
+          <!-- <el-input v-model="form.contractHandlerName" placeholder="请输入处理人" /> -->
         </el-form-item>
         <el-form-item label="工单处理状态" prop="processingStatus">
           <el-select v-model="form.processingStatus" placeholder="请选择工单处理状态">
@@ -199,6 +202,31 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 在现有 el-dialog 后面添加新的确认对话框 -->
+    <el-dialog title="确认接单信息" v-model="acceptDialog.visible" width="500px" append-to-body>
+      <el-form :model="acceptDialog.form" label-width="100px">
+        <el-form-item label="法务支持">
+          <el-input v-model="acceptDialog.form.legalSupport" disabled />
+        </el-form-item>
+        <el-form-item label="原合同">
+          <el-input v-model="acceptDialog.form.preContractName" disabled />
+        </el-form-item>
+        <el-form-item label="客户要求">
+          <el-input v-model="acceptDialog.form.customerRequirements" type="textarea" disabled />
+        </el-form-item>
+        <el-form-item label="交付时间">
+          <el-date-picker v-model="acceptDialog.form.deliveryTime" type="datetime" disabled />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="acceptDialog.visible = false">取 消</el-button>
+          <el-button type="primary" @click="confirmAccept">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -291,23 +319,23 @@ const getList = async () => {
   loading.value = false;
 }
 
-const handleAccept = async (row: CustomerJobOrderVO) => {
-  // 检查工单是否已被接收
-  if (row.processingStatus === 1) {
-    proxy?.$modal.msgWarning("该工单已被接收，不能重复接收");
-    return;
-  }
+// const handleAccept = async (row: CustomerJobOrderVO) => {
+//   // 检查工单是否已被接收
+//   if (row.processingStatus === 1) {
+//     proxy?.$modal.msgWarning("该工单已被接收，不能重复接收");
+//     return;
+//   }
   
-  // 调用后端接工单接口
+//   // 调用后端接工单接口
  
-    const res = await acceptCustomerJobOrder(row.id.toString());
-    if (res.code === 200) {
-      proxy?.$modal.msgSuccess("工单接收成功");
-      await getList(); // 刷新列表
-    } else {
-      proxy?.$modal.msgWarning(res.msg || "接工单失败");
-    }
-}
+//     const res = await acceptCustomerJobOrder(row.id.toString());
+//     if (res.code === 200) {
+//       proxy?.$modal.msgSuccess("工单接收成功");
+//       await getList(); // 刷新列表
+//     } else {
+//       proxy?.$modal.msgWarning(res.msg || "接工单失败");
+//     }
+// }
 /** 取消按钮 */
 const cancel = () => {
   reset();
@@ -437,6 +465,62 @@ const handleExport = () => {
 const handleProcess = (row: CustomerJobOrderVO) => {
   proxy?.$download.oss(row.preContractAddress);
 }
+
+// 添加确认对话框的状态管理
+const acceptDialog = reactive({
+  visible: false,
+  form: {
+    id: undefined,
+    legalSupport: '',
+    preContractName: '',
+    newContractName: '',
+    customerRequirements: '',
+    deliveryTime: ''
+  }
+});
+
+/**
+ * 处理接单按钮点击事件 - 显示确认对话框
+ */
+const handleAccept = (row: CustomerJobOrderVO) => {
+  // 检查工单是否已被接收
+  if (row.processingStatus !== 0) {
+    proxy?.$modal.msgWarning("该工单已被接收，不能重复接收");
+    return;
+  }
+  
+  // 填充确认对话框数据
+  acceptDialog.form.id = row.id;
+  acceptDialog.form.legalSupport = row.legalSupport;
+  acceptDialog.form.preContractName = row.preContractName;
+  acceptDialog.form.newContractName = row.newContractName;
+  acceptDialog.form.customerRequirements = row.customerRequirements;
+  acceptDialog.form.deliveryTime = row.deliveryTime;
+  
+  // 显示确认对话框
+  acceptDialog.visible = true;
+}
+
+/**
+ * 确认接单操作
+ */
+const confirmAccept = async () => {
+  if (!acceptDialog.form.id) return;
+  
+  try {
+    const res = await acceptCustomerJobOrder(acceptDialog.form.id.toString());
+    if (res.code === 200) {
+      proxy?.$modal.msgSuccess("工单接收成功");
+      acceptDialog.visible = false;
+      await getList(); // 刷新列表
+    } else {
+      proxy?.$modal.msgWarning(res.msg || "接工单失败");
+    }
+  } catch (error) {
+    proxy?.$modal.msgError("接单操作失败");
+  }
+}
+
 onMounted(() => {
   loadLawyerSupportList();
   getList();
