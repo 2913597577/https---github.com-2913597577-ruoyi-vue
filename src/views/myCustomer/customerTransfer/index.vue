@@ -94,9 +94,9 @@
             <dict-tag :options="contract_type" :value="scope.row.contractType || ''" />
           </template>
         </el-table-column>
-        <el-table-column label="常法签约" align="center" prop="serviceType" width="100" show-overflow-tooltip>
+        <el-table-column label="套餐类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="dc_service_type" :value="scope.row.serviceType || ''" />
+            <dict-tag :options="combo_type" :value="scope.row.serviceType || ''" />
           </template>
         </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
@@ -372,13 +372,13 @@
               </tr>
 
               <!-- 财务签字 -->
-              <tr class="border-b border-black">
+              <!-- <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">财务签字：</td>
                 <td colspan="5" class="p-2">
                   <input type="text" v-model="form.financeSignature" placeholder="请输入财务签字信息"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-              </tr>
+              </tr> -->
 
               <!-- 律师咨询情况 -->
               <tr class="border-b border-black">

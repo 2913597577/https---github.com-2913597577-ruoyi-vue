@@ -6,11 +6,24 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="对接客户" prop="customerId">
-              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+              <!-- <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
                   :value="item.transfer_id">
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <!-- <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading" :filter-method="filterCustomer"
+                :teleported="false" :height="300">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+</el-select-v2> -->
+              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
             </el-form-item>
             <el-form-item label="跟踪状态" prop="cumtomerStatus">
               <el-select v-model="queryParams.cumtomerStatus" placeholder="请选择跟踪状态" clearable>
@@ -31,7 +44,7 @@
                 placeholder="请选择下次跟踪时间" />
             </el-form-item>
             <el-form-item label="日志类型" prop="isReturn">
-               <el-select v-model="queryParams.isReturn" placeholder="请选择日志类型" clearable>
+              <el-select v-model="queryParams.isReturn" placeholder="请选择日志类型" clearable>
                 <el-option :key=0 label="普通日志" value=0></el-option>
                 <el-option :key=1 label="回访日志" value=1></el-option>
               </el-select>
@@ -73,7 +86,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-         <el-table-column label="客户名称" align="center" prop="customerId">
+        <el-table-column label="客户名称" align="center" prop="customerId">
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
@@ -126,7 +139,8 @@
             </el-tooltip>
             <el-tooltip content="提交" placement="top">
               <el-button link type="success" icon="Upload" @click="handleSubmit(scope.row)"
-                v-hasPermi="['myCustomer:customerTracking:submit']" v-if="scope.row.submitStatus == 0 && scope.row.trackingType==2">提交</el-button>
+                v-hasPermi="['myCustomer:customerTracking:submit']"
+                v-if="scope.row.submitStatus == 0 && scope.row.trackingType == 2">提交</el-button>
             </el-tooltip>
 
           </template>
@@ -172,7 +186,7 @@
               :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item> -->
-        <el-form-item label="下次跟踪时间" prop="nextTime" >
+        <el-form-item label="下次跟踪时间" prop="nextTime">
           <el-date-picker clearable v-model="form.nextTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择下次跟踪时间">
           </el-date-picker>
@@ -185,8 +199,8 @@
         </el-form-item>
         <el-form-item label="日志类型" prop="isReturn">
           <el-radio-group v-model="form.isReturn">
-          <el-radio :label=0>普通记录</el-radio>
-          <el-radio :label=1>回访记录</el-radio>
+            <el-radio :label=0>普通记录</el-radio>
+            <el-radio :label=1>回访记录</el-radio>
           </el-radio-group>
         </el-form-item>
         <!-- <el-form-item label="备注3" prop="remark3">
@@ -229,15 +243,15 @@
     </el-dialog>
 
     <!-- 查看客户跟踪记录对话框 -->
-      <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body>
-        <el-table :data="viewCustomerTrackings" border>
-          <el-table-column label="跟踪时间" align="center" width="180">
-            <template #default="scope">
-              <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="跟踪记录" prop="customerRemark" show-overflow-tooltip />
-          <!-- <el-table-column label="跟踪类型" align="center" width="100">
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body>
+      <el-table :data="viewCustomerTrackings" border>
+        <el-table-column label="跟踪时间" align="center" width="180">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="跟踪记录" prop="customerRemark" show-overflow-tooltip />
+        <!-- <el-table-column label="跟踪类型" align="center" width="100">
             <template #default="scope">
               <dict-tag :options="customer_tracking_type" :value="scope.row.trackingType" />
             </template>
@@ -247,21 +261,21 @@
               <dict-tag :options="cumtomer_status" :value="scope.row.cumtomerStatus" />
             </template>
           </el-table-column> -->
-          
-          <!-- <el-table-column label="下次跟踪时间" align="center" width="180">
+
+        <!-- <el-table-column label="下次跟踪时间" align="center" width="180">
             <template #default="scope">
               <span>{{ parseTime(scope.row.nextTime, '{y}-{m}-{d}') }}</span>
             </template>
           </el-table-column>
           <el-table-column label="风险提示" prop="remark1" show-overflow-tooltip />
           <el-table-column label="处理进度" prop="remark2" show-overflow-tooltip /> -->
-        </el-table>
-        <template #footer>
-          <div class="dialog-footer">
-            <el-button @click="viewDialog.visible = false">关闭</el-button>
-          </div>
-        </template>
-      </el-dialog>
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
   </div>
 </template>
@@ -333,9 +347,9 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
     remark2: undefined,
     remark3: undefined,
     isReturn: undefined,
-      /**
-   * 是否回访记录
-   */
+    /**
+ * 是否回访记录
+ */
     params: {
     }
   },
@@ -369,6 +383,13 @@ const jobOrderForm = ref({
   remark2: undefined,
   remark3: undefined
 });
+
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'transfer_id'
+}
+
 
 /** 查询客户跟踪列表 */
 const getList = async () => {
@@ -524,7 +545,7 @@ const viewCustomerTrackings = ref<CustomerTrackingVO[]>([]);
 const handleView = async (row: CustomerTrackingVO) => {
   const customerId = row.customerId;
   const customerName = getCustomerNameById(customerId);
-  
+
   // 查询该客户的所有跟踪记录
   try {
     const res = await listCustomerTracking({ customerId });
