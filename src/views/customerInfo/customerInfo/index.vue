@@ -245,16 +245,26 @@
 
             <div class="form-row">
               <el-form-item label="法务支持" prop="lawyerId" class="form-item">
-                <el-input v-model="form.lawyerId" placeholder="请输入法务支持" style="width: 100%"></el-input>
+                <span v-if="form.lawyerId">
+                  {{ getLawyerNameById(form.lawyerId) }}
+                </span>
               </el-form-item>
 
               <el-form-item label="甩单人" prop="transferPerson" class="form-item">
-                <el-input v-model="form.transferPerson" placeholder="请输入甩单人" style="width: 100%"></el-input>
+                <!-- <el-input v-model="form.transferPerson" placeholder="请输入甩单人" style="width: 100%"></el-input> -->
+                <el-select v-model="form.transferPerson" placeholder="请选择甩单人" filterable clearable style="width: 100%">
+                    <el-option v-for="seller in sellerList" :key="seller.userName"
+                      :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
+                  </el-select>
               </el-form-item>
             </div>
 
             <el-form-item label="杀单手" prop="closer" class="form-item-full">
-              <el-input v-model="form.closer" placeholder="请输入杀单手" style="width: 100%"></el-input>
+              <!-- <el-input v-model="form.closer" placeholder="请输入杀单手" style="width: 100%"></el-input> -->
+               <el-select v-model="form.closer" placeholder="杀单手" filterable clearable style="width: 100%">
+                    <el-option v-for="seller in sellerList" :key="seller.userName"
+                      :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
+                  </el-select>
             </el-form-item>
           </div>
 
@@ -501,7 +511,7 @@
 </template>
 
 <script setup name="CustomerInfo" lang="ts">
-import { listCustomerInfo, getCustomerInfo, delCustomerInfo, addCustomerInfo, updateCustomerInfo, listLawyerSupport, assign } from '@/api/customerInfo/customerInfo';
+import { listCustomerInfo, getCustomerInfo, delCustomerInfo, addCustomerInfo, updateCustomerInfo, listLawyerSupport, assign, listSeller } from '@/api/customerInfo/customerInfo';
 import { CustomerInfoVO, CustomerInfoQuery, CustomerInfoForm } from '@/api/customerInfo/customerInfo/types';
 import { CustomerRiskRefundQuery, CustomerRiskRefundForm } from '@/api/customerRiskRefund/customerRiskRefund/types';
 import { addCustomerRiskRefund } from '@/api/customerRiskRefund/customerRiskRefund';
@@ -1183,6 +1193,7 @@ const getLawyerNameById = (lawyerId: string | number) => {
 
 
 const handleUpload = async (row: CustomerInfoVO) => {
+  contract.value = [];
   reset();
   const _id = row?.id;
   if (!_id) {
@@ -1210,7 +1221,18 @@ const submitintentionForm = async () => {
   await updateCustomerInfo(customerInfoForm.value).finally(() => buttonLoading.value = false);
   proxy?.$modal.msgSuccess("操作成功");
   customerInfoDialog.visible = false;
+  getList();
+};
 
+const sellerList = ref([]);
+const loadSellerList = async () => {
+  try {
+    const response = await listSeller();
+    sellerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载人员失败，请稍后重试');
+    console.error('人员列表加载异常：', error);
+  }
 };
 
 const handleViewContract =  (row: CustomerInfoVO) => {
@@ -1223,6 +1245,7 @@ const handleViewContract =  (row: CustomerInfoVO) => {
 
 onMounted(() => {
   loadLawyerSupportList();
+  loadSellerList();
   getList();
 });
 </script>

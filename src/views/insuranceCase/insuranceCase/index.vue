@@ -83,14 +83,15 @@
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
+         <el-table-column label="法务支持员工" align="center" prop="legalSupportName" />
         <el-table-column label="下单日期" align="center" prop="orderDate" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="工单号" align="center" prop="insuranceNumber" />
-        <el-table-column label="法务支持id" align="center" prop="legalSupportId" />
-        <el-table-column label="法务支持姓名" align="center" prop="legalSupportName" />
+        <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
+       
         <el-table-column label="原告方" align="center" prop="plaintiff" />
         <el-table-column label="被告方" align="center" prop="defendant" />
         <el-table-column label="标的额" align="center" prop="subjectAmount" />
@@ -136,12 +137,12 @@
         <el-form-item label="工单号" prop="insuranceNumber">
           <el-input v-model="form.insuranceNumber" placeholder="请输入工单号" />
         </el-form-item>
-        <el-form-item label="法务支持id" prop="legalSupportId">
+        <!-- <el-form-item label="法务支持id" prop="legalSupportId">
           <el-input v-model="form.legalSupportId" placeholder="请输入法务支持id" />
         </el-form-item>
         <el-form-item label="法务支持姓名" prop="legalSupportName">
           <el-input v-model="form.legalSupportName" placeholder="请输入法务支持姓名" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="原告方" prop="plaintiff">
           <el-input v-model="form.plaintiff" placeholder="请输入原告方" />
         </el-form-item>

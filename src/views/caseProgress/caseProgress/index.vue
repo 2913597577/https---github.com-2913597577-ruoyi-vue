@@ -61,6 +61,16 @@
         <el-table-column label="客户id" align="center" prop="customerId" />
         <el-table-column label="客户姓名" align="center" prop="customerName" />
         <el-table-column label="案件进展" align="center" prop="caseProgress" />
+        <el-table-column label="跟进日期" align="center" prop="trackingTime" width="180">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="下次跟进日期" align="center" prop="nextTrackingTime" width="180">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -99,6 +109,22 @@
         </el-form-item>
         <el-form-item label="案件进展" prop="caseProgress">
             <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="跟进日期" prop="visitTime">
+          <el-date-picker clearable
+            v-model="form.trackingTime"
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择出访时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="下次跟进日期" prop="nextVisitTime">
+          <el-date-picker clearable
+            v-model="form.nextTrackingTime"
+            type="datetime"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择下次出访时间">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <template #footer>

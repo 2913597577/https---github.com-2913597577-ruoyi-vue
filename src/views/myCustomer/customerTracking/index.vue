@@ -104,6 +104,7 @@
             <span>{{ parseTime(scope.row.nextTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="内勤项数计数" align="center" prop="interCount" />
         <el-table-column label="风险提示" align="center" prop="remark1" />
         <el-table-column label="处理进度" align="center" prop="remark2" />
         <el-table-column label="备注" align="center" prop="remark3" />
@@ -176,6 +177,9 @@
           <el-date-picker clearable v-model="form.nextTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择下次跟踪时间">
           </el-date-picker>
+        </el-form-item>
+         <el-form-item label="内勤项数计数" prop="interCount">
+          <el-input v-model="form.interCount"  placeholder="请输入内勤项数计数" />
         </el-form-item>
         <el-form-item label="风险提示" prop="remark1">
           <el-input v-model="form.remark1" type="textarea" placeholder="请输入内容" />
@@ -314,6 +318,7 @@ const initFormData: CustomerTrackingForm = {
   remark2: undefined,
   remark3: undefined,
   isReturn: 0,
+  interCount:0
 }
 
 const preFile = ref(null);
@@ -333,6 +338,7 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
     remark2: undefined,
     remark3: undefined,
     isReturn: undefined,
+    interCount:0,
       /**
    * 是否回访记录
    */

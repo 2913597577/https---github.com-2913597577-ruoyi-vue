@@ -656,7 +656,7 @@
 </template>
 
 <script setup name="CustomerTransfer" lang="ts">
-import { listUser } from '@/api/customerInfo/customerInfo';
+import { listSeller, listUser } from '@/api/customerInfo/customerInfo';
 import {
   addCustomerTransfer,
   audit,
