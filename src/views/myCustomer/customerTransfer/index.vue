@@ -329,31 +329,26 @@
                 <td class="p-2">
                   <select v-model="form.contractType"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                    <option value="">选择类型</option>
-                    <option value="0">常法</option>
-                    <option value="1">单项</option>
-                    <option value="2">律师费</option>
-                    <option value="3">其他</option>
+
+                    <option v-for="dict in contract_type" :key="dict.value" :value="dict.value">
+                      {{ dict.label }}
+                    </option>
                   </select>
                 </td>
               </tr>
 
               <!-- 常法版本与服务周期 -->
               <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">常法签约：</td>
+
+                <td class="border-r border-black p-2 w-32 bg-blue-50">套餐类型：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 w-40">
-                  <div class="flex items-center gap-4">
-                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                      <input type="radio" name="serviceType" value="0" v-model="form.serviceType"
-                        class="w-4 h-4 cursor-pointer accent-blue-500">
-                      <span>升级版</span>
-                    </label>
-                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                      <input type="radio" name="serviceType" value="1" v-model="form.serviceType"
-                        class="w-4 h-4 cursor-pointer accent-blue-500">
-                      <span>标准版</span>
-                    </label>
-                  </div>
+                  <select v-model="form.serviceType"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+
+                    <option v-for="dict in combo_type" :key="dict.value" :value="dict.value">
+                      {{ dict.label }}
+                    </option>
+                  </select>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：</td>
                 <td colspan="2" class="border-r border-black p-2">
@@ -534,126 +529,127 @@
 
 
     <!-- 替换原有的查看对话框 -->
-<!-- 替换原有的查看对话框 -->
-<el-dialog v-model="viewDialogVisible" title="客户流转单详情" width="700px" append-to-body>
-  <div class="customer-transfer-detail">
-    <el-scrollbar max-height="600px">
-      <el-descriptions :column="1" border size="medium">
-        <el-descriptions-item label="公司名称">
-          {{ viewForm.companyName }}
-        </el-descriptions-item>
-        <el-descriptions-item label="所属行业">
-          {{ viewForm.companyIndustry }}
-        </el-descriptions-item>
-        <el-descriptions-item label="公司地址">
-          {{ viewForm.companyAddress }}
-        </el-descriptions-item>
-        <el-descriptions-item label="员工人数">
-          {{ viewForm.employeeCount }}
-        </el-descriptions-item>
-        <el-descriptions-item label="邀约人">
-          {{ getUserNameById(viewForm.inviterId) }}
-        </el-descriptions-item>
-        <el-descriptions-item label="客户经理">
-          {{ getUserNameById(viewForm.accountManagerId) }}
-        </el-descriptions-item>
-        <el-descriptions-item label="交易日期">
-          {{ parseTime(viewForm.transactionDate, '{y}-{m}-{d}') }}
-        </el-descriptions-item>
-        <el-descriptions-item label="财务确认">
-          <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed || ''" />
-        </el-descriptions-item>
-        
-        <el-descriptions-item label="对接人姓名">
-          {{ viewForm.contactPerson }}
-        </el-descriptions-item>
-        <el-descriptions-item label="对接人联系方式">
-          {{ viewForm.contactInfo }}
-        </el-descriptions-item>
-        <el-descriptions-item label="对接人职务">
-          {{ viewForm.contactPosition }}
-        </el-descriptions-item>
-        <el-descriptions-item label="对接人年龄">
-          {{ viewForm.contactAge }}
-        </el-descriptions-item>
-        
-        <el-descriptions-item label="附赠自然人">
-          {{ viewForm.additionalPerson }}
-        </el-descriptions-item>
-        <el-descriptions-item label="自然人联系方式">
-          {{ viewForm.additionalContact }}
-        </el-descriptions-item>
-        <el-descriptions-item label="自然人职务">
-          {{ viewForm.additionalPosition }}
-        </el-descriptions-item>
-        <el-descriptions-item label="自然人年龄">
-          {{ viewForm.additionalAge }}
-        </el-descriptions-item>
-        
-        <el-descriptions-item label="支付金额">
-          {{ viewForm.actualPayment }}
-        </el-descriptions-item>
-        <el-descriptions-item label="尾款情况">
-          {{ viewForm.balanceStatus }}
-        </el-descriptions-item>
-        <el-descriptions-item label="签约类型">
-          <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
-        </el-descriptions-item>
-        <el-descriptions-item label="常法签约">
-          <dict-tag :options="dc_service_type" :value="viewForm.serviceType || ''" />
-        </el-descriptions-item>
-        <el-descriptions-item label="服务周期">
-          {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}') }}
-        </el-descriptions-item>
-        <el-descriptions-item label="代账公司">
-          <span v-if="viewForm.accountingCompany === '0'">是</span>
-          <span v-else-if="viewForm.accountingCompany === '1'">否</span>
-          <span v-else-if="viewForm.accountingCompany === '2'">不确定</span>
-        </el-descriptions-item>
-        <el-descriptions-item label="财务签字">
-          {{ viewForm.financeSignature }}
-        </el-descriptions-item>
-        <el-descriptions-item label="律师咨询情况">
-          {{ viewForm.lawyerConsultation }}
-        </el-descriptions-item>
-        <el-descriptions-item label="其他费用">
-          {{ viewForm.otherFee }}
-        </el-descriptions-item>
-        
-        <el-descriptions-item label="以前是否有过公司法务">
-          {{ viewForm.preLegal === '1' ? '是' : '否' }}
-        </el-descriptions-item>
-        <el-descriptions-item label="合作公司名称">
-          {{ viewForm.preCompany }}
-        </el-descriptions-item>
-        <el-descriptions-item label="不合作原因">
-          {{ viewForm.preReason }}
-        </el-descriptions-item>
-        <el-descriptions-item label="公司以前出现过的纠纷及解决方式">
-          {{ viewForm.preDiscuss }}
-        </el-descriptions-item>
-        <el-descriptions-item label="待处理事项登记">
-          {{ viewForm.pendingRemark }}
-        </el-descriptions-item>
-        <el-descriptions-item label="欠款问题登记">
-          {{ viewForm.debtRemark }}
-        </el-descriptions-item>
-        <el-descriptions-item label="客户性格及工作习惯描述">
-          {{ viewForm.customerDescription }}
-        </el-descriptions-item>
-        <el-descriptions-item label="其他备注信息">
-          {{ viewForm.remark }}
-        </el-descriptions-item>
-      </el-descriptions>
-    </el-scrollbar>
-  </div>
-  
-  <template #footer>
-    <div class="dialog-footer">
-      <el-button @click="viewDialogVisible = false">关闭</el-button>
-    </div>
-  </template>
-</el-dialog>
+    <!-- 替换原有的查看对话框 -->
+    <el-dialog v-model="viewDialogVisible" title="客户流转单详情" width="700px" append-to-body>
+      <div class="customer-transfer-detail">sq
+        <el-scrollbar max-height="600px">
+          <el-descriptions :column="1" border size="medium">
+            <el-descriptions-item label="公司名称">
+              {{ viewForm.companyName }}
+            </el-descriptions-item>
+            <el-descriptions-item label="所属行业">
+              {{ viewForm.companyIndustry }}
+            </el-descriptions-item>
+            <el-descriptions-item label="公司地址">
+              {{ viewForm.companyAddress }}
+            </el-descriptions-item>
+            <el-descriptions-item label="员工人数">
+              {{ viewForm.employeeCount }}
+            </el-descriptions-item>
+            <el-descriptions-item label="邀约人">
+              {{ getUserNameById(viewForm.inviterId) }}
+            </el-descriptions-item>
+            <el-descriptions-item label="客户经理">
+              {{ getUserNameById(viewForm.accountManagerId) }}
+            </el-descriptions-item>
+            <el-descriptions-item label="交易日期">
+              {{ parseTime(viewForm.transactionDate, '{y}-{m}-{d}') }}
+            </el-descriptions-item>
+            <el-descriptions-item label="财务确认">
+              <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed || ''" />
+            </el-descriptions-item>
+
+            <el-descriptions-item label="对接人姓名">
+              {{ viewForm.contactPerson }}
+            </el-descriptions-item>
+            <el-descriptions-item label="对接人联系方式">
+              {{ viewForm.contactInfo }}
+            </el-descriptions-item>
+            <el-descriptions-item label="对接人职务">
+              {{ viewForm.contactPosition }}
+            </el-descriptions-item>
+            <el-descriptions-item label="对接人年龄">
+              {{ viewForm.contactAge }}
+            </el-descriptions-item>
+
+            <el-descriptions-item label="附赠自然人">
+              {{ viewForm.additionalPerson }}
+            </el-descriptions-item>
+            <el-descriptions-item label="自然人联系方式">
+              {{ viewForm.additionalContact }}
+            </el-descriptions-item>
+            <el-descriptions-item label="自然人职务">
+              {{ viewForm.additionalPosition }}
+            </el-descriptions-item>
+            <el-descriptions-item label="自然人年龄">
+              {{ viewForm.additionalAge }}
+            </el-descriptions-item>
+
+            <el-descriptions-item label="支付金额">
+              {{ viewForm.actualPayment }}
+            </el-descriptions-item>
+            <el-descriptions-item label="尾款情况">
+              {{ viewForm.balanceStatus }}
+            </el-descriptions-item>
+            <el-descriptions-item label="签约类型">
+              <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
+            </el-descriptions-item>
+            <el-descriptions-item label="常法签约">
+              <dict-tag :options="dc_service_type" :value="viewForm.serviceType || ''" />
+            </el-descriptions-item>
+            <el-descriptions-item label="服务周期">
+              {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')
+              }}
+            </el-descriptions-item>
+            <el-descriptions-item label="代账公司">
+              <span v-if="viewForm.accountingCompany === '0'">是</span>
+              <span v-else-if="viewForm.accountingCompany === '1'">否</span>
+              <span v-else-if="viewForm.accountingCompany === '2'">不确定</span>
+            </el-descriptions-item>
+            <el-descriptions-item label="财务签字">
+              {{ viewForm.financeSignature }}
+            </el-descriptions-item>
+            <el-descriptions-item label="律师咨询情况">
+              {{ viewForm.lawyerConsultation }}
+            </el-descriptions-item>
+            <el-descriptions-item label="其他费用">
+              {{ viewForm.otherFee }}
+            </el-descriptions-item>
+
+            <el-descriptions-item label="以前是否有过公司法务">
+              {{ viewForm.preLegal === '1' ? '是' : '否' }}
+            </el-descriptions-item>
+            <el-descriptions-item label="合作公司名称">
+              {{ viewForm.preCompany }}
+            </el-descriptions-item>
+            <el-descriptions-item label="不合作原因">
+              {{ viewForm.preReason }}
+            </el-descriptions-item>
+            <el-descriptions-item label="公司以前出现过的纠纷及解决方式">
+              {{ viewForm.preDiscuss }}
+            </el-descriptions-item>
+            <el-descriptions-item label="待处理事项登记">
+              {{ viewForm.pendingRemark }}
+            </el-descriptions-item>
+            <el-descriptions-item label="欠款问题登记">
+              {{ viewForm.debtRemark }}
+            </el-descriptions-item>
+            <el-descriptions-item label="客户性格及工作习惯描述">
+              {{ viewForm.customerDescription }}
+            </el-descriptions-item>
+            <el-descriptions-item label="其他备注信息">
+              {{ viewForm.remark }}
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-scrollbar>
+      </div>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialogVisible = false">关闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
 
   </div>
@@ -686,8 +682,9 @@ const userList = ref([]); // 用户列表
 const {
   contract_type,
   dc_service_type,
-  finance_confirmed
-} = toRefs<any>(proxy?.useDict('contract_type', 'dc_service_type', 'finance_confirmed'));
+  finance_confirmed,
+  combo_type
+} = toRefs<any>(proxy?.useDict('contract_type', 'dc_service_type', 'finance_confirmed', 'combo_type'));
 
 
 const queryFormRef = ref<ElFormInstance>();
@@ -1000,6 +997,7 @@ const getUserNameById = (userId: string) => {
 }
 
 onMounted(() => {
+  console.log(combo_type.value[0]);
   loadUserList();
   getList();
 });
