@@ -96,6 +96,7 @@
         <!-- <el-table-column label="跟踪记录id" align="center" prop="trackingId" />
         <el-table-column label="处理人id" align="center" prop="contractHandler" /> -->
         <el-table-column label="法务中心接单人" align="center" prop="contractHandlerName" />
+         <el-table-column label="客户所属方" align="center" prop="remark1" />
         
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
@@ -162,6 +163,9 @@
         <el-form-item label="客户要求" prop="customerRequirements">
           {{ form.customerRequirements }}
           <!-- <el-input v-model="form.customerRequirements" type="textarea" placeholder="请输入内容" /> -->
+        </el-form-item>
+        <el-form-item label="客户所属方" prop="remark1">
+          <el-input v-model="form.remark1" />
         </el-form-item>
         <el-form-item label="交付时间" prop="deliveryTime">
           {{ form.deliveryTime ? parseTime(form.deliveryTime, '{y}-{m}-{d} {h}:{i}:{s}') : '' }}

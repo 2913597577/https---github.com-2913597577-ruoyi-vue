@@ -96,7 +96,7 @@
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="欠款人" align="center" prop="debtorName" />
+        <el-table-column label="债务人" align="center" prop="debtorName" />
         <el-table-column label="欠款金额" align="center" prop="debtAmount" />
         <el-table-column label="剩余欠款" align="center" prop="remainingAmount" />
         <el-table-column label="联系电话" align="center" prop="contactPhone" />
@@ -106,7 +106,8 @@
             <span>{{ parseTime(scope.row.requestReceiveTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center" prop="evidenceNotes" />
+        <el-table-column label="标的" align="center" prop="remark" />
+        <el-table-column label="证据备注" align="center" prop="evidenceNotes" />
         <el-table-column label="立案系统账号" align="center" prop="filingSystemAccount" />
         <el-table-column label="立案密码" align="center" prop="filingPassword" />
         <el-table-column label="立案日期" align="center" prop="filingDate" width="180">
@@ -119,7 +120,6 @@
             <span>{{ parseTime(scope.row.nextContactTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center" prop="remark" />
         <el-table-column label="0-未处理 1-推进中 2-无法推进 3 -已办结" align="center" prop="caseStatus" />
         <el-table-column label="法官" align="center" prop="judgeName" />
         <el-table-column label="法官电话" align="center" prop="judgePhone" />
@@ -150,7 +150,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="欠款人" prop="debtorName">
+        <el-form-item label="债务人" prop="debtorName">
           <el-input v-model="form.debtorName" placeholder="请输入欠款人" />
         </el-form-item>
         <el-form-item label="欠款金额" prop="debtAmount">
@@ -173,7 +173,7 @@
             placeholder="请选择需求接收时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="备注" prop="evidenceNotes">
+        <el-form-item label="证据备注" prop="evidenceNotes">
             <el-input v-model="form.evidenceNotes" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="立案系统账号" prop="filingSystemAccount">
@@ -198,7 +198,7 @@
             placeholder="请选择下次联系时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-form-item label="标的" prop="remark">
             <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="法官" prop="judgeName">

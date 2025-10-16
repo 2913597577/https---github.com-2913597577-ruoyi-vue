@@ -53,6 +53,10 @@ export interface CustomerTrackingVO {
    * 备注3
    */
   remark3: string;
+  /**
+   * 内勤项数计数
+   */
+  interCount:number;
 
 }
 
@@ -112,6 +116,11 @@ export interface CustomerTrackingForm extends BaseEntity {
    */
   remark3?: string;
 
+    /**
+   * 内勤项数计数
+   */
+  interCount:number;
+
   /**
    * 是否回访记录
    */
@@ -170,6 +179,11 @@ export interface CustomerTrackingQuery extends PageQuery {
    * 备注3
    */
   remark3?: string;
+
+    /**
+   * 内勤项数计数
+   */
+  interCount:number;
 
     /**
      * 日期范围参数
