@@ -67,7 +67,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed || ''" />
+            <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
@@ -91,12 +91,12 @@
         <el-table-column label="尾款情况" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
         <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="contract_type" :value="scope.row.contractType || ''" />
+            <dict-tag :options="contract_type" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="套餐类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="combo_type" :value="scope.row.serviceType || ''" />
+            <dict-tag :options="combo_type" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
@@ -916,7 +916,7 @@ async function submitAudit() {
 
 /** 提交按钮 */
 const submitForm = () => {
-  console.log('submitForm called');
+
   console.log('Form ref:', customerTransferFormRef.value);
   console.log('Form data:', form.value);
 
