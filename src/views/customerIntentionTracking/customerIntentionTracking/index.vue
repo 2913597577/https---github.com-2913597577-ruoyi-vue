@@ -1,14 +1,15 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="意向客户" prop="customerId" label-width="68px">
               <el-select v-model="queryParams.customerId" placeholder="请输入意向客户" filterable clearable>
-                  <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
-                    :value="item.customer_id">
-                  </el-option>
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
+                </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -24,50 +25,55 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['customerIntentionTracking:customerIntentionTracking:add']">新增</el-button>
           </el-col>
           <!-- <el-col :span="1.5">
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:edit']">修改</el-button>
           </el-col> -->
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['customerIntentionTracking:customerIntentionTracking:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['customerIntentionTracking:customerIntentionTracking:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['customerIntentionTracking:customerIntentionTracking:export']">导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerIntentionTrackingList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" border :data="customerIntentionTrackingList"
+        @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="意向客户" align="center" prop="customerName" />
         <el-table-column label="备注" align="center" prop="customerRemark" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
-        width="240" fixed="right">
+          width="240" fixed="right">
           <template #default="scope">
-              <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
+            <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
               v-hasPermi="['customerIntentionTracking:customerIntentionTracking:edit']">修改</el-button>
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" 
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
               v-hasPermi="['customerIntentionTracking:customerIntentionTracking:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改意向客户跟踪记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerIntentionTrackingFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="意向客户" prop="customerName">
-          <el-select v-model="form.customerId" placeholder="请输入意向客户" filterable clearable  @change="handleChange">
-                  <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
-                    :value="item.customer_id">
-                  </el-option>
+        <el-form-item label="意向客户" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请输入意向客户" filterable clearable @change="handleChange">
+            <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+              :value="item.customer_id">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="customerRemark">
-            <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -84,7 +90,7 @@
 import { getIntentionCustomerByUserId } from '@/api/common';
 import { listCustomerIntentionTracking, getCustomerIntentionTracking, delCustomerIntentionTracking, addCustomerIntentionTracking, updateCustomerIntentionTracking } from '@/api/customerIntentionTracking/customerIntentionTracking';
 import { CustomerIntentionTrackingVO, CustomerIntentionTrackingQuery, CustomerIntentionTrackingForm } from '@/api/customerIntentionTracking/customerIntentionTracking/types';
-
+import { useRoute } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const customerIntentionTrackingList = ref<CustomerIntentionTrackingVO[]>([]);
@@ -96,8 +102,12 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 
+const route = useRoute();
 const queryFormRef = ref<ElFormInstance>();
 const customerIntentionTrackingFormRef = ref<ElFormInstance>();
+
+
+const intentionCustomerId = route.query.intentionCustomerId;
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -111,7 +121,7 @@ const initFormData: CustomerIntentionTrackingForm = {
   customerRemark: undefined,
 }
 const data = reactive<PageData<CustomerIntentionTrackingForm, CustomerIntentionTrackingQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -123,17 +133,11 @@ const data = reactive<PageData<CustomerIntentionTrackingForm, CustomerIntentionT
     }
   },
   rules: {
-    inentionId: [
-      { required: true, message: "意向客户表id不能为空", trigger: "blur" }
-    ],
     customerId: [
-      { required: true, message: "意向客户id不能为空", trigger: "blur" }
-    ],
-    customerName: [
-      { required: true, message: "意向客户不能为空", trigger: "blur" }
+      { required: true, message: "请选择意向客户", trigger: "change" }
     ],
     customerRemark: [
-      { required: true, message: "备注不能为空", trigger: "blur" }
+      { required: true, message: "请输入备注", trigger: "blur" }
     ],
   }
 });
@@ -157,7 +161,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   customerIntentionTrackingFormRef.value?.resetFields();
 }
 
@@ -189,8 +193,9 @@ const handleAdd = () => {
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: CustomerIntentionTrackingVO) => {
-  reset();
-  const _id = row?.id || ids.value[0]
+
+  console.log(row)
+  const _id = row?.customerId || ids.value[0]
   const res = await getCustomerIntentionTracking(_id);
   Object.assign(form.value, res.data);
   dialog.visible = true;
@@ -202,10 +207,10 @@ const submitForm = () => {
   customerIntentionTrackingFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
-      if (form.value.id) {
-        await updateCustomerIntentionTracking(form.value).finally(() =>  buttonLoading.value = false);
+      if (form.value.customerId) {
+        await updateCustomerIntentionTracking(form.value).finally(() => buttonLoading.value = false);
       } else {
-        await addCustomerIntentionTracking(form.value).finally(() =>  buttonLoading.value = false);
+        await addCustomerIntentionTracking(form.value).finally(() => buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;
@@ -216,7 +221,7 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: CustomerIntentionTrackingVO) => {
-  const _ids = row?.id || ids.value;
+  const _ids = row?.customerId || ids.value;
   await proxy?.$modal.confirm('是否确认删除意向客户跟踪记录编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
   await delCustomerIntentionTracking(_ids);
   proxy?.$modal.msgSuccess("删除成功");
@@ -244,19 +249,36 @@ const loadIntentionCustomerList = async () => {
 const handleChange = (customerId: string) => {
   if (customerId) {
     // 获取选中的意向客户信息
-    const selectedCustomer = customerList.value.find(customerList => customerList.customer_id === customerId);
+    const selectedCustomer = customerList.value.find(customer => customer.customer_id === customerId);
     if (selectedCustomer) {
-      // 设置法务支持名称到 legalSupport 字段
-      form.value.customerName = selectedCustomer.customerName;
+      // 设置意向客户ID到 customerId 字段，customerName 用于显示
+      form.value.customerId = customerId;
+      form.value.customerName = selectedCustomer.customer_name;
     }
   } else {
     // 清空选择时重置相关字段
+    form.value.customerId = undefined;
     form.value.customerName = undefined;
   }
 }
 
-onMounted(() => {
-  loadIntentionCustomerList();
-  getList();
+onMounted(async () => {
+
+  await loadIntentionCustomerList();
+
+  if (intentionCustomerId) {
+    // 2. 有CustomerId：查询该客户的单条跟踪记录，并渲染到表格
+    try {
+      queryParams.value.inentionId = intentionCustomerId;
+      handleQuery();
+    } catch (error) {
+      console.error('获取客户跟踪记录失败:', error);
+      proxy?.$modal.msgError('获取客户跟踪记录失败');
+    }
+  } else {
+    // 3. 无CustomerId：加载默认的所有客户跟踪记录列表
+    await getList();
+  }
+
 });
 </script>

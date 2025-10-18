@@ -6,26 +6,26 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="合同编号" prop="contractCode">
-            <el-input v-model="queryParams.contractCode" placeholder="请输入合同编号" clearable @keyup.enter="handleQuery" />
-          </el-form-item>
-          <el-form-item label="客户名称" prop="customerName">
-            <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
-          </el-form-item>
-          <el-form-item label="客户类型" prop="customerType">
-            <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable>
-              <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
+              <el-input v-model="queryParams.contractCode" placeholder="请输入合同编号" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="客户名称" prop="customerName">
+              <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="客户类型" prop="customerType">
+              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable>
+                <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="负责人" prop="principal">
               <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-          <el-form-item label="签约类型" prop="contractType">
-            <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
-              <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
+            <el-form-item label="签约类型" prop="contractType">
+              <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
+                <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" />
@@ -65,7 +65,7 @@
       <el-table v-loading="loading" border :data="customerInfoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-         <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip >
+        <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
           <template #default="scope">
             <!-- 详情按钮：点击携带当前行id跳转 -->
             <el-button link type="primary" icon="View" size="default"
@@ -87,17 +87,17 @@
           </template>
         </el-table-column>
         <!-- <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip /> -->
-        <el-table-column label="客户类型" align="center" width="100" prop="customerType" >
-         <template #default="scope">
+        <el-table-column label="客户类型" align="center" width="100" prop="customerType">
+          <template #default="scope">
             <dict-tag :options="dc_customer_type" :value="scope.row.customerType" />
           </template>
         </el-table-column>
-         <el-table-column label="签约类型" align="center" width="100" prop="contractType">
+        <el-table-column label="签约类型" align="center" width="100" prop="contractType">
           <template #default="scope">
             <dict-tag :options="contract_type" :value="scope.row.contractType" />
           </template>
         </el-table-column>
-        <el-table-column label="套餐类型" width="100" align="center" prop="packageType" >
+        <el-table-column label="套餐类型" width="100" align="center" prop="packageType">
           <template #default="scope">
             <dict-tag :options="dc_service_type" :value="scope.row.packageType" />
           </template>
@@ -106,31 +106,28 @@
         <el-table-column label="负责人" align="center" width="100" prop="principal" />
         <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
         <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip>
-            <template #default="scope">
-              <div class="contract-cell">
-                <span v-if="scope.row.contractCode" class="contract-code" @click="handleViewContract(scope.row)" style="cursor: pointer; color: red;" >{{ scope.row.contractCode }}</span>
-                <el-button 
-                  v-if="!scope.row.contractCode" 
-                  link 
-                  type="primary" 
-                  icon="Upload"  
-                  @click="handleUpload(scope.row)">
-                  上传合同
-                </el-button>
-              </div>
-            </template>
-          </el-table-column>
+          <template #default="scope">
+            <div class="contract-cell">
+              <span v-if="scope.row.contractCode" class="contract-code" @click="handleViewContract(scope.row)"
+                style="cursor: pointer; color: red;">{{ scope.row.contractCode }}</span>
+              <el-button v-if="!scope.row.contractCode" link type="primary" icon="Upload"
+                @click="handleUpload(scope.row)">
+                上传合同
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" />
         <el-table-column label="杀单手" align="center" width="100" prop="closer" />
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
         <el-table-column label="实收金额" width="100" align="center" prop="actualReceipt" show-overflow-tooltip />
         <el-table-column label="尾款金额" width="100" align="center" prop="balance" show-overflow-tooltip />
-        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip >
+        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center" prop="remarks"  width="140" show-overflow-tooltip />
+        <el-table-column label="备注" align="center" prop="remarks" width="140" show-overflow-tooltip />
         <el-table-column label="续费/尾款" align="center" prop="actionType" width="100" show-overflow-tooltip />
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
           <template #default="scope">
@@ -148,32 +145,32 @@
             <span>{{ scope.row.isIntention ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
-         width="360px" fixed="right">
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="360px"
+          fixed="right">
           <template #default="scope">
             <el-button link type="info" icon="View" @click="handleView(scope.row)">
               查看
             </el-button>
-              <!-- 处置按钮 -->
-              <el-button link type="success" icon="Operation" @click="handleTransfer(scope.row)"
-                v-hasPermi="['customerInfo:customerInfo:transfer']">
-                流转
-              </el-button>
-              <!-- 修改按钮 -->
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['customerInfo:customerInfo:edit']">
-                修改
-              </el-button>
-              <!-- 删除按钮 -->
-              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['customerInfo:customerInfo:remove']">
-                删除
-              </el-button>
-              <!-- 分配法务支持按钮 -->
-              <el-button link type="warning" icon="Menu" @click="handleAssign(scope.row)"
-                v-hasPermi="['customerInfo:customerInfo:assign']">
-                分配
-              </el-button>
+            <!-- 处置按钮 -->
+            <el-button link type="success" icon="Operation" @click="handleTransfer(scope.row)"
+              v-hasPermi="['customerInfo:customerInfo:transfer']">
+              流转
+            </el-button>
+            <!-- 修改按钮 -->
+            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+              v-hasPermi="['customerInfo:customerInfo:edit']">
+              修改
+            </el-button>
+            <!-- 删除按钮 -->
+            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+              v-hasPermi="['customerInfo:customerInfo:remove']">
+              删除
+            </el-button>
+            <!-- 分配法务支持按钮 -->
+            <el-button link type="warning" icon="Menu" @click="handleAssign(scope.row)"
+              v-hasPermi="['customerInfo:customerInfo:assign']">
+              分配
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -253,18 +250,18 @@
               <el-form-item label="甩单人" prop="transferPerson" class="form-item">
                 <!-- <el-input v-model="form.transferPerson" placeholder="请输入甩单人" style="width: 100%"></el-input> -->
                 <el-select v-model="form.transferPerson" placeholder="请选择甩单人" filterable clearable style="width: 100%">
-                    <el-option v-for="seller in sellerList" :key="seller.userName"
-                      :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
-                  </el-select>
+                  <el-option v-for="seller in sellerList" :key="seller.userName"
+                    :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
+                </el-select>
               </el-form-item>
             </div>
 
             <el-form-item label="杀单手" prop="closer" class="form-item-full">
               <!-- <el-input v-model="form.closer" placeholder="请输入杀单手" style="width: 100%"></el-input> -->
-               <el-select v-model="form.closer" placeholder="杀单手" filterable clearable style="width: 100%">
-                    <el-option v-for="seller in sellerList" :key="seller.userName"
-                      :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
-                  </el-select>
+              <el-select v-model="form.closer" placeholder="杀单手" filterable clearable style="width: 100%">
+                <el-option v-for="seller in sellerList" :key="seller.userName"
+                  :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
+              </el-select>
             </el-form-item>
           </div>
 
@@ -310,7 +307,7 @@
           <el-radio-group v-model="transferForm.transferType">
             <el-radio label="1" class="mb-2">1 转为风险客户</el-radio>
             <el-radio label="2" class="mb-2">2 转为退费客户</el-radio>
-            <el-radio label="3">3 转为意向客户</el-radio>
+            <el-radio label="3">3 转介绍意向客户</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -329,8 +326,12 @@
     <!--转为风险或退费客户操作对话框 -->
     <el-dialog :title="riskRefundDialog.title" v-model="riskRefundDialog.visible" width="500px" append-to-body>
       <el-form ref="customerRiskRefundFormRef" :model="CRRform" :rules="CRRrules" label-width="120px">
-        <el-form-item label="法务支持" prop="lawyerId">
-          <el-input v-model="CRRform.lawyerId" placeholder="请输入法务支持" />
+        <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+          <el-select filterable v-model="queryParams.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="客户id" prop="customerId">
           <el-input v-model="CRRform.customerId" placeholder="请输入客户id" readonly />
@@ -396,17 +397,24 @@
           <el-date-picker clearable v-model="intentionForm.submissionDate" type="datetime"
             value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择提报日期" required />
         </el-form-item>
-        <el-form-item label="法务支持" prop="legalSupport">
+        <!-- <el-form-item label="法务支持" prop="legalSupport">
           <el-input v-model="intentionForm.legalSupport" placeholder="请输入法务支持姓名" required />
         </el-form-item>
         <el-form-item label="法务支持ID" prop="legalSupportId">
           <el-input v-model="intentionForm.legalSupportId" placeholder="请输入法务支持ID" required />
+        </el-form-item> -->
+        <el-form-item label="法务支持" prop="legalSupportId" label-width="80px">
+          <el-select filterable v-model="queryParams.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="意向客户名称" prop="intendedCustomer">
-          <el-input v-model="intentionForm.intendedCustomer" placeholder="请输入意向客户名称" required readonly />
+          <el-input v-model="intentionForm.intendedCustomer" placeholder="请输入意向客户名称" required />
         </el-form-item>
         <el-form-item label="意向客户ID" prop="intendedCustomerId">
-          <el-input v-model="intentionForm.intendedCustomerId" placeholder="请输入意向客户ID" required readonly />
+          <el-input v-model="intentionForm.intendedCustomerId" placeholder="请输入意向客户ID" required />
         </el-form-item>
         <el-form-item label="意向类型" prop="type">
           <el-select v-model="intentionForm.type" placeholder="请选择意向类型" required>
@@ -420,7 +428,7 @@
           <el-input v-model="intentionForm.expectedAmount" placeholder="请输入预计合作金额" type="number" required />
         </el-form-item>
         <el-form-item label="介绍人" prop="introducer">
-          <el-input v-model="intentionForm.introducer" placeholder="请输入介绍人（无则填无）" />
+          <el-input v-model="intentionForm.introducer" placeholder="请输入介绍人" />
         </el-form-item>
         <el-form-item label="跟进结果" prop="followUpResult">
           <el-input v-model="intentionForm.followUpResult" type="textarea" placeholder="请输入当前跟进结果（如：初步沟通，待二次跟进）"
@@ -458,54 +466,54 @@
     </el-dialog>
 
     <el-dialog title="客户详情" v-model="viewDialog.visible" width="650px" append-to-body>
-    <el-descriptions :column="1" border>
-      <el-descriptions-item label="合同编号">{{ viewForm.contractCode }}</el-descriptions-item>
-      <el-descriptions-item label="客户名称">{{ viewForm.customerName }}</el-descriptions-item>
-      <el-descriptions-item label="客户类型">
-        <dict-tag :options="dc_customer_type" :value="viewForm.customerType" />
-      </el-descriptions-item>
-      <el-descriptions-item label="签约类型">
-        <dict-tag :options="contract_type" :value="viewForm.contractType" />
-      </el-descriptions-item>
-      <el-descriptions-item label="套餐类型">
-        <dict-tag :options="dc_service_type" :value="viewForm.packageType" />
-      </el-descriptions-item>
-      <el-descriptions-item label="负责人">{{ viewForm.principal }}</el-descriptions-item>
-      <el-descriptions-item label="负责人电话">{{ viewForm.principalPhone }}</el-descriptions-item>
-      <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
-      <el-descriptions-item label="甩单人">{{ viewForm.transferPerson }}</el-descriptions-item>
-      <el-descriptions-item label="杀单手">{{ viewForm.closer }}</el-descriptions-item>
-      <el-descriptions-item label="签约日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
-      <el-descriptions-item label="到期时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
-      <el-descriptions-item label="实收金额">{{ viewForm.actualReceipt }}</el-descriptions-item>
-      <el-descriptions-item label="尾款金额">{{ viewForm.balance }}</el-descriptions-item>
-      <el-descriptions-item label="续费/尾款">{{ viewForm.actionType }}</el-descriptions-item>
-      <el-descriptions-item label="风险客户">{{ viewForm.isRisk ? '是' : '否' }}</el-descriptions-item>
-      <el-descriptions-item label="退费客户">{{ viewForm.isRefund ? '是' : '否' }}</el-descriptions-item>
-      <el-descriptions-item label="意向客户">{{ viewForm.isIntention ? '是' : '否' }}</el-descriptions-item>
-      <el-descriptions-item label="备注">{{ viewForm.remarks }}</el-descriptions-item>
-    </el-descriptions>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="viewDialog.visible = false">关闭</el-button>
-      </div>
-    </template>
-  </el-dialog>
+      <el-descriptions :column="1" border>
+        <el-descriptions-item label="合同编号">{{ viewForm.contractCode }}</el-descriptions-item>
+        <el-descriptions-item label="客户名称">{{ viewForm.customerName }}</el-descriptions-item>
+        <el-descriptions-item label="客户类型">
+          <dict-tag :options="dc_customer_type" :value="viewForm.customerType" />
+        </el-descriptions-item>
+        <el-descriptions-item label="签约类型">
+          <dict-tag :options="contract_type" :value="viewForm.contractType" />
+        </el-descriptions-item>
+        <el-descriptions-item label="套餐类型">
+          <dict-tag :options="dc_service_type" :value="viewForm.packageType" />
+        </el-descriptions-item>
+        <el-descriptions-item label="负责人">{{ viewForm.principal }}</el-descriptions-item>
+        <el-descriptions-item label="负责人电话">{{ viewForm.principalPhone }}</el-descriptions-item>
+        <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
+        <el-descriptions-item label="甩单人">{{ viewForm.transferPerson }}</el-descriptions-item>
+        <el-descriptions-item label="杀单手">{{ viewForm.closer }}</el-descriptions-item>
+        <el-descriptions-item label="签约日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+        <el-descriptions-item label="到期时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+        <el-descriptions-item label="实收金额">{{ viewForm.actualReceipt }}</el-descriptions-item>
+        <el-descriptions-item label="尾款金额">{{ viewForm.balance }}</el-descriptions-item>
+        <el-descriptions-item label="续费/尾款">{{ viewForm.actionType }}</el-descriptions-item>
+        <el-descriptions-item label="风险客户">{{ viewForm.isRisk ? '是' : '否' }}</el-descriptions-item>
+        <el-descriptions-item label="退费客户">{{ viewForm.isRefund ? '是' : '否' }}</el-descriptions-item>
+        <el-descriptions-item label="意向客户">{{ viewForm.isIntention ? '是' : '否' }}</el-descriptions-item>
+        <el-descriptions-item label="备注">{{ viewForm.remarks }}</el-descriptions-item>
+      </el-descriptions>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
-      <el-dialog :title="customerInfoDialog.title" v-model="customerInfoDialog.visible" width="500px" append-to-body>
-          <el-form ref="customerintentionFormRef" :model="customerInfoForm" :rules="rules" label-width="80px">
-            <el-form-item label="合同文件" prop="contractCode">
-              <file-upload :limit="1" :fileSize="10" v-model="contract" />
-            </el-form-item>
-          </el-form>
+    <el-dialog :title="customerInfoDialog.title" v-model="customerInfoDialog.visible" width="500px" append-to-body>
+      <el-form ref="customerintentionFormRef" :model="customerInfoForm" :rules="rules" label-width="80px">
+        <el-form-item label="合同文件" prop="contractCode">
+          <file-upload :limit="1" :fileSize="10" v-model="contract" />
+        </el-form-item>
+      </el-form>
 
-          <template #footer>
-            <div class="dialog-footer">
-              <el-button :loading="buttonLoading" type="primary" @click="submitintentionForm">确 定</el-button>
-              <el-button @click="customerInfoDialogCancel">取 消</el-button>
-            </div>
-          </template>
-        </el-dialog>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button :loading="buttonLoading" type="primary" @click="submitintentionForm">确 定</el-button>
+          <el-button @click="customerInfoDialogCancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
   </div>
 </template>
@@ -568,6 +576,7 @@ const initFormData: CustomerInfoForm = {
   actionType: undefined,
   transferId: undefined,
   customerType: undefined,
+
 }
 const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
   form: { ...initFormData },
@@ -810,7 +819,7 @@ const intentionData = reactive<PageData<CustomerIntentionForm, CustomerIntention
       { required: true, message: "请输入法务支持", trigger: "blur" }
     ],
     legalSupportId: [
-      { required: true, message: "请输入法务支持ID", trigger: "blur" }
+      { required: true, message: "请输入法务支持", trigger: "blur" }
     ],
     intendedCustomer: [
       { required: true, message: "请输入意向客户", trigger: "blur" }
@@ -955,8 +964,9 @@ const handleTransferConfirm = async () => {
         // 意向客户处理逻辑
         resetIntentionForm();
         // 从原客户数据自动填充表单
-        intentionForm.value.intendedCustomer = currentCustomer.customerName;
+        intentionForm.value.introducer = currentCustomer.customerName;
         intentionForm.value.intendedCustomerId = currentCustomer.transferId;
+
         intentionForm.value.legalSupport = String(currentCustomer.lawyerId);
         // 设置当前日期为默认提报日期
         intentionForm.value.submissionDate = new Date().toISOString().slice(0, 19);
@@ -1191,7 +1201,22 @@ const getLawyerNameById = (lawyerId: string | number) => {
   return lawyer ? `${lawyer.userName}` : '';
 };
 
-
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+      form.value.lawyerId = selectedLawyer.userName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.lawyerId = undefined;
+  }
+}
 const handleUpload = async (row: CustomerInfoVO) => {
   contract.value = [];
   reset();
@@ -1200,7 +1225,7 @@ const handleUpload = async (row: CustomerInfoVO) => {
     proxy?.$modal.msgWarning('请选择要上传合同的客户');
     return;
   }
-  
+
   const res = await getCustomerInfo(_id);
   Object.assign(customerInfoForm.value, res.data);
   customerInfoDialog.visible = true;
@@ -1235,10 +1260,10 @@ const loadSellerList = async () => {
   }
 };
 
-const handleViewContract =  (row: CustomerInfoVO) => {
-  if ( row.contractCode) {
+const handleViewContract = (row: CustomerInfoVO) => {
+  if (row.contractCode) {
     proxy?.$download.oss(row.contractCode);
-  }  else {
+  } else {
     proxy?.$modal.msgWarning(`无合同文件可下载`);
   }
 };

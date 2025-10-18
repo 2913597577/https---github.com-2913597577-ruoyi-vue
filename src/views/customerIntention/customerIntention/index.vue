@@ -65,6 +65,15 @@
 
       <el-table v-loading="loading" border :data="customerIntentionList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="意向客户跟踪记录" align="center" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <!-- 详情按钮：点击携带当前行id跳转 -->
+            <el-button link type="primary" icon="View" size="default"
+              @click="handleTrackingDetail(scope.row.intendedCustomerId)" style="padding: 0 6px;">
+              详情
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="提报日期" align="center" prop="submissionDate" width="160" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.submissionDate, '{y}-{m}-{d}') }}</span>
@@ -80,10 +89,10 @@
         <el-table-column label="来源" align="center" prop="source" width="160" show-overflow-tooltip />
         <el-table-column label="预计金额" align="center" prop="expectedAmount" width="110" show-overflow-tooltip />
         <el-table-column label="介绍人" align="center" prop="introducer" width="120" show-overflow-tooltip />
-        <el-table-column label="跟进结果" align="center" prop="followUpResult" width="110" show-overflow-tooltip >
-            <template #default="scope">
-                <dict-tag :options="cumtomer_status" :value="scope.row.followUpResult" />
-            </template>
+        <el-table-column label="跟进结果" align="center" prop="followUpResult" width="110" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="cumtomer_status" :value="scope.row.followUpResult" />
+          </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
           width="180" fixed="right">
@@ -153,7 +162,7 @@
 import { listCustomerIntention, getCustomerIntention, delCustomerIntention, addCustomerIntention, updateCustomerIntention } from '@/api/customerIntention/customerIntention';
 import { CustomerIntentionVO, CustomerIntentionQuery, CustomerIntentionForm } from '@/api/customerIntention/customerIntention/types';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
-
+import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
 const { cumtomer_status } = toRefs<any>(proxy?.useDict('cumtomer_status'));
@@ -330,6 +339,17 @@ const handleExport = () => {
     ...queryParams.value
   }, `customerIntention_${new Date().getTime()}.xlsx`)
 }
+
+
+const router = useRouter();
+//  新增：跟踪记录详情跳转函数
+const handleTrackingDetail = (id: number | string) => {
+  // 跳转到目标路由，并通过query参数传递id
+  router.push({
+    path: '/customer/customerIntentionTracking',  // 目标路由路径（需与实际路由配置一致）
+    query: { intentionCustomerId: id }  // 传递id参数（键名可自定义，如customerId）
+  });
+};
 
 onMounted(() => {
   loadLawyerSupportList();
