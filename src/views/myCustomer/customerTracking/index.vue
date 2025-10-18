@@ -5,7 +5,7 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="对接客户" prop="customerId">
+            <el-form-item label="客户名称" prop="customerId">
               <!-- <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
                   :value="item.transfer_id">
@@ -19,7 +19,7 @@
                 </template>
 </el-select-v2> -->
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
-                :props="selectProps" filterable clearable :loading="loading">
+                :props="selectProps"  filterable clearable :loading="loading">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
@@ -563,22 +563,42 @@ const handleView = async (row: CustomerTrackingVO) => {
   }
 };
 
+// 监听 intentionCustomerId 的变化
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    if (newCustomerId) {
+      // 确保客户列表已加载
+      if (customerList.value.length === 0) {
+        await loadCustomerList();
+      }
+      
+      queryParams.value.customerId = newCustomerId;
+      
+      // 验证客户ID是否在客户列表中
+      const customerExists = customerList.value.some(
+        item => item.transfer_id === newCustomerId
+      );
+      
+      if (!customerExists) {
+        console.warn(`客户ID ${newCustomerId} 不在客户列表中`);
+        // 可以选择清空或保留显示ID
+        // queryParams.value.customerId = undefined;
+      }
+      
+      await handleQuery();
+    } else {
+      queryParams.value.customerId = undefined;
+      await getList();
+    }
+  },
+  { immediate: true }
+);
+
 onMounted(async () => {
   // 1. 优先加载客户下拉框（无论是否有CustomerId，表单都需要）
   await loadCustomerList();
+  await getList();
 
-  if (CustomerId) {
-    // 2. 有CustomerId：查询该客户的单条跟踪记录，并渲染到表格
-    try {
-      queryParams.value.customerId = CustomerId;
-      handleQuery();
-    } catch (error) {
-      console.error('获取客户跟踪记录失败:', error);
-      proxy?.$modal.msgError('获取客户跟踪记录失败');
-    }
-  } else {
-    // 3. 无CustomerId：加载默认的所有客户跟踪记录列表
-    await getList();
-  }
 });
 </script>
