@@ -79,6 +79,9 @@ export interface CustomerJobOrderVO {
    */
   remark3: string;
 
+  customerId: string | number;
+  customerName: string;
+
 }
 
 export interface CustomerJobOrderForm extends BaseEntity {
@@ -162,6 +165,9 @@ export interface CustomerJobOrderForm extends BaseEntity {
    */
   remark3?: string;
 
+  customerId?: string | number;
+  customerName?: string;
+
 }
 
 export interface CustomerJobOrderQuery extends PageQuery {
@@ -240,6 +246,8 @@ export interface CustomerJobOrderQuery extends PageQuery {
    * 备注3
    */
   remark3?: string;
+  customerId?: string | number;
+  customerName?: string;
 
     /**
      * 日期范围参数

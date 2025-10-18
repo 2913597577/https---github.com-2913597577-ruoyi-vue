@@ -275,6 +275,8 @@ const initFormData: CustomerJobOrderForm = {
   contractHandler: undefined,
   contractHandlerName: undefined,
   processingStatus: undefined,
+  customerId: undefined,
+  customerName: undefined,
   remark1: undefined,
   remark2: undefined,
   remark3: undefined,
@@ -299,6 +301,8 @@ const data = reactive<PageData<CustomerJobOrderForm, CustomerJobOrderQuery>>({
     remark1: undefined,
     remark2: undefined,
     remark3: undefined,
+    customerId: undefined,
+    customerName: undefined,
     params: {
     }
   },
