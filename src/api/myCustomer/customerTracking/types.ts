@@ -56,8 +56,17 @@ export interface CustomerTrackingVO {
   /**
    * 内勤项数计数
    */
-  interCount:number;
+  interCount: number;
+  /**
+ * 法务支持id
+ */
 
+  legalSupportId?: number
+  /**
+     * 法务支持名称
+     */
+
+  legalSupportName?: string
 }
 
 export interface CustomerTrackingForm extends BaseEntity {
@@ -116,16 +125,25 @@ export interface CustomerTrackingForm extends BaseEntity {
    */
   remark3?: string;
 
-    /**
-   * 内勤项数计数
-   */
-  interCount:number;
+  /**
+ * 内勤项数计数
+ */
+  interCount: number;
 
   /**
    * 是否回访记录
    */
   isReturn?: number;
+  /**
+ * 法务支持id
+ */
 
+  legalSupportId?: number
+  /**
+     * 法务支持名称
+     */
+
+  legalSupportName?: string
 }
 
 export interface CustomerTrackingQuery extends PageQuery {
@@ -180,20 +198,32 @@ export interface CustomerTrackingQuery extends PageQuery {
    */
   remark3?: string;
 
-    /**
-   * 内勤项数计数
-   */
-  interCount:number;
+  /**
+ * 内勤项数计数
+ */
+  interCount: number;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
-
-      /**
-   * 是否回访记录
+  /**
+   * 日期范围参数
    */
+  params?: any;
+
+  /**
+* 是否回访记录
+*/
   isReturn?: number;
+
+  /**
+* 法务支持id
+*/
+
+  legalSupportId?: number
+
+  /**
+   * 法务支持名称
+   */
+
+  legalSupportName?: string
 }
 
 

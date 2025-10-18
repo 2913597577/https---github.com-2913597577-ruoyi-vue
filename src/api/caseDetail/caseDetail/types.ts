@@ -84,6 +84,12 @@ export interface CaseDetailVO {
    */
   judgePhone: string;
 
+
+  legalSupportId?: number,
+
+
+  legalSupportName?: string
+
 }
 
 export interface CaseDetailForm extends BaseEntity {
@@ -172,6 +178,12 @@ export interface CaseDetailForm extends BaseEntity {
    */
   judgePhone?: string;
 
+
+  legalSupportId?: number,
+
+
+  legalSupportName?: string
+
 }
 
 export interface CaseDetailQuery extends PageQuery {
@@ -241,10 +253,16 @@ export interface CaseDetailQuery extends PageQuery {
    */
   caseStatus?: number;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
+
+
+  legalSupportId?: number,
+
+
+  legalSupportName?: string
 }
 
 

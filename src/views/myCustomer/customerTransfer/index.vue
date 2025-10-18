@@ -5,6 +5,10 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="财务确认" prop="financeConfirmed" label-width="68px">
+              <el-input v-model="queryParams.financeConfirmed" placeholder="0-待审核,1-已通过,2-未通过" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
             <el-form-item label="公司名称" prop="companyName" label-width="68px">
               <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -325,7 +329,7 @@
                   <input type="text" v-model="form.balanceStatus" placeholder="尾款情况描述"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-                <td class="border-r border-black p-2 w-48 bg-blue-50">签约类型：</td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">签约类型：<span class="text-red-500">*</span></td>
                 <td class="p-2">
                   <select v-model="form.contractType"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
@@ -774,6 +778,10 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     actualPayment: [
       { required: true, message: "支付金额不能为空", trigger: "blur" }
     ],
+    contractType: [
+      { required: true, message: "签约类型不能为空", trigger: "change" }
+    ],
+
   }
 });
 
@@ -901,6 +909,7 @@ async function submitAudit() {
     if (res && res.code === 200) {
       ElMessage.success('操作成功')
       auditDialogVisible.value = false
+      getList()
       // 刷新列表
       // emit('success') 或 getList()
     } else {
@@ -997,7 +1006,7 @@ const getUserNameById = (userId: string) => {
 }
 
 onMounted(() => {
-  console.log(combo_type.value[0]);
+
   loadUserList();
   getList();
 });

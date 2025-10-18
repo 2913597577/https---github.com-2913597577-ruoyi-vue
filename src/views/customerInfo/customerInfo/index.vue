@@ -97,9 +97,10 @@
             <dict-tag :options="contract_type" :value="scope.row.contractType" />
           </template>
         </el-table-column>
-        <el-table-column label="套餐类型" width="100" align="center" prop="packageType">
+
+        <el-table-column label="套餐类型" align="center" prop="packageType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="dc_service_type" :value="scope.row.packageType" />
+            <dict-tag :options="combo_type" :value="scope.row.packageType" />
           </template>
         </el-table-column>
         <el-table-column label="客户名称" align="center" width="100" prop="customerName" />
@@ -404,8 +405,8 @@
           <el-input v-model="intentionForm.legalSupportId" placeholder="请输入法务支持ID" required />
         </el-form-item> -->
         <el-form-item label="法务支持" prop="legalSupportId">
-          <el-select filterable v-model="intentionForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
-            @change="handleLegalSupportChange">
+          <el-select filterable v-model="intentionForm.legalSupportId" placeholder="请选择法务支持人员" clearable
+            style="width: 100%;" @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
@@ -428,7 +429,7 @@
           <el-input v-model="intentionForm.expectedAmount" placeholder="请输入预计合作金额" type="number" required />
         </el-form-item>
         <el-form-item label="介绍人" prop="introducer">
-          <el-input v-model="intentionForm.introducer" placeholder="请输入介绍人" readonly/>
+          <el-input v-model="intentionForm.introducer" placeholder="请输入介绍人" readonly />
         </el-form-item>
         <!-- <el-form-item label="跟进结果" prop="followUpResult">
           <el-input v-model="intentionForm.followUpResult" type="textarea" placeholder="请输入当前跟进结果（如：初步沟通，待二次跟进）"
@@ -475,9 +476,13 @@
         <el-descriptions-item label="签约类型">
           <dict-tag :options="contract_type" :value="viewForm.contractType" />
         </el-descriptions-item>
-        <el-descriptions-item label="套餐类型">
+        <!-- <el-descriptions-item label="套餐类型">
           <dict-tag :options="dc_service_type" :value="viewForm.packageType" />
+        </el-descriptions-item> -->
+        <el-descriptions-item label="套餐类型">
+          <dict-tag :options="combo_type" :value="viewForm.packageType" />
         </el-descriptions-item>
+
         <el-descriptions-item label="负责人">{{ viewForm.principal }}</el-descriptions-item>
         <el-descriptions-item label="负责人电话">{{ viewForm.principalPhone }}</el-descriptions-item>
         <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
@@ -534,6 +539,7 @@ const { contract_type } = toRefs<any>(proxy?.useDict('contract_type'));
 const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
 const { dc_customer_type } = toRefs<any>(proxy?.useDict('dc_customer_type'));
 const { dc_service_type } = toRefs<any>(proxy?.useDict('dc_service_type'));
+const { combo_type } = toRefs<any>(proxy?.useDict('combo_type'));
 const customerInfoList = ref<CustomerInfoVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -906,7 +912,21 @@ const submitIntentionForm = async () => {
     intentionLoading.value = false;
   }
 };
+// 获取本地时间的函数
+const getLocalDateTime = () => {
+  const date = new Date();
+  // 补零函数：确保数字是两位数（如 1 → 01，9 → 09）
+  const padZero = (num: number) => num.toString().padStart(2, '0');
 
+  const year = date.getFullYear();
+  const month = padZero(date.getMonth() + 1); // 月份是 0-11，需+1
+  const day = padZero(date.getDate());
+  const hours = padZero(date.getHours()); // 24小时制，本地时区
+  const minutes = padZero(date.getMinutes());
+  const seconds = padZero(date.getSeconds());
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
 // ---------------------- 修改流转确认逻辑 ----------------------
 // 在原有handleTransferConfirm函数的switch语句中添加case '3'的处理
 const handleTransferConfirm = async () => {
@@ -967,7 +987,7 @@ const handleTransferConfirm = async () => {
 
         intentionForm.value.legalSupport = String(currentCustomer.lawyerId);
         // 设置当前日期为默认提报日期
-        intentionForm.value.submissionDate = new Date().toISOString().slice(0, 19);
+        intentionForm.value.submissionDate = getLocalDateTime();
 
         // 关闭流转弹窗，打开意向登记弹窗
         transferDialog.visible = false;
@@ -1208,6 +1228,7 @@ const handleLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
+      console.log(selectedLawyer)
       intentionForm.value.legalSupport = selectedLawyer.userName;
     }
   } else {

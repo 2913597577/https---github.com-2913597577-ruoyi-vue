@@ -1,6 +1,7 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
@@ -18,7 +19,8 @@
               <el-input v-model="queryParams.debtAmount" placeholder="请输入欠款金额" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="剩余欠款" prop="remainingAmount">
-              <el-input v-model="queryParams.remainingAmount" placeholder="请输入剩余欠款" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.remainingAmount" placeholder="请输入剩余欠款" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="联系电话" prop="contactPhone">
               <el-input v-model="queryParams.contactPhone" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery" />
@@ -27,37 +29,27 @@
               <el-input v-model="queryParams.idCard" placeholder="请输入身份证号" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="需求接收时间" prop="requestReceiveTime">
-              <el-date-picker clearable
-                v-model="queryParams.requestReceiveTime"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择需求接收时间"
-              />
+              <el-date-picker clearable v-model="queryParams.requestReceiveTime" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择需求接收时间" />
             </el-form-item>
             <el-form-item label="备注" prop="evidenceNotes">
               <el-input v-model="queryParams.evidenceNotes" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="立案系统账号" prop="filingSystemAccount">
-              <el-input v-model="queryParams.filingSystemAccount" placeholder="请输入立案系统账号" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.filingSystemAccount" placeholder="请输入立案系统账号" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="立案密码" prop="filingPassword">
-              <el-input v-model="queryParams.filingPassword" placeholder="请输入立案密码" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.filingPassword" placeholder="请输入立案密码" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="立案日期" prop="filingDate">
-              <el-date-picker clearable
-                v-model="queryParams.filingDate"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择立案日期"
-              />
+              <el-date-picker clearable v-model="queryParams.filingDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择立案日期" />
             </el-form-item>
             <el-form-item label="下次联系时间" prop="nextContactTime">
-              <el-date-picker clearable
-                v-model="queryParams.nextContactTime"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择下次联系时间"
-              />
+              <el-date-picker clearable v-model="queryParams.nextContactTime" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择下次联系时间" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -72,16 +64,20 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['caseDetail:caseDetail:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['caseDetail:caseDetail:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['caseDetail:caseDetail:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
+              v-hasPermi="['caseDetail:caseDetail:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['caseDetail:caseDetail:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['caseDetail:caseDetail:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['caseDetail:caseDetail:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['caseDetail:caseDetail:export']">导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -94,6 +90,15 @@
         <el-table-column label="客户名称" align="center" prop="customerId">
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <!-- 详情按钮：点击携带当前行id跳转 -->
+            <el-button link type="primary" icon="View" size="default"
+              @click="handleTrackingDetail(scope.row.customerId)" style="padding: 0 6px;">
+              详情
+            </el-button>
           </template>
         </el-table-column>
         <el-table-column label="债务人" align="center" prop="debtorName" />
@@ -126,16 +131,19 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="200px">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['caseDetail:caseDetail:edit']">修改</el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                v-hasPermi="['caseDetail:caseDetail:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['caseDetail:caseDetail:remove']">删除</el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['caseDetail:caseDetail:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改欠款案件表对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
@@ -148,6 +156,13 @@
             <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
               :value="item.transfer_id">
             </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="债务人" prop="debtorName">
@@ -166,15 +181,12 @@
           <el-input v-model="form.idCard" placeholder="请输入身份证号" />
         </el-form-item>
         <el-form-item label="需求接收时间" prop="requestReceiveTime">
-          <el-date-picker clearable
-            v-model="form.requestReceiveTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.requestReceiveTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择需求接收时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="证据备注" prop="evidenceNotes">
-            <el-input v-model="form.evidenceNotes" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.evidenceNotes" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="立案系统账号" prop="filingSystemAccount">
           <el-input v-model="form.filingSystemAccount" placeholder="请输入立案系统账号" />
@@ -183,23 +195,17 @@
           <el-input v-model="form.filingPassword" placeholder="请输入立案密码" />
         </el-form-item>
         <el-form-item label="立案日期" prop="filingDate">
-          <el-date-picker clearable
-            v-model="form.filingDate"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.filingDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择立案日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="下次联系时间" prop="nextContactTime">
-          <el-date-picker clearable
-            v-model="form.nextContactTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.nextContactTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择下次联系时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="标的" prop="remark">
-            <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="法官" prop="judgeName">
           <el-input v-model="form.judgeName" placeholder="请输入法官" />
@@ -222,7 +228,9 @@
 import { listCaseDetail, getCaseDetail, delCaseDetail, addCaseDetail, updateCaseDetail } from '@/api/caseDetail/caseDetail';
 import { CaseDetailVO, CaseDetailQuery, CaseDetailForm } from '@/api/caseDetail/caseDetail/types';
 import { getCustomerByUserId } from '@/api/common';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 
+import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const caseDetailList = ref<CaseDetailVO[]>([]);
@@ -260,9 +268,11 @@ const initFormData: CaseDetailForm = {
   caseStatus: undefined,
   judgeName: undefined,
   judgePhone: undefined,
+  legalSupportId: undefined,
+  legalSupportName: undefined
 }
 const data = reactive<PageData<CaseDetailForm, CaseDetailQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -279,6 +289,8 @@ const data = reactive<PageData<CaseDetailForm, CaseDetailQuery>>({
     filingDate: undefined,
     nextContactTime: undefined,
     caseStatus: undefined,
+    legalSupportId: undefined,
+    legalSupportName: undefined,
     params: {
     }
   },
@@ -332,7 +344,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   caseDetailFormRef.value?.resetFields();
 }
 
@@ -378,9 +390,9 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateCaseDetail(form.value).finally(() =>  buttonLoading.value = false);
+        await updateCaseDetail(form.value).finally(() => buttonLoading.value = false);
       } else {
-        await addCaseDetail(form.value).finally(() =>  buttonLoading.value = false);
+        await addCaseDetail(form.value).finally(() => buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;
@@ -405,7 +417,51 @@ const handleExport = () => {
   }, `caseDetail_${new Date().getTime()}.xlsx`)
 }
 
+const router = useRouter();
+//  新增：跟踪记录详情跳转函数
+const handleTrackingDetail = (id: number | string) => {
+  // 跳转到目标路由，并通过query参数传递id
+  router.push({
+    path: '/legalSupport/caseProgress',  // 目标路由路径（需与实际路由配置一致）
+    query: { CustomerId: id }  // 传递id参数（键名可自定义，如customerId）
+  });
+};
+
+const lawyerList = ref([]);
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+
+
+      form.value.legalSupportName = selectedLawyer.userName;
+
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.legalSupportId = undefined;
+    form.value.legalSupportName = undefined;
+  }
+}
+
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
 onMounted(() => {
+  loadLawyerSupportList();
   loadCustomerList();
   getList();
 });

@@ -1,6 +1,7 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
@@ -8,8 +9,9 @@
               <el-input v-model="queryParams.caseId" placeholder="请输入案件id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="案件类型" prop="caseType">
-              <el-select v-model="queryParams.caseType" placeholder="请选择案件类型" clearable >
-                <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.caseType" placeholder="请选择案件类型" clearable>
+                <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label"
+                  :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="客户id" prop="customerId">
@@ -34,16 +36,20 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['caseProgress:caseProgress:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['caseProgress:caseProgress:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['caseProgress:caseProgress:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
+              v-hasPermi="['caseProgress:caseProgress:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['caseProgress:caseProgress:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['caseProgress:caseProgress:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['caseProgress:caseProgress:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['caseProgress:caseProgress:export']">导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -55,7 +61,7 @@
         <el-table-column label="案件id" align="center" prop="caseId" />
         <el-table-column label="案件类型" align="center" prop="caseType">
           <template #default="scope">
-            <dict-tag :options="customer_case_type" :value="scope.row.caseType"/>
+            <dict-tag :options="customer_case_type" :value="scope.row.caseType" />
           </template>
         </el-table-column>
         <el-table-column label="客户id" align="center" prop="customerId" />
@@ -74,16 +80,19 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['caseProgress:caseProgress:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                v-hasPermi="['caseProgress:caseProgress:edit']"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['caseProgress:caseProgress:remove']"></el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['caseProgress:caseProgress:remove']"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改案件进展表对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
@@ -93,12 +102,8 @@
         </el-form-item>
         <el-form-item label="案件类型" prop="caseType">
           <el-select v-model="form.caseType" placeholder="请选择案件类型">
-            <el-option
-                v-for="dict in customer_case_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
+            <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label"
+              :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="客户id" prop="customerId">
@@ -108,21 +113,15 @@
           <el-input v-model="form.customerName" placeholder="请输入客户姓名" />
         </el-form-item>
         <el-form-item label="案件进展" prop="caseProgress">
-            <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="跟进日期" prop="visitTime">
-          <el-date-picker clearable
-            v-model="form.trackingTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.trackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择出访时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="下次跟进日期" prop="nextVisitTime">
-          <el-date-picker clearable
-            v-model="form.nextTrackingTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.nextTrackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择下次出访时间">
           </el-date-picker>
         </el-form-item>
@@ -140,7 +139,7 @@
 <script setup name="CaseProgress" lang="ts">
 import { listCaseProgress, getCaseProgress, delCaseProgress, addCaseProgress, updateCaseProgress } from '@/api/caseProgress/caseProgress';
 import { CaseProgressVO, CaseProgressQuery, CaseProgressForm } from '@/api/caseProgress/caseProgress/types';
-
+import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { customer_case_type } = toRefs<any>(proxy?.useDict('customer_case_type'));
 
@@ -170,7 +169,7 @@ const initFormData: CaseProgressForm = {
   caseProgress: undefined,
 }
 const data = reactive<PageData<CaseProgressForm, CaseProgressQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -220,7 +219,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   caseProgressFormRef.value?.resetFields();
 }
 
@@ -266,9 +265,9 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateCaseProgress(form.value).finally(() =>  buttonLoading.value = false);
+        await updateCaseProgress(form.value).finally(() => buttonLoading.value = false);
       } else {
-        await addCaseProgress(form.value).finally(() =>  buttonLoading.value = false);
+        await addCaseProgress(form.value).finally(() => buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;
@@ -292,7 +291,27 @@ const handleExport = () => {
     ...queryParams.value
   }, `caseProgress_${new Date().getTime()}.xlsx`)
 }
-
+const route = useRoute();
+// 监听 intentionCustomerId 的变化
+watch(
+  () => route.query.CustomerId,
+  (newCustomerId) => {
+    if (newCustomerId) {
+      // 2. 有CustomerId：查询该客户的单条跟踪记录，并渲染到表格
+      try {
+        queryParams.value.customerId = newCustomerId;
+        handleQuery();
+      } catch (error) {
+        console.error('获取客户跟踪记录失败:', error);
+        proxy?.$modal.msgError('获取客户跟踪记录失败');
+      }
+    } else {
+      // 如果 intentionCustomerId 为空，则加载所有数据
+      getList();
+    }
+  },
+  { immediate: true } // 立即执行一次
+);
 onMounted(() => {
   getList();
 });

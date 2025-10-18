@@ -19,7 +19,7 @@
                 </template>
 </el-select-v2> -->
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
-                :props="selectProps"  filterable clearable :loading="loading">
+                :props="selectProps" filterable clearable :loading="loading">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
@@ -161,6 +161,13 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="跟踪记录" prop="customerRemark">
           <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -192,8 +199,8 @@
             placeholder="请选择下次跟踪时间">
           </el-date-picker>
         </el-form-item>
-         <el-form-item label="内勤项数计数" prop="interCount">
-          <el-input v-model="form.interCount"  placeholder="请输入内勤项数计数" />
+        <el-form-item label="内勤项数计数" prop="interCount">
+          <el-input v-model="form.interCount" placeholder="请输入内勤项数计数" />
         </el-form-item>
         <el-form-item label="风险提示" prop="remark1">
           <el-input v-model="form.remark1" type="textarea" placeholder="请输入内容" />
@@ -289,6 +296,7 @@ import { getCustomerByUserId } from '@/api/common';
 import { listCustomerTracking, getCustomerTracking, delCustomerTracking, addCustomerTracking, updateCustomerTracking } from '@/api/myCustomer/customerTracking';
 import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from '@/api/myCustomer/customerTracking/types';
 import { addCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { useRoute } from 'vue-router';  // 用于接收路由参数
 
 
@@ -325,14 +333,16 @@ const initFormData: CustomerTrackingForm = {
   customerRemark: undefined,
   trackingType: undefined,
   cumtomerStatus: undefined,
+  legalSupportId: undefined,
   trackingTime: undefined,
   submitStatus: undefined,
+  legalSupportName: undefined,
   nextTime: undefined,
   remark1: undefined,
   remark2: undefined,
   remark3: undefined,
   isReturn: 0,
-  interCount:0
+  interCount: 0
 }
 
 const preFile = ref(null);
@@ -352,10 +362,12 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
     remark2: undefined,
     remark3: undefined,
     isReturn: undefined,
-    interCount:0,
-      /**
-   * 是否回访记录
-   */
+    legalSupportId: undefined,
+    interCount: 0,
+
+    /**
+ * 是否回访记录
+ */
     params: {
     }
   },
@@ -387,7 +399,8 @@ const jobOrderForm = ref({
   processingStatus: undefined,
   remark1: undefined,
   remark2: undefined,
-  remark3: undefined
+  remark3: undefined,
+
 });
 
 // select 的 props 定义为常量，避免递归更新
@@ -396,7 +409,39 @@ const selectProps = {
   value: 'transfer_id'
 }
 
+const lawyerList = ref([]);
 
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+
+
+      form.value.legalSupportName = selectedLawyer.userName;
+      console.log(form.value.legalSupportId);
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.legalSupportId = undefined;
+    form.value.legalSupportName = undefined;
+  }
+}
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
 /** 查询客户跟踪列表 */
 const getList = async () => {
   loading.value = true;
@@ -572,20 +617,20 @@ watch(
       if (customerList.value.length === 0) {
         await loadCustomerList();
       }
-      
+
       queryParams.value.customerId = newCustomerId;
-      
+
       // 验证客户ID是否在客户列表中
       const customerExists = customerList.value.some(
         item => item.transfer_id === newCustomerId
       );
-      
+
       if (!customerExists) {
         console.warn(`客户ID ${newCustomerId} 不在客户列表中`);
         // 可以选择清空或保留显示ID
         // queryParams.value.customerId = undefined;
       }
-      
+
       await handleQuery();
     } else {
       queryParams.value.customerId = undefined;
@@ -597,6 +642,7 @@ watch(
 
 onMounted(async () => {
   // 1. 优先加载客户下拉框（无论是否有CustomerId，表单都需要）
+  await loadLawyerSupportList();
   await loadCustomerList();
   await getList();
 
