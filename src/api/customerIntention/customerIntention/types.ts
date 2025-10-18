@@ -63,9 +63,9 @@ export interface CustomerIntentionForm extends BaseEntity {
   intendedCustomer?: string;
 
   /**
-   * 意向客户id
+   * 介绍人id
    */
-  intendedCustomerId?: string | number;
+  introducerId?: string | number;
 
   /**
    * 类型
@@ -119,7 +119,7 @@ export interface CustomerIntentionQuery extends PageQuery {
   /**
    * 意向客户id
    */
-  intendedCustomerId?: string | number;
+  introducerId?: string | number;
 
   /**
    * 类型

@@ -403,8 +403,8 @@
         <el-form-item label="法务支持ID" prop="legalSupportId">
           <el-input v-model="intentionForm.legalSupportId" placeholder="请输入法务支持ID" required />
         </el-form-item> -->
-        <el-form-item label="法务支持" prop="legalSupportId" label-width="80px">
-          <el-select filterable v-model="queryParams.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+        <el-form-item label="法务支持" prop="legalSupportId">
+          <el-select filterable v-model="intentionForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
@@ -413,9 +413,9 @@
         <el-form-item label="意向客户名称" prop="intendedCustomer">
           <el-input v-model="intentionForm.intendedCustomer" placeholder="请输入意向客户名称" required />
         </el-form-item>
-        <el-form-item label="意向客户ID" prop="intendedCustomerId">
-          <el-input v-model="intentionForm.intendedCustomerId" placeholder="请输入意向客户ID" required />
-        </el-form-item>
+        <!-- <el-form-item label="介绍人ID" prop="introducerId">
+          <el-input v-model="intentionForm.introducerId" placeholder="介绍人id" required />
+        </el-form-item> -->
         <el-form-item label="意向类型" prop="type">
           <el-select v-model="intentionForm.type" placeholder="请选择意向类型" required>
             <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -428,12 +428,12 @@
           <el-input v-model="intentionForm.expectedAmount" placeholder="请输入预计合作金额" type="number" required />
         </el-form-item>
         <el-form-item label="介绍人" prop="introducer">
-          <el-input v-model="intentionForm.introducer" placeholder="请输入介绍人" />
+          <el-input v-model="intentionForm.introducer" placeholder="请输入介绍人" readonly/>
         </el-form-item>
-        <el-form-item label="跟进结果" prop="followUpResult">
+        <!-- <el-form-item label="跟进结果" prop="followUpResult">
           <el-input v-model="intentionForm.followUpResult" type="textarea" placeholder="请输入当前跟进结果（如：初步沟通，待二次跟进）"
             required />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -786,7 +786,7 @@ const initIntentionForm: CustomerIntentionForm = {
   legalSupport: undefined,
   legalSupportId: undefined,
   intendedCustomer: undefined,
-  intendedCustomerId: undefined,
+  introducerId: undefined,
   type: undefined,
   source: undefined,
   expectedAmount: undefined,
@@ -804,7 +804,7 @@ const intentionData = reactive<PageData<CustomerIntentionForm, CustomerIntention
     legalSupport: undefined,
     legalSupportId: undefined,
     intendedCustomer: undefined,
-    intendedCustomerId: undefined,
+    introducerId: undefined,
     type: undefined,
     source: undefined,
     introducer: undefined,
@@ -824,7 +824,7 @@ const intentionData = reactive<PageData<CustomerIntentionForm, CustomerIntention
     intendedCustomer: [
       { required: true, message: "请输入意向客户", trigger: "blur" }
     ],
-    intendedCustomerId: [
+    introducerId: [
       { required: true, message: "请输入意向客户id", trigger: "blur" }
     ],
     type: [
@@ -837,9 +837,6 @@ const intentionData = reactive<PageData<CustomerIntentionForm, CustomerIntention
       { required: true, message: "请输入预计金额", trigger: "blur" },
       { pattern: /^\d+(\.\d{1,2})?$/, message: "请输入正确的金额格式（最多2位小数）", trigger: "blur" }
     ],
-    followUpResult: [
-      { required: true, message: "请输入跟进结果", trigger: "blur" }
-    ]
   }
 });
 
@@ -861,7 +858,7 @@ const customerInfoForm = ref({
   legalSupport: undefined,
   legalSupportId: undefined,
   intendedCustomer: undefined,
-  intendedCustomerId: undefined,
+  introducerId: undefined,
   type: undefined,
   source: undefined,
   expectedAmount: undefined,
@@ -965,7 +962,8 @@ const handleTransferConfirm = async () => {
         resetIntentionForm();
         // 从原客户数据自动填充表单
         intentionForm.value.introducer = currentCustomer.customerName;
-        intentionForm.value.intendedCustomerId = currentCustomer.transferId;
+        intentionForm.value.introducerId = currentCustomer.transferId;
+        intentionForm.value.followUpResult = 0;
 
         intentionForm.value.legalSupport = String(currentCustomer.lawyerId);
         // 设置当前日期为默认提报日期
@@ -1210,11 +1208,11 @@ const handleLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
-      form.value.lawyerId = selectedLawyer.userName;
+      intentionForm.value.legalSupport = selectedLawyer.userName;
     }
   } else {
     // 清空选择时重置相关字段
-    form.value.lawyerId = undefined;
+    intentionForm.value.legalSupport = undefined;
   }
 }
 const handleUpload = async (row: CustomerInfoVO) => {
