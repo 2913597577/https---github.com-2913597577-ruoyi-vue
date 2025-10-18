@@ -136,6 +136,13 @@
         <el-form-item label="法务支持姓名" prop="legalSupportName">
           <el-input v-model="form.legalSupportName" placeholder="请输入法务支持姓名" />
         </el-form-item> -->
+        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="出访时间" prop="visitTime">
           <el-date-picker clearable
             v-model="form.visitTime"
@@ -177,7 +184,7 @@
           <image-upload v-model="form.placePic1"/>
         </el-form-item>
         <el-form-item label="面访记录附件" prop="outRecord">
-          <file-upload v-model="form.outRecord"/>
+          <file-upload :limit="1" v-model="uploadFile"/>
         </el-form-item>
         <el-form-item label="面访地点" prop="visitAddress">
             <el-input v-model="form.visitAddress" type="textarea" placeholder="请输入内容" />
@@ -195,6 +202,7 @@
 
 <script setup name="CustomerOutVisit" lang="ts">
 import { getCustomerByUserId } from '@/api/common';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listCustomerOutVisit, getCustomerOutVisit, delCustomerOutVisit, addCustomerOutVisit, updateCustomerOutVisit } from '@/api/customerOutVisit/customerOutVisit';
 import { CustomerOutVisitVO, CustomerOutVisitQuery, CustomerOutVisitForm } from '@/api/customerOutVisit/customerOutVisit/types';
 
@@ -210,6 +218,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const customerList = ref<any[]>([]);
+const uploadFile = ref();
 
 const queryFormRef = ref<ElFormInstance>();
 const customerOutVisitFormRef = ref<ElFormInstance>();
@@ -308,6 +317,7 @@ const handleSelectionChange = (selection: CustomerOutVisitVO[]) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
+  uploadFile.value = []; 
   dialog.visible = true;
   dialog.title = "添加客户出访记录";
 }
@@ -318,6 +328,7 @@ const handleUpdate = async (row?: CustomerOutVisitVO) => {
   const _id = row?.id || ids.value[0]
   const res = await getCustomerOutVisit(_id);
   Object.assign(form.value, res.data);
+  uploadFile.value = []; 
   dialog.visible = true;
   dialog.title = "修改客户出访记录";
 }
@@ -327,6 +338,9 @@ const submitForm = () => {
   customerOutVisitFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
+      if (uploadFile.value) {
+        form.value.outRecord = uploadFile.value[0].ossId;
+      } 
       if (form.value.id) {
         await updateCustomerOutVisit(form.value).finally(() =>  buttonLoading.value = false);
       } else {
@@ -364,6 +378,37 @@ const getCustomerNameById = (customerId: string | number) => {
   return customer ? customer.customer_realName : '';
 };
 
+const lawyerList = ref([]);
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+      form.value.legalSupportName = selectedLawyer.userName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.legalSupportId = undefined;
+    form.value.legalSupportName = undefined;
+  }
+}
+
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+
 /** 导出按钮操作 */
 const handleExport = () => {
   proxy?.download('customerOutVisit/customerOutVisit/export', {
@@ -372,6 +417,7 @@ const handleExport = () => {
 }
 
 onMounted(() => {
+  loadLawyerSupportList();
   loadCustomerList();
   getList();
 });
