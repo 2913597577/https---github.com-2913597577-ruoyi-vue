@@ -76,8 +76,8 @@
     <!-- 数据表格 -->
     <el-table v-loading="loading" :data="trackingList" border>
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
-      <el-table-column label="客户名称" align="center" prop="customerName" />
-      <el-table-column label="法务支持" align="center" prop="legalSupportName" />
+      <el-table-column label="客户名称" align="center" prop="customerName"  width="240"/>
+      <el-table-column label="法务支持" align="center" prop="legalSupportName"  width="180"/>
       <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="180">
         <template #default="scope">
           <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime) : '' }}</span>
@@ -88,7 +88,7 @@
           <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime) : '' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="跟踪类型" align="center" prop="trackingType">
+      <el-table-column label="跟踪类型" align="center" prop="trackingType" width="100">
         <template #default="scope">
           <el-tag v-if="scope.row.trackingType === 1">回访</el-tag>
           <el-tag v-else-if="scope.row.trackingType === 2" type="success">出访</el-tag>
@@ -97,7 +97,7 @@
           <el-tag v-else-if="scope.row.trackingType === 5" type="info">案件</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="备注" align="center" prop="remark"  />
       <!-- <el-table-column label="操作" align="center" width="150">
         <template #default="scope">
           <el-button type="primary" link icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>

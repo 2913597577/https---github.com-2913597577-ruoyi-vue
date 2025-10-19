@@ -22,7 +22,7 @@ export interface CaseProgressVO {
   /**
    * 客户姓名
    */
-  customerName: number;
+  customerName: string;
 
   /**
    * 案件进展
@@ -66,7 +66,7 @@ export interface CaseProgressForm extends BaseEntity {
   /**
    * 客户姓名
    */
-  customerName?: number;
+  customerName?: string;
 
   /**
    * 案件进展
@@ -105,7 +105,7 @@ export interface CaseProgressQuery extends PageQuery {
   /**
    * 客户姓名
    */
-  customerName?: number;
+  customerName?: string;
 
   /**
    * 案件进展

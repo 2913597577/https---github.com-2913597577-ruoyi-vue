@@ -327,17 +327,17 @@
     <!--转为风险或退费客户操作对话框 -->
     <el-dialog :title="riskRefundDialog.title" v-model="riskRefundDialog.visible" width="500px" append-to-body>
       <el-form ref="customerRiskRefundFormRef" :model="CRRform" :rules="CRRrules" label-width="120px">
-        <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
-          <el-select filterable v-model="queryParams.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+        <el-form-item label="法务支持" prop="lawyerId" label-width="68px">
+          <el-select filterable v-model="CRRform.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="客户id" prop="customerId">
-          <el-input v-model="CRRform.customerId" placeholder="请输入客户id" readonly />
-          <!-- 客户ID从原客户数据获取，设为只读避免手动输入错误 -->
-        </el-form-item>
+        <!-- <el-form-item label="客户id" prop="customerId">
+          <el-input v-model="CRRform.customerId" placeholder="请输入客户id" readonly /> -->
+          <!-- 客户ID从原客户数据获取，设为只读避免手动输入错误
+        </el-form-item> -->
         <el-form-item label="客户名称" prop="customerName">
           <el-input v-model="CRRform.customerName" placeholder="请输入客户名称" readonly />
           <!-- 客户名称同理，只读 -->
@@ -947,6 +947,7 @@ const handleTransferConfirm = async () => {
         resetRiskRefundForm(); // 重置表单
         CRRform.value.customerType = 1; // 标记为风险客户
         // 自动填充客户基础信息（从原客户数据获取，减少手动输入）
+        CRRform.value.lawyerId = currentCustomer.lawyerId;
         CRRform.value.customerId = currentCustomer.transferId;
         CRRform.value.customerName = currentCustomer.customerName;
         CRRform.value.principal = currentCustomer.principal;

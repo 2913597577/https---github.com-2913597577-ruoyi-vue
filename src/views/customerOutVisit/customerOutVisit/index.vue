@@ -104,7 +104,16 @@
             <image-preview :src="scope.row.placePic1Url" :width="50" :height="50"/>
           </template>
         </el-table-column>
-        <el-table-column label="面访记录附件" align="center" prop="outRecord" />
+        <el-table-column label="面访记录附件" align="center" prop="outRecord" >
+          <template #default="scope">
+            <div class="contract-cell">
+              <el-button v-if="scope.row.outRecord" link type="primary" icon="download"
+                @click="handleViewContract(scope.row)">
+                下载附件
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="面访地点" align="center" prop="visitAddress" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
@@ -317,7 +326,7 @@ const handleSelectionChange = (selection: CustomerOutVisitVO[]) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
-  uploadFile.value = []; 
+  uploadFile.value = null; 
   dialog.visible = true;
   dialog.title = "添加客户出访记录";
 }
@@ -341,6 +350,7 @@ const submitForm = () => {
       if (uploadFile.value) {
         form.value.outRecord = uploadFile.value[0].ossId;
       } 
+      form.value.customerName=getCustomerNameById(form.value.customerId);
       if (form.value.id) {
         await updateCustomerOutVisit(form.value).finally(() =>  buttonLoading.value = false);
       } else {
@@ -406,6 +416,14 @@ const loadLawyerSupportList = async () => {
   } catch (error) {
     proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
     console.error('法务人员列表加载异常：', error);
+  }
+};
+
+const handleViewContract = (row: CustomerOutVisitVO) => {
+  if (row.outRecord) {
+    proxy?.$download.oss(row.outRecord);
+  } else {
+    proxy?.$modal.msgWarning(`无合同文件可下载`);
   }
 };
 

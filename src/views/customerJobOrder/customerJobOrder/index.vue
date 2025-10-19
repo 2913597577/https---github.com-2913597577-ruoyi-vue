@@ -231,6 +231,60 @@
       </template>
     </el-dialog>
 
+    <!-- 在现有 el-dialog 后面添加新的新增工单对话框 -->
+<el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
+  <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="100px">
+    <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
+      <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+        @change="handleAddLegalSupportChange">
+        <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+          :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="原合同" prop="preContractAddress">
+      <file-upload :limit="1" :fileSize="10" v-model="addPreFile" />
+    </el-form-item>
+    <!-- <el-form-item label="原合同文件名" prop="preContractName">
+      <el-input v-model="addForm.preContractName" placeholder="请输入源合同文件名" />
+    </el-form-item> -->
+    <!-- <el-form-item label="新合同地址" prop="newContractAddress">
+      <file-upload :limit="1" :fileSize="10" v-model="addNewFile" />
+    </el-form-item>
+    <el-form-item label="新合同文件名" prop="newContractName">
+      <el-input v-model="addForm.newContractName" placeholder="请输入新合同文件名" />
+    </el-form-item> -->
+    <el-form-item label="客户要求" prop="customerRequirements">
+      <el-input v-model="addForm.customerRequirements" type="textarea" placeholder="请输入内容" />
+    </el-form-item>
+    <el-form-item label="客户所属方" prop="remark1">
+      <el-input v-model="addForm.remark1" placeholder="请输入客户所属方" />
+    </el-form-item>
+    <el-form-item label="交付时间" prop="deliveryTime">
+      <el-date-picker clearable v-model="addForm.deliveryTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+        placeholder="请选择交付时间">
+      </el-date-picker>
+    </el-form-item>
+    <!-- <el-form-item label="处理人" prop="contractHandlerName">
+      <el-input v-model="addForm.contractHandlerName" placeholder="请输入处理人" />
+    </el-form-item> -->
+    <!-- <el-form-item label="备注1" prop="remark1">
+      <el-input v-model="addForm.remark1" placeholder="请输入备注1" />
+    </el-form-item>
+    <el-form-item label="备注2" prop="remark2">
+      <el-input v-model="addForm.remark2" placeholder="请输入备注2" />
+    </el-form-item>
+    <el-form-item label="备注3" prop="remark3">
+      <el-input v-model="addForm.remark3" placeholder="请输入备注3" />
+    </el-form-item> -->
+  </el-form>
+  <template #footer>
+    <div class="dialog-footer">
+      <el-button :loading="buttonLoading" type="primary" @click="submitAddForm">确 定</el-button>
+      <el-button @click="cancelAdd">取 消</el-button>
+    </div>
+  </template>
+</el-dialog>
+
   </div>
 </template>
 
@@ -375,12 +429,12 @@ const handleSelectionChange = (selection: CustomerJobOrderVO[]) => {
   multiple.value = !selection.length;
 }
 
-/** 新增按钮操作 */
-const handleAdd = () => {
-  reset();
-  dialog.visible = true;
-  dialog.title = "添加工单管理";
-}
+// /** 新增按钮操作 */
+// const handleAdd = () => {
+//   reset();
+//   dialog.visible = true;
+//   dialog.title = "添加工单管理";
+// }
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: CustomerJobOrderVO) => {
@@ -527,6 +581,87 @@ const confirmAccept = async () => {
   } catch (error) {
     proxy?.$modal.msgError("接单操作失败");
   }
+}
+
+// 新增弹窗相关状态
+const addDialog = reactive<DialogOption>({
+  visible: false,
+  title: '新增工单管理'
+});
+
+const addCustomerJobOrderFormRef = ref<ElFormInstance>();
+const addPreFile = ref();
+const addNewFile = ref();
+
+const addForm = ref<CustomerJobOrderForm>({ ...initFormData });
+
+const addRules = {
+  deliveryTime: [
+    { required: true, message: "交付时间不能为空", trigger: "blur" }
+  ],
+};
+
+/** 取消新增按钮 */
+const cancelAdd = () => {
+  addForm.value = { ...initFormData };
+  addCustomerJobOrderFormRef.value?.resetFields();
+  addPreFile.value = null;
+  addNewFile.value = null;
+  addDialog.visible = false;
+}
+
+/**
+ * 新增法务支持选择变化处理
+ */
+const handleAddLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+      addForm.value.legalSupport = selectedLawyer.userName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    addForm.value.legalSupport = undefined;
+  }
+}
+
+/** 新增提交按钮 */
+const submitAddForm = () => {
+  addCustomerJobOrderFormRef.value?.validate(async (valid: boolean) => {
+    if (valid) {
+      buttonLoading.value = true;
+      const formData = { ...addForm.value };
+      
+      if (addPreFile.value) {
+        formData.preContractAddress = addPreFile.value[0].ossId;
+        formData.preContractName = addPreFile.value[0].name;
+      }
+      if (addNewFile.value) {
+        formData.newContractAddress = addNewFile.value[0].ossId;
+        formData.newContractName = addNewFile.value[0].name;
+      }
+      
+      try {
+        await addCustomerJobOrder(formData);
+        proxy?.$modal.msgSuccess("新增成功");
+        addDialog.visible = false;
+        await getList();
+      } finally {
+        buttonLoading.value = false;
+      }
+    }
+  });
+}
+
+/** 修改新增按钮操作 */
+const handleAdd = () => {
+  addForm.value = { ...initFormData };
+  addCustomerJobOrderFormRef.value?.resetFields();
+  addPreFile.value = null;
+  addNewFile.value = null;
+  addDialog.visible = true;
 }
 
 onMounted(() => {

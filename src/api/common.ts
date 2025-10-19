@@ -8,6 +8,7 @@ export const getCustomerByUserId = () => {
   })
 }
 
+
 // 获取客户意向列表
 export const getIntentionCustomerByUserId = () => {
   return request({
@@ -55,5 +56,13 @@ export const getRiskRefundData = (params?: {
     url: '/common/getRiskRefundData',
     method: 'get',
     params
+  })
+}
+
+// 获取案件详情
+export const getCaseDetail=()=>{
+  return request({
+    url: '/common/getCaseDetail',
+    method: 'get'
   })
 }

@@ -5,8 +5,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="案件id" prop="caseId">
-              <el-input v-model="queryParams.caseId" placeholder="请输入案件id" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="案件" prop="caseId">
+               <el-select v-model="queryParams.caseId" placeholder="请选择案件" filterable clearable>
+                <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
+                  :value="item.case_id">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="案件类型" prop="caseType">
               <el-select v-model="queryParams.caseType" placeholder="请选择案件类型" clearable>
@@ -57,14 +61,14 @@
 
       <el-table v-loading="loading" border :data="caseProgressList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="案件id" align="center" prop="caseId" />
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
+        <el-table-column label="案件" align="center" prop="caseId" />
         <el-table-column label="案件类型" align="center" prop="caseType">
           <template #default="scope">
             <dict-tag :options="customer_case_type" :value="scope.row.caseType" />
           </template>
         </el-table-column>
-        <el-table-column label="客户id" align="center" prop="customerId" />
+        <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="客户姓名" align="center" prop="customerName" />
         <el-table-column label="案件进展" align="center" prop="caseProgress" />
         <el-table-column label="跟进日期" align="center" prop="trackingTime" width="180">
@@ -97,8 +101,12 @@
     <!-- 添加或修改案件进展表对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="caseProgressFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="案件id" prop="caseId">
-          <el-input v-model="form.caseId" placeholder="请输入案件id" />
+        <el-form-item label="案件" prop="caseId">
+         <el-select v-model="form.caseId" placeholder="请选择案件" filterable clearable>
+                <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
+                  :value="item.case_id">
+                </el-option>
+              </el-select>
         </el-form-item>
         <el-form-item label="案件类型" prop="caseType">
           <el-select v-model="form.caseType" placeholder="请选择案件类型">
@@ -106,12 +114,12 @@
               :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="客户id" prop="customerId">
+        <!-- <el-form-item label="客户id" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id" />
         </el-form-item>
         <el-form-item label="客户姓名" prop="customerName">
           <el-input v-model="form.customerName" placeholder="请输入客户姓名" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="案件进展" prop="caseProgress">
           <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -139,6 +147,7 @@
 <script setup name="CaseProgress" lang="ts">
 import { listCaseProgress, getCaseProgress, delCaseProgress, addCaseProgress, updateCaseProgress } from '@/api/caseProgress/caseProgress';
 import { CaseProgressVO, CaseProgressQuery, CaseProgressForm } from '@/api/caseProgress/caseProgress/types';
+import { getCaseDetail } from '@/api/common';
 import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { customer_case_type } = toRefs<any>(proxy?.useDict('customer_case_type'));
@@ -151,6 +160,18 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
+
+const caseDetailList = ref<any[]>([]);
+
+const loadcaseDetailList = async () => {
+  try {
+    const res = await getCaseDetail();
+    caseDetailList.value = res.data;
+  } catch (error) {
+    console.error('获取案件列表失败:', error);
+    proxy?.$modal.msgError('获取案件列表失败');
+  }
+}
 
 const queryFormRef = ref<ElFormInstance>();
 const caseProgressFormRef = ref<ElFormInstance>();
@@ -313,6 +334,7 @@ watch(
   { immediate: true } // 立即执行一次
 );
 onMounted(() => {
+  loadcaseDetailList();
   getList();
 });
 </script>
