@@ -126,6 +126,13 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="下单日期" prop="orderDate">
           <el-date-picker clearable
             v-model="form.orderDate"
@@ -177,6 +184,7 @@
 
 <script setup name="InsuranceCase" lang="ts">
 import { getCustomerByUserId } from '@/api/common';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listInsuranceCase, getInsuranceCase, delInsuranceCase, addInsuranceCase, updateInsuranceCase } from '@/api/insuranceCase/insuranceCase';
 import { InsuranceCaseVO, InsuranceCaseQuery, InsuranceCaseForm } from '@/api/insuranceCase/insuranceCase/types';
 
@@ -348,6 +356,38 @@ const handleDelete = async (row?: InsuranceCaseVO) => {
   await getList();
 }
 
+const lawyerList = ref([]);
+
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+      form.value.legalSupportName = selectedLawyer.userName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.legalSupportId = undefined;
+    form.value.legalSupportName = undefined;
+  }
+}
+
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+
 /** 导出按钮操作 */
 const handleExport = () => {
   proxy?.download('insuranceCase/insuranceCase/export', {
@@ -356,6 +396,7 @@ const handleExport = () => {
 }
 
 onMounted(() => {
+  loadLawyerSupportList();
   loadCustomerList();
   getList();
 });

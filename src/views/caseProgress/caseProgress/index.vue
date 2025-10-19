@@ -62,7 +62,7 @@
       <el-table v-loading="loading" border :data="caseProgressList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="案件" align="center" prop="caseId" />
+        <!-- <el-table-column label="案件" align="center" prop="caseId" /> -->
         <el-table-column label="案件类型" align="center" prop="caseType">
           <template #default="scope">
             <dict-tag :options="customer_case_type" :value="scope.row.caseType" />
