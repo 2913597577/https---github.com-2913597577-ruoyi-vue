@@ -20,6 +20,14 @@
               </el-select>
             </el-form-item>
 
+            <el-form-item label="客户名称" prop="customerId">
+              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
+            </el-form-item>
             <el-form-item label="交付时间" prop="deliveryTime">
               <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择交付时间" />
@@ -78,6 +86,11 @@
         <el-table-column label="工单处理状态" align="center" prop="processingStatus">
           <template #default="scope">
             <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
+          </template>
+        </el-table-column>
+        <el-table-column label="客户名称" align="center" prop="customerId">
+          <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
@@ -232,26 +245,26 @@
     </el-dialog>
 
     <!-- 在现有 el-dialog 后面添加新的新增工单对话框 -->
-<el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
-  <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="90px">
-     <el-form-item label="客户" prop="customerId">
-          <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+    <el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
+      <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="90px">
+        <el-form-item label="客户" prop="customerId">
+          <el-select v-model="addForm.customerId" placeholder="请选择客户" filterable>
             <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
               :value="item.transfer_id">
             </el-option>
           </el-select>
         </el-form-item>
-    <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
-      <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
-        @change="handleAddLegalSupportChange">
-        <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
-          :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="原合同" prop="preContractAddress">
-      <file-upload :limit="1" :fileSize="10" v-model="addPreFile" />
-    </el-form-item>
-    <!-- <el-form-item label="原合同文件名" prop="preContractName">
+        <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
+          <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleAddLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原合同" prop="preContractAddress">
+          <file-upload :limit="1" :fileSize="10" v-model="addPreFile" />
+        </el-form-item>
+        <!-- <el-form-item label="原合同文件名" prop="preContractName">
     <el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
       <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="100px">
         <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
@@ -402,6 +415,7 @@ const getList = async () => {
   loading.value = true;
   const res = await listCustomerJobOrder(queryParams.value);
   customerJobOrderList.value = res.rows;
+  // console.log(res.rows, '工单管理')
   total.value = res.total;
   loading.value = false;
 }
@@ -528,11 +542,11 @@ const loadLawyerSupportList = async () => {
   try {
     // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
     const response = await listLawyerSupport();
-    console.log('法务支持人员列表：', response);
+    // console.log('法务支持人员列表：', response);
     lawyerList.value = response.rows;
   } catch (error) {
     proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
-    console.error('法务人员列表加载异常：', error);
+    // console.error('法务人员列表加载异常：', error);
   }
 };
 /** 删除按钮操作 */
@@ -660,7 +674,7 @@ const submitAddForm = () => {
       buttonLoading.value = true;
       const formData = { ...addForm.value };
 
-      form.value.customerName=getCustomerNameById(form.value.customerId);
+      form.value.customerName = getCustomerNameById(form.value.customerId);
       if (addPreFile.value) {
         formData.preContractAddress = addPreFile.value[0].ossId;
         formData.preContractName = addPreFile.value[0].name;
@@ -684,7 +698,10 @@ const submitAddForm = () => {
 
 const getCustomerNameById = (customerId: string | number) => {
   if (!customerId) return '';
+  // console.log(customerId, '客户id')
+  // console.log(customerList.value, '客户列表')
   const customer = customerList.value.find(item => item.transfer_id === customerId);
+  // console.log(customer)
   return customer ? customer.customer_realName : '';
 };
 
@@ -696,15 +713,19 @@ const handleAdd = () => {
   addNewFile.value = null;
   addDialog.visible = true;
 }
-
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'transfer_id'
+}
 const customerList = ref<any[]>([]);
 const loadCustomerList = async () => {
   try {
     const res = await getCustomerByUserId();
     customerList.value = res.data;
-    console.log(customerList.value)
+
   } catch (error) {
-    console.error('获取客户列表失败:', error);
+    // console.error('获取客户列表失败:', error);
     proxy?.$modal.msgError('获取客户列表失败');
   }
 }
@@ -727,9 +748,11 @@ watch(
   { immediate: true }
 );
 
-onMounted(() => {
-  loadCustomerList();
+
+
+onMounted(async () => {
+  await loadCustomerList(); // 等待客户列表加载完成
   loadLawyerSupportList();
-  getList();
+  await getList(); // 客户列表加载完后，再获取工单列表并渲染
 });
 </script>

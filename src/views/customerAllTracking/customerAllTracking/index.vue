@@ -3,14 +3,21 @@
   <div class="tracking-container">
     <!-- 查询条件 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
-      <el-form-item label="客户ID" prop="customerId">
-        <el-input v-model="queryParams.customerId" placeholder="请输入客户ID" clearable style="width: 200px"
-          @keyup.enter="handleQuery" />
+      <el-form-item label="客户名称" prop="customerId">
+        <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList" :props="selectProps"
+          filterable clearable :loading="loading">
+          <template #empty>
+            <div class="empty-state">未找到匹配的客户</div>
+          </template>
+        </el-select-v2>
       </el-form-item>
 
-      <el-form-item label="法务支持ID" prop="legalSupportId">
-        <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持ID" clearable style="width: 200px"
-          @keyup.enter="handleQuery" />
+      <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+        <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+          style="width: 100%;" @change="handleLegalSupportChange">
+          <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+            :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item label="跟踪类型" prop="trackingType">
@@ -145,6 +152,8 @@ import { getAllTrackingRecords, TrackingQueryParams, TrackingRecord } from '@/ap
 import { parseTime } from '@/utils/ruoyi';
 import { ElForm, ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
+import { getCustomerByUserId } from '@/api/common';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 // 定义变量
 const loading = ref(true);
 const showSearch = ref(true);
@@ -276,7 +285,49 @@ function handleDelete(row: TrackingRecord) {
   });
 }
 
+const customerList = ref([]);
 
+
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'transfer_id'
+}
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
+const lawyerList = ref([]);
+
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+      form.value.legalSupport = selectedLawyer.userName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.legalSupport = undefined;
+  }
+}
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
 // 新增：跟踪记录详情跳转函数
 const handleTrackingDetail = (data) => {
 
@@ -316,6 +367,11 @@ const handleTrackingDetail = (data) => {
     query: { customerId: customerId }
   });
 };
+
+onMounted(() => {
+  loadLawyerSupportList();
+  loadCustomerList();
+});
 </script>
 
 <style scoped>

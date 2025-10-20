@@ -114,9 +114,9 @@ const loginRules: ElFormRules = {
   code: [{ required: true, trigger: 'change', message: t('login.rule.code.required') }]
 };
 const carouselImages = [
-  "https://picsum.photos/800/600?random=1",
-  "https://picsum.photos/800/600?random=2",
-  "https://picsum.photos/800/600?random=3"
+  '/logo/bg1.jpg',
+  '/logo/bg2.jpg',
+  '/logo/bg3.jpg'
 ];
 const codeUrl = ref('');
 const loading = ref(false);

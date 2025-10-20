@@ -315,12 +315,25 @@ const handleSelectionChange = (selection: CustomerOutVisitVO[]) => {
 }
 
 /** 新增按钮操作 */
-const handleAdd = () => {
+/** 新增按钮操作 */
+const handleAdd = async () => {
   reset();
   uploadFile.value = null;
   dialog.visible = true;
   dialog.title = "添加客户出访记录";
-}
+
+  try {
+    proxy?.$modal.confirm('正在获取当前位置，请稍候...');
+    const pos = await getCurrentPosition();
+    const address = await reverseGeocode(pos.lat, pos.lng);
+    // form.value.visitAddress = address;
+    console.log(address)
+    proxy?.$modal.msgSuccess('已自动获取当前位置');
+  } catch (error) {
+    console.warn('获取定位失败:', error);
+    proxy?.$modal.msgWarning('无法获取当前位置，请手动填写地址');
+  }
+};
 
 /** 修改按钮操作 */
 const handleUpdate = async (row?: CustomerOutVisitVO) => {
@@ -367,7 +380,7 @@ const loadCustomerList = async () => {
   try {
     const res = await getCustomerByUserId();
     customerList.value = res.data;
-    console.log(customerList.value)
+    // console.log(customerList.value)
   } catch (error) {
     console.error('获取客户列表失败:', error);
     proxy?.$modal.msgError('获取客户列表失败');
@@ -426,35 +439,57 @@ const handleExport = () => {
   }, `customerOutVisit_${new Date().getTime()}.xlsx`)
 }
 
+/** 获取当前位置经纬度 */
+const getCurrentPosition = (): Promise<{ lat: number; lng: number }> => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('当前浏览器不支持地理定位'));
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      },
+      (error) => {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            reject(new Error('用户拒绝授权获取位置'));
+            break;
+          case error.POSITION_UNAVAILABLE:
+            reject(new Error('位置信息不可用'));
+            break;
+          case error.TIMEOUT:
+            reject(new Error('获取位置超时'));
+            break;
+          default:
+            reject(new Error('未知错误'));
+        }
+      }
+    );
+  });
+};
 
-// // 监听 intentionCustomerId 的变化
-// watch(
-//   () => route.query.customerId,
-//   async (newCustomerId) => {
-//     if (newCustomerId) {
-//       // 确保客户列表已加载
-//       if (customerList.value.length === 0) {
-//         await loadCustomerList();
-//       }
-//       queryParams.value.customerId = newCustomerId;
-//       // 验证客户ID是否在客户列表中
-//       const customerExists = customerList.value.some(
-//         item => item.transfer_id === newCustomerId
-//       );
-//       if (!customerExists) {
-//         console.warn(`客户ID ${newCustomerId} 不在客户列表中`);
-//         // 可以选择清空或保留显示ID
-//         // queryParams.value.customerId = undefined;
-//       }
-//       handleQuery();
-//     } else {
-//       queryParams.value.customerId = undefined;
-//       getList();
-//     }
-//   },
-//   { immediate: true }
-// );
-// 替换原有的 watch 监听逻辑
+/** 根据经纬度调用高德API获取详细地址 */
+const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
+  const key = 'a86984fb0449d5fdffd6e78d4544ca2d'; // 替换为你自己的Key
+  const url = `https://restapi.amap.com/v3/geocode/regeo?location=${lng},${lat}&key=${key}&radius=1000&extensions=all`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === '1' && data.regeocode) {
+      return data.regeocode.formatted_address;
+    } else {
+      throw new Error('逆地理编码失败');
+    }
+  } catch (err) {
+    console.error('逆地理编码失败:', err);
+    throw err;
+  }
+};
+
 watch(
   () => route.query.customerId,
   async (newCustomerId) => {

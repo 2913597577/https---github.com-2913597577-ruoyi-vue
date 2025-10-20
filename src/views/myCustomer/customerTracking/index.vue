@@ -6,18 +6,6 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="客户名称" prop="customerId">
-              <!-- <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
-                <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
-                  :value="item.transfer_id">
-                </el-option>
-              </el-select> -->
-              <!-- <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
-                :props="selectProps" filterable clearable :loading="loading" :filter-method="filterCustomer"
-                :teleported="false" :height="300">
-                <template #empty>
-                  <div class="empty-state">未找到匹配的客户</div>
-                </template>
-</el-select-v2> -->
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
                 :props="selectProps" filterable clearable :loading="loading">
                 <template #empty>

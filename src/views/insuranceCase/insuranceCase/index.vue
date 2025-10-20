@@ -23,9 +23,12 @@
             <!-- <el-form-item label="法务支持id" prop="legalSupportId">
               <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
-            <el-form-item label="法务支持" prop="legalSupportName">
-              <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable
-                @keyup.enter="handleQuery" />
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+              <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+                style="width: 100%;" @change="handleLegalSupportChange">
+                <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+                  :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="原告方" prop="plaintiff">
               <el-input v-model="queryParams.plaintiff" placeholder="请输入原告方" clearable @keyup.enter="handleQuery" />

@@ -327,7 +327,7 @@
                     <el-input v-model="form.actualPayment" placeholder="实付金额" type="number" />
                   </el-form-item>
                 </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">尾款情况：</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">尾款金额：</td>
                 <td class="border-r border-black p-2 flex-1">
                   <input type="text" v-model="form.balanceStatus" placeholder="尾款情况描述"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
@@ -357,7 +357,7 @@
                     </option>
                   </select>
                 </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：<span class="text-red-500">*</span></td>
                 <td colspan="2" class="border-r border-black p-2">
                   <div class="flex gap-2">
                     <input type="date" v-model="form.serviceStart" placeholder="开始日期"
@@ -783,6 +783,12 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     ],
     contractType: [
       { required: true, message: "签约类型不能为空", trigger: "change" }
+    ],
+    serviceStart: [
+      { required: true, message: "服务周期开始日期不能为空", trigger: "change" }
+    ],
+    serviceEnd: [
+      { required: true, message: "服务周期结束日期不能为空", trigger: "change" }
     ],
 
   }
