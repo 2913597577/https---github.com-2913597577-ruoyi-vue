@@ -89,6 +89,12 @@ export interface CustomerInfoVO {
    */
   transferId: string | number;
 
+  caseFillingAccount?: string;
+
+  caseFillingPwd?: string;
+
+  customerCity?: string;
+
 }
 
 export interface CustomerInfoForm extends BaseEntity {
@@ -186,6 +192,12 @@ export interface CustomerInfoForm extends BaseEntity {
    */
   customerType?: string | number;
 
+    caseFillingAccount?: string;
+
+  caseFillingPwd?: string;
+
+  customerCity?: string;
+
 }
 
 export interface CustomerInfoQuery extends PageQuery {
@@ -274,6 +286,12 @@ export interface CustomerInfoQuery extends PageQuery {
    * 客户id（流转单id）
    */
   transferId?: string | number;
+
+    caseFillingAccount?: string;
+
+  caseFillingPwd?: string;
+
+  customerCity?: string;
 
     /**
      * 日期范围参数

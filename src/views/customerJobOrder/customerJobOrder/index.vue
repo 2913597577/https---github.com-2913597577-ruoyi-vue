@@ -232,6 +232,26 @@
     </el-dialog>
 
     <!-- 在现有 el-dialog 后面添加新的新增工单对话框 -->
+<el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
+  <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="90px">
+     <el-form-item label="客户" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+            <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
+              :value="item.transfer_id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+    <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
+      <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+        @change="handleAddLegalSupportChange">
+        <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+          :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="原合同" prop="preContractAddress">
+      <file-upload :limit="1" :fileSize="10" v-model="addPreFile" />
+    </el-form-item>
+    <!-- <el-form-item label="原合同文件名" prop="preContractName">
     <el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
       <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="100px">
         <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
@@ -289,11 +309,11 @@
 </template>
 
 <script setup name="CustomerJobOrder" lang="ts">
+import { getCustomerByUserId } from '@/api/common';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listCustomerJobOrder, getCustomerJobOrder, delCustomerJobOrder, addCustomerJobOrder, updateCustomerJobOrder, acceptCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { CustomerJobOrderVO, CustomerJobOrderQuery, CustomerJobOrderForm } from '@/api/customerJobOrder/customerJobOrder/types';
 import { useRoute } from 'vue-router';
-import { getCustomerByUserId } from '@/api/common';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -420,6 +440,7 @@ const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
 }
+
 
 /** 重置按钮操作 */
 const resetQuery = () => {
@@ -639,6 +660,7 @@ const submitAddForm = () => {
       buttonLoading.value = true;
       const formData = { ...addForm.value };
 
+      form.value.customerName=getCustomerNameById(form.value.customerId);
       if (addPreFile.value) {
         formData.preContractAddress = addPreFile.value[0].ossId;
         formData.preContractName = addPreFile.value[0].name;
@@ -659,6 +681,12 @@ const submitAddForm = () => {
     }
   });
 }
+
+const getCustomerNameById = (customerId: string | number) => {
+  if (!customerId) return '';
+  const customer = customerList.value.find(item => item.transfer_id === customerId);
+  return customer ? customer.customer_realName : '';
+};
 
 /** 修改新增按钮操作 */
 const handleAdd = () => {
@@ -700,6 +728,7 @@ watch(
 );
 
 onMounted(() => {
+  loadCustomerList();
   loadLawyerSupportList();
   getList();
 });

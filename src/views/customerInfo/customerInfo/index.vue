@@ -128,6 +128,13 @@
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="140" show-overflow-tooltip />
+        <el-table-column label="立案密码" align="center" prop="caseFillingPwd" width="140" show-overflow-tooltip />
+        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip >
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
+          </template>
+        </el-table-column>
         <el-table-column label="备注" align="center" prop="remarks" width="140" show-overflow-tooltip />
         <el-table-column label="续费/尾款" align="center" prop="actionType" width="100" show-overflow-tooltip />
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
@@ -222,6 +229,23 @@
                 </el-select>
               </el-form-item>
             </div>
+            <div class="form-row">
+              <el-form-item label="立案账号" prop="caseFillingAccount" class="form-item">
+                <el-input v-model="form.caseFillingAccount" placeholder="请输入立案账号" style="width: 100%"></el-input>
+              </el-form-item>
+              <el-form-item label="立案密码" prop="caseFillingPwd" class="form-item">
+                <el-input v-model="form.caseFillingPwd" placeholder="请输入立案密码" style="width: 100%"></el-input>
+              </el-form-item>
+            </div>
+            <div class="form-row">
+               <el-form-item label="服务城市" prop="customerCity" class="form-item">
+                <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 100%">
+                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                    :value="dict.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </div>
+
 
             <!-- <el-form-item label="客户id" prop="transferId" class="form-item-full">
               <el-input v-model="form.transferId" placeholder="请输入客户id" style="width: 100%"></el-input>
@@ -539,6 +563,7 @@ const { contract_type } = toRefs<any>(proxy?.useDict('contract_type'));
 const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
 const { dc_customer_type } = toRefs<any>(proxy?.useDict('dc_customer_type'));
 const { dc_service_type } = toRefs<any>(proxy?.useDict('dc_service_type'));
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const { combo_type } = toRefs<any>(proxy?.useDict('combo_type'));
 const customerInfoList = ref<CustomerInfoVO[]>([]);
 const buttonLoading = ref(false);
@@ -582,6 +607,9 @@ const initFormData: CustomerInfoForm = {
   actionType: undefined,
   transferId: undefined,
   customerType: undefined,
+    caseFillingAccount: undefined,
+  caseFillingPwd: undefined,
+  customerCity: undefined,
 
 }
 const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
@@ -606,6 +634,9 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
     remarks: undefined,
     actionType: undefined,
     transferId: undefined,
+    caseFillingAccount: undefined,
+  caseFillingPwd: undefined,
+  customerCity: undefined,
     params: {
     }
   },
@@ -871,6 +902,9 @@ const customerInfoForm = ref({
   introducer: undefined,
   followUpResult: undefined,
   contractCode: undefined,
+  caseFillingAccount: undefined,
+  caseFillingPwd: undefined,
+  customerCity: undefined,
 })
 
 // 意向表单引用

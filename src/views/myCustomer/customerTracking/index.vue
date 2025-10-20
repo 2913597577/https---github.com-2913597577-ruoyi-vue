@@ -25,30 +25,30 @@
                 </template>
               </el-select-v2>
             </el-form-item>
-            <el-form-item label="跟踪状态" prop="cumtomerStatus">
+            <!-- <el-form-item label="跟踪状态" prop="cumtomerStatus">
               <el-select v-model="queryParams.cumtomerStatus" placeholder="请选择跟踪状态" clearable>
                 <el-option v-for="dict in cumtomer_status" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
-            </el-form-item>
-            <el-form-item label="跟踪时间" prop="trackingTime">
+            </el-form-item> -->
+            <el-form-item label="回访时间" prop="trackingTime">
               <el-date-picker clearable v-model="queryParams.trackingTime" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择跟踪时间" />
+                placeholder="请选择回访时间" />
             </el-form-item>
             <!-- <el-form-item label="提交状态" prop="submitStatus">
               <el-select v-model="queryParams.submitStatus" placeholder="请选择提交状态" clearable>
                 <el-option v-for="dict in submit_status" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item> -->
-            <el-form-item label="下次跟踪时间" prop="nextTime">
+            <el-form-item label="下次回访时间" prop="nextTime">
               <el-date-picker clearable v-model="queryParams.nextTime" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择下次跟踪时间" />
+                placeholder="请选择下次回访时间" />
             </el-form-item>
-            <el-form-item label="日志类型" prop="isReturn">
+            <!-- <el-form-item label="日志类型" prop="isReturn">
               <el-select v-model="queryParams.isReturn" placeholder="请选择日志类型" clearable>
                 <el-option :key=0 label="普通日志" value=0></el-option>
                 <el-option :key=1 label="回访日志" value=1></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -91,17 +91,17 @@
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="跟踪记录" align="center" prop="customerRemark" />
-        <el-table-column label="跟踪类型" align="center" prop="trackingType">
+        <el-table-column label="回访记录" align="center" prop="customerRemark" />
+        <!-- <el-table-column label="跟踪类型" align="center" prop="trackingType">
           <template #default="scope">
             <dict-tag :options="customer_tracking_type" :value="scope.row.trackingType" />
           </template>
-        </el-table-column>
-        <el-table-column label="跟踪状态" align="center" prop="cumtomerStatus">
+        </el-table-column> -->
+        <!-- <el-table-column label="跟踪状态" align="center" prop="cumtomerStatus">
           <template #default="scope">
             <dict-tag :options="cumtomer_status" :value="scope.row.cumtomerStatus" />
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
@@ -118,9 +118,9 @@
           </template>
         </el-table-column>
         <el-table-column label="内勤项数计数" align="center" prop="interCount" />
-        <el-table-column label="风险提示" align="center" prop="remark1" />
-        <el-table-column label="处理进度" align="center" prop="remark2" />
-        <el-table-column label="备注" align="center" prop="remark3" />
+        <!-- <el-table-column label="风险提示" align="center" prop="remark1" />
+        <el-table-column label="处理进度" align="center" prop="remark2" /> -->
+        <!-- <el-table-column label="备注" align="center" prop="remark3" /> -->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
           width="300" fixed="right">
 
@@ -168,24 +168,24 @@
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="跟踪记录" prop="customerRemark">
+        <el-form-item label="回访记录" prop="customerRemark">
           <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="跟踪类型" prop="trackingType">
+        <!-- <el-form-item label="跟踪类型" prop="trackingType">
           <el-select v-model="form.trackingType" placeholder="请选择跟踪类型">
             <el-option v-for="dict in customer_tracking_type" :key="dict.value" :label="dict.label"
               :value="parseInt(dict.value)"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="跟踪状态" prop="cumtomerStatus">
+        </el-form-item> -->
+        <!-- <el-form-item label="跟踪状态" prop="cumtomerStatus">
           <el-select v-model="form.cumtomerStatus" placeholder="请选择跟踪状态">
             <el-option v-for="dict in cumtomer_status" :key="dict.value" :label="dict.label"
               :value="parseInt(dict.value)"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="跟踪时间" prop="trackingTime">
+        </el-form-item> -->
+        <el-form-item label="回访时间" prop="trackingTime">
           <el-date-picker clearable v-model="form.trackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择跟踪时间">
+            placeholder="请选择回访时间">
           </el-date-picker>
         </el-form-item>
         <!-- <el-form-item label="提交状态" prop="submitStatus">
@@ -194,15 +194,15 @@
               :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item> -->
-        <el-form-item label="下次跟踪时间" prop="nextTime">
+        <el-form-item label="下次回访时间" prop="nextTime">
           <el-date-picker clearable v-model="form.nextTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择下次跟踪时间">
+            placeholder="请选择下次回访时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="内勤项数计数" prop="interCount">
           <el-input v-model="form.interCount" placeholder="请输入内勤项数计数" />
         </el-form-item>
-        <el-form-item label="风险提示" prop="remark1">
+        <!-- <el-form-item label="风险提示" prop="remark1">
           <el-input v-model="form.remark1" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="处理进度" prop="remark2">
@@ -213,7 +213,7 @@
             <el-radio :label=0>普通记录</el-radio>
             <el-radio :label=1>回访记录</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="备注3" prop="remark3">
           <el-input v-model="form.remark3" type="textarea" placeholder="请输入内容" />
         </el-form-item> -->
