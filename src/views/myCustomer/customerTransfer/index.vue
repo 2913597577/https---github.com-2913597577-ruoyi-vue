@@ -98,12 +98,12 @@
         <el-table-column label="尾款情况" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
         <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="contract_type" :value="scope.row.financeConfirmed ?? ''" />
+            <dict-tag :options="contract_type" :value="scope.row.contractType ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="套餐类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="combo_type" :value="scope.row.financeConfirmed ?? ''" />
+            <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
@@ -601,8 +601,8 @@
             <el-descriptions-item label="签约类型">
               <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
             </el-descriptions-item>
-            <el-descriptions-item label="常法签约">
-              <dict-tag :options="dc_service_type" :value="viewForm.serviceType || ''" />
+            <el-descriptions-item label="套餐类型">
+              <dict-tag :options="combo_type" :value="viewForm.serviceType || ''" />
             </el-descriptions-item>
             <el-descriptions-item label="服务周期">
               {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')
