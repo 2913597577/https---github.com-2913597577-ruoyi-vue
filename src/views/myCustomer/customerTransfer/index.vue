@@ -6,8 +6,11 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="财务确认" prop="financeConfirmed" label-width="68px">
-              <el-input v-model="queryParams.financeConfirmed" placeholder="0-待审核,1-已通过,2-未通过" clearable
-                @keyup.enter="handleQuery" />
+              <el-select v-model="queryParams.financeConfirmed" placeholder="请选择财务确认状态" clearable
+                @keyup.enter="handleQuery">
+                <el-option v-for="item in financeStatusList" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="公司名称" prop="companyName" label-width="68px">
               <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" clearable @keyup.enter="handleQuery" />
@@ -787,6 +790,11 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
 
 const { queryParams, form, rules } = toRefs(data);
 
+const financeStatusList = [
+  { value: 0, label: '待审核' },
+  { value: 1, label: '已通过' },
+  { value: 2, label: '未通过' }
+];
 /** 查询客户信息录入列表 */
 const getList = async () => {
   loading.value = true;
