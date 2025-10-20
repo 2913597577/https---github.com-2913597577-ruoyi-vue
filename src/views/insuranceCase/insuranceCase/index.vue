@@ -1,10 +1,11 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-           <el-form-item label="对接客户" prop="customerId">
+            <el-form-item label="对接客户" prop="customerId">
               <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
                   :value="item.transfer_id">
@@ -12,21 +13,19 @@
               </el-select>
             </el-form-item>
             <el-form-item label="下单日期" prop="orderDate">
-              <el-date-picker clearable
-                v-model="queryParams.orderDate"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择下单日期"
-              />
+              <el-date-picker clearable v-model="queryParams.orderDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择下单日期" />
             </el-form-item>
             <el-form-item label="工单号" prop="insuranceNumber">
-              <el-input v-model="queryParams.insuranceNumber" placeholder="请输入工单号" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.insuranceNumber" placeholder="请输入工单号" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <!-- <el-form-item label="法务支持id" prop="legalSupportId">
               <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="法务支持" prop="legalSupportName">
-              <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="原告方" prop="plaintiff">
               <el-input v-model="queryParams.plaintiff" placeholder="请输入原告方" clearable @keyup.enter="handleQuery" />
@@ -41,7 +40,8 @@
               <el-input v-model="queryParams.caseReason" placeholder="请输入案由" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="法院" prop="jurisdictionCourt">
-              <el-input v-model="queryParams.jurisdictionCourt" placeholder="请输入管辖权法院" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.jurisdictionCourt" placeholder="请输入管辖权法院" clearable
+                @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="保费" prop="premium">
               <el-input v-model="queryParams.premium" placeholder="请输入保费" clearable @keyup.enter="handleQuery" />
@@ -59,16 +59,20 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['insuranceCase:insuranceCase:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['insuranceCase:insuranceCase:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['insuranceCase:insuranceCase:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
+              v-hasPermi="['insuranceCase:insuranceCase:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['insuranceCase:insuranceCase:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['insuranceCase:insuranceCase:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['insuranceCase:insuranceCase:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['insuranceCase:insuranceCase:export']">导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -83,7 +87,7 @@
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
-         <el-table-column label="法务支持员工" align="center" prop="legalSupportName" />
+        <el-table-column label="法务支持员工" align="center" prop="legalSupportName" />
         <el-table-column label="下单日期" align="center" prop="orderDate" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
@@ -91,7 +95,7 @@
         </el-table-column>
         <el-table-column label="工单号" align="center" prop="insuranceNumber" />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
-       
+
         <el-table-column label="原告方" align="center" prop="plaintiff" />
         <el-table-column label="被告方" align="center" prop="defendant" />
         <el-table-column label="标的额" align="center" prop="subjectAmount" />
@@ -102,16 +106,19 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['insuranceCase:insuranceCase:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                v-hasPermi="['insuranceCase:insuranceCase:edit']"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['insuranceCase:insuranceCase:remove']"></el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['insuranceCase:insuranceCase:remove']"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改保险记录表对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
@@ -134,10 +141,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="下单日期" prop="orderDate">
-          <el-date-picker clearable
-            v-model="form.orderDate"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.orderDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择下单日期">
           </el-date-picker>
         </el-form-item>
@@ -169,7 +173,7 @@
           <el-input v-model="form.premium" placeholder="请输入保费" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-            <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -187,9 +191,12 @@ import { getCustomerByUserId } from '@/api/common';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listInsuranceCase, getInsuranceCase, delInsuranceCase, addInsuranceCase, updateInsuranceCase } from '@/api/insuranceCase/insuranceCase';
 import { InsuranceCaseVO, InsuranceCaseQuery, InsuranceCaseForm } from '@/api/insuranceCase/insuranceCase/types';
-
+import { useRoute } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
+
+
+const route = useRoute();
 const insuranceCaseList = ref<InsuranceCaseVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -223,7 +230,7 @@ const initFormData: InsuranceCaseForm = {
   remark: undefined,
 }
 const data = reactive<PageData<InsuranceCaseForm, InsuranceCaseQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -282,7 +289,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   insuranceCaseFormRef.value?.resetFields();
 }
 
@@ -328,9 +335,9 @@ const submitForm = () => {
     if (valid) {
       buttonLoading.value = true;
       if (form.value.id) {
-        await updateInsuranceCase(form.value).finally(() =>  buttonLoading.value = false);
+        await updateInsuranceCase(form.value).finally(() => buttonLoading.value = false);
       } else {
-        await addInsuranceCase(form.value).finally(() =>  buttonLoading.value = false);
+        await addInsuranceCase(form.value).finally(() => buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;
@@ -394,10 +401,28 @@ const handleExport = () => {
     ...queryParams.value
   }, `insuranceCase_${new Date().getTime()}.xlsx`)
 }
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // 等待客户列表加载完毕再操作
+    if (customerList.value.length === 0) {
+      await loadCustomerList();
+    }
 
-onMounted(() => {
-  loadLawyerSupportList();
-  loadCustomerList();
-  getList();
+    if (newCustomerId) {
+      queryParams.value.customerId = newCustomerId;
+    } else {
+      queryParams.value.customerId = undefined;
+    }
+
+    await getList(); // 确保客户列表已加载
+  },
+  { immediate: true }
+);
+
+onMounted(async () => {
+  await loadLawyerSupportList();
+  await loadCustomerList();
+  await getList();
 });
 </script>

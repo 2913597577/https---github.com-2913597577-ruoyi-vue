@@ -141,7 +141,7 @@
             <span>{{ scope.row.isRefund ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="意向客户" align="center" prop="isIntention" width="100">
+        <el-table-column label="是否转介绍意向客户" align="center" prop="isIntention" width="100">
           <template #default="scope">
             <span>{{ scope.row.isIntention ? '是' : '否' }}</span>
           </template>
@@ -336,7 +336,7 @@
         </el-form-item>
         <!-- <el-form-item label="客户id" prop="customerId">
           <el-input v-model="CRRform.customerId" placeholder="请输入客户id" readonly /> -->
-          <!-- 客户ID从原客户数据获取，设为只读避免手动输入错误
+        <!-- 客户ID从原客户数据获取，设为只读避免手动输入错误
         </el-form-item> -->
         <el-form-item label="客户名称" prop="customerName">
           <el-input v-model="CRRform.customerName" placeholder="请输入客户名称" readonly />

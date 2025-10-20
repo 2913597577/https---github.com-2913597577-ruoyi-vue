@@ -1,43 +1,37 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-             <el-form-item label="对接客户" prop="customerId">
+            <el-form-item label="对接客户" prop="customerId">
               <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
                   :value="item.transfer_id">
                 </el-option>
               </el-select>
             </el-form-item>
+
             <!-- <el-form-item label="法务支持姓名" prop="legalSupportName">
               <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="出访时间" prop="visitTime">
-              <el-date-picker clearable
-                v-model="queryParams.visitTime"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择出访时间"
-              />
+              <el-date-picker clearable v-model="queryParams.visitTime" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择出访时间" />
             </el-form-item>
             <el-form-item label="下次出访时间" prop="nextVisitTime">
-              <el-date-picker clearable
-                v-model="queryParams.nextVisitTime"
-                type="date"
-                value-format="YYYY-MM-DD"
-                placeholder="请选择下次出访时间"
-              />
+              <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择下次出访时间" />
             </el-form-item>
             <el-form-item label="是否本月第一次出访" prop="isFirstVisit">
-              <el-select v-model="queryParams.isFirstVisit" placeholder="请选择是否本月第一次出访" clearable >
-                <el-option v-for="dict in dc_true_or_false" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.isFirstVisit" placeholder="请选择是否本月第一次出访" clearable>
+                <el-option v-for="dict in dc_true_or_false" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="是否计入外勤项数" prop="isOutCount">
-              <el-select v-model="queryParams.isOutCount" placeholder="请选择是否计入外勤项数" clearable >
-                <el-option v-for="dict in dc_true_or_false" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              <el-select v-model="queryParams.isOutCount" placeholder="请选择是否计入外勤项数" clearable>
+                <el-option v-for="dict in dc_true_or_false" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="面访地点" prop="visitAddress">
@@ -56,16 +50,20 @@
       <template #header>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerOutVisit:customerOutVisit:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['customerOutVisit:customerOutVisit:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerOutVisit:customerOutVisit:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
+              v-hasPermi="['customerOutVisit:customerOutVisit:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['customerOutVisit:customerOutVisit:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['customerOutVisit:customerOutVisit:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['customerOutVisit:customerOutVisit:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['customerOutVisit:customerOutVisit:export']">导出</el-button>
           </el-col>
           <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
@@ -91,20 +89,20 @@
         <el-table-column label="面访目的" align="center" prop="visitPurpose" />
         <el-table-column label="是否本月第一次出访" align="center" prop="isFirstVisit">
           <template #default="scope">
-            <dict-tag :options="dc_true_or_false" :value="scope.row.isFirstVisit"/>
+            <dict-tag :options="dc_true_or_false" :value="scope.row.isFirstVisit" />
           </template>
         </el-table-column>
         <el-table-column label="是否计入外勤项数" align="center" prop="isOutCount">
           <template #default="scope">
-            <dict-tag :options="dc_true_or_false" :value="scope.row.isOutCount"/>
+            <dict-tag :options="dc_true_or_false" :value="scope.row.isOutCount" />
           </template>
         </el-table-column>
         <el-table-column label="客户地点照片" align="center" prop="placePic1Url" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.placePic1Url" :width="50" :height="50"/>
+            <image-preview :src="scope.row.placePic1Url" :width="50" :height="50" />
           </template>
         </el-table-column>
-        <el-table-column label="面访记录附件" align="center" prop="outRecord" >
+        <el-table-column label="面访记录附件" align="center" prop="outRecord">
           <template #default="scope">
             <div class="contract-cell">
               <el-button v-if="scope.row.outRecord" link type="primary" icon="download"
@@ -118,16 +116,19 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerOutVisit:customerOutVisit:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                v-hasPermi="['customerOutVisit:customerOutVisit:edit']"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerOutVisit:customerOutVisit:remove']"></el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['customerOutVisit:customerOutVisit:remove']"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改客户出访记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
@@ -153,50 +154,38 @@
           </el-select>
         </el-form-item>
         <el-form-item label="出访时间" prop="visitTime">
-          <el-date-picker clearable
-            v-model="form.visitTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.visitTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择出访时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="下次出访时间" prop="nextVisitTime">
-          <el-date-picker clearable
-            v-model="form.nextVisitTime"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.nextVisitTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择下次出访时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="面访目的" prop="visitPurpose">
-            <el-input v-model="form.visitPurpose" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.visitPurpose" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="是否本月第一次出访" prop="isFirstVisit">
           <el-radio-group v-model="form.isFirstVisit">
-            <el-radio
-              v-for="dict in dc_true_or_false"
-              :key="dict.value"
-              :value="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in dc_true_or_false" :key="dict.value" :value="parseInt(dict.value)">{{ dict.label
+            }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="是否计入外勤项数" prop="isOutCount">
           <el-radio-group v-model="form.isOutCount">
-            <el-radio
-              v-for="dict in dc_true_or_false"
-              :key="dict.value"
-              :value="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
+            <el-radio v-for="dict in dc_true_or_false" :key="dict.value" :value="parseInt(dict.value)">{{ dict.label
+            }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="客户地点照片" prop="placePic1">
-          <image-upload v-model="form.placePic1"/>
+          <image-upload v-model="form.placePic1" />
         </el-form-item>
         <el-form-item label="面访记录附件" prop="outRecord">
-          <file-upload :limit="1" v-model="uploadFile"/>
+          <file-upload :limit="1" v-model="uploadFile" />
         </el-form-item>
         <el-form-item label="面访地点" prop="visitAddress">
-            <el-input v-model="form.visitAddress" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.visitAddress" type="textarea" placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -214,7 +203,9 @@ import { getCustomerByUserId } from '@/api/common';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listCustomerOutVisit, getCustomerOutVisit, delCustomerOutVisit, addCustomerOutVisit, updateCustomerOutVisit } from '@/api/customerOutVisit/customerOutVisit';
 import { CustomerOutVisitVO, CustomerOutVisitQuery, CustomerOutVisitForm } from '@/api/customerOutVisit/customerOutVisit/types';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { dc_true_or_false } = toRefs<any>(proxy?.useDict('dc_true_or_false'));
 
@@ -255,7 +246,7 @@ const initFormData: CustomerOutVisitForm = {
   visitAddress: undefined,
 }
 const data = reactive<PageData<CustomerOutVisitForm, CustomerOutVisitQuery>>({
-  form: {...initFormData},
+  form: { ...initFormData },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -300,7 +291,7 @@ const cancel = () => {
 
 /** 表单重置 */
 const reset = () => {
-  form.value = {...initFormData};
+  form.value = { ...initFormData };
   customerOutVisitFormRef.value?.resetFields();
 }
 
@@ -326,7 +317,7 @@ const handleSelectionChange = (selection: CustomerOutVisitVO[]) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   reset();
-  uploadFile.value = null; 
+  uploadFile.value = null;
   dialog.visible = true;
   dialog.title = "添加客户出访记录";
 }
@@ -337,7 +328,7 @@ const handleUpdate = async (row?: CustomerOutVisitVO) => {
   const _id = row?.id || ids.value[0]
   const res = await getCustomerOutVisit(_id);
   Object.assign(form.value, res.data);
-  uploadFile.value = []; 
+  uploadFile.value = [];
   dialog.visible = true;
   dialog.title = "修改客户出访记录";
 }
@@ -349,12 +340,12 @@ const submitForm = () => {
       buttonLoading.value = true;
       if (uploadFile.value) {
         form.value.outRecord = uploadFile.value[0].ossId;
-      } 
-      form.value.customerName=getCustomerNameById(form.value.customerId);
+      }
+      form.value.customerName = getCustomerNameById(form.value.customerId);
       if (form.value.id) {
-        await updateCustomerOutVisit(form.value).finally(() =>  buttonLoading.value = false);
+        await updateCustomerOutVisit(form.value).finally(() => buttonLoading.value = false);
       } else {
-        await addCustomerOutVisit(form.value).finally(() =>  buttonLoading.value = false);
+        await addCustomerOutVisit(form.value).finally(() => buttonLoading.value = false);
       }
       proxy?.$modal.msgSuccess("操作成功");
       dialog.visible = false;
@@ -376,6 +367,7 @@ const loadCustomerList = async () => {
   try {
     const res = await getCustomerByUserId();
     customerList.value = res.data;
+    console.log(customerList.value)
   } catch (error) {
     console.error('获取客户列表失败:', error);
     proxy?.$modal.msgError('获取客户列表失败');
@@ -434,9 +426,57 @@ const handleExport = () => {
   }, `customerOutVisit_${new Date().getTime()}.xlsx`)
 }
 
-onMounted(() => {
-  loadLawyerSupportList();
-  loadCustomerList();
-  getList();
+
+// // 监听 intentionCustomerId 的变化
+// watch(
+//   () => route.query.customerId,
+//   async (newCustomerId) => {
+//     if (newCustomerId) {
+//       // 确保客户列表已加载
+//       if (customerList.value.length === 0) {
+//         await loadCustomerList();
+//       }
+//       queryParams.value.customerId = newCustomerId;
+//       // 验证客户ID是否在客户列表中
+//       const customerExists = customerList.value.some(
+//         item => item.transfer_id === newCustomerId
+//       );
+//       if (!customerExists) {
+//         console.warn(`客户ID ${newCustomerId} 不在客户列表中`);
+//         // 可以选择清空或保留显示ID
+//         // queryParams.value.customerId = undefined;
+//       }
+//       handleQuery();
+//     } else {
+//       queryParams.value.customerId = undefined;
+//       getList();
+//     }
+//   },
+//   { immediate: true }
+// );
+// 替换原有的 watch 监听逻辑
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // 等待客户列表加载完毕再操作
+    if (customerList.value.length === 0) {
+      await loadCustomerList();
+    }
+
+    if (newCustomerId) {
+      queryParams.value.customerId = newCustomerId;
+    } else {
+      queryParams.value.customerId = undefined;
+    }
+
+    await getList(); // 确保客户列表已加载
+  },
+  { immediate: true }
+);
+
+onMounted(async () => {
+  await loadLawyerSupportList();
+  await loadCustomerList();
+  await getList();
 });
 </script>

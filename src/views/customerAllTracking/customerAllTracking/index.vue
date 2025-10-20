@@ -277,16 +277,45 @@ function handleDelete(row: TrackingRecord) {
 }
 
 
-//  新增：跟踪记录详情跳转函数
+// 新增：跟踪记录详情跳转函数
 const handleTrackingDetail = (data) => {
-  // 跳转到目标路由，并通过query参数传递id
-  console.log(data)
-  // router.push({
-  //   path: '/legalSupport/customerTracking',  // 目标路由路径（需与实际路由配置一致）
-  //   query: { customerId: id }  // 传递id参数（键名可自定义，如customerId）
-  // });
-};
 
+  // console.log(data)
+  const { trackingType, customerId } = data;
+
+  if (!trackingType || !customerId) {
+    ElMessage.error("跳转失败：trackingType或customerId为空");
+    return;
+  }
+
+  let targetPath = "";
+  switch (trackingType) {
+    case 1:
+      targetPath = "/legalSupport/customerTracking";
+      break;
+    case 2:
+      targetPath = "/legalSupport/customerOutVisit";
+      break;
+    case 3:
+      targetPath = "/legalSupport/insuranceCase";
+      break;
+    case 4:
+      targetPath = "/legalSupport/customerJobOrder";
+      break;
+    case 5:
+      targetPath = "/legalSupport/caseDetail";
+      break;
+    default:
+      console.error("跳转失败：未知的trackingType", trackingType);
+      return; // 未知类型时终止跳转
+  }
+
+
+  router.push({
+    path: targetPath,
+    query: { customerId: customerId }
+  });
+};
 </script>
 
 <style scoped>

@@ -229,10 +229,12 @@ import { listCaseDetail, getCaseDetail, delCaseDetail, addCaseDetail, updateCase
 import { CaseDetailVO, CaseDetailQuery, CaseDetailForm } from '@/api/caseDetail/caseDetail/types';
 import { getCustomerByUserId } from '@/api/common';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
-
+import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
+
+const route = useRoute();
 const caseDetailList = ref<CaseDetailVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -460,6 +462,28 @@ const loadLawyerSupportList = async () => {
     console.error('法务人员列表加载异常：', error);
   }
 };
+
+
+
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // 等待客户列表加载完毕再操作
+    if (customerList.value.length === 0) {
+      await loadCustomerList();
+    }
+
+    if (newCustomerId) {
+      queryParams.value.customerId = newCustomerId;
+    } else {
+      queryParams.value.customerId = undefined;
+    }
+
+    await getList(); // 确保客户列表已加载
+  },
+  { immediate: true }
+);
+
 onMounted(() => {
   loadLawyerSupportList();
   loadCustomerList();

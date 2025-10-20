@@ -19,7 +19,7 @@
                   :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
               </el-select>
             </el-form-item>
-        
+
             <el-form-item label="交付时间" prop="deliveryTime">
               <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择交付时间" />
@@ -96,15 +96,15 @@
         <!-- <el-table-column label="跟踪记录id" align="center" prop="trackingId" />
         <el-table-column label="处理人id" align="center" prop="contractHandler" /> -->
         <el-table-column label="法务中心接单人" align="center" prop="contractHandlerName" />
-         <el-table-column label="客户所属方" align="center" prop="remark1" />
-        
+        <el-table-column label="客户所属方" align="center" prop="remark1" />
+
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
         <el-table-column label="备注3" align="center" prop="remark3" /> -->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="240px">
           <template #default="scope">
             <el-tooltip content="接工单" placement="top">
-            <el-button v-if="scope.row.processingStatus==0" link type="primary"  @click="handleAccept(scope.row)"
+              <el-button v-if="scope.row.processingStatus == 0" link type="primary" @click="handleAccept(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']">接工单</el-button>
             </el-tooltip>
             <el-tooltip content="修改" placement="top">
@@ -119,18 +119,18 @@
               <el-button link type="primary" icon="Download" @click="handleProcess(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:process']">下载</el-button>
             </el-tooltip> -->
-          <el-tooltip content="处理" placement="top">
-          <el-dropdown @command="(command) => handleProcessCommand({ row: scope.row, type: command })">
-            <el-button link type="primary" icon="Download"
-              v-hasPermi="['customerJobOrder:customerJobOrder:process']">合同下载</el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item command="pre">原合同</el-dropdown-item>
-                <el-dropdown-item command="new">新合同</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </el-tooltip>
+            <el-tooltip content="处理" placement="top">
+              <el-dropdown @command="(command) => handleProcessCommand({ row: scope.row, type: command })">
+                <el-button link type="primary" icon="Download"
+                  v-hasPermi="['customerJobOrder:customerJobOrder:process']">合同下载</el-button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="pre">原合同</el-dropdown-item>
+                    <el-dropdown-item command="new">新合同</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -180,7 +180,7 @@
           <el-input v-model="form.contractHandler" placeholder="请输入处理人id" />
         </el-form-item> -->
         <el-form-item label="处理人" prop="contractHandlerName">
-          {{ form.contractHandlerName}}
+          {{ form.contractHandlerName }}
           <!-- <el-input v-model="form.contractHandlerName" placeholder="请输入处理人" /> -->
         </el-form-item>
         <el-form-item label="工单处理状态" prop="processingStatus">
@@ -232,42 +232,42 @@
     </el-dialog>
 
     <!-- 在现有 el-dialog 后面添加新的新增工单对话框 -->
-<el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
-  <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="100px">
-    <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
-      <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
-        @change="handleAddLegalSupportChange">
-        <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
-          :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="原合同" prop="preContractAddress">
-      <file-upload :limit="1" :fileSize="10" v-model="addPreFile" />
-    </el-form-item>
-    <!-- <el-form-item label="原合同文件名" prop="preContractName">
+    <el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
+      <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="100px">
+        <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
+          <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleAddLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="原合同" prop="preContractAddress">
+          <file-upload :limit="1" :fileSize="10" v-model="addPreFile" />
+        </el-form-item>
+        <!-- <el-form-item label="原合同文件名" prop="preContractName">
       <el-input v-model="addForm.preContractName" placeholder="请输入源合同文件名" />
     </el-form-item> -->
-    <!-- <el-form-item label="新合同地址" prop="newContractAddress">
+        <!-- <el-form-item label="新合同地址" prop="newContractAddress">
       <file-upload :limit="1" :fileSize="10" v-model="addNewFile" />
     </el-form-item>
     <el-form-item label="新合同文件名" prop="newContractName">
       <el-input v-model="addForm.newContractName" placeholder="请输入新合同文件名" />
     </el-form-item> -->
-    <el-form-item label="客户要求" prop="customerRequirements">
-      <el-input v-model="addForm.customerRequirements" type="textarea" placeholder="请输入内容" />
-    </el-form-item>
-    <el-form-item label="客户所属方" prop="remark1">
-      <el-input v-model="addForm.remark1" placeholder="请输入客户所属方" />
-    </el-form-item>
-    <el-form-item label="交付时间" prop="deliveryTime">
-      <el-date-picker clearable v-model="addForm.deliveryTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
-        placeholder="请选择交付时间">
-      </el-date-picker>
-    </el-form-item>
-    <!-- <el-form-item label="处理人" prop="contractHandlerName">
+        <el-form-item label="客户要求" prop="customerRequirements">
+          <el-input v-model="addForm.customerRequirements" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
+        <el-form-item label="客户所属方" prop="remark1">
+          <el-input v-model="addForm.remark1" placeholder="请输入客户所属方" />
+        </el-form-item>
+        <el-form-item label="交付时间" prop="deliveryTime">
+          <el-date-picker clearable v-model="addForm.deliveryTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择交付时间">
+          </el-date-picker>
+        </el-form-item>
+        <!-- <el-form-item label="处理人" prop="contractHandlerName">
       <el-input v-model="addForm.contractHandlerName" placeholder="请输入处理人" />
     </el-form-item> -->
-    <!-- <el-form-item label="备注1" prop="remark1">
+        <!-- <el-form-item label="备注1" prop="remark1">
       <el-input v-model="addForm.remark1" placeholder="请输入备注1" />
     </el-form-item>
     <el-form-item label="备注2" prop="remark2">
@@ -276,14 +276,14 @@
     <el-form-item label="备注3" prop="remark3">
       <el-input v-model="addForm.remark3" placeholder="请输入备注3" />
     </el-form-item> -->
-  </el-form>
-  <template #footer>
-    <div class="dialog-footer">
-      <el-button :loading="buttonLoading" type="primary" @click="submitAddForm">确 定</el-button>
-      <el-button @click="cancelAdd">取 消</el-button>
-    </div>
-  </template>
-</el-dialog>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button :loading="buttonLoading" type="primary" @click="submitAddForm">确 定</el-button>
+          <el-button @click="cancelAdd">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
   </div>
 </template>
@@ -292,10 +292,15 @@
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listCustomerJobOrder, getCustomerJobOrder, delCustomerJobOrder, addCustomerJobOrder, updateCustomerJobOrder, acceptCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { CustomerJobOrderVO, CustomerJobOrderQuery, CustomerJobOrderForm } from '@/api/customerJobOrder/customerJobOrder/types';
+import { useRoute } from 'vue-router';
+import { getCustomerByUserId } from '@/api/common';
+
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { processing_status } = toRefs<any>(proxy?.useDict('processing_status'));
 
+
+const route = useRoute();
 const customerJobOrderList = ref<CustomerJobOrderVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -387,9 +392,9 @@ const getList = async () => {
 //     proxy?.$modal.msgWarning("该工单已被接收，不能重复接收");
 //     return;
 //   }
-  
+
 //   // 调用后端接工单接口
- 
+
 //     const res = await acceptCustomerJobOrder(row.id.toString());
 //     if (res.code === 200) {
 //       proxy?.$modal.msgSuccess("工单接收成功");
@@ -550,7 +555,7 @@ const handleAccept = (row: CustomerJobOrderVO) => {
     proxy?.$modal.msgWarning("该工单已被接收，不能重复接收");
     return;
   }
-  
+
   // 填充确认对话框数据
   acceptDialog.form.id = row.id;
   acceptDialog.form.legalSupport = row.legalSupport;
@@ -558,7 +563,7 @@ const handleAccept = (row: CustomerJobOrderVO) => {
   acceptDialog.form.newContractName = row.newContractName;
   acceptDialog.form.customerRequirements = row.customerRequirements;
   acceptDialog.form.deliveryTime = row.deliveryTime;
-  
+
   // 显示确认对话框
   acceptDialog.visible = true;
 }
@@ -568,7 +573,7 @@ const handleAccept = (row: CustomerJobOrderVO) => {
  */
 const confirmAccept = async () => {
   if (!acceptDialog.form.id) return;
-  
+
   try {
     const res = await acceptCustomerJobOrder(acceptDialog.form.id.toString());
     if (res.code === 200) {
@@ -633,7 +638,7 @@ const submitAddForm = () => {
     if (valid) {
       buttonLoading.value = true;
       const formData = { ...addForm.value };
-      
+
       if (addPreFile.value) {
         formData.preContractAddress = addPreFile.value[0].ossId;
         formData.preContractName = addPreFile.value[0].name;
@@ -642,7 +647,7 @@ const submitAddForm = () => {
         formData.newContractAddress = addNewFile.value[0].ossId;
         formData.newContractName = addNewFile.value[0].name;
       }
-      
+
       try {
         await addCustomerJobOrder(formData);
         proxy?.$modal.msgSuccess("新增成功");
@@ -663,6 +668,36 @@ const handleAdd = () => {
   addNewFile.value = null;
   addDialog.visible = true;
 }
+
+const customerList = ref<any[]>([]);
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    customerList.value = res.data;
+    console.log(customerList.value)
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // 等待客户列表加载完毕再操作
+    if (customerList.value.length === 0) {
+      await loadCustomerList();
+    }
+
+    if (newCustomerId) {
+      queryParams.value.customerId = newCustomerId;
+    } else {
+      queryParams.value.customerId = undefined;
+    }
+
+    await getList(); // 确保客户列表已加载
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
   loadLawyerSupportList();
