@@ -4,25 +4,15 @@
     <!-- 查询条件 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="客户ID" prop="customerId">
-        <el-input
-          v-model="queryParams.customerId"
-          placeholder="请输入客户ID"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.customerId" placeholder="请输入客户ID" clearable style="width: 200px"
+          @keyup.enter="handleQuery" />
       </el-form-item>
-      
+
       <el-form-item label="法务支持ID" prop="legalSupportId">
-        <el-input
-          v-model="queryParams.legalSupportId"
-          placeholder="请输入法务支持ID"
-          clearable
-          style="width: 200px"
-          @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持ID" clearable style="width: 200px"
+          @keyup.enter="handleQuery" />
       </el-form-item>
-      
+
       <el-form-item label="跟踪类型" prop="trackingType">
         <el-select v-model="queryParams.trackingType" placeholder="请选择跟踪类型" clearable style="width: 200px">
           <el-option label="全部" :value="null" />
@@ -33,27 +23,17 @@
           <el-option label="案件" :value="5" />
         </el-select>
       </el-form-item>
-      
+
       <el-form-item label="跟踪时间" prop="trackingTime">
-        <el-date-picker
-          v-model="queryParams.trackingTime"
-          type="date"
-          placeholder="请选择跟踪时间"
-          value-format="YYYY-MM-DD"
-          style="width: 200px"
-        />
+        <el-date-picker v-model="queryParams.trackingTime" type="date" placeholder="请选择跟踪时间" value-format="YYYY-MM-DD"
+          style="width: 200px" />
       </el-form-item>
-      
+
       <el-form-item label="下次跟踪时间" prop="nextTrackingTime">
-        <el-date-picker
-          v-model="queryParams.nextTrackingTime"
-          type="date"
-          placeholder="请选择下次跟踪时间"
-          value-format="YYYY-MM-DD"
-          style="width: 200px"
-        />
+        <el-date-picker v-model="queryParams.nextTrackingTime" type="date" placeholder="请选择下次跟踪时间"
+          value-format="YYYY-MM-DD" style="width: 200px" />
       </el-form-item>
-      
+
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -76,8 +56,8 @@
     <!-- 数据表格 -->
     <el-table v-loading="loading" :data="trackingList" border>
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
-      <el-table-column label="客户名称" align="center" prop="customerName"  width="240"/>
-      <el-table-column label="法务支持" align="center" prop="legalSupportName"  width="180"/>
+      <el-table-column label="客户名称" align="center" prop="customerName" width="240" />
+      <el-table-column label="法务支持" align="center" prop="legalSupportName" width="180" />
       <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="180">
         <template #default="scope">
           <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime) : '' }}</span>
@@ -86,6 +66,15 @@
       <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="180">
         <template #default="scope">
           <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime) : '' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
+        <template #default="scope">
+          <!-- 详情按钮：点击携带当前行id跳转 -->
+          <el-button link type="primary" icon="View" size="default" @click="handleTrackingDetail(scope.row)"
+            style="padding: 0 6px;">
+            详情
+          </el-button>
         </template>
       </el-table-column>
       <el-table-column label="跟踪类型" align="center" prop="trackingType" width="100">
@@ -97,7 +86,7 @@
           <el-tag v-else-if="scope.row.trackingType === 5" type="info">案件</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark"  />
+      <el-table-column label="备注" align="center" prop="remark" />
       <!-- <el-table-column label="操作" align="center" width="150">
         <template #default="scope">
           <el-button type="primary" link icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
@@ -107,13 +96,8 @@
     </el-table>
 
     <!-- 分页 -->
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 添加或修改对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -125,22 +109,12 @@
           <el-input v-model.number="form.legalSupportId" placeholder="请输入法务支持ID" />
         </el-form-item>
         <el-form-item label="跟踪时间" prop="trackingTime">
-          <el-date-picker
-            v-model="form.trackingTime"
-            type="datetime"
-            placeholder="请选择跟踪时间"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            style="width: 100%"
-          />
+          <el-date-picker v-model="form.trackingTime" type="datetime" placeholder="请选择跟踪时间"
+            value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" />
         </el-form-item>
         <el-form-item label="下次跟踪时间" prop="nextTrackingTime">
-          <el-date-picker
-            v-model="form.nextTrackingTime"
-            type="datetime"
-            placeholder="请选择下次跟踪时间"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            style="width: 100%"
-          />
+          <el-date-picker v-model="form.nextTrackingTime" type="datetime" placeholder="请选择下次跟踪时间"
+            value-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" />
         </el-form-item>
         <el-form-item label="跟踪类型" prop="trackingType">
           <el-select v-model="form.trackingType" placeholder="请选择跟踪类型" style="width: 100%">
@@ -170,7 +144,7 @@ import { ref, reactive, onMounted } from 'vue';
 import { getAllTrackingRecords, TrackingQueryParams, TrackingRecord } from '@/api/customerAllTracking';
 import { parseTime } from '@/utils/ruoyi';
 import { ElForm, ElMessage, ElMessageBox } from 'element-plus';
-
+import { useRouter } from 'vue-router';
 // 定义变量
 const loading = ref(true);
 const showSearch = ref(true);
@@ -178,7 +152,7 @@ const trackingList = ref<TrackingRecord[]>([]);
 const total = ref(0);
 const title = ref('');
 const open = ref(false);
-
+const router = useRouter();
 // 查询参数
 const queryParams = reactive<TrackingQueryParams>({
   pageNum: 0,
@@ -301,6 +275,18 @@ function handleDelete(row: TrackingRecord) {
     getList();
   });
 }
+
+
+//  新增：跟踪记录详情跳转函数
+const handleTrackingDetail = (data) => {
+  // 跳转到目标路由，并通过query参数传递id
+  console.log(data)
+  // router.push({
+  //   path: '/legalSupport/customerTracking',  // 目标路由路径（需与实际路由配置一致）
+  //   query: { customerId: id }  // 传递id参数（键名可自定义，如customerId）
+  // });
+};
+
 </script>
 
 <style scoped>

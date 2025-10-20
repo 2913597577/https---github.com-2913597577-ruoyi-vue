@@ -538,7 +538,7 @@
     <!-- 替换原有的查看对话框 -->
     <!-- 替换原有的查看对话框 -->
     <el-dialog v-model="viewDialogVisible" title="客户流转单详情" width="700px" append-to-body>
-      <div class="customer-transfer-detail">sq
+      <div class="customer-transfer-detail">
         <el-scrollbar max-height="600px">
           <el-descriptions :column="1" border size="medium">
             <el-descriptions-item label="公司名称">
