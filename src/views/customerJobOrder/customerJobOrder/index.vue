@@ -415,7 +415,7 @@ const getList = async () => {
   loading.value = true;
   const res = await listCustomerJobOrder(queryParams.value);
   customerJobOrderList.value = res.rows;
-  // console.log(res.rows, '工单管理')
+  console.log(res.rows, '工单管理')
   total.value = res.total;
   loading.value = false;
 }

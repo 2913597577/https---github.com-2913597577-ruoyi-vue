@@ -63,7 +63,11 @@
     <!-- 数据表格 -->
     <el-table v-loading="loading" :data="trackingList" border>
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
-      <el-table-column label="客户名称" align="center" prop="customerName" width="240" />
+      <el-table-column label="客户名称" align="center" prop="customerId">
+        <template #default="scope">
+          <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="法务支持" align="center" prop="legalSupportName" width="180" />
       <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="180">
         <template #default="scope">
@@ -293,6 +297,15 @@ const selectProps = {
   label: 'customer_name',
   value: 'transfer_id'
 }
+
+const getCustomerNameById = (customerId: string | number) => {
+  if (!customerId) return '';
+  // console.log(customerId, '客户id')
+  // console.log(customerList.value, '客户列表')
+  const customer = customerList.value.find(item => item.transfer_id === customerId);
+  // console.log(customer)
+  return customer ? customer.customer_realName : '';
+};
 const loadCustomerList = async () => {
   try {
     const res = await getCustomerByUserId();
