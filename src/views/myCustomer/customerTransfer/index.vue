@@ -739,6 +739,14 @@ const initFormData: CustomerTransferForm = {
   accountManagerId: undefined,
   inviterId: undefined,
   remark: undefined,
+ balancePayType: undefined,
+
+  contractCode: undefined,
+
+  contractOssId: undefined,
+
+  customerCity: undefined,
+  
 }
 const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   form: { ...initFormData },
@@ -768,6 +776,13 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     lawyerConsultation: undefined,
     otherFee: undefined,
     financeConfirmed: undefined,
+     balancePayType: undefined,
+
+  contractCode: undefined,
+
+  contractOssId: undefined,
+
+  customerCity: undefined,
 
     params: {}
   },
