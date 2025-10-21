@@ -19,13 +19,13 @@
               <el-input v-model="queryParams.contactPerson" placeholder="请输入公司对接人" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="尾款情况" prop="balanceStatus" label-width="68px">
-              <el-input v-model="queryParams.balanceStatus" placeholder="请输入尾款情况" clearable
+            <!-- <el-form-item label="尾款金额" prop="balanceStatus" label-width="68px">
+              <el-input v-model="queryParams.balanceStatus" placeholder="尾款金额" clearable
                 @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="签约类型" prop="signType" label-width="68px">
+            </el-form-item> -->
+            <!-- <el-form-item label="签约类型" prop="signType" label-width="68px">
               <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="开始时间" prop="serviceStart" label-width="68px">
               <el-date-picker clearable v-model="queryParams.serviceStart" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择服务周期开始时间" />
@@ -77,6 +77,11 @@
             <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
+        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip >
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
+          </template>
+        </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip />
         <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip />
@@ -95,12 +100,13 @@
           </template>
         </el-table-column>
         <el-table-column label="实付金额" align="center" prop="actualPayment" width="100" show-overflow-tooltip />
-        <el-table-column label="尾款情况" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
-        <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
+        <el-table-column label="尾款金额" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
+         <el-table-column label="尾款支付条件" align="center" prop="balancePayType" width="100" show-overflow-tooltip />
+        <!-- <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="contract_type" :value="scope.row.contractType ?? ''" />
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="套餐类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
@@ -174,7 +180,7 @@
                   <input type="date"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-                <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
+                <!-- <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
                 <td class="p-2 w-64">
                   <el-select v-model="form.inviterId" placeholder="请选择邀约人" filterable>
                     <el-option v-for="user in userList" :key="user.userId"
@@ -187,6 +193,13 @@
                     <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
+                </td> -->
+                <td class="border-l border-black p-2 w-32 bg-blue-50">客户归属城市：<span class="text-red-500">*</span></td>
+                <td class="p-2">
+                  <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 100%">
+                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                    :value="dict.value"></el-option>
+                </el-select>
                 </td>
               </tr>
             </table>
@@ -329,18 +342,13 @@
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">尾款金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text" v-model="form.balanceStatus" placeholder="尾款情况描述"
+                  <input type="text" v-model="form.balanceStatus" placeholder="尾款金额"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-                <td class="border-r border-black p-2 w-48 bg-blue-50">签约类型：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">尾款支付条件：</td>
                 <td class="p-2">
-                  <select v-model="form.contractType"
+                  <input type="text" v-model="form.balancePayType" placeholder="尾款支付条件"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-
-                    <option v-for="dict in contract_type" :key="dict.value" :value="dict.value">
-                      {{ dict.label }}
-                    </option>
-                  </select>
                 </td>
               </tr>
 
@@ -677,6 +685,7 @@ import { ElMessage } from 'element-plus';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
