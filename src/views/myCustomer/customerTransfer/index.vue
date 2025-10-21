@@ -188,7 +188,7 @@
             <table class="w-full border-collapse">
               <tr>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：</td>
-                <td class="p-2 w-64">
+                <td class="p-2 w-32">
                   <input type="date"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
@@ -213,8 +213,8 @@
                     :value="dict.value"></el-option>
                 </el-select>
                 </td>
-                <td class="border-l border-black p-2 w-32 bg-blue-50">合同编号：</td>
-                 <input type="text" v-model="form.contractCode" placeholder="联系方式"
+                <td class="border-l border-black p-2 w-24 bg-blue-50">合同编号：</td>
+                 <input type="text" v-model="form.contractCode" placeholder="请输入合同编号"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
               </tr>
             </table>
@@ -348,16 +348,16 @@
             <table class="w-full border-collapse">
               <!-- 金额与签约类型 -->
               <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">支付金额：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">实收金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 w-40">
                   <el-form-item prop="actualPayment" style="margin-bottom: 0;" :show-message="false"
                     hide-required-asterisk>
-                    <el-input v-model="form.actualPayment" placeholder="实付金额" type="number" />
+                    <el-input v-model="form.actualPayment" placeholder="实收金额" type="number" />
                   </el-form-item>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">尾款金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text" v-model="form.balanceStatus" placeholder="尾款金额"
+                  <input type="text" v-model="form.balanceStatus" placeholder="尾款金额,没有填0"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-48 bg-blue-50">尾款支付条件：</td>
@@ -415,7 +415,7 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">律师咨询情况：</td>
                 <td colspan="5" class="p-2">
                   <textarea v-model="form.lawyerConsultation" placeholder="请描述是否咨询律师、是否给客户约定所交费用包含律师费等"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-red-500"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                     rows="2"></textarea>
                 </td>
               </tr>
@@ -425,8 +425,89 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">其他费用沟通：</td>
                 <td colspan="5" class="p-2">
                   <textarea v-model="form.otherFee" placeholder="请描述是否给客户讲清调档费、保险费、诉讼费等其他费用"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-red-500"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-gray-500"
                     rows="2"></textarea>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!--业绩归属登记-->
+          <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
+            <h2 class="text-lg font-bold text-blue-800">业绩归属登记</h2>
+          </div>
+          <div class="border-b border-black mb-1 mt-0">
+            <table class="w-full border-collapse">
+              <!-- 业绩归属类型1 -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人1：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="业绩所属人1"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text" placeholder="分配业绩金额"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：<span class="text-red-500">*</span></td>
+                <td class="p-2">
+                  <input type="text" placeholder="所属城市"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+              <!-- 业绩归属类型2 -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人2：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="业绩所属人2"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="分配业绩金额"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
+                <td class="p-2">
+                  <input type="text"  placeholder="所属城市"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+              <!-- 业绩归属类型3 -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人3：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="业绩所属人3"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text" v-model="form.balanceStatus" placeholder="分配业绩金额"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
+                <td class="p-2">
+                  <input type="text" v-model="form.balancePayType" placeholder="所属城市"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+              <!-- 业绩归属类型4-->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人4：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="业绩所属人4"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text" v-model="form.balanceStatus" placeholder="分配业绩金额"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
+                <td class="p-2">
+                  <input type="text" v-model="form.balancePayType" placeholder="所属城市"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
               </tr>
             </table>
