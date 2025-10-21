@@ -327,7 +327,7 @@
                     <el-input v-model="form.actualPayment" placeholder="实付金额" type="number" />
                   </el-form-item>
                 </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">尾款金额：</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">尾款金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
                   <input type="text" v-model="form.balanceStatus" placeholder="尾款情况描述"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
@@ -391,8 +391,8 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">律师咨询情况：</td>
                 <td colspan="5" class="p-2">
-                  <textarea v-model="form.lawyerConsultation" placeholder="请描述咨询情况"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+                  <textarea v-model="form.lawyerConsultation" placeholder="请描述是否咨询律师、是否给客户约定所交费用包含律师费等"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-red-500"
                     rows="2"></textarea>
                 </td>
               </tr>
@@ -401,8 +401,8 @@
               <tr>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">其他费用沟通：</td>
                 <td colspan="5" class="p-2">
-                  <textarea v-model="form.otherFee" placeholder="请描述其他费用沟通情况"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+                  <textarea v-model="form.otherFee" placeholder="请描述是否给客户讲清调档费、保险费、诉讼费等其他费用"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-red-500"
                     rows="2"></textarea>
                 </td>
               </tr>
@@ -410,7 +410,7 @@
           </div>
 
           <!-- 客户情况概述 -->
-          <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
+          <div class=" text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
             <h2 class="text-lg font-bold text-blue-800">客户情况概述</h2>
           </div>
           <div class="border-b border-black mb-1 mt-0">
@@ -790,6 +790,9 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     serviceEnd: [
       { required: true, message: "服务周期结束日期不能为空", trigger: "change" }
     ],
+    balanceStatus: [
+      { required: true, message: "尾款金额", trigger: "blur" }
+    ],
 
   }
 });
@@ -1103,6 +1106,11 @@ $spacing-xxxl: 28px; // 极大间距
 // 流转表单卡片（外层容器：浅灰背景，非蓝色）
 .transfer-form-card {
   @include card-base-style;
+}
+
+.textarea-red-placeholder::placeholder {
+  color: red;
+  opacity: 1;
 }
 
 // 表单分组容器（关键：移除蓝色背景，改用纯白+中性边框）

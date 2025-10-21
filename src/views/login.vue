@@ -75,9 +75,9 @@
       </el-form>
 
       <!-- 底部版权 -->
-      <div class="el-login-footer">
+      <!-- <div class="el-login-footer">
         <span>Copyright © 2018-2025 疯狂的狮子Li All Rights Reserved.</span>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

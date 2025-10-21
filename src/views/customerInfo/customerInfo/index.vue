@@ -130,7 +130,7 @@
         </el-table-column>
         <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="140" show-overflow-tooltip />
         <el-table-column label="立案密码" align="center" prop="caseFillingPwd" width="140" show-overflow-tooltip />
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip >
+        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
@@ -238,7 +238,7 @@
               </el-form-item>
             </div>
             <div class="form-row">
-               <el-form-item label="服务城市" prop="customerCity" class="form-item">
+              <el-form-item label="服务城市" prop="customerCity" class="form-item">
                 <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 100%">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
                     :value="dict.value"></el-option>
@@ -607,7 +607,7 @@ const initFormData: CustomerInfoForm = {
   actionType: undefined,
   transferId: undefined,
   customerType: undefined,
-    caseFillingAccount: undefined,
+  caseFillingAccount: undefined,
   caseFillingPwd: undefined,
   customerCity: undefined,
 
@@ -635,8 +635,8 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
     actionType: undefined,
     transferId: undefined,
     caseFillingAccount: undefined,
-  caseFillingPwd: undefined,
-  customerCity: undefined,
+    caseFillingPwd: undefined,
+    customerCity: undefined,
     params: {
     }
   },
