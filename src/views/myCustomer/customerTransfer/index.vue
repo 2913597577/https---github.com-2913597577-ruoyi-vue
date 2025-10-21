@@ -82,6 +82,18 @@
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
         </el-table-column>
+        <el-table-column label="合同上传" align="center" prop="contractOssId" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <div class="contract-cell">
+              <span v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
+                style="cursor: pointer; color: green">合同下载</span>
+              <el-button v-if="!scope.row.contractOssId" link type="primary" icon="Upload"
+                @click="handleUpload(scope.row)">
+                上传合同
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip />
         <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip />
@@ -201,6 +213,9 @@
                     :value="dict.value"></el-option>
                 </el-select>
                 </td>
+                <td class="border-l border-black p-2 w-32 bg-blue-50">合同编号：</td>
+                 <input type="text" v-model="form.contractCode" placeholder="联系方式"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
               </tr>
             </table>
           </div>
@@ -666,6 +681,21 @@
       </template>
     </el-dialog>
 
+        <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
+      <el-form ref="customerintentionFormRef" :model="transferFormData" :rules="rules" label-width="80px">
+        <el-form-item label="合同文件" prop="contractOssId">
+          <file-upload :limit="1" :fileSize="10" v-model="contract" />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button :loading="buttonLoading" type="primary" @click="submitintentionForm">确 定</el-button>
+          <el-button @click="customerInfoDialogCancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
 
   </div>
 </template>
@@ -821,6 +851,57 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   }
 });
 
+const transferInfoDialog = reactive<DialogOption>({
+  visible: false,
+  title: ''
+});
+
+const transferFormData= ref({
+  companyName: undefined,
+  contactPerson: undefined,
+  contactInfo: undefined,
+  contactPosition: undefined,
+  contactAge: undefined,
+  additionalPerson: undefined,
+  additionalContact: undefined,
+  additionalPosition: undefined,
+  additionalAge: undefined,
+  companyIndustry: undefined,
+  companyAddress: undefined,
+  employeeCount: undefined,
+  accountingCompany: undefined,
+  customerDescription: undefined,
+  actualPayment: undefined,
+  balanceStatus: undefined,
+  contractType: undefined,
+  serviceType: undefined,
+  serviceStart: undefined,
+  serviceEnd: undefined,
+  lawyerConsultation: undefined,
+  otherFee: undefined,
+  financeConfirmed: undefined,
+  financeSignature: undefined,
+  preLegal: undefined,
+  preCompany: undefined,
+  preReason: undefined,
+  preDiscuss: undefined,
+  pendingMatters: [],
+  pendingRemark: undefined,
+  debtDetails: [],
+  debtRemark: undefined,
+  accountManagerId: undefined,
+  inviterId: undefined,
+  remark: undefined,
+ balancePayType: undefined,
+
+  contractCode: undefined,
+
+  contractOssId: undefined,
+
+  customerCity: undefined,
+  
+});
+
 const { queryParams, form, rules } = toRefs(data);
 
 const financeStatusList = [
@@ -865,6 +946,48 @@ const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
 }
+
+const contract = ref(null);
+
+const handleViewContract = (row: CustomerTransferVO) => {
+  if (row.contractOssId) {
+    proxy?.$download.oss(row.contractOssId);
+  } else {
+    proxy?.$modal.msgWarning(`无合同文件可下载`);
+  }
+};
+
+const handleUpload = async (row: CustomerTransferVO) => {
+  contract.value = [];
+  reset();
+  const _id = row?.id;
+  if (!_id) {
+    proxy?.$modal.msgWarning('请选择要上传合同的流转单');
+    return;
+  }
+
+   const res = await getCustomerTransfer(_id);
+   Object.assign(transferFormData.value, res.data);
+   transferInfoDialog.visible = true;
+   transferInfoDialog.title = "上传合同";
+};
+
+const customerInfoDialogCancel = () => {
+  transferInfoDialog.visible = false;
+};
+
+// 替换原有的 submitintentionForm 方法为以下代码：
+const submitintentionForm = async () => {
+  // 使用正确的表单引用
+  if (contract.value) {
+    transferFormData.value.contractOssId = contract.value[0].ossId;
+  }
+
+  await updateCustomerTransfer(transferFormData.value).finally(() => buttonLoading.value = false);
+  proxy?.$modal.msgSuccess("操作成功");
+  transferInfoDialog.visible = false;
+  getList();
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {
