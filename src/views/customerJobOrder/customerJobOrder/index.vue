@@ -83,41 +83,46 @@
 
       <el-table v-loading="loading" border :data="customerJobOrderList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="工单处理状态" align="center" prop="processingStatus">
+        <el-table-column label="工单状态" align="center" prop="processingStatus" width="100">
           <template #default="scope">
             <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" prop="customerId">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="120">
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="法务支持" align="center" prop="legalSupport" />
+        <el-table-column label="法务支持" align="center" prop="legalSupport" width="100" />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <!-- <el-table-column label="源合同地址" align="center" prop="preContractAddress" /> -->
-        <el-table-column label="原合同" align="center" prop="preContractName" />
+        <el-table-column label="原合同" align="center" prop="preContractName" width="100" />
         <!-- <el-table-column label="新合同地址" align="center" prop="newContractAddress" /> -->
-        <el-table-column label="新合同" align="center" prop="newContractName" />
-        <el-table-column label="客户要求" align="center" prop="customerRequirements" />
-        <el-table-column label="交付时间" align="center" prop="deliveryTime" width="180">
+        <el-table-column label="新合同" align="center" prop="newContractName" width="100" />
+        <el-table-column label="客户要求" align="center" prop="customerRequirements" width="160" />
+        <el-table-column label="交付时间" align="center" prop="deliveryTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.deliveryTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <!-- <el-table-column label="跟踪记录id" align="center" prop="trackingId" />
         <el-table-column label="处理人id" align="center" prop="contractHandler" /> -->
-        <el-table-column label="法务中心接单人" align="center" prop="contractHandlerName" />
-        <el-table-column label="客户所属方" align="center" prop="remark1" />
+        <el-table-column label="法务中心接单人" align="center" prop="contractHandlerName" width="100">
+        <template #header>
+            <span style="font-size: 11px; font-weight: bold;">法务中心接单人</span>
+        </template>
+         </el-table-column>       
+        <el-table-column label="客户所属方" align="center" prop="remark1" width="100"/>
 
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
         <el-table-column label="备注3" align="center" prop="remark3" /> -->
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="240px">
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
+        width="300" fixed="right">
           <template #default="scope">
             <el-tooltip content="接工单" placement="top">
-              <el-button v-if="scope.row.processingStatus == 0" link type="primary" @click="handleAccept(scope.row)"
+              <el-button v-if="scope.row.processingStatus == 0" link type="success" icon="Menu" @click="handleAccept(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']">接工单</el-button>
             </el-tooltip>
             <el-tooltip content="修改" placement="top">
@@ -125,16 +130,16 @@
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:remove']">删除</el-button>
             </el-tooltip>
             <!-- <el-tooltip content="处理" placement="top">
               <el-button link type="primary" icon="Download" @click="handleProcess(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:process']">下载</el-button>
             </el-tooltip> -->
-            <el-tooltip content="处理" placement="top">
+            <el-tooltip content="合同下载" placement="top" >
               <el-dropdown @command="(command) => handleProcessCommand({ row: scope.row, type: command })">
-                <el-button link type="primary" icon="Download"
+                <el-button link type="warning" icon="Download"
                   v-hasPermi="['customerJobOrder:customerJobOrder:process']">合同下载</el-button>
                 <template #dropdown>
                   <el-dropdown-menu>

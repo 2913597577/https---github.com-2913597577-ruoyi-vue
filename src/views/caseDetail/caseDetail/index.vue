@@ -87,12 +87,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" />
         <el-table-column label="客户id(客户编号)" align="center" prop="customerId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerId">
-          <template #default="scope">
-            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
+        <el-table-column label="跟踪记录" align="center" width="80" show-overflow-tooltip>
           <template #default="scope">
             <!-- 详情按钮：点击携带当前行id跳转 -->
             <el-button link type="primary" icon="View" size="default"
@@ -101,41 +96,48 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="债务人" align="center" prop="debtorName" />
-        <el-table-column label="欠款金额" align="center" prop="debtAmount" />
-        <el-table-column label="剩余欠款" align="center" prop="remainingAmount" />
-        <el-table-column label="联系电话" align="center" prop="contactPhone" />
-        <el-table-column label="身份证号" align="center" prop="idCard" />
-        <el-table-column label="需求接收时间" align="center" prop="requestReceiveTime" width="180">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="120">
+          <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
+        <el-table-column label="债务人" align="center" prop="debtorName" width="100" />
+        <el-table-column label="欠款金额" align="center" prop="debtAmount" width="100" />
+        <el-table-column label="剩余欠款" align="center" prop="remainingAmount" width="100" />
+        <el-table-column label="联系电话" align="center" prop="contactPhone" width="100" />
+        <el-table-column label="身份证号" align="center" prop="idCard" width="100" />
+        <el-table-column label="需求接收时间" align="center" prop="requestReceiveTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.requestReceiveTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="标的" align="center" prop="remark" />
-        <el-table-column label="证据备注" align="center" prop="evidenceNotes" />
-        <el-table-column label="立案系统账号" align="center" prop="filingSystemAccount" />
-        <el-table-column label="立案密码" align="center" prop="filingPassword" />
-        <el-table-column label="立案日期" align="center" prop="filingDate" width="180">
+        <el-table-column label="标的" align="center" prop="remark" width="100" />
+        <el-table-column label="证据备注" align="center" prop="evidenceNotes" width="100" />
+        <el-table-column label="立案日期" align="center" prop="filingDate" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.filingDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="下次联系时间" align="center" prop="nextContactTime" width="180">
+        <el-table-column label="立案系统账号" align="center" prop="filingSystemAccount" width="100" />
+        <el-table-column label="立案密码" align="center" prop="filingPassword" width="100" />
+        <el-table-column label="下次联系时间" align="center" prop="nextContactTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.nextContactTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="0-未处理 1-推进中 2-无法推进 3 -已办结" align="center" prop="caseStatus" />
-        <el-table-column label="法官" align="center" prop="judgeName" />
-        <el-table-column label="法官电话" align="center" prop="judgePhone" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="200px">
+        <el-table-column label="法官" align="center" prop="judgeName" width="80" />
+        <el-table-column label="法官电话" align="center" prop="judgePhone" width="100" />
+        <el-table-column label="案件状态" align="center" prop="caseStatus" />
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
+        width="200" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                 v-hasPermi="['caseDetail:caseDetail:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                 v-hasPermi="['caseDetail:caseDetail:remove']">删除</el-button>
             </el-tooltip>
           </template>

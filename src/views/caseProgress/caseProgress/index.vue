@@ -65,33 +65,34 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="案件" align="center" prop="caseId" /> -->
-        <el-table-column label="案件类型" align="center" prop="caseType">
+        <el-table-column label="客户姓名" align="center" prop="customerName" width="180"/>
+        <el-table-column label="跟进日期" align="center" prop="trackingTime" width="120">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="案件进展内容" align="center" prop="caseProgress" />
+        <el-table-column label="下次跟进日期" align="center" prop="nextTrackingTime" width="120">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="案件类型" align="center" prop="caseType" width="120">
           <template #default="scope">
             <dict-tag :options="customer_case_type" :value="scope.row.caseType" />
           </template>
         </el-table-column>
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" />
-        <el-table-column label="案件进展" align="center" prop="caseProgress" />
-        <el-table-column label="跟进日期" align="center" prop="trackingTime" width="180">
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="下次跟进日期" align="center" prop="nextTrackingTime" width="180">
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
+        width="200" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['caseProgress:caseProgress:edit']"></el-button>
+                v-hasPermi="['caseProgress:caseProgress:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['caseProgress:caseProgress:remove']"></el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['caseProgress:caseProgress:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
