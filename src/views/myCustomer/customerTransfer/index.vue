@@ -77,16 +77,11 @@
             <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip >
-          <template #default="scope">
-            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
-          </template>
-        </el-table-column>
-        <el-table-column label="合同上传" align="center" prop="contractOssId" width="120" show-overflow-tooltip>
+        <el-table-column label="合同操作" align="center" prop="contractOssId" width="120" show-overflow-tooltip>
           <template #default="scope">
             <div class="contract-cell">
-              <span v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
-                style="cursor: pointer; color: green">合同下载</span>
+              <el-button v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
+              link type="danger" icon="Download">合同下载</el-button>
               <el-button v-if="!scope.row.contractOssId" link type="primary" icon="Upload"
                 @click="handleUpload(scope.row)">
                 上传合同
@@ -122,6 +117,11 @@
         <el-table-column label="套餐类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip >
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
         </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
@@ -440,7 +440,7 @@
             <table class="w-full border-collapse">
               <!-- 业绩归属类型1 -->
               <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人1：</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人1：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
                   <input type="text"  placeholder="业绩所属人1"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
