@@ -187,7 +187,7 @@
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
               <tr>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：<span class="text-red-500">*</span></td>
                 <td class="p-2 w-32">
                   <input type="date"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
@@ -208,13 +208,13 @@
                 </td> -->
                 <td class="border-l border-black p-2 w-32 bg-blue-50">客户归属城市：<span class="text-red-500">*</span></td>
                 <td class="p-2">
-                  <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 100%">
+                  <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 120px">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
                     :value="dict.value"></el-option>
                 </el-select>
                 </td>
-                <td class="border-l border-black p-2 w-24 bg-blue-50">合同编号：</td>
-                 <input type="text" v-model="form.contractCode" placeholder="请输入合同编号"
+                <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span class="text-red-500">*</span></td>
+                 <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 410px;"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
               </tr>
             </table>
@@ -242,7 +242,8 @@
                     <el-input v-model="form.contactPerson" placeholder="对接人姓名" />
                   </el-form-item>
                 </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）<span class="text-red-500">*</span>
+                </td>
                 <td class="border-r border-black p-2 w-40">
                   <input type="text" v-model="form.contactInfo" placeholder="联系方式"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
@@ -644,8 +645,8 @@
     <el-dialog v-model="viewDialogVisible" title="客户流转单详情" width="700px" append-to-body>
       <div class="customer-transfer-detail">
         <el-scrollbar max-height="600px">
-          <el-descriptions :column="1" border size="medium">
-            <el-descriptions-item label="公司名称">
+          <el-descriptions :column="1" border size="small">
+            <el-descriptions-item label="公司名称" label-align="left" align="left" width="60">
               {{ viewForm.companyName }}
             </el-descriptions-item>
             <el-descriptions-item label="所属行业">
@@ -777,7 +778,6 @@
       </template>
     </el-dialog>
 
-
   </div>
 </template>
 
@@ -859,7 +859,7 @@ const initFormData: CustomerTransferForm = {
   accountManagerId: undefined,
   inviterId: undefined,
   remark: undefined,
- balancePayType: undefined,
+  balancePayType: undefined,
 
   contractCode: undefined,
 
@@ -896,13 +896,13 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     lawyerConsultation: undefined,
     otherFee: undefined,
     financeConfirmed: undefined,
-     balancePayType: undefined,
+    balancePayType: undefined,
 
-  contractCode: undefined,
+    contractCode: undefined,
 
-  contractOssId: undefined,
+    contractOssId: undefined,
 
-  customerCity: undefined,
+    customerCity: undefined,
 
     params: {}
   },
@@ -973,7 +973,7 @@ const transferFormData= ref({
   accountManagerId: undefined,
   inviterId: undefined,
   remark: undefined,
- balancePayType: undefined,
+  balancePayType: undefined,
 
   contractCode: undefined,
 

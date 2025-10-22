@@ -20,12 +20,12 @@
             <el-form-item label="负责人" prop="principal">
               <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="签约类型" prop="contractType">
+            <!-- <el-form-item label="签约类型" prop="contractType">
               <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
                 <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" />
@@ -491,10 +491,14 @@
       </template>
     </el-dialog>
 
-    <el-dialog title="客户详情" v-model="viewDialog.visible" width="650px" append-to-body>
-      <el-descriptions :column="1" border>
-        <el-descriptions-item label="合同编号">{{ viewForm.contractCode }}</el-descriptions-item>
-        <el-descriptions-item label="客户名称">{{ viewForm.customerName }}</el-descriptions-item>
+    <el-dialog title="客户详情" v-model="viewDialog.visible" width="700px" append-to-body>
+      <el-descriptions :column="1" border size="small">
+        <el-descriptions-item label="合同编号" label-align="left" align="left" width="60">
+          {{ viewForm.contractCode }}
+        </el-descriptions-item>
+        <el-descriptions-item label="客户名称">
+          {{ viewForm.customerName }}
+        </el-descriptions-item>
         <el-descriptions-item label="客户类型">
           <dict-tag :options="dc_customer_type" :value="viewForm.customerType" />
         </el-descriptions-item>
