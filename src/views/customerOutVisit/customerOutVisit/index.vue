@@ -73,7 +73,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" width="120"/>
+        <el-table-column label="客户姓名" align="center" prop="customerName" width="160"/>
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100"/>
         <el-table-column label="出访时间" align="center" prop="visitTime" width="100">
@@ -106,7 +106,7 @@
         <el-table-column label="出访定位" align="center" prop="visitAddress" />
         <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.placePic1Url" :width="50" :height="50" />
+            <image-preview :src="scope.row.placePic1Url" :width="20" :height="20" />
           </template>
         </el-table-column>
         <el-table-column label="出访记录表" align="center" prop="outRecord" width="100">

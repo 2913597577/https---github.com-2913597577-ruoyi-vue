@@ -88,7 +88,7 @@
             <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" prop="customerId" width="120">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="160">
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
