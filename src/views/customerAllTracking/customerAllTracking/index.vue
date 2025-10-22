@@ -71,12 +71,12 @@
       <el-table-column label="法务支持" align="center" prop="legalSupportName" width="180" />
       <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="180">
         <template #default="scope">
-          <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime) : '' }}</span>
+          <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime, '{y}-{m}-{d}') : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="180">
         <template #default="scope">
-          <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime) : '' }}</span>
+          <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
