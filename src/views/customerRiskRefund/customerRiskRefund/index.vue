@@ -406,7 +406,7 @@ const getLawyerNameById = (lawyerId: string | number) => {
   if (!lawyerId) return '';
   const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
   console.log('lawyer:', lawyer);
-  return lawyer ? `${lawyer.userName}` : '';
+  return lawyer ? `${lawyer.nickName}` : '';
 };
 onMounted(() => {
   loadLawyerSupportList();

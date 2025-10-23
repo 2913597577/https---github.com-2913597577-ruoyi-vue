@@ -525,7 +525,7 @@ const handleLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
-      form.value.legalSupport = selectedLawyer.userName;
+      form.value.legalSupport = selectedLawyer.nickName;
     }
   } else {
     // 清空选择时重置相关字段
@@ -664,7 +664,7 @@ const handleAddLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
-      addForm.value.legalSupport = selectedLawyer.userName;
+      addForm.value.legalSupport = selectedLawyer.nickName;
     }
   } else {
     // 清空选择时重置相关字段

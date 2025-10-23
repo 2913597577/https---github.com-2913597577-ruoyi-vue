@@ -91,9 +91,11 @@ export interface CustomerInfoVO {
 
   caseFillingAccount?: string;
 
-  caseFillingPwd?: string;
+  caseFillingPwd: string;
 
-  customerCity?: string;
+  customerCity: string;
+
+  isAssigned: number;
 
 }
 
@@ -197,6 +199,7 @@ export interface CustomerInfoForm extends BaseEntity {
   caseFillingPwd?: string;
 
   customerCity?: string;
+    isAssigned?: number;
 
 }
 
@@ -292,6 +295,10 @@ export interface CustomerInfoQuery extends PageQuery {
   caseFillingPwd?: string;
 
   customerCity?: string;
+
+  isAssigned?: number;
+
+  
 
     /**
      * 日期范围参数

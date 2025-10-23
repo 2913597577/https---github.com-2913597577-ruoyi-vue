@@ -77,6 +77,12 @@
             <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
+         <el-table-column label="审核人" align="center" prop="auditUserName" width="180" show-overflow-tooltip />
+          <el-table-column label="审核时间" align="center" prop="auditTime" width="150">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.auditTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="合同操作" align="center" prop="contractOssId" width="120" show-overflow-tooltip>
           <template #default="scope">
             <div class="contract-cell">

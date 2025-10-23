@@ -30,6 +30,12 @@
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" />
             </el-form-item>
+            <el-form-item label="是否分配法务支持" prop="isAssigned">
+            <el-select v-model="queryParams.isAssigned" placeholder="是否分配法务支持" clearable>
+              <el-option label="否" :value="0"></el-option>
+              <el-option label="是" :value="1"></el-option>
+            </el-select>
+          </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -645,6 +651,7 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
     caseFillingAccount: undefined,
     caseFillingPwd: undefined,
     customerCity: undefined,
+    isAssigned: undefined,
     params: {
     }
   },
@@ -1259,7 +1266,7 @@ const getLawyerNameById = (lawyerId: string | number) => {
   if (!lawyerId) return '';
   const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
   console.log('lawyer:', lawyer);
-  return lawyer ? `${lawyer.userName}` : '';
+  return lawyer ? `${lawyer.nickName}` : '';
 };
 
 /**
@@ -1272,7 +1279,7 @@ const handleLegalSupportChange = (userId: string) => {
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
       console.log(selectedLawyer)
-      intentionForm.value.legalSupport = selectedLawyer.userName;
+      intentionForm.value.legalSupport = selectedLawyer.nickName;
     }
   } else {
     // 清空选择时重置相关字段

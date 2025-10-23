@@ -443,7 +443,7 @@ const handleLegalSupportChange = (userId: string) => {
       // 设置法务支持名称到 legalSupport 字段
 
 
-      form.value.legalSupportName = selectedLawyer.userName;
+      form.value.legalSupportName = selectedLawyer.nickName;
 
     }
   } else {
