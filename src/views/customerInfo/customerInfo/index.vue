@@ -176,7 +176,7 @@
               删除
             </el-button>
             <!-- 分配法务支持按钮 -->
-            <el-button link type="warning" icon="Menu" @click="handleAssign(scope.row)"
+            <el-button link type="warning" icon="Menu" @click="handleAssign(scope.row)" 
               v-hasPermi="['customerInfo:customerInfo:assign']">
               分配
             </el-button>
@@ -493,35 +493,38 @@
 
     <el-dialog title="客户详情" v-model="viewDialog.visible" width="700px" append-to-body>
       <el-descriptions :column="1" border size="small">
-        <el-descriptions-item label="合同编号" label-align="left" align="left" width="60">
-          {{ viewForm.contractCode }}
-        </el-descriptions-item>
+        <el-descriptions-item label="签约日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+        <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
         <el-descriptions-item label="客户名称">
           {{ viewForm.customerName }}
         </el-descriptions-item>
+        <el-descriptions-item label="负责人">{{ viewForm.principal }}</el-descriptions-item>
+        <el-descriptions-item label="负责人电话">{{ viewForm.principalPhone }}</el-descriptions-item>
         <el-descriptions-item label="客户类型">
           <dict-tag :options="dc_customer_type" :value="viewForm.customerType" />
         </el-descriptions-item>
-        <el-descriptions-item label="签约类型">
+       <!--  <el-descriptions-item label="签约类型">
           <dict-tag :options="contract_type" :value="viewForm.contractType" />
-        </el-descriptions-item>
+        </el-descriptions-item> -->
         <!-- <el-descriptions-item label="套餐类型">
           <dict-tag :options="dc_service_type" :value="viewForm.packageType" />
         </el-descriptions-item> -->
         <el-descriptions-item label="套餐类型">
           <dict-tag :options="combo_type" :value="viewForm.packageType" />
         </el-descriptions-item>
-
-        <el-descriptions-item label="负责人">{{ viewForm.principal }}</el-descriptions-item>
-        <el-descriptions-item label="负责人电话">{{ viewForm.principalPhone }}</el-descriptions-item>
-        <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
-        <el-descriptions-item label="甩单人">{{ viewForm.transferPerson }}</el-descriptions-item>
-        <el-descriptions-item label="杀单手">{{ viewForm.closer }}</el-descriptions-item>
-        <el-descriptions-item label="签约日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
-        <el-descriptions-item label="到期时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+       
+        <!-- <el-descriptions-item label="甩单人">{{ viewForm.transferPerson }}</el-descriptions-item>
+        <el-descriptions-item label="杀单手">{{ viewForm.closer }}</el-descriptions-item> -->
         <el-descriptions-item label="实收金额">{{ viewForm.actualReceipt }}</el-descriptions-item>
         <el-descriptions-item label="尾款金额">{{ viewForm.balance }}</el-descriptions-item>
+        <el-descriptions-item label="合同编号" label-align="left" align="left" width="60">
+          {{ viewForm.contractCode }}
+        </el-descriptions-item>
+        <el-descriptions-item label="到期时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
         <el-descriptions-item label="续费/尾款">{{ viewForm.actionType }}</el-descriptions-item>
+        <el-descriptions-item label="立案账号">{{ viewForm.caseFillingAccount }}</el-descriptions-item>
+        <el-descriptions-item label="立案密码">{{ viewForm.caseFillingPwd }}</el-descriptions-item>
+        <el-descriptions-item label="客户服务城市">{{ viewForm.customerCity}}</el-descriptions-item>
         <el-descriptions-item label="风险客户">{{ viewForm.isRisk ? '是' : '否' }}</el-descriptions-item>
         <el-descriptions-item label="退费客户">{{ viewForm.isRefund ? '是' : '否' }}</el-descriptions-item>
         <el-descriptions-item label="意向客户">{{ viewForm.isIntention ? '是' : '否' }}</el-descriptions-item>

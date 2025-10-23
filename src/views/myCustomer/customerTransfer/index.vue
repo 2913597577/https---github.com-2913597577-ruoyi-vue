@@ -82,7 +82,7 @@
             <div class="contract-cell">
               <el-button v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
               link type="danger" icon="Download">合同下载</el-button>
-              <el-button v-if="!scope.row.contractOssId" link type="primary" icon="Upload"
+              <el-button v-if="!scope.row.contractOssId" link type="primary" icon="Upload" 
                 @click="handleUpload(scope.row)">
                 上传合同
               </el-button>
@@ -484,12 +484,12 @@
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text" v-model="form.balanceStatus" placeholder="分配业绩金额"
+                  <input type="text"  placeholder="分配业绩金额"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
                 <td class="p-2">
-                  <input type="text" v-model="form.balancePayType" placeholder="所属城市"
+                  <input type="text"  placeholder="所属城市"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
               </tr>
@@ -502,12 +502,12 @@
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text" v-model="form.balanceStatus" placeholder="分配业绩金额"
+                  <input type="text"  placeholder="分配业绩金额"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
                 <td class="p-2">
-                  <input type="text" v-model="form.balancePayType" placeholder="所属城市"
+                  <input type="text"  placeholder="所属城市"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
               </tr>
@@ -646,6 +646,21 @@
       <div class="customer-transfer-detail">
         <el-scrollbar max-height="600px">
           <el-descriptions :column="1" border size="small">
+            <el-descriptions-item label="录入日期">
+              {{ parseTime(viewForm.createTime, '{y}-{m}-{d}') }}
+            </el-descriptions-item>
+            <el-descriptions-item label="财务确认">
+              <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed || ''" />
+            </el-descriptions-item>
+            <el-descriptions-item label="合同编号">
+              {{ viewForm.contractCode }}
+            </el-descriptions-item>
+            <el-descriptions-item label="合同OssID">
+              {{ viewForm.contractOssId }}
+            </el-descriptions-item>
+            <el-descriptions-item label="客户归属城市">
+              {{ viewForm.customerCity }}
+            </el-descriptions-item>
             <el-descriptions-item label="公司名称" label-align="left" align="left" width="60">
               {{ viewForm.companyName }}
             </el-descriptions-item>
@@ -658,19 +673,18 @@
             <el-descriptions-item label="员工人数">
               {{ viewForm.employeeCount }}
             </el-descriptions-item>
-            <el-descriptions-item label="邀约人">
+            <el-descriptions-item label="是否有代账公司">
+              <span v-if="viewForm.accountingCompany === 0">是</span>
+              <span v-else-if="viewForm.accountingCompany === 1">否</span>
+              <span v-else-if="viewForm.accountingCompany === 2">不确定</span>
+            </el-descriptions-item>
+            <!-- <el-descriptions-item label="邀约人">
               {{ getUserNameById(viewForm.inviterId) }}
             </el-descriptions-item>
             <el-descriptions-item label="客户经理">
               {{ getUserNameById(viewForm.accountManagerId) }}
-            </el-descriptions-item>
-            <el-descriptions-item label="交易日期">
-              {{ parseTime(viewForm.transactionDate, '{y}-{m}-{d}') }}
-            </el-descriptions-item>
-            <el-descriptions-item label="财务确认">
-              <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed || ''" />
-            </el-descriptions-item>
-
+            </el-descriptions-item> -->
+            
             <el-descriptions-item label="对接人姓名">
               {{ viewForm.contactPerson }}
             </el-descriptions-item>
@@ -696,16 +710,18 @@
             <el-descriptions-item label="自然人年龄">
               {{ viewForm.additionalAge }}
             </el-descriptions-item>
-
-            <el-descriptions-item label="支付金额">
+            <el-descriptions-item label="客户性格及工作习惯描述">
+              {{ viewForm.customerDescription }}
+            </el-descriptions-item>
+            <el-descriptions-item label="实付金额">
               {{ viewForm.actualPayment }}
             </el-descriptions-item>
             <el-descriptions-item label="尾款情况">
               {{ viewForm.balanceStatus }}
             </el-descriptions-item>
-            <el-descriptions-item label="签约类型">
+           <!--  <el-descriptions-item label="签约类型">
               <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
-            </el-descriptions-item>
+            </el-descriptions-item> -->
             <el-descriptions-item label="套餐类型">
               <dict-tag :options="combo_type" :value="viewForm.serviceType || ''" />
             </el-descriptions-item>
@@ -713,23 +729,19 @@
               {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')
               }}
             </el-descriptions-item>
-            <el-descriptions-item label="代账公司">
-              <span v-if="viewForm.accountingCompany === '0'">是</span>
-              <span v-else-if="viewForm.accountingCompany === '1'">否</span>
-              <span v-else-if="viewForm.accountingCompany === '2'">不确定</span>
-            </el-descriptions-item>
+            
             <el-descriptions-item label="财务签字">
               {{ viewForm.financeSignature }}
             </el-descriptions-item>
             <el-descriptions-item label="律师咨询情况">
               {{ viewForm.lawyerConsultation }}
             </el-descriptions-item>
-            <el-descriptions-item label="其他费用">
+            <el-descriptions-item label="其他费用沟通">
               {{ viewForm.otherFee }}
             </el-descriptions-item>
 
             <el-descriptions-item label="以前是否有过公司法务">
-              {{ viewForm.preLegal === '1' ? '是' : '否' }}
+              {{ viewForm.preLegal === 1 ? '是' : '否' }}
             </el-descriptions-item>
             <el-descriptions-item label="合作公司名称">
               {{ viewForm.preCompany }}
@@ -743,11 +755,8 @@
             <el-descriptions-item label="待处理事项登记">
               {{ viewForm.pendingRemark }}
             </el-descriptions-item>
-            <el-descriptions-item label="欠款问题登记">
+            <el-descriptions-item label="欠款问题请详细登记">
               {{ viewForm.debtRemark }}
-            </el-descriptions-item>
-            <el-descriptions-item label="客户性格及工作习惯描述">
-              {{ viewForm.customerDescription }}
             </el-descriptions-item>
             <el-descriptions-item label="其他备注信息">
               {{ viewForm.remark }}

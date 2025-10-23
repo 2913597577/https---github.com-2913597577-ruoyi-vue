@@ -83,6 +83,7 @@
           </template>
         </el-table-column>
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" /> 
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
         width="200" fixed="right">
           <template #default="scope">
