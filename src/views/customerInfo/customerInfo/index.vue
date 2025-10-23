@@ -30,12 +30,12 @@
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" />
             </el-form-item>
-            <el-form-item label="是否分配法务支持" prop="isAssigned">
-            <el-select v-model="queryParams.isAssigned" placeholder="是否分配法务支持" clearable>
-              <el-option label="否" :value="0"></el-option>
-              <el-option label="是" :value="1"></el-option>
-            </el-select>
-          </el-form-item>
+            <el-form-item label="分配状态" prop="isAssigned">
+              <el-select v-model="queryParams.isAssigned" placeholder="是否分配法务支持" clearable>
+                <el-option label="否" :value="0"></el-option>
+                <el-option label="是" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -530,7 +530,9 @@
         <el-descriptions-item label="续费/尾款">{{ viewForm.actionType }}</el-descriptions-item>
         <el-descriptions-item label="立案账号">{{ viewForm.caseFillingAccount }}</el-descriptions-item>
         <el-descriptions-item label="立案密码">{{ viewForm.caseFillingPwd }}</el-descriptions-item>
-        <el-descriptions-item label="客户服务城市">{{ viewForm.customerCity}}</el-descriptions-item>
+        <el-descriptions-item label="客户服务城市">
+          <dict-tag :options="dc_sercive_city" :value="viewForm.customerCity" />
+        </el-descriptions-item>
         <el-descriptions-item label="风险客户">{{ viewForm.isRisk ? '是' : '否' }}</el-descriptions-item>
         <el-descriptions-item label="退费客户">{{ viewForm.isRefund ? '是' : '否' }}</el-descriptions-item>
         <el-descriptions-item label="意向客户">{{ viewForm.isIntention ? '是' : '否' }}</el-descriptions-item>
