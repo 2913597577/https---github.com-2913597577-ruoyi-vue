@@ -65,7 +65,7 @@
 
       <el-table v-loading="loading" border :data="customerIntentionList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="意向客户跟踪记录" align="center" width="120" show-overflow-tooltip>
+        <el-table-column label="跟踪记录" align="center" width="100" show-overflow-tooltip>
           <template #default="scope">
             <!-- 详情按钮：点击携带当前行id跳转 -->
             <el-button link type="primary" icon="View" size="default" @click="handleTrackingDetail(scope.row.id)"
@@ -74,32 +74,33 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="提报日期" align="center" prop="submissionDate" width="160" show-overflow-tooltip>
+        <el-table-column label="提报日期" align="center" prop="submissionDate" width="100" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.submissionDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupport" width="120" show-overflow-tooltip />
+        <el-table-column label="法务支持" align="center" prop="legalSupport" width="100" show-overflow-tooltip />
         <el-table-column label="意向客户" align="center" prop="intendedCustomer" width="120" show-overflow-tooltip />
-        <el-table-column label="类型" align="center" prop="type" width="130" show-overflow-tooltip>
+        <el-table-column label="类型" align="center" prop="type" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="intention_type" :value="scope.row.type" />
           </template>
         </el-table-column>
-        <el-table-column label="来源" align="center" prop="source" width="160" show-overflow-tooltip />
-        <el-table-column label="预计金额" align="center" prop="expectedAmount" width="110" show-overflow-tooltip />
+        <el-table-column label="来源" align="center" prop="source" width="100" show-overflow-tooltip />
+        <el-table-column label="预计金额" align="center" prop="expectedAmount" width="100" show-overflow-tooltip />
         <el-table-column label="介绍人" align="center" prop="introducer" width="120" show-overflow-tooltip />
-        <el-table-column label="跟进结果" align="center" prop="followUpResult" width="110" show-overflow-tooltip>
+        <el-table-column label="跟进结果" align="center" prop="followUpResult" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="cumtomer_status" :value="scope.row.followUpResult" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
-          width="180" fixed="right">
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
+          width="200" fixed="right">
           <template #default="scope">
-            <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
+            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
               v-hasPermi="['customerIntention:customerIntention:edit']">修改</el-button>
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+
+            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
               v-hasPermi="['customerIntention:customerIntention:remove']">删除</el-button>
           </template>
         </el-table-column>

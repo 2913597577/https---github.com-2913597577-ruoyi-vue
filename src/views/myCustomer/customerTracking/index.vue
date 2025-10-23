@@ -74,12 +74,12 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerId">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="180">
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="回访记录" align="center" prop="customerRemark" />
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
         <!-- <el-table-column label="跟踪类型" align="center" prop="trackingType">
           <template #default="scope">
             <dict-tag :options="customer_tracking_type" :value="scope.row.trackingType" />
@@ -90,28 +90,28 @@
             <dict-tag :options="cumtomer_status" :value="scope.row.cumtomerStatus" />
           </template>
         </el-table-column> -->
-        <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="180">
+        <el-table-column label="回访时间" align="center" prop="trackingTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="回访内容" align="center" prop="customerRemark" />
         <!-- <el-table-column label="提交状态" align="center" prop="submitStatus">
           <template #default="scope">
             <dict-tag :options="submit_status" :value="scope.row.submitStatus" />
           </template>
         </el-table-column> -->
-        <el-table-column label="下次跟踪时间" align="center" prop="nextTime" width="180">
+        <el-table-column label="下次回访时间" align="center" prop="nextTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.nextTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="内勤项数计数" align="center" prop="interCount" />
+        <el-table-column label="内勤项数计数" align="center" prop="interCount" width="100" />
         <!-- <el-table-column label="风险提示" align="center" prop="remark1" />
         <el-table-column label="处理进度" align="center" prop="remark2" /> -->
         <!-- <el-table-column label="备注" align="center" prop="remark3" /> -->
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
-          width="300" fixed="right">
-
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
+          width="200" fixed="right">
           <template #default="scope">
             <el-tooltip content="查看" placement="top">
               <el-button link type="info" icon="View" @click="handleView(scope.row)">
@@ -123,7 +123,7 @@
                 v-hasPermi="['myCustomer:customerTracking:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                 v-hasPermi="['myCustomer:customerTracking:remove']">删除</el-button>
             </el-tooltip>
             <el-tooltip content="提交" placement="top">
@@ -131,7 +131,6 @@
                 v-hasPermi="['myCustomer:customerTracking:submit']"
                 v-if="scope.row.submitStatus == 0 && scope.row.trackingType == 2">提交</el-button>
             </el-tooltip>
-
           </template>
         </el-table-column>
       </el-table>

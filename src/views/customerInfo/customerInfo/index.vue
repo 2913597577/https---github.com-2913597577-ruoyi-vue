@@ -20,12 +20,12 @@
             <el-form-item label="负责人" prop="principal">
               <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="签约类型" prop="contractType">
+            <!-- <el-form-item label="签约类型" prop="contractType">
               <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
                 <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" />
@@ -65,7 +65,7 @@
       <el-table v-loading="loading" border :data="customerInfoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
+        <el-table-column label="跟踪记录" align="center" width="80" show-overflow-tooltip>
           <template #default="scope">
             <!-- 详情按钮：点击携带当前行id跳转 -->
             <el-button link type="primary" icon="View" size="default"
@@ -74,69 +74,69 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持员工" align="center" width="120" prop="lawyerId" show-overflow-tooltip>
+        <el-table-column label="法务支持" align="center" width="100" prop="lawyerId" show-overflow-tooltip>
           <template #default="scope">
             <span v-if="scope.row.lawyerId">
               {{ getLawyerNameById(scope.row.lawyerId) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="签约日期" align="center" prop="signDate" width="100">
+        <el-table-column label="签约日期" align="center" prop="signDate" width="80">
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="客户名称" align="center" width="120" prop="customerName" />
+        <el-table-column label="负责人" align="center" width="80" prop="principal" />
+        <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
         <!-- <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip /> -->
-        <el-table-column label="客户类型" align="center" width="100" prop="customerType">
+        <el-table-column label="客户类型" align="center" width="70" prop="customerType">
           <template #default="scope">
             <dict-tag :options="dc_customer_type" :value="scope.row.customerType" />
           </template>
         </el-table-column>
-        <el-table-column label="签约类型" align="center" width="100" prop="contractType">
+   <!--      <el-table-column label="签约类型" align="center" width="100" prop="contractType">
           <template #default="scope">
             <dict-tag :options="contract_type" :value="scope.row.contractType" />
           </template>
-        </el-table-column>
-
+        </el-table-column> -->
         <el-table-column label="套餐类型" align="center" prop="packageType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="combo_type" :value="scope.row.packageType" />
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" width="100" prop="customerName" />
-        <el-table-column label="负责人" align="center" width="100" prop="principal" />
-        <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
-        <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip>
-          <template #default="scope">
-            <div class="contract-cell">
-              <span v-if="scope.row.contractCode" class="contract-code" @click="handleViewContract(scope.row)"
-                style="cursor: pointer; color: red;">{{ scope.row.contractCode }}</span>
-              <el-button v-if="!scope.row.contractCode" link type="primary" icon="Upload"
-                @click="handleUpload(scope.row)">
-                上传合同
-              </el-button>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" />
-        <el-table-column label="杀单手" align="center" width="100" prop="closer" />
-        <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
         <el-table-column label="实收金额" width="100" align="center" prop="actualReceipt" show-overflow-tooltip />
         <el-table-column label="尾款金额" width="100" align="center" prop="balance" show-overflow-tooltip />
-        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
+        <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip>
+        <template #default="scope">
+         <div class="contract-cell">
+            <span v-if="scope.row.contractCode" class="contract-code" @click="handleViewContract(scope.row)"
+                style="cursor: pointer; color: red;">{{ scope.row.contractCode }}</span>
+            <el-button v-if="!scope.row.contractCode" link type="primary" icon="Upload"
+                @click="handleUpload(scope.row)">
+                上传合同
+            </el-button>
+          </div>
+        </template> 
+        </el-table-column>
+        <!-- <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" /> -->
+        <!-- <el-table-column label="杀单手" align="center" width="100" prop="closer" /> -->
+        <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
+        
+        <el-table-column label="到期时间" align="center" prop="expireDate" width="80" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="140" show-overflow-tooltip />
-        <el-table-column label="立案密码" align="center" prop="caseFillingPwd" width="140" show-overflow-tooltip />
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip>
+        <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="80" show-overflow-tooltip />
+        <el-table-column label="立案密码" align="center" prop="caseFillingPwd" width="80" show-overflow-tooltip />
+        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center" prop="remarks" width="140" show-overflow-tooltip />
-        <el-table-column label="续费/尾款" align="center" prop="actionType" width="100" show-overflow-tooltip />
+       
+        <el-table-column label="续费" align="center" prop="actionType" width="100" show-overflow-tooltip />
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
           <template #default="scope">
             <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
@@ -148,11 +148,12 @@
             <span>{{ scope.row.isRefund ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="是否转介绍意向客户" align="center" prop="isIntention" width="100">
+        <el-table-column label="转介绍意向客户" align="center" prop="isIntention" width="120">
           <template #default="scope">
             <span>{{ scope.row.isIntention ? '是' : '否' }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="备注" align="center" prop="remarks" width="100" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="360px"
           fixed="right">
           <template #default="scope">
@@ -490,10 +491,14 @@
       </template>
     </el-dialog>
 
-    <el-dialog title="客户详情" v-model="viewDialog.visible" width="650px" append-to-body>
-      <el-descriptions :column="1" border>
-        <el-descriptions-item label="合同编号">{{ viewForm.contractCode }}</el-descriptions-item>
-        <el-descriptions-item label="客户名称">{{ viewForm.customerName }}</el-descriptions-item>
+    <el-dialog title="客户详情" v-model="viewDialog.visible" width="700px" append-to-body>
+      <el-descriptions :column="1" border size="small">
+        <el-descriptions-item label="合同编号" label-align="left" align="left" width="60">
+          {{ viewForm.contractCode }}
+        </el-descriptions-item>
+        <el-descriptions-item label="客户名称">
+          {{ viewForm.customerName }}
+        </el-descriptions-item>
         <el-descriptions-item label="客户类型">
           <dict-tag :options="dc_customer_type" :value="viewForm.customerType" />
         </el-descriptions-item>

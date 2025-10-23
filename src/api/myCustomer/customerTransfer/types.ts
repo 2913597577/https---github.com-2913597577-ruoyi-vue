@@ -162,6 +162,15 @@ export interface CustomerTransferVO {
 
   remark: string;
 
+  balancePayType: string
+
+  contractCode: string;
+
+  contractOssId: string;
+
+  customerCity: string;
+
+
 }
 
 export interface CustomerTransferForm extends BaseEntity {
@@ -340,6 +349,16 @@ export interface CustomerTransferForm extends BaseEntity {
    */
   inviterId?: string | number;
 
+
+  balancePayType?:string;
+
+  contractCode?:string;
+
+  contractOssId?:string;
+
+  customerCity?:string;
+
+
 }
 
 export interface CustomerTransferQuery extends PageQuery {
@@ -467,6 +486,14 @@ export interface CustomerTransferQuery extends PageQuery {
    * 财务是否确认(1:是,0:否)
    */
   financeConfirmed?: number;
+
+    balancePayType?:string;
+
+  contractCode?:string;
+
+  contractOssId?:string;
+
+  customerCity?:string;
 
     /**
      * 日期范围参数

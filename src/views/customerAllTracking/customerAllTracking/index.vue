@@ -1,6 +1,10 @@
 <!-- views/tracking/index.vue -->
 <template>
   <div class="tracking-container">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+      <el-card shadow="hover">
     <!-- 查询条件 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="客户名称" prop="customerId">
@@ -46,7 +50,9 @@
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
+  </el-card>
+      </div>
+    </transition>
     <!-- 操作按钮 -->
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -59,26 +65,33 @@
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
+    <el-card shadow="never">
+
+      <template #header>
+        <el-row :gutter="10" class="mb8">
+         <!--  <el-col :span="1.5">
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['customerAllTracking:customerAllTracking:add']">新增</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
+              v-hasPermi="['customerAllTracking:customerAllTracking:edit']">修改</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['customerAllTracking:customerAllTracking:remove']">删除</el-button>
+          </el-col> -->
+          <el-col :span="1.5">
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['customerAllTracking:customerAllTracking:export']">导出</el-button>
+          </el-col>
+          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </el-row>
+      </template>
 
     <!-- 数据表格 -->
     <el-table v-loading="loading" :data="trackingList" border>
-      <!-- <el-table-column label="ID" align="center" prop="id" /> -->
-      <el-table-column label="客户名称" align="center" prop="customerId">
-        <template #default="scope">
-          <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="法务支持" align="center" prop="legalSupportName" width="180" />
-      <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="180">
-        <template #default="scope">
-          <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime) : '' }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="180">
-        <template #default="scope">
-          <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime) : '' }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
         <template #default="scope">
           <!-- 详情按钮：点击携带当前行id跳转 -->
@@ -88,6 +101,25 @@
           </el-button>
         </template>
       </el-table-column>
+      <!-- <el-table-column label="ID" align="center" prop="id" /> -->
+      <el-table-column label="客户名称" align="center" prop="customerId" width="200">
+        <template #default="scope">
+          <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="法务支持" align="center" prop="legalSupportName" width="120" />
+      <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="100">
+        <template #default="scope">
+          <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime, '{y}-{m}-{d}') : '' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="跟踪内容" align="center" prop="remark" width="240"/>
+      <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="100">
+        <template #default="scope">
+          <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') : '' }}</span>
+        </template>
+      </el-table-column>
+      
       <el-table-column label="跟踪类型" align="center" prop="trackingType" width="100">
         <template #default="scope">
           <el-tag v-if="scope.row.trackingType === 1">回访</el-tag>
@@ -97,18 +129,17 @@
           <el-tag v-else-if="scope.row.trackingType === 5" type="info">案件</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
-      <!-- <el-table-column label="操作" align="center" width="150">
-        <template #default="scope">
+      <el-table-column label="操作" align="center" width="180">
+        <!-- <template #default="scope">
           <el-button type="primary" link icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button type="danger" link icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-        </template>
-      </el-table-column> -->
+        </template> -->
+      </el-table-column>
     </el-table>
-
     <!-- 分页 -->
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize" @pagination="getList" />
+    </el-card>
 
     <!-- 添加或修改对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -197,9 +228,9 @@ const queryRef = ref<InstanceType<typeof ElForm>>();
 const trackingRef = ref<InstanceType<typeof ElForm>>();
 
 // 生命周期
-onMounted(() => {
+/* onMounted(() => {
   getList();
-});
+}); */
 
 // 获取数据列表
 function getList() {
@@ -323,11 +354,11 @@ const handleLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
-      form.value.legalSupport = selectedLawyer.userName;
+      form.legalSupportName = selectedLawyer.userName;
     }
   } else {
     // 清空选择时重置相关字段
-    form.value.legalSupport = undefined;
+    form.legalSupportName = undefined;
   }
 }
 const loadLawyerSupportList = async () => {
@@ -381,14 +412,20 @@ const handleTrackingDetail = (data) => {
   });
 };
 
-onMounted(() => {
+/* onMounted(() => {
   loadLawyerSupportList();
   loadCustomerList();
+}); */
+onMounted(async () => {
+  await loadCustomerList(); // 等待客户列表加载完成
+  loadLawyerSupportList();
+  await getList(); // 客户列表加载完后，再获取工单列表并渲染
 });
 </script>
 
-<style scoped>
+<!-- <style scoped>
 .tracking-container {
   padding: 20px;
 }
 </style>
+ -->

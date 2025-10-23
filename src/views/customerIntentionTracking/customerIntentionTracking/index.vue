@@ -47,15 +47,23 @@
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="意向客户" align="center" prop="customerName" />
-        <el-table-column label="跟踪内容" align="center" prop="customerRemark" />
-        <el-table-column label="跟踪时间" align="center" prop="trackingDate" />
-        <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingDate" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
+        <el-table-column label="跟踪时间" align="center" prop="trackingDate">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.trackingDate, '{y}-{m}-{d}') }}</span>
+        </template>
+       </el-table-column>
+       <el-table-column label="跟踪内容" align="center" prop="customerRemark" />
+        <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingDate">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.nextTrackingDate, '{y}-{m}-{d}') }}</span>
+        </template>
+       </el-table-column>
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
           width="240" fixed="right">
           <template #default="scope">
-            <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
+            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
               v-hasPermi="['customerIntentionTracking:customerIntentionTracking:edit']">修改</el-button>
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
               v-hasPermi="['customerIntentionTracking:customerIntentionTracking:remove']">删除</el-button>
           </template>
         </el-table-column>

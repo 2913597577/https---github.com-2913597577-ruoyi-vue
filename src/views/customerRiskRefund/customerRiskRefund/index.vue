@@ -63,42 +63,48 @@
       <el-table v-loading="loading" border :data="customerRiskRefundList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="法务支持员工" align="center" width="120" prop="lawyerId" show-overflow-tooltip>
+        <el-table-column label="客户名称" align="center" prop="customerName" width="120" show-overflow-tooltip />
+        <el-table-column label="负责人" align="center" prop="principal" width="90" show-overflow-tooltip />
+        <el-table-column label="负责人电话" align="center" prop="principalPhone" width="100" show-overflow-tooltip />
+        <el-table-column label="法务支持" align="center" width="100" prop="lawyerId" show-overflow-tooltip>
           <template #default="scope">
             <span v-if="scope.row.lawyerId">
               {{ getLawyerNameById(scope.row.lawyerId) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" prop="customerName" width="100" show-overflow-tooltip />
-        <el-table-column label="客户对接人" align="center" prop="principal" width="90" show-overflow-tooltip />
-        <el-table-column label="对接人电话" align="center" prop="principalPhone" width="120" show-overflow-tooltip />
-        <el-table-column label="大成负责人" align="center" prop="inviterId" width="90" show-overflow-tooltip />
-        <el-table-column label="签约日期" align="center" prop="signDate" width="120" show-overflow-tooltip>
+        <el-table-column label="签单金额" align="center" prop="contractAmount" width="90" show-overflow-tooltip />
+        <el-table-column label="退款金额" align="center" prop="refundAmount" width="90" show-overflow-tooltip
+        v-if="customerTypeLabel == '退费'" />
+        <!-- <el-table-column label="大成负责人" align="center" prop="inviterId" width="90" show-overflow-tooltip /> -->
+        <el-table-column label="签约日期" align="center" prop="signDate" width="100" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
+        <el-table-column label="到期时间" align="center" prop="expireDate" width="100" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="签单金额" align="center" prop="contractAmount" width="90" show-overflow-tooltip />
+       
         <el-table-column label="服务时长" align="center" prop="serviceHours" width="80" show-overflow-tooltip />
         <!-- <el-table-column :label="customerTypeLabel" align="center" prop="customerType" width="80" show-overflow-tooltip /> -->
         <el-table-column :label="customerTypeLabel + '原因'" align="center" prop="reasons" width="120"
           show-overflow-tooltip />
-        <el-table-column label="退款金额" align="center" prop="refundAmount" width="90" show-overflow-tooltip
-          v-if="customerTypeLabel == '退费'" />
-        <el-table-column label="备注" align="center" prop="remark1" width="140" show-overflow-tooltip />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" show-overflow-tooltip
-          width="180" fixed="right">
+       
+        <el-table-column label="备注" align="center" prop="remark1" width="100" show-overflow-tooltip />
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
+          width="200" fixed="right">
           <template #default="scope">
-            <el-button link type="success" icon="Edit" @click="handleUpdate(scope.row)"
-              v-hasPermi="['customerRiskRefund:customerRiskRefund:edit']">修改</el-button>
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-              v-hasPermi="['customerRiskRefund:customerRiskRefund:remove']">删除</el-button>
+            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+              v-hasPermi="['customerRiskRefund:customerRiskRefund:edit']">
+              修改
+            </el-button>
+            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+              v-hasPermi="['customerRiskRefund:customerRiskRefund:remove']">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

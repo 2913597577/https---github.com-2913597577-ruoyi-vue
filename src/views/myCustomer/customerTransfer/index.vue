@@ -19,13 +19,13 @@
               <el-input v-model="queryParams.contactPerson" placeholder="请输入公司对接人" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="尾款情况" prop="balanceStatus" label-width="68px">
-              <el-input v-model="queryParams.balanceStatus" placeholder="请输入尾款情况" clearable
+            <!-- <el-form-item label="尾款金额" prop="balanceStatus" label-width="68px">
+              <el-input v-model="queryParams.balanceStatus" placeholder="尾款金额" clearable
                 @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="签约类型" prop="signType" label-width="68px">
+            </el-form-item> -->
+            <!-- <el-form-item label="签约类型" prop="signType" label-width="68px">
               <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="开始时间" prop="serviceStart" label-width="68px">
               <el-date-picker clearable v-model="queryParams.serviceStart" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择服务周期开始时间" />
@@ -77,6 +77,18 @@
             <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
+        <el-table-column label="合同操作" align="center" prop="contractOssId" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <div class="contract-cell">
+              <el-button v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
+              link type="danger" icon="Download">合同下载</el-button>
+              <el-button v-if="!scope.row.contractOssId" link type="primary" icon="Upload"
+                @click="handleUpload(scope.row)">
+                上传合同
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip />
         <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip />
@@ -95,15 +107,21 @@
           </template>
         </el-table-column>
         <el-table-column label="实付金额" align="center" prop="actualPayment" width="100" show-overflow-tooltip />
-        <el-table-column label="尾款情况" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
-        <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
+        <el-table-column label="尾款金额" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
+         <el-table-column label="尾款支付条件" align="center" prop="balancePayType" width="100" show-overflow-tooltip />
+        <!-- <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="contract_type" :value="scope.row.contractType ?? ''" />
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="套餐类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip >
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
         </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
@@ -169,8 +187,8 @@
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
               <tr>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：</td>
-                <td class="p-2 w-64">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：<span class="text-red-500">*</span></td>
+                <td class="p-2 w-32">
                   <input type="date"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
@@ -188,6 +206,16 @@
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
                 </td> -->
+                <td class="border-l border-black p-2 w-32 bg-blue-50">客户归属城市：<span class="text-red-500">*</span></td>
+                <td class="p-2">
+                  <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 120px">
+                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                    :value="dict.value"></el-option>
+                </el-select>
+                </td>
+                <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span class="text-red-500">*</span></td>
+                 <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 410px;"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
               </tr>
             </table>
           </div>
@@ -214,7 +242,8 @@
                     <el-input v-model="form.contactPerson" placeholder="对接人姓名" />
                   </el-form-item>
                 </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）<span class="text-red-500">*</span>
+                </td>
                 <td class="border-r border-black p-2 w-40">
                   <input type="text" v-model="form.contactInfo" placeholder="联系方式"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
@@ -320,27 +349,22 @@
             <table class="w-full border-collapse">
               <!-- 金额与签约类型 -->
               <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">支付金额：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">实收金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 w-40">
                   <el-form-item prop="actualPayment" style="margin-bottom: 0;" :show-message="false"
                     hide-required-asterisk>
-                    <el-input v-model="form.actualPayment" placeholder="实付金额" type="number" />
+                    <el-input v-model="form.actualPayment" placeholder="实收金额" type="number" />
                   </el-form-item>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">尾款金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text" v-model="form.balanceStatus" placeholder="尾款情况描述"
+                  <input type="text" v-model="form.balanceStatus" placeholder="尾款金额,没有填0"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-                <td class="border-r border-black p-2 w-48 bg-blue-50">签约类型：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">尾款支付条件：</td>
                 <td class="p-2">
-                  <select v-model="form.contractType"
+                  <input type="text" v-model="form.balancePayType" placeholder="尾款支付条件"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-
-                    <option v-for="dict in contract_type" :key="dict.value" :value="dict.value">
-                      {{ dict.label }}
-                    </option>
-                  </select>
                 </td>
               </tr>
 
@@ -392,7 +416,7 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">律师咨询情况：</td>
                 <td colspan="5" class="p-2">
                   <textarea v-model="form.lawyerConsultation" placeholder="请描述是否咨询律师、是否给客户约定所交费用包含律师费等"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-red-500"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
                     rows="2"></textarea>
                 </td>
               </tr>
@@ -402,8 +426,89 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">其他费用沟通：</td>
                 <td colspan="5" class="p-2">
                   <textarea v-model="form.otherFee" placeholder="请描述是否给客户讲清调档费、保险费、诉讼费等其他费用"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-red-500"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-gray-500"
                     rows="2"></textarea>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!--业绩归属登记-->
+          <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
+            <h2 class="text-lg font-bold text-blue-800">业绩归属登记</h2>
+          </div>
+          <div class="border-b border-black mb-1 mt-0">
+            <table class="w-full border-collapse">
+              <!-- 业绩归属类型1 -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人1：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="业绩所属人1"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text" placeholder="分配业绩金额"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：<span class="text-red-500">*</span></td>
+                <td class="p-2">
+                  <input type="text" placeholder="所属城市"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+              <!-- 业绩归属类型2 -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人2：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="业绩所属人2"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="分配业绩金额"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
+                <td class="p-2">
+                  <input type="text"  placeholder="所属城市"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+              <!-- 业绩归属类型3 -->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人3：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="业绩所属人3"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text" v-model="form.balanceStatus" placeholder="分配业绩金额"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
+                <td class="p-2">
+                  <input type="text" v-model="form.balancePayType" placeholder="所属城市"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+              <!-- 业绩归属类型4-->
+              <tr class="border-b border-black">
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人4：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text"  placeholder="业绩所属人4"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
+                <td class="border-r border-black p-2 flex-1">
+                  <input type="text" v-model="form.balanceStatus" placeholder="分配业绩金额"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
+                <td class="p-2">
+                  <input type="text" v-model="form.balancePayType" placeholder="所属城市"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
               </tr>
             </table>
@@ -540,8 +645,8 @@
     <el-dialog v-model="viewDialogVisible" title="客户流转单详情" width="700px" append-to-body>
       <div class="customer-transfer-detail">
         <el-scrollbar max-height="600px">
-          <el-descriptions :column="1" border size="medium">
-            <el-descriptions-item label="公司名称">
+          <el-descriptions :column="1" border size="small">
+            <el-descriptions-item label="公司名称" label-align="left" align="left" width="60">
               {{ viewForm.companyName }}
             </el-descriptions-item>
             <el-descriptions-item label="所属行业">
@@ -658,6 +763,20 @@
       </template>
     </el-dialog>
 
+        <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
+      <el-form ref="customerintentionFormRef" :model="transferFormData" :rules="rules" label-width="80px">
+        <el-form-item label="合同文件" prop="contractOssId">
+          <file-upload :limit="1" :fileSize="10" v-model="contract" />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button :loading="buttonLoading" type="primary" @click="submitintentionForm">确 定</el-button>
+          <el-button @click="customerInfoDialogCancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
 
   </div>
 </template>
@@ -677,6 +796,7 @@ import { ElMessage } from 'element-plus';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -739,6 +859,14 @@ const initFormData: CustomerTransferForm = {
   accountManagerId: undefined,
   inviterId: undefined,
   remark: undefined,
+  balancePayType: undefined,
+
+  contractCode: undefined,
+
+  contractOssId: undefined,
+
+  customerCity: undefined,
+  
 }
 const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   form: { ...initFormData },
@@ -768,6 +896,13 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     lawyerConsultation: undefined,
     otherFee: undefined,
     financeConfirmed: undefined,
+    balancePayType: undefined,
+
+    contractCode: undefined,
+
+    contractOssId: undefined,
+
+    customerCity: undefined,
 
     params: {}
   },
@@ -795,6 +930,57 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     ],
 
   }
+});
+
+const transferInfoDialog = reactive<DialogOption>({
+  visible: false,
+  title: ''
+});
+
+const transferFormData= ref({
+  companyName: undefined,
+  contactPerson: undefined,
+  contactInfo: undefined,
+  contactPosition: undefined,
+  contactAge: undefined,
+  additionalPerson: undefined,
+  additionalContact: undefined,
+  additionalPosition: undefined,
+  additionalAge: undefined,
+  companyIndustry: undefined,
+  companyAddress: undefined,
+  employeeCount: undefined,
+  accountingCompany: undefined,
+  customerDescription: undefined,
+  actualPayment: undefined,
+  balanceStatus: undefined,
+  contractType: undefined,
+  serviceType: undefined,
+  serviceStart: undefined,
+  serviceEnd: undefined,
+  lawyerConsultation: undefined,
+  otherFee: undefined,
+  financeConfirmed: undefined,
+  financeSignature: undefined,
+  preLegal: undefined,
+  preCompany: undefined,
+  preReason: undefined,
+  preDiscuss: undefined,
+  pendingMatters: [],
+  pendingRemark: undefined,
+  debtDetails: [],
+  debtRemark: undefined,
+  accountManagerId: undefined,
+  inviterId: undefined,
+  remark: undefined,
+  balancePayType: undefined,
+
+  contractCode: undefined,
+
+  contractOssId: undefined,
+
+  customerCity: undefined,
+  
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -841,6 +1027,48 @@ const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
 }
+
+const contract = ref(null);
+
+const handleViewContract = (row: CustomerTransferVO) => {
+  if (row.contractOssId) {
+    proxy?.$download.oss(row.contractOssId);
+  } else {
+    proxy?.$modal.msgWarning(`无合同文件可下载`);
+  }
+};
+
+const handleUpload = async (row: CustomerTransferVO) => {
+  contract.value = [];
+  reset();
+  const _id = row?.id;
+  if (!_id) {
+    proxy?.$modal.msgWarning('请选择要上传合同的流转单');
+    return;
+  }
+
+   const res = await getCustomerTransfer(_id);
+   Object.assign(transferFormData.value, res.data);
+   transferInfoDialog.visible = true;
+   transferInfoDialog.title = "上传合同";
+};
+
+const customerInfoDialogCancel = () => {
+  transferInfoDialog.visible = false;
+};
+
+// 替换原有的 submitintentionForm 方法为以下代码：
+const submitintentionForm = async () => {
+  // 使用正确的表单引用
+  if (contract.value) {
+    transferFormData.value.contractOssId = contract.value[0].ossId;
+  }
+
+  await updateCustomerTransfer(transferFormData.value).finally(() => buttonLoading.value = false);
+  proxy?.$modal.msgSuccess("操作成功");
+  transferInfoDialog.visible = false;
+  getList();
+};
 
 /** 重置按钮操作 */
 const resetQuery = () => {

@@ -73,36 +73,43 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" />
+        <el-table-column label="客户姓名" align="center" prop="customerName" width="160"/>
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
-        <el-table-column label="法务支持员工" align="center" prop="legalSupportName" />
-        <el-table-column label="出访时间" align="center" prop="visitTime" width="180">
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100"/>
+        <el-table-column label="出访时间" align="center" prop="visitTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.visitTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="下次出访时间" align="center" prop="nextVisitTime" width="180">
+        <el-table-column label="出访内容" align="center" prop="visitPurpose" width="160"/>
+        <el-table-column label="下次出访时间" align="center" prop="nextVisitTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.nextVisitTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="面访目的" align="center" prop="visitPurpose" />
-        <el-table-column label="是否本月第一次出访" align="center" prop="isFirstVisit">
+        <el-table-column label="是否本月第一次出访" align="center" prop="isFirstVisit" width="80">
+          <template #header>
+            <span style="font-size: 11px; font-weight: bold;">本月第一次出访</span>
+          </template>
           <template #default="scope">
             <dict-tag :options="dc_true_or_false" :value="scope.row.isFirstVisit" />
           </template>
         </el-table-column>
-        <el-table-column label="是否计入外勤项数" align="center" prop="isOutCount">
+        <el-table-column label="是否计入外勤项数" align="center" prop="isOutCount" width="80">
+          <template #header>
+            <span style="font-size: 11px; font-weight: bold;">计入外勤项数</span>
+          </template>
           <template #default="scope">
             <dict-tag :options="dc_true_or_false" :value="scope.row.isOutCount" />
           </template>
         </el-table-column>
-        <el-table-column label="客户地点照片" align="center" prop="placePic1Url" width="100">
+        <el-table-column label="出访定位" align="center" prop="visitAddress" />
+        <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100">
           <template #default="scope">
-            <image-preview :src="scope.row.placePic1Url" :width="50" :height="50" />
+            <image-preview :src="scope.row.placePic1Url" :width="20" :height="20" />
           </template>
         </el-table-column>
-        <el-table-column label="面访记录附件" align="center" prop="outRecord">
+        <el-table-column label="出访记录表" align="center" prop="outRecord" width="100">
           <template #default="scope">
             <div class="contract-cell">
               <el-button v-if="scope.row.outRecord" link type="primary" icon="download"
@@ -112,16 +119,18 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="面访地点" align="center" prop="visitAddress" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px" 
+        fixed="right">
           <template #default="scope">
-            <el-tooltip content="修改" placement="top">
+            <!--修改按钮-->
+            <el-tooltip content="修改">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['customerOutVisit:customerOutVisit:edit']"></el-button>
+                v-hasPermi="['customerOutVisit:customerOutVisit:edit']">修改</el-button>
             </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['customerOutVisit:customerOutVisit:remove']"></el-button>
+            <!--删除按钮-->
+            <el-tooltip content="删除">
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['customerOutVisit:customerOutVisit:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>

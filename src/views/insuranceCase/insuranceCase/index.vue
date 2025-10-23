@@ -85,36 +85,37 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="客户id(客户编号)" align="center" prop="customerId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerId">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="120">
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持员工" align="center" prop="legalSupportName" />
-        <el-table-column label="下单日期" align="center" prop="orderDate" width="180">
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
+        <el-table-column label="下单日期" align="center" prop="orderDate" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="工单号" align="center" prop="insuranceNumber" />
+        <el-table-column label="保费" align="center" prop="premium" width="80" />
+        <el-table-column label="工单号" align="center" prop="insuranceNumber" width="100" />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
-
-        <el-table-column label="原告方" align="center" prop="plaintiff" />
-        <el-table-column label="被告方" align="center" prop="defendant" />
-        <el-table-column label="标的额" align="center" prop="subjectAmount" />
-        <el-table-column label="案由" align="center" prop="caseReason" />
-        <el-table-column label="管辖权法院" align="center" prop="jurisdictionCourt" />
-        <el-table-column label="保费" align="center" prop="premium" />
-        <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="案由" align="center" prop="caseReason" width="140" />
+        <el-table-column label="标的额" align="center" prop="subjectAmount" width="80" />
+       
+        <el-table-column label="原告方" align="center" prop="plaintiff" width="120" />
+        <el-table-column label="被告方" align="center" prop="defendant" width="120" />
+        <el-table-column label="管辖权法院" align="center" prop="jurisdictionCourt" width="100" />
+        <el-table-column label="备注" align="center" prop="remark" width="100" />
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px" 
+          fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['insuranceCase:insuranceCase:edit']"></el-button>
+                v-hasPermi="['insuranceCase:insuranceCase:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['insuranceCase:insuranceCase:remove']"></el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['insuranceCase:insuranceCase:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
