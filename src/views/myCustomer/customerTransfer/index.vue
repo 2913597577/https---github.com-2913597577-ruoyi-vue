@@ -174,7 +174,7 @@
                   <input type="date"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-                <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
+                <!-- <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
                 <td class="p-2 w-64">
                   <el-select v-model="form.inviterId" placeholder="请选择邀约人" filterable>
                     <el-option v-for="user in userList" :key="user.userId"
@@ -187,7 +187,7 @@
                     <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
-                </td>
+                </td> -->
               </tr>
             </table>
           </div>

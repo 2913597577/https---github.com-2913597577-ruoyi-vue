@@ -323,15 +323,16 @@ const handleAdd = async () => {
   dialog.title = "添加客户出访记录";
 
   try {
-    proxy?.$modal.confirm('正在获取当前位置，请稍候...');
+
     const pos = await getCurrentPosition();
+
     const address = await reverseGeocode(pos.lat, pos.lng);
-    // form.value.visitAddress = address;
+    form.value.visitAddress = address;
     console.log(address)
     proxy?.$modal.msgSuccess('已自动获取当前位置');
   } catch (error) {
     console.warn('获取定位失败:', error);
-    proxy?.$modal.msgWarning('无法获取当前位置，请手动填写地址');
+    proxy?.$modal.msgWarning('无法获取当前位置');
   }
 };
 
