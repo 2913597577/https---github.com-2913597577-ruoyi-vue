@@ -128,7 +128,7 @@
         </el-table-column>
         <el-table-column label="客户服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip >
           <template #default="scope">
-            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
+            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
@@ -138,12 +138,15 @@
         <el-table-column label="自然人电话" align="center" prop="additionalContact" width="100" show-overflow-tooltip />
         <el-table-column label="自然人职务" align="center" prop="additionalPosition" width="100" show-overflow-tooltip />
         <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip />
-        <el-table-column label="代账公司" align="center" prop="accountingCompany" width="80" show-overflow-tooltip />
+        <el-table-column label="代账公司" align="center" prop="accountingCompany" width="80" show-overflow-tooltip>
+        <template #default="scope">
+            <dict-tag :options="dc_accounting_company" :value="scope.row.accountingCompany ?? ''" />
+          </template>
+         </el-table-column>
         <el-table-column label="客户描述" align="center" prop="customerDescription" width="100" show-overflow-tooltip />
         <el-table-column label="是否有过法务" align="center" prop="preLegal" width="80" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="[{ label: '否', value: '0' }, { label: '是', value: '1' }]"
-              :value="scope.row.preLegal || ''" />
+            <dict-tag :options="dc_legal_affairs" :value="scope.row.preLegal ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="合作公司名称" align="center" prop="preCompany" width="100" show-overflow-tooltip />
@@ -668,6 +671,7 @@
             </el-descriptions-item>
             <el-descriptions-item label="财务确认">
               <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed !== undefined && viewForm.financeConfirmed !== null ? viewForm.financeConfirmed : ''" />
+              <!-- <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed ?? ''" /> -->
             </el-descriptions-item>
             <el-descriptions-item label="合同编号">
               {{ viewForm.contractCode }}
@@ -676,7 +680,7 @@
               {{ viewForm.contractOssId }}
             </el-descriptions-item>
             <el-descriptions-item label="客户归属城市">
-              {{ viewForm.customerCity }}
+              <dict-tag :options="dc_sercive_city" :value="viewForm.customerCity !== undefined && viewForm.customerCity !== null ? viewForm.customerCity : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="公司名称" label-align="left" align="left" width="60">
               {{ viewForm.companyName }}
@@ -691,9 +695,10 @@
               {{ viewForm.employeeCount }}
             </el-descriptions-item>
             <el-descriptions-item label="是否有代账公司">
-              <span v-if="viewForm.accountingCompany === 0">是</span>
+              <!-- <span v-if="viewForm.accountingCompany === 0">是</span>
               <span v-else-if="viewForm.accountingCompany === 1">否</span>
-              <span v-else-if="viewForm.accountingCompany === 2">不确定</span>
+              <span v-else-if="viewForm.accountingCompany === 2">不确定</span> -->
+              <dict-tag :options="dc_accounting_company" :value="viewForm.accountingCompany !== undefined && viewForm.accountingCompany !== null ? viewForm.accountingCompany : ''" />
             </el-descriptions-item>
             <!-- <el-descriptions-item label="邀约人">
               {{ getUserNameById(viewForm.inviterId) }}
@@ -740,7 +745,7 @@
               <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
             </el-descriptions-item> -->
             <el-descriptions-item label="套餐类型">
-              <dict-tag :options="combo_type" :value="viewForm.serviceType || ''" />
+              <dict-tag :options="combo_type" :value="viewForm.serviceType !== undefined && viewForm.serviceType !== null ? viewForm.serviceType : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="服务周期">
               {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')
@@ -758,7 +763,8 @@
             </el-descriptions-item>
 
             <el-descriptions-item label="以前是否有过公司法务">
-              {{ viewForm.preLegal === 1 ? '是' : '否' }}
+              <!-- {{ viewForm.preLegal === 1 ? '是' : '否' }} -->
+              <dict-tag :options="dc_legal_affairs" :value="viewForm.preLegal !== undefined && viewForm.preLegal !== null ? viewForm.preLegal : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="合作公司名称">
               {{ viewForm.preCompany }}
@@ -823,6 +829,8 @@ import { ElMessage } from 'element-plus';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
+const { dc_accounting_company } = toRefs<any>(proxy?.useDict('dc_accounting_company'));
+const { dc_legal_affairs } = toRefs<any>(proxy?.useDict('dc_legal_affairs'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);

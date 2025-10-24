@@ -145,19 +145,28 @@
        
         <el-table-column label="续费" align="center" prop="actionType" width="100" show-overflow-tooltip />
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
-          <template #default="scope">
+         <!--  <template #default="scope"> -->
             <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
-            <span>{{ scope.row.isRisk ? '是' : '否' }}</span>
+           <!--  <span>{{ scope.row.isRisk ? '是' : '否' }}</span>
+          </template> -->
+          <template #default="scope">
+            <dict-tag :options="dc_false_true" :value="scope.row.isRisk ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="退费客户" align="center" prop="isRefund" width="100">
-          <template #default="scope">
+          <!-- <template #default="scope">
             <span>{{ scope.row.isRefund ? '是' : '否' }}</span>
+          </template> -->
+          <template #default="scope">
+            <dict-tag :options="dc_false_true" :value="scope.row.isRefund ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="转介绍意向客户" align="center" prop="isIntention" width="120">
-          <template #default="scope">
+          <!-- <template #default="scope">
             <span>{{ scope.row.isIntention ? '是' : '否' }}</span>
+          </template> -->
+          <template #default="scope">
+            <dict-tag :options="dc_false_true" :value="scope.row.isIntention ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="备注" align="center" prop="remarks" width="100" show-overflow-tooltip />
@@ -508,7 +517,7 @@
         <el-descriptions-item label="负责人">{{ viewForm.principal }}</el-descriptions-item>
         <el-descriptions-item label="负责人电话">{{ viewForm.principalPhone }}</el-descriptions-item>
         <el-descriptions-item label="客户类型">
-          <dict-tag :options="dc_customer_type" :value="viewForm.customerType" />
+          <dict-tag :options="dc_customer_type" :value="viewForm.customerType ?? ''" />
         </el-descriptions-item>
        <!--  <el-descriptions-item label="签约类型">
           <dict-tag :options="contract_type" :value="viewForm.contractType" />
@@ -517,7 +526,7 @@
           <dict-tag :options="dc_service_type" :value="viewForm.packageType" />
         </el-descriptions-item> -->
         <el-descriptions-item label="套餐类型">
-          <dict-tag :options="combo_type" :value="viewForm.packageType" />
+          <dict-tag :options="combo_type" :value="viewForm.packageType ?? ''" />
         </el-descriptions-item>
        
         <!-- <el-descriptions-item label="甩单人">{{ viewForm.transferPerson }}</el-descriptions-item>
@@ -532,11 +541,20 @@
         <el-descriptions-item label="立案账号">{{ viewForm.caseFillingAccount }}</el-descriptions-item>
         <el-descriptions-item label="立案密码">{{ viewForm.caseFillingPwd }}</el-descriptions-item>
         <el-descriptions-item label="客户服务城市">
-          <dict-tag :options="dc_sercive_city" :value="viewForm.customerCity" />
+          <dict-tag :options="dc_sercive_city" :value="viewForm.customerCity ?? ''" />
         </el-descriptions-item>
-        <el-descriptions-item label="风险客户">{{ viewForm.isRisk ? '是' : '否' }}</el-descriptions-item>
-        <el-descriptions-item label="退费客户">{{ viewForm.isRefund ? '是' : '否' }}</el-descriptions-item>
-        <el-descriptions-item label="意向客户">{{ viewForm.isIntention ? '是' : '否' }}</el-descriptions-item>
+        <el-descriptions-item label="风险客户">
+          <!-- {{ viewForm.isRisk ? '是' : '否' }} -->
+          <dict-tag :options="dc_false_true" :value="viewForm.isRisk ?? ''" />
+        </el-descriptions-item>
+        <el-descriptions-item label="退费客户">
+          <!-- {{ viewForm.isRefund ? '是' : '否' }} -->
+        <dict-tag :options="dc_false_true" :value="viewForm.isRefund ?? ''" />
+        </el-descriptions-item>
+        <el-descriptions-item label="意向客户">
+          <!-- {{ viewForm.isIntention ? '是' : '否' }} -->
+        <dict-tag :options="dc_false_true" :value="viewForm.isIntention ?? ''" />  
+        </el-descriptions-item>
         <el-descriptions-item label="备注">{{ viewForm.remarks }}</el-descriptions-item>
       </el-descriptions>
       <template #footer>
@@ -581,6 +599,7 @@ const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
 const { dc_customer_type } = toRefs<any>(proxy?.useDict('dc_customer_type'));
 const { dc_service_type } = toRefs<any>(proxy?.useDict('dc_service_type'));
 const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
+const { dc_false_true } = toRefs<any>(proxy?.useDict('dc_false_true'));
 const { combo_type } = toRefs<any>(proxy?.useDict('combo_type'));
 const customerInfoList = ref<CustomerInfoVO[]>([]);
 const buttonLoading = ref(false);

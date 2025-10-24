@@ -83,7 +83,7 @@
         <el-table-column label="意向客户" align="center" prop="intendedCustomer" width="120" show-overflow-tooltip />
         <el-table-column label="类型" align="center" prop="type" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="intention_type" :value="scope.row.type" />
+            <dict-tag :options="intention_type" :value="scope.row.type ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="来源" align="center" prop="source" width="100" show-overflow-tooltip />
@@ -91,7 +91,7 @@
         <el-table-column label="介绍人" align="center" prop="introducer" width="120" show-overflow-tooltip />
         <el-table-column label="跟进结果" align="center" prop="followUpResult" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="cumtomer_status" :value="scope.row.followUpResult" />
+            <dict-tag :options="cumtomer_status" :value="scope.row.followUpResult ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
