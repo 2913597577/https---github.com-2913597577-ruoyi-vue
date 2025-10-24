@@ -77,13 +77,13 @@
             <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
-         <el-table-column label="审核人" align="center" prop="auditUserName" width="180" show-overflow-tooltip />
-          <el-table-column label="审核时间" align="center" prop="auditTime" width="150">
+         <el-table-column label="审核人" align="center" prop="auditUserName" width="80" show-overflow-tooltip />
+          <el-table-column label="审核时间" align="center" prop="auditTime" width="80">
           <template #default="scope">
             <span>{{ parseTime(scope.row.auditTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="合同操作" align="center" prop="contractOssId" width="120" show-overflow-tooltip>
+        <el-table-column label="合同操作" align="center" prop="contractOssId" width="100" show-overflow-tooltip>
           <template #default="scope">
             <div class="contract-cell">
               <el-button v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
@@ -95,6 +95,7 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column label="录入人" align="center" prop="inviterId" width="100" show-overflow-tooltip />
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip />
         <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip />
@@ -102,12 +103,12 @@
         <el-table-column label="对接人" align="center" prop="contactPerson" width="100" show-overflow-tooltip />
         <el-table-column label="对接人电话" align="center" prop="contactInfo" width="120" show-overflow-tooltip />
         <el-table-column label="对接人职务" align="center" prop="contactPosition" width="100" show-overflow-tooltip />
-        <el-table-column label="开始时间" align="center" prop="serviceStart" width="150">
+        <el-table-column label="开始时间" align="center" prop="serviceStart" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.serviceStart, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="结束时间" align="center" prop="serviceEnd" width="150">
+        <el-table-column label="结束时间" align="center" prop="serviceEnd" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') }}</span>
           </template>
@@ -125,27 +126,27 @@
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
           </template>
         </el-table-column>
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip >
+        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip >
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
         </el-table-column>
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
-        <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="120" show-overflow-tooltip />
+        <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="100" show-overflow-tooltip />
         <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
 
-        <el-table-column label="自然人电话" align="center" prop="additionalContact" width="120" show-overflow-tooltip />
+        <el-table-column label="自然人电话" align="center" prop="additionalContact" width="100" show-overflow-tooltip />
         <el-table-column label="自然人职务" align="center" prop="additionalPosition" width="100" show-overflow-tooltip />
         <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip />
         <el-table-column label="代账公司" align="center" prop="accountingCompany" width="80" show-overflow-tooltip />
-        <el-table-column label="客户描述" align="center" prop="customerDescription" width="120" show-overflow-tooltip />
+        <el-table-column label="客户描述" align="center" prop="customerDescription" width="100" show-overflow-tooltip />
         <el-table-column label="是否有过法务" align="center" prop="preLegal" width="80" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="[{ label: '否', value: '0' }, { label: '是', value: '1' }]"
               :value="scope.row.preLegal || ''" />
           </template>
         </el-table-column>
-        <el-table-column label="合作公司名称" align="center" prop="preCompany" width="120" show-overflow-tooltip />
+        <el-table-column label="合作公司名称" align="center" prop="preCompany" width="100" show-overflow-tooltip />
         <el-table-column label="不合作原因" align="center" prop="preReason" width="100" show-overflow-tooltip />
         <el-table-column label="公司纠纷及解决方式" align="center" prop="preDiscuss" width="150" show-overflow-tooltip />
         <el-table-column label="待处理事项登记" align="center" prop="pendingMatters" width="150" show-overflow-tooltip />
@@ -220,8 +221,17 @@
                 </el-select>
                 </td>
                 <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span class="text-red-500">*</span></td>
-                 <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 410px;"
+                 <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 180px;"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                    <td class="border-l border-black p-2 w-32 bg-blue-50" style="width: 80px">录入人：<span class="text-red-500">*</span></td>
+                    <!-- <input type="text" v-model="form.contractCode" placeholder="请输入录入人姓名" style="width: 140px;"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"></input> -->
+                    <td class="p-2">
+                  <el-select v-model="form.inviterId" placeholder="请选择录入人" filterable>
+                    <el-option v-for="user in userList" :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
+                  </el-select>
+                    </td>
               </tr>
             </table>
           </div>
@@ -656,7 +666,7 @@
               {{ parseTime(viewForm.createTime, '{y}-{m}-{d}') }}
             </el-descriptions-item>
             <el-descriptions-item label="财务确认">
-              <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed || ''" />
+              <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed !== undefined && viewForm.financeConfirmed !== null ? viewForm.financeConfirmed : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="合同编号">
               {{ viewForm.contractCode }}

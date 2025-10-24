@@ -65,13 +65,13 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="案件" align="center" prop="caseId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" width="180"/>
+        <el-table-column label="客户姓名" align="center" prop="customerName" width="180" show-overflow-tooltip />
         <el-table-column label="跟进日期" align="center" prop="trackingTime" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="案件进展内容" align="center" prop="caseProgress" />
+        <el-table-column label="案件进展内容" align="center" prop="caseProgress" show-overflow-tooltip />
         <el-table-column label="下次跟进日期" align="center" prop="nextTrackingTime" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') }}</span>

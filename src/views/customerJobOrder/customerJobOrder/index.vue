@@ -88,7 +88,7 @@
             <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" prop="customerId" width="160">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="160" show-overflow-tooltip >
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
@@ -97,10 +97,10 @@
         <el-table-column label="法务支持" align="center" prop="legalSupport" width="100" />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <!-- <el-table-column label="源合同地址" align="center" prop="preContractAddress" /> -->
-        <el-table-column label="原合同" align="center" prop="preContractName" width="100" />
+        <el-table-column label="原合同" align="center" prop="preContractName" width="160" show-overflow-tooltip />
         <!-- <el-table-column label="新合同地址" align="center" prop="newContractAddress" /> -->
-        <el-table-column label="新合同" align="center" prop="newContractName" width="100" />
-        <el-table-column label="客户要求" align="center" prop="customerRequirements" width="160" />
+        <el-table-column label="新合同" align="center" prop="newContractName" width="160" show-overflow-tooltip />
+        <el-table-column label="客户要求" align="center" prop="customerRequirements" width="160" show-overflow-tooltip />
         <el-table-column label="交付时间" align="center" prop="deliveryTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.deliveryTime, '{y}-{m}-{d}') }}</span>
@@ -113,7 +113,7 @@
             <span style="font-size: 11px; font-weight: bold;">法务中心接单人</span>
         </template>
          </el-table-column>       
-        <el-table-column label="客户所属方" align="center" prop="remark1" width="100"/>
+        <el-table-column label="客户所属方" align="center" prop="remark1" width="100" show-overflow-tooltip />
 
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />

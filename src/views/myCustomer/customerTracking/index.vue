@@ -74,7 +74,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerId" width="180">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="180" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
@@ -95,7 +95,7 @@
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="回访内容" align="center" prop="customerRemark" />
+        <el-table-column label="回访内容" align="center" prop="customerRemark" show-overflow-tooltip />
         <!-- <el-table-column label="提交状态" align="center" prop="submitStatus">
           <template #default="scope">
             <dict-tag :options="submit_status" :value="scope.row.submitStatus" />

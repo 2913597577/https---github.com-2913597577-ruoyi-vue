@@ -46,13 +46,13 @@
       <el-table v-loading="loading" border :data="customerIntentionTrackingList"
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="意向客户" align="center" prop="customerName" />
+        <el-table-column label="意向客户" align="center" prop="customerName" show-overflow-tooltip />
         <el-table-column label="跟踪时间" align="center" prop="trackingDate">
         <template #default="scope">
             <span>{{ parseTime(scope.row.trackingDate, '{y}-{m}-{d}') }}</span>
         </template>
        </el-table-column>
-       <el-table-column label="跟踪内容" align="center" prop="customerRemark" />
+       <el-table-column label="跟踪内容" align="center" prop="customerRemark" show-overflow-tooltip />
         <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingDate">
         <template #default="scope">
             <span>{{ parseTime(scope.row.nextTrackingDate, '{y}-{m}-{d}') }}</span>

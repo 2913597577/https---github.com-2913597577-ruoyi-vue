@@ -87,12 +87,13 @@
             </span>
           </template>
         </el-table-column>
+        <el-table-column label="录入人" align="center" prop="inviterId" width="80" show-overflow-tooltip />
         <el-table-column label="签约日期" align="center" prop="signDate" width="80">
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" width="120" prop="customerName" />
+        <el-table-column label="客户名称" align="center" width="120" prop="customerName" show-overflow-tooltip />
         <el-table-column label="负责人" align="center" width="80" prop="principal" />
         <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
         <!-- <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip /> -->
@@ -279,22 +280,22 @@
                 </span>
               </el-form-item>
 
-              <el-form-item label="甩单人" prop="transferPerson" class="form-item">
+              <!-- <el-form-item label="甩单人" prop="transferPerson" class="form-item"> -->
                 <!-- <el-input v-model="form.transferPerson" placeholder="请输入甩单人" style="width: 100%"></el-input> -->
-                <el-select v-model="form.transferPerson" placeholder="请选择甩单人" filterable clearable style="width: 100%">
+               <!--  <el-select v-model="form.transferPerson" placeholder="请选择甩单人" filterable clearable style="width: 100%">
                   <el-option v-for="seller in sellerList" :key="seller.userName"
                     :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
                 </el-select>
-              </el-form-item>
+              </el-form-item> -->
             </div>
 
-            <el-form-item label="杀单手" prop="closer" class="form-item-full">
+            <!-- <el-form-item label="杀单手" prop="closer" class="form-item-full"> -->
               <!-- <el-input v-model="form.closer" placeholder="请输入杀单手" style="width: 100%"></el-input> -->
-              <el-select v-model="form.closer" placeholder="杀单手" filterable clearable style="width: 100%">
+             <!--  <el-select v-model="form.closer" placeholder="杀单手" filterable clearable style="width: 100%">
                 <el-option v-for="seller in sellerList" :key="seller.userName"
                   :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
           </div>
 
           <!-- 金额信息分组 -->
