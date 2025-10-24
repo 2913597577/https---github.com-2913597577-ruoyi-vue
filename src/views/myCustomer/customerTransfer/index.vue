@@ -153,15 +153,16 @@
         <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="130" show-overflow-tooltip />
         <el-table-column label="欠款问题登记" align="center" prop="debtDetails" width="120" />
         <el-table-column label="欠款问题备注" align="center" prop="debtRemark" width="120" show-overflow-tooltip />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="250" fixed="right">
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="280" 
+        fixed="right">
           <template #default="scope">
-            <div class="table-action-buttons">
+            <!-- <div class="table-action-buttons"> -->
               <el-button link type="primary" icon="View" @click="handleView(scope.row)">查看</el-button>
               <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
                 @click="handleProcess(scope.row)">处置</el-button>
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
               <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-            </div>
+            <!-- </div> -->
           </template>
         </el-table-column>
       </el-table>

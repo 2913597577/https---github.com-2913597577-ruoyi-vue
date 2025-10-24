@@ -94,7 +94,7 @@
           </template>
         </el-table-column>
         <el-table-column label="客户名称" align="center" width="120" prop="customerName" show-overflow-tooltip />
-        <el-table-column label="负责人" align="center" width="80" prop="principal" />
+        <el-table-column label="负责人" align="center" width="80" prop="principal" show-overflow-tooltip />
         <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
         <!-- <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip /> -->
         <el-table-column label="客户类型" align="center" width="70" prop="customerType">
@@ -161,7 +161,7 @@
           </template>
         </el-table-column>
         <el-table-column label="备注" align="center" prop="remarks" width="100" show-overflow-tooltip />
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="360px"
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="320px"
           fixed="right">
           <template #default="scope">
             <el-button link type="info" icon="View" @click="handleView(scope.row)">
