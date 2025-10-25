@@ -176,6 +176,9 @@ export interface CustomerTransferVO {
 
   auditTime: string;
 
+  performanceInfo:any;
+
+
 
 }
 
@@ -370,6 +373,9 @@ export interface CustomerTransferForm extends BaseEntity {
 
   auditTime?: string;
 
+  performanceInfo?:any;
+
+
 
 }
 
@@ -510,8 +516,10 @@ export interface CustomerTransferQuery extends PageQuery {
   auditUserId?: string;
 
   auditUserName?: string;
-  
+
   auditTime?: string;
+
+  performanceInfo?:any;
 
 
   /**

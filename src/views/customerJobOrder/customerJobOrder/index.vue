@@ -112,7 +112,7 @@
         <template #header>
             <span style="font-size: 11px; font-weight: bold;">法务中心接单人</span>
         </template>
-         </el-table-column>       
+         </el-table-column>
         <el-table-column label="客户所属方" align="center" prop="remark1" width="100" show-overflow-tooltip />
 
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
@@ -122,15 +122,15 @@
         width="300" fixed="right">
           <template #default="scope">
             <el-tooltip content="接工单" placement="top">
-              <el-button v-if="scope.row.processingStatus == 0" link type="success" icon="Menu" @click="handleAccept(scope.row)"
+              <el-button size="small" v-if="scope.row.processingStatus == 0" link type="success" icon="Menu" @click="handleAccept(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']">接工单</el-button>
             </el-tooltip>
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+              <el-button  size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+              <el-button size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:remove']">删除</el-button>
             </el-tooltip>
             <!-- <el-tooltip content="处理" placement="top">
@@ -139,7 +139,7 @@
             </el-tooltip> -->
             <el-tooltip content="合同下载" placement="top" >
               <el-dropdown @command="(command) => handleProcessCommand({ row: scope.row, type: command })">
-                <el-button link type="warning" icon="Download"
+                <el-button size="small" link type="warning" icon="Download"
                   v-hasPermi="['customerJobOrder:customerJobOrder:process']">合同下载</el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
