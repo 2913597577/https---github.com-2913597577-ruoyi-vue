@@ -243,7 +243,7 @@
     <!-- 查看客户跟踪记录对话框 -->
     <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body>
       <el-table :data="viewCustomerTrackings" border>
-        <el-table-column label="跟踪时间" align="center" width="180">
+        <el-table-column label="跟踪时间" align="center" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -267,6 +267,7 @@
           </el-table-column>
           <el-table-column label="风险提示" prop="remark1" show-overflow-tooltip />
           <el-table-column label="处理进度" prop="remark2" show-overflow-tooltip /> -->
+      <el-table-column label="法务支持" prop="legalSupportName" width="100px" show-overflow-tooltip /> 
       </el-table>
       <template #footer>
         <div class="dialog-footer">
