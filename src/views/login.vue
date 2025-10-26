@@ -50,7 +50,7 @@
           <el-button circle :title="proxy.$t('login.social.wechat')" @click="doSocialLogin('wechat')">
             <svg-icon icon-class="wechat" />
           </el-button>
-          <el-button circle :title="proxy.$t('login.social.maxkey')" @click="doSocialLogin('maxkey')">
+          <!-- <el-button circle :title="proxy.$t('login.social.maxkey')" @click="doSocialLogin('maxkey')">
             <svg-icon icon-class="maxkey" />
           </el-button>
           <el-button circle :title="proxy.$t('login.social.topiam')" @click="doSocialLogin('topiam')">
@@ -61,7 +61,7 @@
           </el-button>
           <el-button circle :title="proxy.$t('login.social.github')" @click="doSocialLogin('github')">
             <svg-icon icon-class="github" />
-          </el-button>
+          </el-button> -->
         </el-form-item>
         <el-form-item style="width: 100%">
           <el-button :loading="loading" size="large" type="primary" style="width: 100%" @click.prevent="handleLogin">
