@@ -66,3 +66,11 @@ export const getCaseDetail=()=>{
     method: 'get'
   })
 }
+
+// 获取法务支持业绩统计
+export const getLegalSupportPerformance = () => {
+  return request({
+    url: '/common/getLegalSupportPerformance',
+    method: 'get'
+  })
+}

@@ -17,11 +17,11 @@
               <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="出访时间" prop="visitTime">
-              <el-date-picker clearable v-model="queryParams.visitTime" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.visitTime" type="date" 
                 placeholder="请选择出访时间" />
             </el-form-item>
             <el-form-item label="下次出访时间" prop="nextVisitTime">
-              <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" 
                 placeholder="请选择下次出访时间" />
             </el-form-item>
             <el-form-item label="是否本月第一次出访" prop="isFirstVisit">

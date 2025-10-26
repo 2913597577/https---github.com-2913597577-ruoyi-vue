@@ -29,7 +29,7 @@
               </el-select-v2>
             </el-form-item>
             <el-form-item label="交付时间" prop="deliveryTime">
-              <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" 
                 placeholder="请选择交付时间" />
             </el-form-item>
             <el-form-item label="跟踪记录" prop="trackingId">

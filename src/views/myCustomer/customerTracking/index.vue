@@ -19,7 +19,7 @@
               </el-select>
             </el-form-item> -->
             <el-form-item label="回访时间" prop="trackingTime">
-              <el-date-picker clearable v-model="queryParams.trackingTime" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.trackingTime" type="date" 
                 placeholder="请选择回访时间" />
             </el-form-item>
             <!-- <el-form-item label="提交状态" prop="submitStatus">
@@ -28,7 +28,7 @@
               </el-select>
             </el-form-item> -->
             <el-form-item label="下次回访时间" prop="nextTime">
-              <el-date-picker clearable v-model="queryParams.nextTime" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.nextTime" type="date" 
                 placeholder="请选择下次回访时间" />
             </el-form-item>
             <!-- <el-form-item label="日志类型" prop="isReturn">
