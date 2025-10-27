@@ -164,6 +164,11 @@
         <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="200" show-overflow-tooltip />
         <el-table-column label="欠款问题登记" align="center" prop="debtDetails" width="120" />
         <el-table-column label="欠款问题备注" align="center" prop="debtRemark" width="120" show-overflow-tooltip />
+        <el-table-column label="录入日期" align="center" prop="auditTime" width="80">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="280"
         fixed="right">
           <template #default="scope">
@@ -206,11 +211,11 @@
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
               <tr>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：<span class="text-red-500">*</span></td>
+               <!--  <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：<span class="text-red-500">*</span></td>
                 <td class="p-2 w-32">
                   <input type="date"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
+                </td> -->
                 <!-- <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
                 <td class="p-2 w-64">
                   <el-select v-model="form.inviterId" placeholder="请选择邀约人" filterable>
@@ -268,7 +273,7 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">公司对接人<br>姓名：<span class="text-red-500">*</span>
                 </td>
                 <td class="border-r border-black p-2 w-40">
-                  <el-form-item prop="contactPerson" style="margin-bottom: 0;" :show-message="false"
+                  <el-form-item prop="contactPerson" style="margin-bottom: 0" :show-message="false"
                     hide-required-asterisk>
                     <el-input v-model="form.contactPerson" placeholder="对接人姓名" />
                   </el-form-item>
