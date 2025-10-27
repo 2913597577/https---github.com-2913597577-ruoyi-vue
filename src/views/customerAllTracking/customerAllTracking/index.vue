@@ -102,7 +102,7 @@
         </template>
       </el-table-column>
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
-      <el-table-column label="客户名称" align="center" prop="customerId" width="200">
+      <el-table-column label="客户名称" align="center" prop="customerId" width="200" show-overflow-tooltip>
         <template #default="scope">
           <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
         </template>
@@ -113,7 +113,7 @@
           <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime, '{y}-{m}-{d}') : '' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="跟踪内容" align="center" prop="remark" width="240"/>
+      <el-table-column label="跟踪内容" align="center" prop="remark" width="240" show-overflow-tooltip />
       <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="100">
         <template #default="scope">
           <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') : '' }}</span>
@@ -354,7 +354,7 @@ const handleLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
-      form.legalSupportName = selectedLawyer.userName;
+      form.legalSupportName = selectedLawyer.nickName;
     }
   } else {
     // 清空选择时重置相关字段

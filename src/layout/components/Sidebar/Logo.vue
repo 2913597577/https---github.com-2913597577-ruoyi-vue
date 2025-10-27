@@ -10,7 +10,7 @@
         </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
+        <img v-if="logo" :src="logo" class="sidebar-logo" style="width: 198px; height: 51px; margin-left: 1px" />
         <h1 class="sidebar-title"
           :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">
           <!-- {{ title }} -->

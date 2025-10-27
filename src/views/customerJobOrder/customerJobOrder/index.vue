@@ -29,8 +29,7 @@
               </el-select-v2>
             </el-form-item>
             <el-form-item label="交付时间" prop="deliveryTime">
-              <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择交付时间" />
+              <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" placeholder="请选择交付时间" />
             </el-form-item>
             <el-form-item label="跟踪记录" prop="trackingId">
               <el-input v-model="queryParams.trackingId" placeholder="请输入跟踪记录id" clearable @keyup.enter="handleQuery" />
@@ -88,7 +87,7 @@
             <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" prop="customerId" width="160">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="160" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
@@ -97,10 +96,10 @@
         <el-table-column label="法务支持" align="center" prop="legalSupport" width="100" />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <!-- <el-table-column label="源合同地址" align="center" prop="preContractAddress" /> -->
-        <el-table-column label="原合同" align="center" prop="preContractName" width="100" />
+        <el-table-column label="原合同" align="center" prop="preContractName" width="160" show-overflow-tooltip />
         <!-- <el-table-column label="新合同地址" align="center" prop="newContractAddress" /> -->
-        <el-table-column label="新合同" align="center" prop="newContractName" width="100" />
-        <el-table-column label="客户要求" align="center" prop="customerRequirements" width="160" />
+        <el-table-column label="新合同" align="center" prop="newContractName" width="160" show-overflow-tooltip />
+        <el-table-column label="客户要求" align="center" prop="customerRequirements" width="160" show-overflow-tooltip />
         <el-table-column label="交付时间" align="center" prop="deliveryTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.deliveryTime, '{y}-{m}-{d}') }}</span>
@@ -113,7 +112,7 @@
             <span style="font-size: 11px; font-weight: bold;">法务中心接单人</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户所属方" align="center" prop="remark1" width="100" />
+        <el-table-column label="客户所属方" align="center" prop="remark1" width="100" show-overflow-tooltip />
 
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
@@ -131,7 +130,7 @@
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']" v-has-roles="['LegalCenter']">合同上传</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+              <el-button size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:remove']">删除</el-button>
             </el-tooltip>
             <!-- <el-tooltip content="处理" placement="top">
@@ -140,7 +139,7 @@
             </el-tooltip> -->
             <el-tooltip content="合同下载" placement="top">
               <el-dropdown @command="(command) => handleProcessCommand({ row: scope.row, type: command })">
-                <el-button link type="warning" icon="Download"
+                <el-button size="small" link type="warning" icon="Download"
                   v-hasPermi="['customerJobOrder:customerJobOrder:process']">合同下载</el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -526,7 +525,7 @@ const handleLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
-      form.value.legalSupport = selectedLawyer.userName;
+      form.value.legalSupport = selectedLawyer.nickName;
     }
   } else {
     // 清空选择时重置相关字段
@@ -666,7 +665,7 @@ const handleAddLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
-      addForm.value.legalSupport = selectedLawyer.userName;
+      addForm.value.legalSupport = selectedLawyer.nickName;
     }
   } else {
     // 清空选择时重置相关字段

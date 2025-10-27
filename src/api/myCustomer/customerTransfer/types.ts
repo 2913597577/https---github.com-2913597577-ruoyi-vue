@@ -170,6 +170,15 @@ export interface CustomerTransferVO {
 
   customerCity: string;
 
+  auditUserId: string;
+
+  auditUserName: string;
+
+  auditTime: string;
+
+  performanceInfo:any;
+
+
 
 }
 
@@ -350,13 +359,22 @@ export interface CustomerTransferForm extends BaseEntity {
   inviterId?: string | number;
 
 
-  balancePayType?:string;
+  balancePayType?: string;
 
-  contractCode?:string;
+  contractCode?: string;
 
-  contractOssId?:string;
+  contractOssId?: string;
 
-  customerCity?:string;
+  customerCity?: string;
+
+  auditUserId?: string;
+
+  auditUserName?: string;
+
+  auditTime?: string;
+
+  performanceInfo?:any;
+
 
 
 }
@@ -487,18 +505,27 @@ export interface CustomerTransferQuery extends PageQuery {
    */
   financeConfirmed?: number;
 
-    balancePayType?:string;
+  balancePayType?: string;
 
-  contractCode?:string;
+  contractCode?: string;
 
-  contractOssId?:string;
+  contractOssId?: string;
 
-  customerCity?:string;
+  customerCity?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  auditUserId?: string;
+
+  auditUserName?: string;
+
+  auditTime?: string;
+
+  performanceInfo?:any;
+
+
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }
 
 

@@ -17,12 +17,10 @@
               <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="出访时间" prop="visitTime">
-              <el-date-picker clearable v-model="queryParams.visitTime" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择出访时间" />
+              <el-date-picker clearable v-model="queryParams.visitTime" type="date" placeholder="请选择出访时间" />
             </el-form-item>
             <el-form-item label="下次出访时间" prop="nextVisitTime">
-              <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择下次出访时间" />
+              <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" placeholder="请选择下次出访时间" />
             </el-form-item>
             <el-form-item label="是否本月第一次出访" prop="isFirstVisit">
               <el-select v-model="queryParams.isFirstVisit" placeholder="请选择是否本月第一次出访" clearable>
@@ -73,7 +71,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" width="160" />
+        <el-table-column label="客户姓名" align="center" prop="customerName" width="160" show-overflow-tooltip />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
         <el-table-column label="出访时间" align="center" prop="visitTime" width="100">
@@ -81,7 +79,7 @@
             <span>{{ parseTime(scope.row.visitTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="出访内容" align="center" prop="visitPurpose" width="160" />
+        <el-table-column label="出访内容" align="center" prop="visitPurpose" width="160" show-overflow-tooltip />
         <el-table-column label="下次出访时间" align="center" prop="nextVisitTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.nextVisitTime, '{y}-{m}-{d}') }}</span>
@@ -103,13 +101,13 @@
             <dict-tag :options="dc_true_or_false" :value="scope.row.isOutCount" />
           </template>
         </el-table-column>
-        <el-table-column label="出访定位" align="center" prop="visitAddress" />
-        <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100">
+        <el-table-column label="出访定位" align="center" prop="visitAddress" show-overflow-tooltip />
+        <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100" show-overflow-tooltip>
           <template #default="scope">
             <image-preview :src="scope.row.placePic1Url" :width="20" :height="20" />
           </template>
         </el-table-column>
-        <el-table-column label="出访记录表" align="center" prop="outRecord" width="100">
+        <el-table-column label="出访记录表" align="center" prop="outRecord" width="100" show-overflow-tooltip>
           <template #default="scope">
             <div class="contract-cell">
               <el-button v-if="scope.row.outRecord" link type="primary" icon="download"
@@ -415,7 +413,7 @@ const handleLegalSupportChange = (userId: string) => {
     const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
-      form.value.legalSupportName = selectedLawyer.userName;
+      form.value.legalSupportName = selectedLawyer.nickName;
     }
   } else {
     // 清空选择时重置相关字段

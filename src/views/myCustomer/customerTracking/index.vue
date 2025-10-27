@@ -19,7 +19,7 @@
               </el-select>
             </el-form-item> -->
             <el-form-item label="回访时间" prop="trackingTime">
-              <el-date-picker clearable v-model="queryParams.trackingTime" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.trackingTime" type="date" 
                 placeholder="请选择回访时间" />
             </el-form-item>
             <!-- <el-form-item label="提交状态" prop="submitStatus">
@@ -28,7 +28,7 @@
               </el-select>
             </el-form-item> -->
             <el-form-item label="下次回访时间" prop="nextTime">
-              <el-date-picker clearable v-model="queryParams.nextTime" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.nextTime" type="date" 
                 placeholder="请选择下次回访时间" />
             </el-form-item>
             <!-- <el-form-item label="日志类型" prop="isReturn">
@@ -74,7 +74,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerId" width="180">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="180" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
@@ -95,7 +95,7 @@
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="回访内容" align="center" prop="customerRemark" />
+        <el-table-column label="回访内容" align="center" prop="customerRemark" show-overflow-tooltip />
         <!-- <el-table-column label="提交状态" align="center" prop="submitStatus">
           <template #default="scope">
             <dict-tag :options="submit_status" :value="scope.row.submitStatus" />
@@ -243,7 +243,7 @@
     <!-- 查看客户跟踪记录对话框 -->
     <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body>
       <el-table :data="viewCustomerTrackings" border>
-        <el-table-column label="跟踪时间" align="center" width="180">
+        <el-table-column label="跟踪时间" align="center" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -267,6 +267,7 @@
           </el-table-column>
           <el-table-column label="风险提示" prop="remark1" show-overflow-tooltip />
           <el-table-column label="处理进度" prop="remark2" show-overflow-tooltip /> -->
+      <el-table-column label="法务支持" prop="legalSupportName" width="100px" show-overflow-tooltip /> 
       </el-table>
       <template #footer>
         <div class="dialog-footer">
@@ -409,7 +410,7 @@ const handleLegalSupportChange = (userId: string) => {
       // 设置法务支持名称到 legalSupport 字段
 
 
-      form.value.legalSupportName = selectedLawyer.userName;
+      form.value.legalSupportName = selectedLawyer.nickName;
       console.log(form.value.legalSupportId);
     }
   } else {

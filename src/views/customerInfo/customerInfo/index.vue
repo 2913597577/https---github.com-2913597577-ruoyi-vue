@@ -30,6 +30,12 @@
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" />
             </el-form-item>
+            <el-form-item label="分配状态" prop="isAssigned">
+              <el-select v-model="queryParams.isAssigned" placeholder="是否分配法务支持" clearable>
+                <el-option label="否" :value="0"></el-option>
+                <el-option label="是" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -68,7 +74,7 @@
         <el-table-column label="跟踪记录" align="center" width="80" show-overflow-tooltip>
           <template #default="scope">
             <!-- 详情按钮：点击携带当前行id跳转 -->
-            <el-button link type="primary" icon="View" size="default"
+            <el-button link type="primary" icon="View" size="small"
               @click="handleTrackingDetail(scope.row.transferId)" style="padding: 0 6px;">
               详情
             </el-button>
@@ -81,16 +87,17 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="签约日期" align="center" prop="signDate" width="80">
+        <el-table-column label="录入人" align="center" prop="transferPerson" width="80" show-overflow-tooltip />
+        <el-table-column label="签约日期" align="center" prop="signDate" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" width="120" prop="customerName" />
-        <el-table-column label="负责人" align="center" width="80" prop="principal" />
+        <el-table-column label="客户名称" align="center" width="180" prop="customerName" show-overflow-tooltip />
+        <el-table-column label="负责人" align="center" width="80" prop="principal" show-overflow-tooltip />
         <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
         <!-- <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip /> -->
-        <el-table-column label="客户类型" align="center" width="70" prop="customerType">
+        <el-table-column label="客户类型" align="center" width="80" prop="customerType">
           <template #default="scope">
             <dict-tag :options="dc_customer_type" :value="scope.row.customerType" />
           </template>
@@ -107,7 +114,7 @@
         </el-table-column>
         <el-table-column label="实收金额" width="100" align="center" prop="actualReceipt" show-overflow-tooltip />
         <el-table-column label="尾款金额" width="100" align="center" prop="balance" show-overflow-tooltip />
-        <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip>
+        <!-- <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip>
         <template #default="scope">
          <div class="contract-cell">
             <span v-if="scope.row.contractCode" class="contract-code" @click="handleViewContract(scope.row)"
@@ -117,66 +124,75 @@
                 上传合同
             </el-button>
           </div>
-        </template> 
-        </el-table-column>
+        </template>
+        </el-table-column> -->
         <!-- <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" /> -->
         <!-- <el-table-column label="杀单手" align="center" width="100" prop="closer" /> -->
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
-        
-        <el-table-column label="到期时间" align="center" prop="expireDate" width="80" show-overflow-tooltip>
+
+        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="80" show-overflow-tooltip />
         <el-table-column label="立案密码" align="center" prop="caseFillingPwd" width="80" show-overflow-tooltip />
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip>
+        <el-table-column label="服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
         </el-table-column>
-       
+
         <el-table-column label="续费" align="center" prop="actionType" width="100" show-overflow-tooltip />
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
-          <template #default="scope">
+         <!--  <template #default="scope"> -->
             <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
-            <span>{{ scope.row.isRisk ? '是' : '否' }}</span>
+           <!--  <span>{{ scope.row.isRisk ? '是' : '否' }}</span>
+          </template> -->
+          <template #default="scope">
+            <dict-tag :options="dc_false_true" :value="scope.row.isRisk ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="退费客户" align="center" prop="isRefund" width="100">
-          <template #default="scope">
+          <!-- <template #default="scope">
             <span>{{ scope.row.isRefund ? '是' : '否' }}</span>
+          </template> -->
+          <template #default="scope">
+            <dict-tag :options="dc_false_true" :value="scope.row.isRefund ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="转介绍意向客户" align="center" prop="isIntention" width="120">
-          <template #default="scope">
+          <!-- <template #default="scope">
             <span>{{ scope.row.isIntention ? '是' : '否' }}</span>
+          </template> -->
+          <template #default="scope">
+            <dict-tag :options="dc_false_true" :value="scope.row.isIntention ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="备注" align="center" prop="remarks" width="100" show-overflow-tooltip />
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="360px"
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="320px"
           fixed="right">
           <template #default="scope">
-            <el-button link type="info" icon="View" @click="handleView(scope.row)">
+            <el-button size="small" link type="info" icon="View" @click="handleView(scope.row)">
               查看
             </el-button>
             <!-- 处置按钮 -->
-            <el-button link type="success" icon="Operation" @click="handleTransfer(scope.row)"
+            <el-button size="small" link type="success" icon="Operation" @click="handleTransfer(scope.row)"
               v-hasPermi="['customerInfo:customerInfo:transfer']">
               流转
             </el-button>
             <!-- 修改按钮 -->
-            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+            <el-button size="small" link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
               v-hasPermi="['customerInfo:customerInfo:edit']">
               修改
             </el-button>
             <!-- 删除按钮 -->
-            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+            <el-button size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
               v-hasPermi="['customerInfo:customerInfo:remove']">
               删除
             </el-button>
             <!-- 分配法务支持按钮 -->
-            <el-button link type="warning" icon="Menu" @click="handleAssign(scope.row)"
+            <el-button size="small" link type="warning" icon="Menu" @click="handleAssign(scope.row)"
               v-hasPermi="['customerInfo:customerInfo:assign']">
               分配
             </el-button>
@@ -273,22 +289,22 @@
                 </span>
               </el-form-item>
 
-              <el-form-item label="甩单人" prop="transferPerson" class="form-item">
+              <!-- <el-form-item label="甩单人" prop="transferPerson" class="form-item"> -->
                 <!-- <el-input v-model="form.transferPerson" placeholder="请输入甩单人" style="width: 100%"></el-input> -->
-                <el-select v-model="form.transferPerson" placeholder="请选择甩单人" filterable clearable style="width: 100%">
+               <!--  <el-select v-model="form.transferPerson" placeholder="请选择甩单人" filterable clearable style="width: 100%">
                   <el-option v-for="seller in sellerList" :key="seller.userName"
                     :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
                 </el-select>
-              </el-form-item>
+              </el-form-item> -->
             </div>
 
-            <el-form-item label="杀单手" prop="closer" class="form-item-full">
+            <!-- <el-form-item label="杀单手" prop="closer" class="form-item-full"> -->
               <!-- <el-input v-model="form.closer" placeholder="请输入杀单手" style="width: 100%"></el-input> -->
-              <el-select v-model="form.closer" placeholder="杀单手" filterable clearable style="width: 100%">
+             <!--  <el-select v-model="form.closer" placeholder="杀单手" filterable clearable style="width: 100%">
                 <el-option v-for="seller in sellerList" :key="seller.userName"
                   :label="seller.nickName + '(' + seller.userName + ')'" :value="seller.userName"></el-option>
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
           </div>
 
           <!-- 金额信息分组 -->
@@ -493,38 +509,52 @@
 
     <el-dialog title="客户详情" v-model="viewDialog.visible" width="700px" append-to-body>
       <el-descriptions :column="1" border size="small">
-        <el-descriptions-item label="合同编号" label-align="left" align="left" width="60">
-          {{ viewForm.contractCode }}
-        </el-descriptions-item>
+        <el-descriptions-item label="签约日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+        <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
         <el-descriptions-item label="客户名称">
           {{ viewForm.customerName }}
         </el-descriptions-item>
+        <el-descriptions-item label="负责人">{{ viewForm.principal }}</el-descriptions-item>
+        <el-descriptions-item label="负责人电话">{{ viewForm.principalPhone }}</el-descriptions-item>
         <el-descriptions-item label="客户类型">
-          <dict-tag :options="dc_customer_type" :value="viewForm.customerType" />
+          <dict-tag :options="dc_customer_type" :value="viewForm.customerType ?? ''" />
         </el-descriptions-item>
-        <el-descriptions-item label="签约类型">
+       <!--  <el-descriptions-item label="签约类型">
           <dict-tag :options="contract_type" :value="viewForm.contractType" />
-        </el-descriptions-item>
+        </el-descriptions-item> -->
         <!-- <el-descriptions-item label="套餐类型">
           <dict-tag :options="dc_service_type" :value="viewForm.packageType" />
         </el-descriptions-item> -->
         <el-descriptions-item label="套餐类型">
-          <dict-tag :options="combo_type" :value="viewForm.packageType" />
+          <dict-tag :options="combo_type" :value="viewForm.packageType ?? ''" />
         </el-descriptions-item>
 
-        <el-descriptions-item label="负责人">{{ viewForm.principal }}</el-descriptions-item>
-        <el-descriptions-item label="负责人电话">{{ viewForm.principalPhone }}</el-descriptions-item>
-        <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
-        <el-descriptions-item label="甩单人">{{ viewForm.transferPerson }}</el-descriptions-item>
-        <el-descriptions-item label="杀单手">{{ viewForm.closer }}</el-descriptions-item>
-        <el-descriptions-item label="签约日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
-        <el-descriptions-item label="到期时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+        <!-- <el-descriptions-item label="甩单人">{{ viewForm.transferPerson }}</el-descriptions-item>
+        <el-descriptions-item label="杀单手">{{ viewForm.closer }}</el-descriptions-item> -->
         <el-descriptions-item label="实收金额">{{ viewForm.actualReceipt }}</el-descriptions-item>
         <el-descriptions-item label="尾款金额">{{ viewForm.balance }}</el-descriptions-item>
+        <el-descriptions-item label="合同编号" label-align="left" align="left" width="60">
+          {{ viewForm.contractCode }}
+        </el-descriptions-item>
+        <el-descriptions-item label="到期时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
         <el-descriptions-item label="续费/尾款">{{ viewForm.actionType }}</el-descriptions-item>
-        <el-descriptions-item label="风险客户">{{ viewForm.isRisk ? '是' : '否' }}</el-descriptions-item>
-        <el-descriptions-item label="退费客户">{{ viewForm.isRefund ? '是' : '否' }}</el-descriptions-item>
-        <el-descriptions-item label="意向客户">{{ viewForm.isIntention ? '是' : '否' }}</el-descriptions-item>
+        <el-descriptions-item label="立案账号">{{ viewForm.caseFillingAccount }}</el-descriptions-item>
+        <el-descriptions-item label="立案密码">{{ viewForm.caseFillingPwd }}</el-descriptions-item>
+        <el-descriptions-item label="客户服务城市">
+          <dict-tag :options="dc_sercive_city" :value="viewForm.customerCity ?? ''" />
+        </el-descriptions-item>
+        <el-descriptions-item label="风险客户">
+          <!-- {{ viewForm.isRisk ? '是' : '否' }} -->
+          <dict-tag :options="dc_false_true" :value="viewForm.isRisk ?? ''" />
+        </el-descriptions-item>
+        <el-descriptions-item label="退费客户">
+          <!-- {{ viewForm.isRefund ? '是' : '否' }} -->
+        <dict-tag :options="dc_false_true" :value="viewForm.isRefund ?? ''" />
+        </el-descriptions-item>
+        <el-descriptions-item label="意向客户">
+          <!-- {{ viewForm.isIntention ? '是' : '否' }} -->
+        <dict-tag :options="dc_false_true" :value="viewForm.isIntention ?? ''" />
+        </el-descriptions-item>
         <el-descriptions-item label="备注">{{ viewForm.remarks }}</el-descriptions-item>
       </el-descriptions>
       <template #footer>
@@ -569,6 +599,7 @@ const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
 const { dc_customer_type } = toRefs<any>(proxy?.useDict('dc_customer_type'));
 const { dc_service_type } = toRefs<any>(proxy?.useDict('dc_service_type'));
 const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
+const { dc_false_true } = toRefs<any>(proxy?.useDict('dc_false_true'));
 const { combo_type } = toRefs<any>(proxy?.useDict('combo_type'));
 const customerInfoList = ref<CustomerInfoVO[]>([]);
 const buttonLoading = ref(false);
@@ -642,6 +673,7 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
     caseFillingAccount: undefined,
     caseFillingPwd: undefined,
     customerCity: undefined,
+    isAssigned: undefined,
     params: {
     }
   },
@@ -1256,7 +1288,7 @@ const getLawyerNameById = (lawyerId: string | number) => {
   if (!lawyerId) return '';
   const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
   console.log('lawyer:', lawyer);
-  return lawyer ? `${lawyer.userName}` : '';
+  return lawyer ? `${lawyer.nickName}` : '';
 };
 
 /**
@@ -1269,7 +1301,7 @@ const handleLegalSupportChange = (userId: string) => {
     if (selectedLawyer) {
       // 设置法务支持名称到 legalSupport 字段
       console.log(selectedLawyer)
-      intentionForm.value.legalSupport = selectedLawyer.userName;
+      intentionForm.value.legalSupport = selectedLawyer.nickName;
     }
   } else {
     // 清空选择时重置相关字段

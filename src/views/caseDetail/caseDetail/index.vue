@@ -44,11 +44,11 @@
                 @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="立案日期" prop="filingDate">
-              <el-date-picker clearable v-model="queryParams.filingDate" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.filingDate" type="date" 
                 placeholder="请选择立案日期" />
             </el-form-item>
             <el-form-item label="下次联系时间" prop="nextContactTime">
-              <el-date-picker clearable v-model="queryParams.nextContactTime" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.nextContactTime" type="date" 
                 placeholder="请选择下次联系时间" />
             </el-form-item>
             <el-form-item>
@@ -96,7 +96,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="客户名称" align="center" prop="customerId" width="160">
+        <el-table-column label="客户名称" align="center" prop="customerId" width="160" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
@@ -106,28 +106,28 @@
         <el-table-column label="欠款金额" align="center" prop="debtAmount" width="100" />
         <el-table-column label="剩余欠款" align="center" prop="remainingAmount" width="100" />
         <el-table-column label="联系电话" align="center" prop="contactPhone" width="100" />
-        <el-table-column label="身份证号" align="center" prop="idCard" width="100" />
+        <el-table-column label="身份证号" align="center" prop="idCard" width="140" show-overflow-tooltip />
         <el-table-column label="需求接收时间" align="center" prop="requestReceiveTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.requestReceiveTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="标的" align="center" prop="remark" width="100" />
-        <el-table-column label="证据备注" align="center" prop="evidenceNotes" width="100" />
+        <el-table-column label="标的" align="center" prop="remark" width="100" show-overflow-tooltip />
+        <el-table-column label="证据备注" align="center" prop="evidenceNotes" width="100" show-overflow-tooltip />
         <el-table-column label="立案日期" align="center" prop="filingDate" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.filingDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="立案系统账号" align="center" prop="filingSystemAccount" width="100" />
-        <el-table-column label="立案密码" align="center" prop="filingPassword" width="100" />
+        <el-table-column label="立案系统账号" align="center" prop="filingSystemAccount" width="100" show-overflow-tooltip />
+        <el-table-column label="立案密码" align="center" prop="filingPassword" width="100" show-overflow-tooltip />
         <el-table-column label="下次联系时间" align="center" prop="nextContactTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.nextContactTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法官" align="center" prop="judgeName" width="80" />
-        <el-table-column label="法官电话" align="center" prop="judgePhone" width="100" />
+        <el-table-column label="法官" align="center" prop="judgeName" width="80" show-overflow-tooltip />
+        <el-table-column label="法官电话" align="center" prop="judgePhone" width="100" show-overflow-tooltip />
         <el-table-column label="案件状态" align="center" prop="caseStatus" />
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
         width="200" fixed="right">
@@ -443,7 +443,7 @@ const handleLegalSupportChange = (userId: string) => {
       // 设置法务支持名称到 legalSupport 字段
 
 
-      form.value.legalSupportName = selectedLawyer.userName;
+      form.value.legalSupportName = selectedLawyer.nickName;
 
     }
   } else {
