@@ -59,6 +59,8 @@
             <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
           </template>
       </el-table-column>
+        <!-- <el-table-column label="业绩所属城市" align="center" prop="city" /> -->
+        <el-table-column label="分配人" align="center" prop="createrName" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
