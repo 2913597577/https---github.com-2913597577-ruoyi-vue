@@ -129,7 +129,7 @@
         <!-- <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" /> -->
         <!-- <el-table-column label="杀单手" align="center" width="100" prop="closer" /> -->
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
-
+        <el-table-column label="合同编号" align="center" prop="contractCode" width="100" show-overflow-tooltip />
         <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>

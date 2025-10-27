@@ -49,12 +49,16 @@
 
       <el-table v-loading="loading" border :data="customerPerformanceList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="流转单id" align="center" prop="transferId" />
-        <el-table-column label="业绩所属用户id" align="center" prop="userId" />
-        <el-table-column label="业绩所属用户名字" align="center" prop="userName" />
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
+        <el-table-column label="流转单编号" align="center" prop="transferId" />
+        <!-- <el-table-column label="业绩所属用户id" align="center" prop="userId" /> -->
+        <el-table-column label="业绩所属人" align="center" prop="userName" />
         <el-table-column label="业绩所属金额" align="center" prop="balance" />
-        <el-table-column label="业绩所属城市" align="center" prop="city" />
+        <el-table-column label="业绩所属城市" align="center" prop="city">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
+          </template>
+      </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -103,7 +107,7 @@ import { listCustomerPerformance, getCustomerPerformance, delCustomerPerformance
 import { CustomerPerformanceVO, CustomerPerformanceQuery, CustomerPerformanceForm } from '@/api/customerPerformance/customerPerformance/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const customerPerformanceList = ref<CustomerPerformanceVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);

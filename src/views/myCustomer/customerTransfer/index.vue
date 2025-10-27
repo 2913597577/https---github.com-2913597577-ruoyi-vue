@@ -77,8 +77,8 @@
             <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
-         <el-table-column label="审核人" align="center" prop="auditUserName" width="100" show-overflow-tooltip />
-          <el-table-column label="审核时间" align="center" prop="auditTime" width="120">
+         <el-table-column label="审核人" align="center" prop="auditUserName" width="80" show-overflow-tooltip />
+          <el-table-column label="审核时间" align="center" prop="auditTime" width="80">
           <template #default="scope">
             <span>{{ parseTime(scope.row.auditTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -95,7 +95,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="录入人" align="center" prop="inviterId" width="100" show-overflow-tooltip >
+        <el-table-column label="录入人" align="center" prop="inviterId" width="80" show-overflow-tooltip >
           <template #default="scope">
             <span>{{ getUserNameById(scope.row.inviterId) }}</span>
           </template>
@@ -135,6 +135,7 @@
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity ?? ''" />
           </template>
         </el-table-column>
+        <el-table-column label="合同编号" align="center" prop="contractCode" width="100" show-overflow-tooltip />
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
         <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="100" show-overflow-tooltip />
         <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
@@ -148,7 +149,10 @@
           </template>
          </el-table-column>
         <el-table-column label="客户描述" align="center" prop="customerDescription" width="100" show-overflow-tooltip />
-        <el-table-column label="是否有过法务" align="center" prop="preLegal" width="80" show-overflow-tooltip>
+        <el-table-column label="是否有过法务" align="center" prop="preLegal" width="90" show-overflow-tooltip>
+          <template #header>
+           <span style="font-size: 11px; font-weight: bold;">是否有过法务</span>
+          </template>
           <template #default="scope">
             <dict-tag :options="dc_legal_affairs" :value="scope.row.preLegal ?? ''" />
           </template>
