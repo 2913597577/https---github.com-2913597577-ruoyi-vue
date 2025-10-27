@@ -81,13 +81,17 @@
           <template #default="scope">
             <div class="contract-cell">
               <el-button v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
-              link type="danger" icon="Download">合同下载</el-button>
+                link type="danger" icon="Download">合同下载</el-button>
               <el-button v-if="!scope.row.contractOssId" link type="primary" icon="Upload"
                 @click="handleUpload(scope.row)">
                 上传合同
               </el-button>
             </div>
           </template>
+
+          <!-- v-hasPermi="['myCustomer:customerTransfer:contractDownload']"
+
+          v-hasPermi="['myCustomer:customerTransfer:contractUpload']" -->
         </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip />
@@ -108,7 +112,7 @@
         </el-table-column>
         <el-table-column label="实付金额" align="center" prop="actualPayment" width="100" show-overflow-tooltip />
         <el-table-column label="尾款金额" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
-         <el-table-column label="尾款支付条件" align="center" prop="balancePayType" width="100" show-overflow-tooltip />
+        <el-table-column label="尾款支付条件" align="center" prop="balancePayType" width="100" show-overflow-tooltip />
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="contract_type" :value="scope.row.contractType ?? ''" />
@@ -119,7 +123,7 @@
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
           </template>
         </el-table-column>
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip >
+        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
@@ -209,13 +213,14 @@
                 <td class="border-l border-black p-2 w-32 bg-blue-50">客户归属城市：<span class="text-red-500">*</span></td>
                 <td class="p-2">
                   <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 120px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
+                    <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                      :value="dict.value"></el-option>
+                  </el-select>
                 </td>
-                <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span class="text-red-500">*</span></td>
-                 <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 410px;"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span
+                    class="text-red-500">*</span></td>
+                <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 410px;"
+                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
               </tr>
             </table>
           </div>
@@ -443,7 +448,7 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人1：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="业绩所属人1"
+                  <input type="text" placeholder="业绩所属人1"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：<span class="text-red-500">*</span></td>
@@ -461,17 +466,17 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人2：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="业绩所属人2"
+                  <input type="text" placeholder="业绩所属人2"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="分配业绩金额"
+                  <input type="text" placeholder="分配业绩金额"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
                 <td class="p-2">
-                  <input type="text"  placeholder="所属城市"
+                  <input type="text" placeholder="所属城市"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
               </tr>
@@ -479,7 +484,7 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人3：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="业绩所属人3"
+                  <input type="text" placeholder="业绩所属人3"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
@@ -497,7 +502,7 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人4：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="业绩所属人4"
+                  <input type="text" placeholder="业绩所属人4"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
@@ -763,7 +768,7 @@
       </template>
     </el-dialog>
 
-        <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
+    <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
       <el-form ref="customerintentionFormRef" :model="transferFormData" :rules="rules" label-width="80px">
         <el-form-item label="合同文件" prop="contractOssId">
           <file-upload :limit="1" :fileSize="10" v-model="contract" />
@@ -866,7 +871,7 @@ const initFormData: CustomerTransferForm = {
   contractOssId: undefined,
 
   customerCity: undefined,
-  
+
 }
 const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   form: { ...initFormData },
@@ -937,7 +942,7 @@ const transferInfoDialog = reactive<DialogOption>({
   title: ''
 });
 
-const transferFormData= ref({
+const transferFormData = ref({
   companyName: undefined,
   contactPerson: undefined,
   contactInfo: undefined,
@@ -980,7 +985,7 @@ const transferFormData= ref({
   contractOssId: undefined,
 
   customerCity: undefined,
-  
+
 });
 
 const { queryParams, form, rules } = toRefs(data);
@@ -1047,10 +1052,10 @@ const handleUpload = async (row: CustomerTransferVO) => {
     return;
   }
 
-   const res = await getCustomerTransfer(_id);
-   Object.assign(transferFormData.value, res.data);
-   transferInfoDialog.visible = true;
-   transferInfoDialog.title = "上传合同";
+  const res = await getCustomerTransfer(_id);
+  Object.assign(transferFormData.value, res.data);
+  transferInfoDialog.visible = true;
+  transferInfoDialog.title = "上传合同";
 };
 
 const customerInfoDialogCancel = () => {

@@ -109,25 +109,26 @@
         <!-- <el-table-column label="跟踪记录id" align="center" prop="trackingId" />
         <el-table-column label="处理人id" align="center" prop="contractHandler" /> -->
         <el-table-column label="法务中心接单人" align="center" prop="contractHandlerName" width="100">
-        <template #header>
+          <template #header>
             <span style="font-size: 11px; font-weight: bold;">法务中心接单人</span>
-        </template>
-         </el-table-column>       
-        <el-table-column label="客户所属方" align="center" prop="remark1" width="100"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="客户所属方" align="center" prop="remark1" width="100" />
 
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
         <el-table-column label="备注3" align="center" prop="remark3" /> -->
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
-        width="300" fixed="right">
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="300"
+          fixed="right">
           <template #default="scope">
             <el-tooltip content="接工单" placement="top">
-              <el-button v-if="scope.row.processingStatus == 0" link type="success" icon="Menu" @click="handleAccept(scope.row)"
-                v-hasPermi="['customerJobOrder:customerJobOrder:edit']">接工单</el-button>
+              <el-button v-if="scope.row.processingStatus == 0" link type="success" icon="Menu"
+                @click="handleAccept(scope.row)" v-hasPermi="['customerJobOrder:customerJobOrder:edit']"
+                v-has-roles="['LegalCenter']">接工单</el-button>
             </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['customerJobOrder:customerJobOrder:edit']">修改</el-button>
+                v-hasPermi="['customerJobOrder:customerJobOrder:edit']" v-has-roles="['LegalCenter']">合同上传</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
               <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
@@ -137,7 +138,7 @@
               <el-button link type="primary" icon="Download" @click="handleProcess(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:process']">下载</el-button>
             </el-tooltip> -->
-            <el-tooltip content="合同下载" placement="top" >
+            <el-tooltip content="合同下载" placement="top">
               <el-dropdown @command="(command) => handleProcessCommand({ row: scope.row, type: command })">
                 <el-button link type="warning" icon="Download"
                   v-hasPermi="['customerJobOrder:customerJobOrder:process']">合同下载</el-button>
@@ -591,6 +592,7 @@ const acceptDialog = reactive({
  */
 const handleAccept = (row: CustomerJobOrderVO) => {
   // 检查工单是否已被接收
+  console.log(row)
   if (row.processingStatus !== 0) {
     proxy?.$modal.msgWarning("该工单已被接收，不能重复接收");
     return;
