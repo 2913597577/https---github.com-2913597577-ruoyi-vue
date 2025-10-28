@@ -7,32 +7,46 @@
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="财务确认" prop="financeConfirmed" label-width="68px">
               <el-select v-model="queryParams.financeConfirmed" placeholder="请选择财务确认状态" clearable
-                @keyup.enter="handleQuery">
+                @keyup.enter="handleQuery" style="width: 160px">
                 <el-option v-for="item in financeStatusList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
+                  :value="item.value" align="center" ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="公司名称" prop="companyName" label-width="68px">
-              <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" style="width: 160px" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="对接人" prop="contactPerson" label-width="68px">
-              <el-input v-model="queryParams.contactPerson" placeholder="请输入公司对接人" clearable
+              <el-input v-model="queryParams.contactPerson" placeholder="请输入公司对接人" style="width: 160px" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
-            <!-- <el-form-item label="尾款金额" prop="balanceStatus" label-width="68px">
-              <el-input v-model="queryParams.balanceStatus" placeholder="尾款金额" clearable
+            <el-form-item label="尾款金额" prop="balanceStatus" label-width="68px">
+              <el-input v-model="queryParams.balanceStatus" placeholder="尾款金额" style="width: 160px" clearable
                 @keyup.enter="handleQuery" />
-            </el-form-item> -->
+            </el-form-item>
             <!-- <el-form-item label="签约类型" prop="signType" label-width="68px">
               <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
+            <el-form-item label="客户归属城市" prop="customerCity" label-width="88px">
+              <el-select v-model="queryParams.customerCity" placeholder="请选择客户归属城市" clearable
+              @change="handleQuery" style="width: 160px">
+                <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                  :value="dict.value" align="center" ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="开票状态" prop="invoiceStatus" label-width="68px">
+              <el-select v-model="queryParams.invoiceStatus" placeholder="请选择开票状态" clearable
+                @keyup.enter="handleQuery" style="width: 160px">
+                <el-option v-for="item in financeStatusList" :key="item.value" :label="item.label"
+                  :value="item.value" align="center" ></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="开始时间" prop="serviceStart" label-width="68px">
               <el-date-picker clearable v-model="queryParams.serviceStart" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择服务周期开始时间" />
+                placeholder="请选择服务开始时间" style="width: 160px" />
             </el-form-item>
             <el-form-item label="结束时间" prop="serviceEnd" label-width="68px">
               <el-date-picker clearable v-model="queryParams.serviceEnd" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择服务周期结束时间" />
+                placeholder="请选择服务结束时间" style="width: 160px" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -136,6 +150,9 @@
           </template>
         </el-table-column>
         <el-table-column label="合同编号" align="center" prop="contractCode" width="100" show-overflow-tooltip />
+        <el-table-column label="开票要求" align="center" prop="invoiceRequirements" width="100" show-overflow-tooltip />
+        <el-table-column label="开票状态" align="center" prop="invoiceStatus" width="100" show-overflow-tooltip />
+        <el-table-column label="开票内容" align="center" prop="invoiceContent" width="100" show-overflow-tooltip />
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
         <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="100" show-overflow-tooltip />
         <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
