@@ -36,7 +36,7 @@
             <el-form-item label="开票状态" prop="invoiceStatus" label-width="68px">
               <el-select v-model="queryParams.invoiceStatus" placeholder="请选择开票状态" clearable
                 @keyup.enter="handleQuery" style="width: 160px">
-                <el-option v-for="item in financeStatusList" :key="item.value" :label="item.label"
+                <el-option v-for="item in invoiceStatusList" :key="item.value" :label="item.label"
                   :value="item.value" align="center" ></el-option>
               </el-select>
             </el-form-item>
@@ -150,8 +150,16 @@
           </template>
         </el-table-column>
         <el-table-column label="合同编号" align="center" prop="contractCode" width="100" show-overflow-tooltip />
-        <el-table-column label="开票要求" align="center" prop="invoiceRequirements" width="100" show-overflow-tooltip />
-        <el-table-column label="开票状态" align="center" prop="invoiceStatus" width="100" show-overflow-tooltip />
+        <el-table-column label="开票要求" align="center" prop="invoiceRequirements" width="100" show-overflow-tooltip >
+        <template #default="scope">
+            <dict-tag :options="dc_invoice_requirement" :value="scope.row.invoiceRequirements ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="开票状态" align="center" prop="invoiceStatus" width="100" show-overflow-tooltip >
+          <template #default="scope">
+            <dict-tag :options="dc_invoice_status" :value="scope.row.invoiceStatus ?? ''" />
+          </template>
+        </el-table-column>
         <el-table-column label="开票内容" align="center" prop="invoiceContent" width="100" show-overflow-tooltip />
         <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
         <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="100" show-overflow-tooltip />
@@ -427,12 +435,10 @@
 
               <!-- 常法版本与服务周期 -->
               <tr class="border-b border-black">
-
                 <td class="border-r border-black p-2 bg-blue-50">套餐类型：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2">
                   <select v-model="form.serviceType"  style="width: 180px"
                     class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-
                     <option v-for="dict in combo_type" :key="dict.value" :value="dict.value">
                       {{ dict.label }}
                     </option>
@@ -441,33 +447,14 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：<span class="text-red-500">*</span></td>
                 <td colspan="2" class="border-r border-black p-2">
                   <div class="flex gap-2">
-                    <input type="date" v-model="form.serviceStart" placeholder="开始日期"  style="width: 120px"
+                    <input type="date" v-model="form.serviceStart" placeholder="开始日期"  style="width: 180px"
                       class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                     <span class="self-center text-gray-500">至</span>
-                    <input type="date" v-model="form.serviceEnd" placeholder="结束日期"  style="width: 120px"
+                    <input type="date" v-model="form.serviceEnd" placeholder="结束日期"  style="width: 180px"
                       class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                   </div>
                 </td>
-               <!--  <td class="p-2 w-48 bg-blue-50">开票要求：</td>
-                <td class="p-2">
-                  <select v-model="form.financeConfirmed"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                    <option value="">选择状态</option>
-                    <option value="1">已确认</option>
-                    <option value="0">未确认</option>
-                  </select>
-                </td> -->
-                <td class="p-2 bg-blue-50" style="width: 100px">开票要求：<span class="text-red-500">*</span></td>
-                <td class="p-2" style="width: 120px">
-                  <select v-model="form.invoiceRequirements" style="width: 120px"
-                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                    <option v-for="dict in dc_invoice_requirement" :key="dict.value" :value="dict.value">
-                      {{ dict.label }}
-                    </option>
-                  </select>
-                </td>
               </tr>
-
               <!-- 财务签字 -->
               <!-- <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">财务签字：</td>
@@ -476,6 +463,35 @@
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
               </tr> -->
+              <!--发票情况-->
+           <tr class="border-b border-black">
+                <td class="p-2 bg-blue-50" style="width: 100px">开票要求：<span class="text-red-500">*</span></td>
+                <td class="p-2" style="width: 120px">
+                  <select v-model="form.invoiceRequirements" style="width: 180px"
+                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300" >
+                    <option v-for="dict in dc_invoice_requirement" :key="dict.value" :value="dict.value">
+                      {{ dict.label }}
+                    </option>
+                  </select>
+                </td>
+
+                <td class="p-2 bg-blue-50" style="width: 100px">开票状态：<span class="text-red-500">*</span></td>
+                <td class="p-2" style="width: 120px">
+                  <select v-model="form.invoiceStatus" style="width: 180px"
+                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300" >
+                    <option v-for="dict in dc_invoice_status" :key="dict.value" :value="dict.value">
+                      {{ dict.label }}
+                    </option>
+                  </select>
+                </td>
+                <td class="border-r border-black p-2 bg-blue-50" style="width: 200px">开票内容：</td>
+                <td class="p-2" style="width: 160px">
+                  <input type="text" v-model="form.invoiceContent" placeholder="请输入开票内容" style="width: 160px"
+                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                </td>
+              </tr>
+
+
 
               <!-- 律师咨询情况 -->
               <tr class="border-b border-black">
@@ -815,8 +831,11 @@
               }}
             </el-descriptions-item>
 
-            <el-descriptions-item label="财务签字">
+            <!-- <el-descriptions-item label="财务签字">
               {{ viewForm.financeSignature }}
+            </el-descriptions-item> -->
+            <el-descriptions-item label="开票状态">
+              <dict-tag :options="dc_invoice_status" :value="viewForm.invoiceStatus !== undefined && viewForm.invoiceStatus !== null ? viewForm.invoiceStatus : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="律师咨询情况">
               {{ viewForm.lawyerConsultation }}
@@ -895,6 +914,7 @@ const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const { dc_accounting_company } = toRefs<any>(proxy?.useDict('dc_accounting_company'));
 const { dc_legal_affairs } = toRefs<any>(proxy?.useDict('dc_legal_affairs'));
 const { dc_invoice_requirement } = toRefs<any>(proxy?.useDict('dc_invoice_requirement'));
+const { dc_invoice_status } = toRefs<any>(proxy?.useDict('dc_invoice_status'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -1113,6 +1133,11 @@ const financeStatusList = [
   { value: 0, label: '待审核' },
   { value: 1, label: '已通过' },
   { value: 2, label: '未通过' }
+];
+
+const invoiceStatusList = [
+  { value: 0, label: '未开票' },
+  { value: 1, label: '已开票' }
 ];
 /** 查询客户信息录入列表 */
 const getList = async () => {
