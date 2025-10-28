@@ -178,6 +178,12 @@ export interface CustomerTransferVO {
 
   performanceInfo:any;
 
+  invoiceRequirements:string;
+
+  invoiceContent:string;
+
+  invoiceStatus:number;
+
 
 
 }
@@ -375,6 +381,11 @@ export interface CustomerTransferForm extends BaseEntity {
 
   performanceInfo?:any;
 
+  invoiceRequirements?:string;
+
+  invoiceContent?:string;
+
+  invoiceStatus?:number;
 
 
 }
@@ -526,6 +537,13 @@ export interface CustomerTransferQuery extends PageQuery {
    * 日期范围参数
    */
   params?: any;
+
+  invoiceRequirements?:string;
+
+  invoiceContent?:string;
+
+  invoiceStatus?:number;
+
 }
 
 

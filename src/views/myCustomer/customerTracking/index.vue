@@ -80,11 +80,6 @@
           </template>
         </el-table-column>
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
-        <!-- <el-table-column label="跟踪类型" align="center" prop="trackingType">
-          <template #default="scope">
-            <dict-tag :options="customer_tracking_type" :value="scope.row.trackingType" />
-          </template>
-        </el-table-column> -->
         <!-- <el-table-column label="跟踪状态" align="center" prop="cumtomerStatus">
           <template #default="scope">
             <dict-tag :options="cumtomer_status" :value="scope.row.cumtomerStatus" />
@@ -110,6 +105,11 @@
         <!-- <el-table-column label="风险提示" align="center" prop="remark1" />
         <el-table-column label="处理进度" align="center" prop="remark2" /> -->
         <!-- <el-table-column label="备注" align="center" prop="remark3" /> -->
+        <el-table-column label="回访分类" align="center" prop="trackingType" width="120">
+          <template #default="scope">
+            <dict-tag :options="dc_follow_classification" :value="scope.row.trackingType ?? ''" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
           width="200" fixed="right">
           <template #default="scope">
@@ -148,6 +148,12 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="回访分类" prop="trackingType">
+          <el-select v-model="form.trackingType" placeholder="请选择回访类型">
+            <el-option v-for="dict in dc_follow_classification" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
@@ -158,12 +164,7 @@
         <el-form-item label="回访记录" prop="customerRemark">
           <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <!-- <el-form-item label="跟踪类型" prop="trackingType">
-          <el-select v-model="form.trackingType" placeholder="请选择跟踪类型">
-            <el-option v-for="dict in customer_tracking_type" :key="dict.value" :label="dict.label"
-              :value="parseInt(dict.value)"></el-option>
-          </el-select>
-        </el-form-item> -->
+       
         <!-- <el-form-item label="跟踪状态" prop="cumtomerStatus">
           <el-select v-model="form.cumtomerStatus" placeholder="请选择跟踪状态">
             <el-option v-for="dict in cumtomer_status" :key="dict.value" :label="dict.label"
@@ -243,18 +244,18 @@
     <!-- 查看客户跟踪记录对话框 -->
     <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body>
       <el-table :data="viewCustomerTrackings" border>
-        <el-table-column label="跟踪时间" align="center" width="100">
+        <el-table-column label="回访时间" align="center" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="跟踪记录" prop="customerRemark" show-overflow-tooltip />
-        <!-- <el-table-column label="跟踪类型" align="center" width="100">
+        <el-table-column label="回访内容" prop="customerRemark" align="center"  show-overflow-tooltip />
+        <el-table-column label="回访分类" align="center" width="100">
             <template #default="scope">
-              <dict-tag :options="customer_tracking_type" :value="scope.row.trackingType" />
+              <dict-tag :options="dc_follow_classification" :value="scope.row.trackingType ?? ''" />
             </template>
           </el-table-column>
-          <el-table-column label="跟踪状态" align="center" width="100">
+         <!--  <el-table-column label="跟踪状态" align="center" width="100">
             <template #default="scope">
               <dict-tag :options="cumtomer_status" :value="scope.row.cumtomerStatus" />
             </template>
@@ -267,7 +268,7 @@
           </el-table-column>
           <el-table-column label="风险提示" prop="remark1" show-overflow-tooltip />
           <el-table-column label="处理进度" prop="remark2" show-overflow-tooltip /> -->
-      <el-table-column label="法务支持" prop="legalSupportName" width="100px" show-overflow-tooltip /> 
+      <el-table-column label="法务支持" prop="legalSupportName" align="center" width="100px" show-overflow-tooltip /> 
       </el-table>
       <template #footer>
         <div class="dialog-footer">
@@ -291,7 +292,7 @@ import { useRoute } from 'vue-router';  // 用于接收路由参数
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { customer_tracking_type, cumtomer_status, submit_status } = toRefs<any>(proxy?.useDict('customer_tracking_type', 'cumtomer_status', 'submit_status'));
-
+const {dc_follow_classification} = toRefs<any>(proxy?.useDict('dc_follow_classification'));
 const customerTrackingList = ref<CustomerTrackingVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);

@@ -204,7 +204,7 @@
 
           <!-- 流转单标题 -->
           <div class="text-center py-3 border-b border-black mb-1 mt-0">
-            <h1 class="text-2xl font-bold text-blue-700">成交客户内部流转单</h1>
+            <h1 class="text-2xl font-bold text-blue-500">成交客户内部流转单</h1>
           </div>
 
           <!-- 交易日期与人员信息 -->
@@ -232,7 +232,7 @@
                 </td> -->
                 <td class="border-l border-black p-2 w-32 bg-blue-50">客户归属城市：<span class="text-red-500">*</span></td>
                 <td class="p-2">
-                  <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 120px">
+                  <el-select v-model="form.customerCity" placeholder="请选择服务城市" size="default" style="width: 140px">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
                     :value="dict.value"></el-option>
                 </el-select>
@@ -273,10 +273,12 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">公司对接人<br>姓名：<span class="text-red-500">*</span>
                 </td>
                 <td class="border-r border-black p-2 w-40">
-                  <el-form-item prop="contactPerson" style="margin-bottom: 0" :show-message="false"
+                  <!-- <el-form-item prop="contactPerson" style="margin-bottom: 0" :show-message="false"
                     hide-required-asterisk>
                     <el-input v-model="form.contactPerson" placeholder="对接人姓名" />
-                  </el-form-item>
+                  </el-form-item> -->
+                  <input type="text" v-model="form.contactPerson" placeholder="对接人姓名"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）<span class="text-red-500">*</span>
                 </td>
@@ -379,38 +381,40 @@
 
           <!-- 签约情况区域 -->
           <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
-            <h2 class="text-lg font-bold text-blue-800">签约情况</h2>
+            <h2 class="text-lg font-bold text-blue-500">签约情况</h2>
           </div>
           <div class="border-b border-black mb-1 mt-0">
-            <table class="w-full border-collapse">
+            <table class="border-collapse">
               <!-- 金额与签约类型 -->
               <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">实收金额：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2 w-40">
-                  <el-form-item prop="actualPayment" style="margin-bottom: 0;" :show-message="false"
+                <td class="border-r border-black p-2 bg-blue-50" style="width: 300px">实收金额：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2" style="width: 180px">
+                  <!-- <el-form-item prop="actualPayment" style="margin-bottom: 0;" :show-message="false"
                     hide-required-asterisk>
-                    <el-input v-model="form.actualPayment" placeholder="实收金额" type="number" />
-                  </el-form-item>
+                    <el-input v-model="form.actualPayment" placeholder="实收金额(数字)" type="number" />
+                  </el-form-item> -->
+                  <input type="number" v-model="form.actualPayment" placeholder="实收金额(数字)" style="width: 180px"
+                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">尾款金额：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2 flex-1">
-                  <input type="text" v-model="form.balanceStatus" placeholder="尾款金额,没有填0"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                <td class="border-r border-black p-2 bg-blue-50" style="width: 220px">尾款金额：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2" style="width: 180px">
+                  <input type="number" v-model="form.balanceStatus" placeholder="尾款金额(数字),没有填0" style="width: 180px"
+                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-                <td class="border-r border-black p-2 w-48 bg-blue-50">尾款支付条件：</td>
-                <td class="p-2">
-                  <input type="text" v-model="form.balancePayType" placeholder="尾款支付条件"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                <td class="border-r border-black p-2 bg-blue-50" style="width: 200px">尾款支付条件：</td>
+                <td class="p-2" style="width: 160px">
+                  <input type="text" v-model="form.balancePayType" placeholder="尾款支付条件" style="width: 160px"
+                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
               </tr>
 
               <!-- 常法版本与服务周期 -->
               <tr class="border-b border-black">
 
-                <td class="border-r border-black p-2 w-32 bg-blue-50">套餐类型：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2 w-40">
-                  <select v-model="form.serviceType"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                <td class="border-r border-black p-2 bg-blue-50">套餐类型：<span class="text-red-500">*</span></td>
+                <td class="border-r border-black p-2">
+                  <select v-model="form.serviceType"  style="width: 180px"
+                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
 
                     <option v-for="dict in combo_type" :key="dict.value" :value="dict.value">
                       {{ dict.label }}
@@ -420,14 +424,14 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：<span class="text-red-500">*</span></td>
                 <td colspan="2" class="border-r border-black p-2">
                   <div class="flex gap-2">
-                    <input type="date" v-model="form.serviceStart" placeholder="开始日期"
-                      class="w-1/3 p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                    <input type="date" v-model="form.serviceStart" placeholder="开始日期"  style="width: 120px"
+                      class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                     <span class="self-center text-gray-500">至</span>
-                    <input type="date" v-model="form.serviceEnd" placeholder="结束日期"
-                      class="w-1/3 p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                    <input type="date" v-model="form.serviceEnd" placeholder="结束日期"  style="width: 120px"
+                      class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                   </div>
                 </td>
-                <!-- <td class="p-2 w-48 bg-blue-50">财务确<br>认状态：</td>
+               <!--  <td class="p-2 w-48 bg-blue-50">开票要求：</td>
                 <td class="p-2">
                   <select v-model="form.financeConfirmed"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
@@ -436,6 +440,15 @@
                     <option value="0">未确认</option>
                   </select>
                 </td> -->
+                <td class="p-2 bg-blue-50" style="width: 100px">开票要求：<span class="text-red-500">*</span></td>
+                <td class="p-2" style="width: 120px">
+                  <select v-model="form.invoiceRequirements" style="width: 120px"
+                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                    <option v-for="dict in dc_invoice_requirement" :key="dict.value" :value="dict.value">
+                      {{ dict.label }}
+                    </option>
+                  </select>
+                </td>
               </tr>
 
               <!-- 财务签字 -->
@@ -449,7 +462,7 @@
 
               <!-- 律师咨询情况 -->
               <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">律师咨询情况：</td>
+                <td class="border-r border-black p-2 bg-blue-50">律师咨询情况：</td>
                 <td colspan="5" class="p-2">
                   <textarea v-model="form.lawyerConsultation" placeholder="请描述是否咨询律师、是否给客户约定所交费用包含律师费等"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
@@ -471,7 +484,7 @@
 
           <!--业绩归属登记-->
           <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
-            <h2 class="text-lg font-bold text-blue-800">业绩归属登记</h2>
+            <h2 class="text-lg font-bold text-blue-500">业绩归属登记</h2>
           </div>
           <div class="border-b border-black mb-1 mt-0">
             <table class="w-full border-collapse">
@@ -479,19 +492,19 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人1：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[0].userId" placeholder="请选择业绩所属人1" filterable @change="changeUser(0)">
+                  <el-select v-model="form.performanceInfo[0].userId" size="default" placeholder="请选择业绩所属人1" filterable @change="changeUser(0)">
                     <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text" placeholder="分配业绩金额" v-model="form.performanceInfo[0].balance"
+                  <input type="number" placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[0].balance"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[0].city" placeholder="请选择业绩所属城市" style="width: 200px">
+                  <el-select v-model="form.performanceInfo[0].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
                     :value="dict.value"></el-option>
                 </el-select>
@@ -501,19 +514,19 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人2：</td>
                 <td class="border-r border-black p-2 flex-1">
-                 <el-select v-model="form.performanceInfo[1].userId" placeholder="请选择业绩所属人2" filterable @change="changeUser(1)">
+                 <el-select v-model="form.performanceInfo[1].userId" size="default" placeholder="请选择业绩所属人2" filterable @change="changeUser(1)">
                     <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="分配业绩金额" v-model="form.performanceInfo[1].balance"
+                  <input type="number"  placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[1].balance"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[1].city" placeholder="请选择业绩所属城市" style="width: 200px">
+                  <el-select v-model="form.performanceInfo[1].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
                     :value="dict.value"></el-option>
                 </el-select>
@@ -523,19 +536,19 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人3：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[2].userId" placeholder="请选择业绩所属人3" filterable @change="changeUser(2)">
+                  <el-select v-model="form.performanceInfo[2].userId" size="default" placeholder="请选择业绩所属人3" filterable @change="changeUser(2)">
                     <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="分配业绩金额" v-model="form.performanceInfo[2].balance"
+                  <input type="number"  placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[2].balance"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[2].city" placeholder="请选择业绩所属城市" style="width: 200px">
+                  <el-select v-model="form.performanceInfo[2].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
                     :value="dict.value"></el-option>
                 </el-select>
@@ -545,19 +558,19 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人4：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[3].userId" placeholder="请选择业绩所属人4" filterable @change="changeUser(3)">
+                  <el-select v-model="form.performanceInfo[3].userId" size="default" placeholder="请选择业绩所属人4" filterable @change="changeUser(3)">
                     <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="分配业绩金额" v-model="form.performanceInfo[3].balance"
+                  <input type="number"  placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[3].balance"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
                 <td class="p-2">
-                  <el-select v-model="form.performanceInfo[3].city" placeholder="请选择业绩所属城市" style="width: 200px">
+                  <el-select v-model="form.performanceInfo[3].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
                     :value="dict.value"></el-option>
                 </el-select>
@@ -569,9 +582,9 @@
 
           <!-- 客户情况概述 -->
           <div class=" text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
-            <h2 class="text-lg font-bold text-blue-800">客户情况概述</h2>
+            <h2 class="text-lg font-bold text-blue-500">客户情况概述</h2>
           </div>
-          <div class="border-b border-black mb-1 mt-0">
+          <div class="border border-black mb-1 mt-0">
             <table class="w-full border-collapse">
               <!-- 以前是否有法务 -->
               <tr class="border-b border-black">
@@ -590,10 +603,10 @@
                     </label>
                     <span class="ml-4 whitespace-nowrap text-gray-700">合作公司名称：</span>
                     <input type="text" v-model="form.preCompany" placeholder="合作公司名称"
-                      class="flex-1 p-1 border-b border-gray-400 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                      class="flex-1 p-1 border border-gray-300 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                     <span class="ml-4 whitespace-nowrap text-gray-700">不合作原因：</span>
                     <input type="text" v-model="form.preReason" placeholder="不合作原因"
-                      class="flex-1 p-1 border-b border-gray-400 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                      class="flex-1 p-1 border border-gray-300 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                   </div>
                 </td>
               </tr>
@@ -604,8 +617,8 @@
                   <div class="flex items-start gap-2">
                     <span class="whitespace-nowrap pt-1 text-gray-700">公司以前出现过的纠纷及解决方式：</span>
                     <textarea v-model="form.preDiscuss" placeholder="请详细描述纠纷及解决方式"
-                      class="flex-1 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                      rows="2"></textarea>
+                    class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[50px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                  </textarea>
                   </div>
                 </td>
               </tr>
@@ -616,8 +629,8 @@
                   <div class="leading-relaxed">
                     <span class="text-gray-700">待处理事项登记：劳资纠纷、合同纠纷、借贷纠纷、承揽纠纷、财税问题、执行案件等</span>
                     <textarea v-model="form.pendingRemark"
-                      class="w-full mt-2 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                      rows="2"></textarea>
+                    class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[50px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                  </textarea>
                   </div>
                 </td>
               </tr>
@@ -628,8 +641,8 @@
                   <div class="leading-relaxed">
                     <span class="text-gray-700">欠款问题请详细登记：相关主体、已知债务人信息、标的额、证据情况、案件处理要求等</span>
                     <textarea v-model="form.debtRemark"
-                      class="w-full mt-2 p-1 border-b border-gray-400 text-sm outline-none resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                      rows="2"></textarea>
+                    class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[50px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                  </textarea>
                   </div>
                 </td>
               </tr>
@@ -637,8 +650,8 @@
           </div>
 
           <!-- 备注大文本区域 -->
-          <div class="min-h-[100px] border-b border-black p-4 mb-4 mt-0">
-            <div class="font-medium mb-2 text-blue-800">其他备注信息：</div>
+          <div class="min-h-[100px] border border-black p-4 mb-4 mt-0">
+            <div class="font-medium mb-2 text-gray-700">其他备注信息：</div>
             <textarea v-model="form.remark" placeholder="请输入其他需要补充的备注信息"
               class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[50px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300"></textarea>
           </div>
@@ -864,6 +877,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const { dc_accounting_company } = toRefs<any>(proxy?.useDict('dc_accounting_company'));
 const { dc_legal_affairs } = toRefs<any>(proxy?.useDict('dc_legal_affairs'));
+const { dc_invoice_requirement } = toRefs<any>(proxy?.useDict('dc_invoice_requirement'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -933,6 +947,13 @@ const initFormData: CustomerTransferForm = {
   contractOssId: undefined,
 
   customerCity: undefined,
+
+  invoiceRequirements: undefined,
+
+  invoiceContent: undefined,
+
+  invoiceStatus: undefined,
+
 performanceInfo: [
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
@@ -976,6 +997,12 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     contractOssId: undefined,
 
     customerCity: undefined,
+
+    invoiceRequirements: undefined,
+
+    invoiceContent: undefined,
+    
+    invoiceStatus: undefined,
 
     params: {}
   },
@@ -1053,6 +1080,12 @@ const transferFormData= ref({
   contractOssId: undefined,
 
   customerCity: undefined,
+
+  invoiceRequirements: undefined,
+
+  invoiceContent: undefined,
+
+  invoiceStatus: undefined
 
 });
 
