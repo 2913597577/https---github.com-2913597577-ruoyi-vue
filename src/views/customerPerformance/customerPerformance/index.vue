@@ -1,24 +1,131 @@
 <template>
-  <div class="p-2">
+    <div class="p-2">
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="流转单id" prop="transferId">
-              <el-input v-model="queryParams.transferId" placeholder="请输入流转单id" clearable @keyup.enter="handleQuery" />
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" >
+            <!-- 流转单id改为多选下拉 -->
+            <el-form-item label="对接客户" prop="transferId">
+              <el-select 
+                v-model="queryParams.transferId" 
+                placeholder="请选择对接客户" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery">
+                <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
+                  :value="item.transfer_id">
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="业绩所属用户id" prop="userId">
-              <el-input v-model="queryParams.userId" placeholder="请输入业绩所属用户id" clearable @keyup.enter="handleQuery" />
+            
+            <!-- 业绩所属用户id改为多选下拉 -->
+            <el-form-item label="业绩所属员工" prop="userId" label-width="120px">
+              <el-select 
+                v-model="queryParams.userId" 
+                placeholder="请选择业绩所属员工" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery">
+                 <el-option v-for="user in userList" :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId">
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="业绩所属用户名字" prop="userName">
-              <el-input v-model="queryParams.userName" placeholder="请输入业绩所属用户名字" clearable @keyup.enter="handleQuery" />
+
+                        <!-- 邀请人ID改为多选下拉 -->
+            <el-form-item label="签单人" prop="inviterId">
+              <el-select 
+                v-model="queryParams.inviterId" 
+                placeholder="请选择签单人" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery">
+                <el-option v-for="user in userList" :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId">
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="业绩所属金额" prop="balance">
-              <el-input v-model="queryParams.balance" placeholder="请输入业绩所属金额" clearable @keyup.enter="handleQuery" />
+            
+            <!-- 服务类型改为多选下拉 -->
+            <el-form-item label="服务类型" prop="serviceType">
+              <el-select 
+                v-model="queryParams.serviceType" 
+                placeholder="请选择服务类型" 
+                clearable 
+                multiple 
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery">
+                <el-option v-for="dict in combo_type" :key="dict.value" :value="dict.value" :label="dict.label">
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="业绩所属城市" prop="city">
-              <el-input v-model="queryParams.city" placeholder="请输入业绩所属城市" clearable @keyup.enter="handleQuery" />
+    
+            <!-- 业绩所属城市改为多选下拉 -->
+            <el-form-item label="业绩所属城市" prop="city" label-width="120px">
+              <el-select 
+                v-model="queryParams.city" 
+                placeholder="请选择业绩所属城市" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery"
+                style="width: 200px;"
+                >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
+            
+            <!-- 服务城市改为多选下拉 -->
+            <el-form-item label="服务城市" prop="serviceCity">
+              <el-select 
+                v-model="queryParams.serviceCity" 
+                placeholder="请选择服务城市" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                style="width: 200px;"
+                @change="handleQuery">
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            
+            <!-- 服务时间保持日期范围选择器 -->
+            <!-- 签单时间 -->
+            <el-form-item label="签单时间" prop="serviceStart">
+              <el-date-picker
+                v-model="queryParams.serviceStart"
+                type="date"
+                placeholder="请选择签单时间"
+                value-format="YYYY-MM-DD">
+              </el-date-picker>
+            </el-form-item>
+
+            <!-- 服务结束时间 -->
+            <el-form-item label="服务到期时间" prop="serviceEnd" label-width="120px">
+              <el-date-picker
+                v-model="queryParams.serviceEnd"
+                type="date"
+                placeholder="请选择服务结束时间"
+                value-format="YYYY-MM-DD">
+              </el-date-picker>
+            </el-form-item>
+            
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -50,17 +157,37 @@
       <el-table v-loading="loading" border :data="customerPerformanceList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="流转单编号" align="center" prop="transferId" />
+        <!-- <el-table-column label="流转单编号" align="center" prop="transferId" /> -->
         <!-- <el-table-column label="业绩所属用户id" align="center" prop="userId" /> -->
-        <el-table-column label="业绩所属人" align="center" prop="userName" />
+        <el-table-column label="客户" align="center" prop="companyName" />
+        <el-table-column label="服务类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="业绩所属人" align="center" prop="user_name" />
         <el-table-column label="业绩所属金额" align="center" prop="balance" />
         <el-table-column label="业绩所属城市" align="center" prop="city">
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
           </template>
       </el-table-column>
-        <!-- <el-table-column label="业绩所属城市" align="center" prop="city" /> -->
-        <el-table-column label="分配人" align="center" prop="createrName" />
+        <el-table-column label="客户服务城市" align="center" prop="serviceCity">
+            <template #default="scope">
+              <dict-tag :options="dc_sercive_city" :value="scope.row.serviceCity" />
+            </template>
+        </el-table-column>
+        <el-table-column label="签单时间" align="center" prop="serviceStart" width="120">
+        <template #default="scope">
+          <span>{{ scope.row.serviceStart ? parseTime(scope.row.serviceStart, '{y}-{m}-{d}') : '' }}</span>
+        </template>
+        </el-table-column>
+        <el-table-column label="服务到期时间" align="center" prop="serviceEnd" width="120">
+          <template #default="scope">
+          <span>{{ scope.row.serviceEnd ? parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') : '' }}</span>
+        </template>
+        </el-table-column>
+        <el-table-column label="分配人" align="center" prop="creater_name" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -77,21 +204,32 @@
     </el-card>
     <!-- 添加或修改业绩归属登记对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
-      <el-form ref="customerPerformanceFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="流转单id" prop="transferId">
+      <el-form ref="customerPerformanceFormRef" :model="form" :rules="rules" label-width="120px">
+        <!-- <el-form-item label="流转单id" prop="transferId">
           <el-input v-model="form.transferId" placeholder="请输入流转单id" />
         </el-form-item>
         <el-form-item label="业绩所属用户id" prop="userId">
           <el-input v-model="form.userId" placeholder="请输入业绩所属用户id" />
-        </el-form-item>
-        <el-form-item label="业绩所属用户名字" prop="userName">
-          <el-input v-model="form.userName" placeholder="请输入业绩所属用户名字" />
+        </el-form-item> -->
+        <el-form-item label="业绩所属员工" prop="userId">
+         <el-select 
+                v-model="form.userId" 
+                placeholder="请选择业绩所属员工" 
+                clearable 
+                >
+                 <el-option v-for="user in userList" :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId">
+                </el-option>
+              </el-select>
         </el-form-item>
         <el-form-item label="业绩所属金额" prop="balance">
-          <el-input v-model="form.balance" placeholder="请输入业绩所属金额" />
+          <el-input v-model="form.balance" placeholder="请输入业绩所属金额"  clearable/>
         </el-form-item>
         <el-form-item label="业绩所属城市" prop="city">
-          <el-input v-model="form.city" placeholder="请输入业绩所属城市" />
+           <el-select v-model="form.city" placeholder="请选择归属城市" clearable >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -105,11 +243,13 @@
 </template>
 
 <script setup name="CustomerPerformance" lang="ts">
-import { listCustomerPerformance, getCustomerPerformance, delCustomerPerformance, addCustomerPerformance, updateCustomerPerformance } from '@/api/customerPerformance/customerPerformance';
+import { getCustomerByUserId } from '@/api/common';
+import { listUser } from '@/api/customerInfo/customerInfo';
+import { listCustomerPerformance, getCustomerPerformance, delCustomerPerformance, addCustomerPerformance, updateCustomerPerformance, listCustomerPerformanceByPage } from '@/api/customerPerformance/customerPerformance';
 import { CustomerPerformanceVO, CustomerPerformanceQuery, CustomerPerformanceForm } from '@/api/customerPerformance/customerPerformance/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
+const { dc_sercive_city,combo_type } = toRefs<any>(proxy?.useDict('dc_sercive_city','combo_type'));
 const customerPerformanceList = ref<CustomerPerformanceVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -121,6 +261,8 @@ const total = ref(0);
 
 const queryFormRef = ref<ElFormInstance>();
 const customerPerformanceFormRef = ref<ElFormInstance>();
+const serviceDateRange = ref<[string, string] | null>(null);
+
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -140,14 +282,15 @@ const data = reactive<PageData<CustomerPerformanceForm, CustomerPerformanceQuery
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    transferId: undefined,
     userId: undefined,
-    userName: undefined,
-    balance: undefined,
+    transferId: undefined,
     city: undefined,
-    params: {
-    }
-  },
+    serviceCity: undefined,
+    inviterId: undefined,
+    serviceType: undefined,
+    serviceStart: undefined,
+    serviceEnd: undefined,
+   },
   rules: {
     id: [
       { required: true, message: "主键ID不能为空", trigger: "blur" }
@@ -172,12 +315,45 @@ const data = reactive<PageData<CustomerPerformanceForm, CustomerPerformanceQuery
 
 const { queryParams, form, rules } = toRefs(data);
 
+const customerList = ref<any[]>([]);
+const userList = ref([]); // 用户列表
+
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
+
+const loadUserList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listUser();
+    userList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载人员失败，请稍后重试');
+    console.error('人员列表加载异常：', error);
+  }
+};
+
+
+
 /** 查询业绩归属登记列表 */
 const getList = async () => {
   loading.value = true;
-  const res = await listCustomerPerformance(queryParams.value);
-  customerPerformanceList.value = res.rows;
-  total.value = res.total;
+  // 使用新的分页查询接口
+  const res = await listCustomerPerformanceByPage(queryParams.value);
+    if (!res.data) {
+    customerPerformanceList.value = [];
+    total.value = 0;
+    loading.value = false;
+    return;
+  }
+  total.value = res.data.count || 0; // 根据实际返回的数据结构调整
+  customerPerformanceList.value = res.data.list; // 注意：返回数据结构可能不同
   loading.value = false;
 }
 
@@ -262,7 +438,10 @@ const handleExport = () => {
   }, `customerPerformance_${new Date().getTime()}.xlsx`)
 }
 
+
 onMounted(() => {
+  loadUserList();
+  loadCustomerList();
   getList();
 });
 </script>

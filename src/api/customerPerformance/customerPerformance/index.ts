@@ -61,3 +61,18 @@ export const delCustomerPerformance = (id: string | number | Array<string | numb
     method: 'delete'
   });
 };
+
+/**
+ * 根据条件分页查询业绩归属登记列表
+ * @param query 查询参数
+ * @returns {*}
+ */
+export const listCustomerPerformanceByPage = (
+  query?: CustomerPerformanceQuery
+): AxiosPromise<any> => {
+  return request({
+    url: '/customerPerformance/customerPerformance/selectListByPage',
+    method: 'post',
+    data: query  // 将 params 改为 data
+  });
+};
