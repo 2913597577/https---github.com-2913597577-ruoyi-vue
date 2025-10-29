@@ -4,15 +4,15 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="文件名" prop="fileName">
+            <!-- <el-form-item label="文件名" prop="fileName">
               <el-input v-model="queryParams.fileName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
+            </el-form-item> -->
+            <el-form-item label="文件名" prop="originalName">
+              <el-input v-model="queryParams.originalName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="原名" prop="originalName">
-              <el-input v-model="queryParams.originalName" placeholder="请输入原名" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="文件后缀" prop="fileSuffix">
+            <!-- <el-form-item label="文件后缀" prop="fileSuffix">
               <el-input v-model="queryParams.fileSuffix" placeholder="请输入文件后缀" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="创建时间" style="width: 308px">
               <el-date-picker
                 v-model="dateRangeCreateTime"
@@ -24,8 +24,11 @@
                 :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)]"
               ></el-date-picker>
             </el-form-item>
-            <el-form-item label="服务商" prop="service">
+           <!--  <el-form-item label="服务商" prop="service">
               <el-input v-model="queryParams.service" placeholder="请输入服务商" clearable @keyup.enter="handleQuery" />
+            </el-form-item> -->
+            <el-form-item label="上传人" prop="createByName">
+              <el-input v-model="queryParams.createByName" placeholder="请输入上传人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="search" @click="handleQuery">搜索</el-button>
@@ -77,15 +80,15 @@
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column v-if="false" label="对象存储主键" align="center" prop="ossId" />
-        <el-table-column label="文件名" align="center" prop="fileName" />
-        <el-table-column label="原名" align="center" prop="originalName" />
-        <el-table-column label="文件后缀" align="center" prop="fileSuffix" />
+        <!-- <el-table-column label="文件名" align="center" prop="fileName" /> -->
+        <el-table-column label="文件名" align="center" prop="originalName" />
+        <!-- <el-table-column label="文件后缀" align="center" prop="fileSuffix" /> -->
         <el-table-column label="文件展示" align="center" prop="url">
           <template #default="scope">
             <ImagePreview
               v-if="previewListResource && checkFileSuffix(scope.row.fileSuffix)"
-              :width="100"
-              :height="100"
+              :width="25"
+              :height="25"
               :src="scope.row.url"
               :preview-src-list="[scope.row.url]"
             />
@@ -98,7 +101,7 @@
           </template>
         </el-table-column>
         <el-table-column label="上传人" align="center" prop="createByName" />
-        <el-table-column label="服务商" align="center" prop="service" sortable="custom" />
+        <!-- <el-table-column label="服务商" align="center" prop="service" sortable="custom" /> -->
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="下载" placement="top">
@@ -177,6 +180,7 @@ const data = reactive<PageData<OssForm, OssQuery>>({
     fileSuffix: '',
     createTime: '',
     service: '',
+    createByName: '',
     orderByColumn: defaultSort.value.prop,
     isAsc: defaultSort.value.order
   },

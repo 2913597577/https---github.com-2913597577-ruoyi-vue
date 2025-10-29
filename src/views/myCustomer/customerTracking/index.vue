@@ -148,17 +148,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="回访分类" prop="trackingType">
-          <el-select v-model="form.trackingType" placeholder="请选择回访类型">
-            <el-option v-for="dict in dc_follow_classification" :key="dict.value" :label="dict.label"
-              :value="parseInt(dict.value)"></el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="回访分类" prop="trackingType">
+          <el-select v-model="form.trackingType" placeholder="请选择回访类型">
+            <el-option v-for="dict in dc_follow_classification" :key="dict.value" :label="dict.label"
+              :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="回访记录" prop="customerRemark">

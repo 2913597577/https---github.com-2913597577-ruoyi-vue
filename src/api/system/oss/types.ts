@@ -16,6 +16,7 @@ export interface OssQuery extends PageQuery {
   service: string;
   orderByColumn: string;
   isAsc: string;
+  createByName: string;
 }
 export interface OssForm {
   file: undefined | string;

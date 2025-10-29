@@ -5,20 +5,20 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="合同编号" prop="contractCode">
-              <el-input v-model="queryParams.contractCode" placeholder="请输入合同编号" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
             <el-form-item label="客户名称" prop="customerName">
-              <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="客户类型" prop="customerType">
-              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable>
-                <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
+              <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable style="width: 120px" @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="负责人" prop="principal">
-              <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="负责人电话" prop="contractCode" label-width="80px">
+              <el-input v-model="queryParams.contractCode" placeholder="请输入负责人电话" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="分配状态" prop="isAssigned" >
+              <el-select v-model="queryParams.isAssigned" placeholder="是否分配法务支持" clearable style="width: 120px">
+                <el-option label="否" :value="0"></el-option>
+                <el-option label="是" :value="1"></el-option>
+              </el-select>
             </el-form-item>
             <!-- <el-form-item label="签约类型" prop="contractType">
               <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
@@ -28,12 +28,27 @@
             </el-form-item> -->
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择到期时间" />
+                placeholder="请选择到期时间" style="width: 120px" />
             </el-form-item>
-            <el-form-item label="分配状态" prop="isAssigned">
-              <el-select v-model="queryParams.isAssigned" placeholder="是否分配法务支持" clearable>
-                <el-option label="否" :value="0"></el-option>
-                <el-option label="是" :value="1"></el-option>
+            <el-form-item label="法务支持" prop="lawyerId">
+              <el-input v-model="queryParams.lawyerId" placeholder="请输入法务支持" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="客户类型" prop="customerType">
+              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable style="width: 120px" >
+                <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="实收金额" prop="actualReceipt">
+              <el-input v-model="queryParams.actualReceipt" placeholder="请输入实收金额" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="尾款金额" prop="balance">
+              <el-input v-model="queryParams.balance" placeholder="请输入尾款金额" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="归属城市" prop="customerCity">
+              <el-select v-model="queryParams.customerCity" placeholder="请选择归属城市" clearable style="width: 120px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -137,7 +152,7 @@
         </el-table-column>
         <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="80" show-overflow-tooltip />
         <el-table-column label="立案密码" align="center" prop="caseFillingPwd" width="80" show-overflow-tooltip />
-        <el-table-column label="服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip>
+        <el-table-column label="归属城市" align="center" prop="customerCity" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
@@ -255,7 +270,7 @@
               </el-form-item>
             </div>
             <div class="form-row">
-              <el-form-item label="服务城市" prop="customerCity" class="form-item">
+              <el-form-item label="归属城市" prop="customerCity" class="form-item">
                 <el-select v-model="form.customerCity" placeholder="请选择服务城市" style="width: 100%">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
                     :value="dict.value"></el-option>
@@ -536,11 +551,14 @@
         <el-descriptions-item label="合同编号" label-align="left" align="left" width="60">
           {{ viewForm.contractCode }}
         </el-descriptions-item>
+        <el-descriptions-item label="合同OssID" label-align="left" align="left" width="60">
+          {{ viewForm.contractNo }}
+        </el-descriptions-item>
         <el-descriptions-item label="到期时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
         <el-descriptions-item label="续费/尾款">{{ viewForm.actionType }}</el-descriptions-item>
         <el-descriptions-item label="立案账号">{{ viewForm.caseFillingAccount }}</el-descriptions-item>
         <el-descriptions-item label="立案密码">{{ viewForm.caseFillingPwd }}</el-descriptions-item>
-        <el-descriptions-item label="客户服务城市">
+        <el-descriptions-item label="客户归属城市">
           <dict-tag :options="dc_sercive_city" :value="viewForm.customerCity ?? ''" />
         </el-descriptions-item>
         <el-descriptions-item label="风险客户">

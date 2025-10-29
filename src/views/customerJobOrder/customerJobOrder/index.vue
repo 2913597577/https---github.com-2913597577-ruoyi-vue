@@ -126,7 +126,7 @@
                 v-has-roles="['LegalCenter']">接工单</el-button>
             </el-tooltip>
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+              <el-button link type="primary" icon="Upload" @click="handleUpdate(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']" v-has-roles="['LegalCenter']">合同上传</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">

@@ -26,7 +26,7 @@
             <!-- <el-form-item label="签约类型" prop="signType" label-width="68px">
               <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
-            <el-form-item label="客户归属城市" prop="customerCity" label-width="88px">
+            <el-form-item label="归属城市" prop="customerCity" label-width="88px">
               <el-select v-model="queryParams.customerCity" placeholder="请选择客户归属城市" clearable
               @change="handleQuery" style="width: 160px">
                 <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
