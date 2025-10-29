@@ -55,6 +55,7 @@
         <el-table-column label="业绩所属用户名字" align="center" prop="userName" />
         <el-table-column label="业绩所属金额" align="center" prop="balance" />
         <el-table-column label="业绩所属城市" align="center" prop="city" />
+        <el-table-column label="分配人" align="center" prop="createrName" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
