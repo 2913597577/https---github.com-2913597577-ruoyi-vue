@@ -77,8 +77,8 @@
             <dict-tag :options="finance_confirmed" :value="scope.row.financeConfirmed ?? ''" />
           </template>
         </el-table-column>
-         <el-table-column label="审核人" align="center" prop="auditUserName" width="100" show-overflow-tooltip />
-          <el-table-column label="审核时间" align="center" prop="auditTime" width="120">
+        <el-table-column label="审核人" align="center" prop="auditUserName" width="100" show-overflow-tooltip />
+        <el-table-column label="审核时间" align="center" prop="auditTime" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.auditTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -99,7 +99,7 @@
 
           v-hasPermi="['myCustomer:customerTransfer:contractUpload']" -->
         </el-table-column>
-        <el-table-column label="录入人" align="center" prop="inviterId" width="100" show-overflow-tooltip >
+        <el-table-column label="录入人" align="center" prop="inviterId" width="100" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ getUserNameById(scope.row.inviterId) }}</span>
           </template>
@@ -134,52 +134,50 @@
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
           </template>
         </el-table-column>
-<<<<<<< HEAD
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="140" show-overflow-tooltip>
-=======
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip >
->>>>>>> 7ac8664c25c3bacb63119a48f683f2605a4d5ba8
-          <template #default="scope">
-            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity ?? ''" />
-          </template>
-        </el-table-column>
-        <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
-        <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="100" show-overflow-tooltip />
-        <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
+        
+          <el-table-column label="客户服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip>
+            
+            <template #default="scope">
+              <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity ?? ''" />
+            </template>
+          </el-table-column>
+          <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
+          <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="100" show-overflow-tooltip />
+          <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
 
-        <el-table-column label="自然人电话" align="center" prop="additionalContact" width="100" show-overflow-tooltip />
-        <el-table-column label="自然人职务" align="center" prop="additionalPosition" width="100" show-overflow-tooltip />
-        <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip />
-        <el-table-column label="代账公司" align="center" prop="accountingCompany" width="80" show-overflow-tooltip>
-        <template #default="scope">
-            <dict-tag :options="dc_accounting_company" :value="scope.row.accountingCompany ?? ''" />
-          </template>
-         </el-table-column>
-        <el-table-column label="客户描述" align="center" prop="customerDescription" width="100" show-overflow-tooltip />
-        <el-table-column label="是否有过法务" align="center" prop="preLegal" width="80" show-overflow-tooltip>
-          <template #default="scope">
-            <dict-tag :options="dc_legal_affairs" :value="scope.row.preLegal ?? ''" />
-          </template>
-        </el-table-column>
-        <el-table-column label="合作公司名称" align="center" prop="preCompany" width="100" show-overflow-tooltip />
-        <el-table-column label="不合作原因" align="center" prop="preReason" width="100" show-overflow-tooltip />
-        <el-table-column label="公司纠纷及解决方式" align="center" prop="preDiscuss" width="150" show-overflow-tooltip />
-        <el-table-column label="待处理事项登记" align="center" prop="pendingMatters" width="150" show-overflow-tooltip />
-        <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="200" show-overflow-tooltip />
-        <el-table-column label="欠款问题登记" align="center" prop="debtDetails" width="120" />
-        <el-table-column label="欠款问题备注" align="center" prop="debtRemark" width="120" show-overflow-tooltip />
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="280"
-        fixed="right">
-          <template #default="scope">
-            <!-- <div class="table-action-buttons"> -->
+          <el-table-column label="自然人电话" align="center" prop="additionalContact" width="100" show-overflow-tooltip />
+          <el-table-column label="自然人职务" align="center" prop="additionalPosition" width="100" show-overflow-tooltip />
+          <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip />
+          <el-table-column label="代账公司" align="center" prop="accountingCompany" width="80" show-overflow-tooltip>
+            <template #default="scope">
+              <dict-tag :options="dc_accounting_company" :value="scope.row.accountingCompany ?? ''" />
+            </template>
+          </el-table-column>
+          <el-table-column label="客户描述" align="center" prop="customerDescription" width="100" show-overflow-tooltip />
+          <el-table-column label="是否有过法务" align="center" prop="preLegal" width="80" show-overflow-tooltip>
+            <template #default="scope">
+              <dict-tag :options="dc_legal_affairs" :value="scope.row.preLegal ?? ''" />
+            </template>
+          </el-table-column>
+          <el-table-column label="合作公司名称" align="center" prop="preCompany" width="100" show-overflow-tooltip />
+          <el-table-column label="不合作原因" align="center" prop="preReason" width="100" show-overflow-tooltip />
+          <el-table-column label="公司纠纷及解决方式" align="center" prop="preDiscuss" width="150" show-overflow-tooltip />
+          <el-table-column label="待处理事项登记" align="center" prop="pendingMatters" width="150" show-overflow-tooltip />
+          <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="200" show-overflow-tooltip />
+          <el-table-column label="欠款问题登记" align="center" prop="debtDetails" width="120" />
+          <el-table-column label="欠款问题备注" align="center" prop="debtRemark" width="120" show-overflow-tooltip />
+          <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="280"
+            fixed="right">
+            <template #default="scope">
+              <!-- <div class="table-action-buttons"> -->
               <el-button link type="primary" icon="View" @click="handleView(scope.row)">查看</el-button>
               <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
                 @click="handleProcess(scope.row)">处置</el-button>
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
               <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-            <!-- </div> -->
-          </template>
-        </el-table-column>
+              <!-- </div> -->
+            </template>
+          </el-table-column>
       </el-table>
 
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
@@ -236,28 +234,22 @@
                       :value="dict.value"></el-option>
                   </el-select>
                 </td>
-<<<<<<< HEAD
                 <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span
-                    class="text-red-500">*</span></td>
-                <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 410px;"
-                  class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-=======
-                <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span class="text-red-500">*</span> </td>
+                    class="text-red-500">*</span> </td>
                 <td class="p-2">
-                   <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 180px;"
+                  <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 180px;"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
 
-                    <!-- <input type="text" v-model="form.contractCode" placeholder="请输入录入人姓名" style="width: 140px;"
+                <!-- <input type="text" v-model="form.contractCode" placeholder="请输入录入人姓名" style="width: 140px;"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"></input> -->
-                    <!-- <td class="border-l border-black p-2 w-32 bg-blue-50" style="width: 80px">录入人：<span class="text-red-500">*</span></td>
+                <!-- <td class="border-l border-black p-2 w-32 bg-blue-50" style="width: 80px">录入人：<span class="text-red-500">*</span></td>
                     <td class="p-2">
                   <el-select v-model="form.inviterId" placeholder="请选择录入人" filterable>
                     <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
                     </td> -->
->>>>>>> 7ac8664c25c3bacb63119a48f683f2605a4d5ba8
               </tr>
             </table>
           </div>
@@ -485,15 +477,7 @@
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人1：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
-<<<<<<< HEAD
-                  <input type="text" placeholder="业绩所属人1"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-=======
-                  <el-select v-model="form.performanceInfo[0].userId" placeholder="请选择业绩所属人1" filterable @change="changeUser(0)">
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
->>>>>>> 7ac8664c25c3bacb63119a48f683f2605a4d5ba8
+                  
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
@@ -503,100 +487,84 @@
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：<span class="text-red-500">*</span></td>
                 <td class="border-r border-black p-2 flex-1">
                   <el-select v-model="form.performanceInfo[0].city" placeholder="请选择业绩所属城市" style="width: 200px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
+                    <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                      :value="dict.value"></el-option>
+                  </el-select>
                 </td>
               </tr>
               <!-- 业绩归属类型2 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人2：</td>
                 <td class="border-r border-black p-2 flex-1">
-<<<<<<< HEAD
-                  <input type="text" placeholder="业绩所属人2"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
-                <td class="border-r border-black p-2 flex-1">
-                  <input type="text" placeholder="分配业绩金额"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
-                <td class="p-2">
-                  <input type="text" placeholder="所属城市"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-=======
-                 <el-select v-model="form.performanceInfo[1].userId" placeholder="请选择业绩所属人2" filterable @change="changeUser(1)">
+                 
+                  <el-select v-model="form.performanceInfo[1].userId" placeholder="请选择业绩所属人2" filterable
+                    @change="changeUser(1)">
                     <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
                   </el-select>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="分配业绩金额" v-model="form.performanceInfo[1].balance"
+                  <input type="text" placeholder="分配业绩金额" v-model="form.performanceInfo[1].balance"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
                 <td class="border-r border-black p-2 flex-1">
                   <el-select v-model="form.performanceInfo[1].city" placeholder="请选择业绩所属城市" style="width: 200px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
->>>>>>> 7ac8664c25c3bacb63119a48f683f2605a4d5ba8
+                    <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                      :value="dict.value"></el-option>
+                  </el-select>
+                
                 </td>
               </tr>
               <!-- 业绩归属类型3 -->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人3：</td>
                 <td class="border-r border-black p-2 flex-1">
-<<<<<<< HEAD
-                  <input type="text" placeholder="业绩所属人3"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-=======
-                  <el-select v-model="form.performanceInfo[2].userId" placeholder="请选择业绩所属人3" filterable @change="changeUser(2)">
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
->>>>>>> 7ac8664c25c3bacb63119a48f683f2605a4d5ba8
+                  
+                    <el-select v-model="form.performanceInfo[2].userId" placeholder="请选择业绩所属人3" filterable
+                      @change="changeUser(2)">
+                      <el-option v-for="user in userList" :key="user.userId"
+                        :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
+                    </el-select>
+                  
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="分配业绩金额" v-model="form.performanceInfo[2].balance"
+                  <input type="text" placeholder="分配业绩金额" v-model="form.performanceInfo[2].balance"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-               <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
                 <td class="border-r border-black p-2 flex-1">
                   <el-select v-model="form.performanceInfo[2].city" placeholder="请选择业绩所属城市" style="width: 200px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
+                    <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                      :value="dict.value"></el-option>
+                  </el-select>
                 </td>
               </tr>
               <!-- 业绩归属类型4-->
               <tr class="border-b border-black">
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人4：</td>
                 <td class="border-r border-black p-2 flex-1">
-<<<<<<< HEAD
-                  <input type="text" placeholder="业绩所属人4"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-=======
-                  <el-select v-model="form.performanceInfo[3].userId" placeholder="请选择业绩所属人4" filterable @change="changeUser(3)">
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
->>>>>>> 7ac8664c25c3bacb63119a48f683f2605a4d5ba8
+                 
+                    <el-select v-model="form.performanceInfo[3].userId" placeholder="请选择业绩所属人4" filterable
+                      @change="changeUser(3)">
+                      <el-option v-for="user in userList" :key="user.userId"
+                        :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
+                    </el-select>
+                   
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
                 <td class="border-r border-black p-2 flex-1">
-                  <input type="text"  placeholder="分配业绩金额" v-model="form.performanceInfo[3].balance"
+                  <input type="text" placeholder="分配业绩金额" v-model="form.performanceInfo[3].balance"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
                 <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
                 <td class="p-2">
                   <el-select v-model="form.performanceInfo[3].city" placeholder="请选择业绩所属城市" style="width: 200px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
+                    <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                      :value="dict.value"></el-option>
+                  </el-select>
                 </td>
               </tr>
             </table>
@@ -739,7 +707,8 @@
               {{ parseTime(viewForm.createTime, '{y}-{m}-{d}') }}
             </el-descriptions-item>
             <el-descriptions-item label="财务确认">
-              <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed !== undefined && viewForm.financeConfirmed !== null ? viewForm.financeConfirmed : ''" />
+              <dict-tag :options="finance_confirmed"
+                :value="viewForm.financeConfirmed !== undefined && viewForm.financeConfirmed !== null ? viewForm.financeConfirmed : ''" />
               <!-- <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed ?? ''" /> -->
             </el-descriptions-item>
             <el-descriptions-item label="合同编号">
@@ -749,7 +718,8 @@
               {{ viewForm.contractOssId }}
             </el-descriptions-item>
             <el-descriptions-item label="客户归属城市">
-              <dict-tag :options="dc_sercive_city" :value="viewForm.customerCity !== undefined && viewForm.customerCity !== null ? viewForm.customerCity : ''" />
+              <dict-tag :options="dc_sercive_city"
+                :value="viewForm.customerCity !== undefined && viewForm.customerCity !== null ? viewForm.customerCity : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="公司名称" label-align="left" align="left" width="60">
               {{ viewForm.companyName }}
@@ -767,7 +737,8 @@
               <!-- <span v-if="viewForm.accountingCompany === 0">是</span>
               <span v-else-if="viewForm.accountingCompany === 1">否</span>
               <span v-else-if="viewForm.accountingCompany === 2">不确定</span> -->
-              <dict-tag :options="dc_accounting_company" :value="viewForm.accountingCompany !== undefined && viewForm.accountingCompany !== null ? viewForm.accountingCompany : ''" />
+              <dict-tag :options="dc_accounting_company"
+                :value="viewForm.accountingCompany !== undefined && viewForm.accountingCompany !== null ? viewForm.accountingCompany : ''" />
             </el-descriptions-item>
             <!-- <el-descriptions-item label="邀约人">
               {{ getUserNameById(viewForm.inviterId) }}
@@ -810,11 +781,12 @@
             <el-descriptions-item label="尾款情况">
               {{ viewForm.balanceStatus }}
             </el-descriptions-item>
-           <!--  <el-descriptions-item label="签约类型">
+            <!--  <el-descriptions-item label="签约类型">
               <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
             </el-descriptions-item> -->
             <el-descriptions-item label="套餐类型">
-              <dict-tag :options="combo_type" :value="viewForm.serviceType !== undefined && viewForm.serviceType !== null ? viewForm.serviceType : ''" />
+              <dict-tag :options="combo_type"
+                :value="viewForm.serviceType !== undefined && viewForm.serviceType !== null ? viewForm.serviceType : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="服务周期">
               {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')
@@ -833,7 +805,8 @@
 
             <el-descriptions-item label="以前是否有过公司法务">
               <!-- {{ viewForm.preLegal === 1 ? '是' : '否' }} -->
-              <dict-tag :options="dc_legal_affairs" :value="viewForm.preLegal !== undefined && viewForm.preLegal !== null ? viewForm.preLegal : ''" />
+              <dict-tag :options="dc_legal_affairs"
+                :value="viewForm.preLegal !== undefined && viewForm.preLegal !== null ? viewForm.preLegal : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="合作公司名称">
               {{ viewForm.preCompany }}
@@ -969,15 +942,12 @@ const initFormData: CustomerTransferForm = {
   contractOssId: undefined,
 
   customerCity: undefined,
-<<<<<<< HEAD
-=======
 performanceInfo: [
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined }
 ]
->>>>>>> 7ac8664c25c3bacb63119a48f683f2605a4d5ba8
 
 }
 const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
@@ -1228,8 +1198,8 @@ const handleUpdate = async (row?: CustomerTransferVO) => {
   const res = await getCustomerTransfer(_id);
   Object.assign(form.value, res.data);
 
-    // 确保 performanceInfo 格式正确
-if (!form.value.performanceInfo || !Array.isArray(form.value.performanceInfo)) {
+  // 确保 performanceInfo 格式正确
+  if (!form.value.performanceInfo || !Array.isArray(form.value.performanceInfo)) {
     form.value.performanceInfo = [
       { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
       { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
