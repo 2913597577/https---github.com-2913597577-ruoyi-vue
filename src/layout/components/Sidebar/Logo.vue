@@ -62,11 +62,12 @@ const sideTheme = computed(() => settingsStore.sideTheme);
     width: 100%;
 
     & .sidebar-logo {
-      margin-top: 1px;
-      width: 184px;
+      // margin-top: 1px;
+      width: 200px;
       height: 50px;
       vertical-align: middle;
-      margin-right: 12px;
+
+      // margin-right: 12px;
     }
 
     & .sidebar-title {

@@ -101,13 +101,17 @@
           <template #default="scope">
             <div class="contract-cell">
               <el-button v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
-              link type="danger" icon="Download">合同下载</el-button>
+                link type="danger" icon="Download">合同下载</el-button>
               <el-button v-if="!scope.row.contractOssId" link type="primary" icon="Upload"
                 @click="handleUpload(scope.row)">
                 上传合同
               </el-button>
             </div>
           </template>
+
+          <!-- v-hasPermi="['myCustomer:customerTransfer:contractDownload']"
+
+          v-hasPermi="['myCustomer:customerTransfer:contractUpload']" -->
         </el-table-column>
         <el-table-column label="录入人" align="center" prop="inviterId" width="80" show-overflow-tooltip >
           <template #default="scope">
@@ -133,7 +137,7 @@
         </el-table-column>
         <el-table-column label="实付金额" align="center" prop="actualPayment" width="100" show-overflow-tooltip />
         <el-table-column label="尾款金额" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
-         <el-table-column label="尾款支付条件" align="center" prop="balancePayType" width="100" show-overflow-tooltip />
+        <el-table-column label="尾款支付条件" align="center" prop="balancePayType" width="100" show-overflow-tooltip />
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="contract_type" :value="scope.row.contractType ?? ''" />
@@ -203,9 +207,9 @@
                 @click="handleProcess(scope.row)">处置</el-button>
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
               <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-            <!-- </div> -->
-          </template>
-        </el-table-column>
+              <!-- </div> -->
+            </template>
+          </el-table-column>
       </el-table>
 
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
@@ -262,15 +266,16 @@
                     :value="dict.value"></el-option>
                 </el-select>
                 </td>
-                <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span class="text-red-500">*</span> </td>
+                <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span
+                    class="text-red-500">*</span> </td>
                 <td class="p-2">
-                   <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 180px;"
+                  <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 180px;"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
 
-                    <!-- <input type="text" v-model="form.contractCode" placeholder="请输入录入人姓名" style="width: 140px;"
+                <!-- <input type="text" v-model="form.contractCode" placeholder="请输入录入人姓名" style="width: 140px;"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"></input> -->
-                    <!-- <td class="border-l border-black p-2 w-32 bg-blue-50" style="width: 80px">录入人：<span class="text-red-500">*</span></td>
+                <!-- <td class="border-l border-black p-2 w-32 bg-blue-50" style="width: 80px">录入人：<span class="text-red-500">*</span></td>
                     <td class="p-2">
                   <el-select v-model="form.inviterId" placeholder="请选择录入人" filterable>
                     <el-option v-for="user in userList" :key="user.userId"
@@ -579,7 +584,7 @@
                   <input type="number"  placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[2].balance"
                     class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
                 </td>
-               <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
+                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
                 <td class="border-r border-black p-2 flex-1">
                   <el-select v-model="form.performanceInfo[2].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
                   <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
@@ -749,7 +754,8 @@
               {{ parseTime(viewForm.createTime, '{y}-{m}-{d}') }}
             </el-descriptions-item>
             <el-descriptions-item label="财务确认">
-              <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed !== undefined && viewForm.financeConfirmed !== null ? viewForm.financeConfirmed : ''" />
+              <dict-tag :options="finance_confirmed"
+                :value="viewForm.financeConfirmed !== undefined && viewForm.financeConfirmed !== null ? viewForm.financeConfirmed : ''" />
               <!-- <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed ?? ''" /> -->
             </el-descriptions-item>
             <el-descriptions-item label="合同编号">
@@ -759,7 +765,8 @@
               {{ viewForm.contractOssId }}
             </el-descriptions-item>
             <el-descriptions-item label="客户归属城市">
-              <dict-tag :options="dc_sercive_city" :value="viewForm.customerCity !== undefined && viewForm.customerCity !== null ? viewForm.customerCity : ''" />
+              <dict-tag :options="dc_sercive_city"
+                :value="viewForm.customerCity !== undefined && viewForm.customerCity !== null ? viewForm.customerCity : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="公司名称" label-align="left" align="left" width="60">
               {{ viewForm.companyName }}
@@ -777,7 +784,8 @@
               <!-- <span v-if="viewForm.accountingCompany === 0">是</span>
               <span v-else-if="viewForm.accountingCompany === 1">否</span>
               <span v-else-if="viewForm.accountingCompany === 2">不确定</span> -->
-              <dict-tag :options="dc_accounting_company" :value="viewForm.accountingCompany !== undefined && viewForm.accountingCompany !== null ? viewForm.accountingCompany : ''" />
+              <dict-tag :options="dc_accounting_company"
+                :value="viewForm.accountingCompany !== undefined && viewForm.accountingCompany !== null ? viewForm.accountingCompany : ''" />
             </el-descriptions-item>
             <!-- <el-descriptions-item label="邀约人">
               {{ getUserNameById(viewForm.inviterId) }}
@@ -820,11 +828,12 @@
             <el-descriptions-item label="尾款情况">
               {{ viewForm.balanceStatus }}
             </el-descriptions-item>
-           <!--  <el-descriptions-item label="签约类型">
+            <!--  <el-descriptions-item label="签约类型">
               <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
             </el-descriptions-item> -->
             <el-descriptions-item label="套餐类型">
-              <dict-tag :options="combo_type" :value="viewForm.serviceType !== undefined && viewForm.serviceType !== null ? viewForm.serviceType : ''" />
+              <dict-tag :options="combo_type"
+                :value="viewForm.serviceType !== undefined && viewForm.serviceType !== null ? viewForm.serviceType : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="服务周期">
               {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')
@@ -846,7 +855,8 @@
 
             <el-descriptions-item label="以前是否有过公司法务">
               <!-- {{ viewForm.preLegal === 1 ? '是' : '否' }} -->
-              <dict-tag :options="dc_legal_affairs" :value="viewForm.preLegal !== undefined && viewForm.preLegal !== null ? viewForm.preLegal : ''" />
+              <dict-tag :options="dc_legal_affairs"
+                :value="viewForm.preLegal !== undefined && viewForm.preLegal !== null ? viewForm.preLegal : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="合作公司名称">
               {{ viewForm.preCompany }}
@@ -877,7 +887,7 @@
       </template>
     </el-dialog>
 
-        <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
+    <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
       <el-form ref="customerintentionFormRef" :model="transferFormData" :rules="rules" label-width="80px">
         <el-form-item label="合同文件" prop="contractOssId">
           <file-upload :limit="1" :fileSize="10" v-model="contract" />
@@ -1074,7 +1084,7 @@ const transferInfoDialog = reactive<DialogOption>({
   title: ''
 });
 
-const transferFormData= ref({
+const transferFormData = ref({
   companyName: undefined,
   contactPerson: undefined,
   contactInfo: undefined,
@@ -1213,10 +1223,10 @@ const handleUpload = async (row: CustomerTransferVO) => {
     return;
   }
 
-   const res = await getCustomerTransfer(_id);
-   Object.assign(transferFormData.value, res.data);
-   transferInfoDialog.visible = true;
-   transferInfoDialog.title = "上传合同";
+  const res = await getCustomerTransfer(_id);
+  Object.assign(transferFormData.value, res.data);
+  transferInfoDialog.visible = true;
+  transferInfoDialog.title = "上传合同";
 };
 
 const customerInfoDialogCancel = () => {
@@ -1264,8 +1274,8 @@ const handleUpdate = async (row?: CustomerTransferVO) => {
   const res = await getCustomerTransfer(_id);
   Object.assign(form.value, res.data);
 
-    // 确保 performanceInfo 格式正确
-if (!form.value.performanceInfo || !Array.isArray(form.value.performanceInfo)) {
+  // 确保 performanceInfo 格式正确
+  if (!form.value.performanceInfo || !Array.isArray(form.value.performanceInfo)) {
     form.value.performanceInfo = [
       { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
       { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },

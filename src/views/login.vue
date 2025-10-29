@@ -114,9 +114,9 @@ const loginRules: ElFormRules = {
   code: [{ required: true, trigger: 'change', message: t('login.rule.code.required') }]
 };
 const carouselImages = [
-  '/logo/bg1.jpg',
-  '/logo/bg2.jpg',
-  '/logo/bg3.jpg'
+  '/dc_customer/logo/bg1.jpg',
+  '/dc_customer/logo/bg2.jpg',
+  '/dc_customer/logo/bg3.jpg'
 ];
 const codeUrl = ref('');
 const loading = ref(false);

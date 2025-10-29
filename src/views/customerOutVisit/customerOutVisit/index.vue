@@ -17,12 +17,10 @@
               <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="出访时间" prop="visitTime">
-              <el-date-picker clearable v-model="queryParams.visitTime" type="date" 
-                placeholder="请选择出访时间" />
+              <el-date-picker clearable v-model="queryParams.visitTime" type="date" placeholder="请选择出访时间" />
             </el-form-item>
             <el-form-item label="下次出访时间" prop="nextVisitTime">
-              <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" 
-                placeholder="请选择下次出访时间" />
+              <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" placeholder="请选择下次出访时间" />
             </el-form-item>
             <el-form-item label="是否本月第一次出访" prop="isFirstVisit">
               <el-select v-model="queryParams.isFirstVisit" placeholder="请选择是否本月第一次出访" clearable>
@@ -75,7 +73,7 @@
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="客户姓名" align="center" prop="customerName" width="160" show-overflow-tooltip />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
-        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100"/>
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
         <el-table-column label="出访时间" align="center" prop="visitTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.visitTime, '{y}-{m}-{d}') }}</span>
@@ -119,8 +117,8 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px" 
-        fixed="right">
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px"
+          fixed="right">
           <template #default="scope">
             <!--修改按钮-->
             <el-tooltip content="修改">
@@ -332,15 +330,18 @@ const handleAdd = async () => {
   dialog.title = "添加客户出访记录";
 
   try {
-    proxy?.$modal.confirm('正在获取当前位置，请稍候...');
+
     const pos = await getCurrentPosition();
+    console.log(pos);
+
     const address = await reverseGeocode(pos.lat, pos.lng);
-    // form.value.visitAddress = address;
+    console.log(address)
+    form.value.visitAddress = address;
     console.log(address)
     proxy?.$modal.msgSuccess('已自动获取当前位置');
   } catch (error) {
     console.warn('获取定位失败:', error);
-    proxy?.$modal.msgWarning('无法获取当前位置，请手动填写地址');
+    proxy?.$modal.msgWarning('无法获取当前位置');
   }
 };
 
@@ -498,7 +499,98 @@ const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
     throw err;
   }
 };
+// /** 判断是否在微信环境 */
+// const isWeixin = () => /micromessenger/i.test(navigator.userAgent);
 
+// /** 微信定位（依赖微信JS-SDK） */
+// const getWeixinPosition = (): Promise<{ lat: number; lng: number }> => {
+//   return new Promise((resolve, reject) => {
+//     if (!window.wx) {
+//       reject(new Error('未检测到微信 JS-SDK，请先引入 https://res.wx.qq.com/open/js/jweixin-1.6.0.js'));
+//       return;
+//     }
+
+//     window.wx.ready(() => {
+//       window.wx.getLocation({
+//         type: 'gcj02', // 微信返回GCJ-02坐标
+//         success: (res: any) => {
+//           resolve({ lat: res.latitude, lng: res.longitude });
+//         },
+//         fail: (err: any) => {
+//           reject(new Error('微信定位失败: ' + JSON.stringify(err)));
+//         }
+//       });
+//     });
+
+//     window.wx.error((err: any) => {
+//       reject(new Error('微信SDK验证失败: ' + JSON.stringify(err)));
+//     });
+//   });
+// };
+
+// /** 通用获取定位函数：微信优先，其次浏览器 */
+// const getCurrentPosition = (): Promise<{ lat: number; lng: number }> => {
+//   return new Promise(async (resolve, reject) => {
+//     if (isWeixin()) {
+//       // 微信环境
+//       try {
+//         const pos = await getWeixinPosition();
+//         return resolve(pos);
+//       } catch (err) {
+//         console.warn('微信定位失败，尝试浏览器定位...', err);
+//       }
+//     }
+
+//     // 浏览器定位（需 HTTPS 或 localhost）
+//     if (!navigator.geolocation) {
+//       return reject(new Error('当前浏览器不支持地理定位'));
+//     }
+
+//     navigator.geolocation.getCurrentPosition(
+//       (position) => {
+//         resolve({
+//           lat: position.coords.latitude,
+//           lng: position.coords.longitude
+//         });
+//       },
+//       (error) => {
+//         switch (error.code) {
+//           case error.PERMISSION_DENIED:
+//             reject(new Error('用户拒绝授权获取位置'));
+//             break;
+//           case error.POSITION_UNAVAILABLE:
+//             reject(new Error('位置信息不可用'));
+//             break;
+//           case error.TIMEOUT:
+//             reject(new Error('获取位置超时'));
+//             break;
+//           default:
+//             reject(new Error('未知错误'));
+//         }
+//       },
+//       { enableHighAccuracy: true, timeout: 10000 }
+//     );
+//   });
+// };
+
+// /** 高德逆地理编码 */
+// const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
+//   const key = 'a86984fb0449d5fdffd6e78d4544ca2d'; // 请替换为你自己的高德Web服务Key
+//   const url = `https://restapi.amap.com/v3/geocode/regeo?location=${lng},${lat}&key=${key}&radius=1000&extensions=all`;
+
+//   try {
+//     const res = await fetch(url);
+//     const data = await res.json();
+//     if (data.status === '1' && data.regeocode) {
+//       return data.regeocode.formatted_address;
+//     } else {
+//       throw new Error('逆地理编码失败');
+//     }
+//   } catch (err) {
+//     console.error('逆地理编码失败:', err);
+//     throw err;
+//   }
+// };
 watch(
   () => route.query.customerId,
   async (newCustomerId) => {
