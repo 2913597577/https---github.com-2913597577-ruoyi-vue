@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+  <!--   <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -23,9 +23,6 @@
               <el-input v-model="queryParams.balanceStatus" placeholder="尾款金额" style="width: 160px" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
-            <!-- <el-form-item label="签约类型" prop="signType" label-width="68px">
-              <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
-            </el-form-item> -->
             <el-form-item label="归属城市" prop="customerCity" label-width="88px">
               <el-select v-model="queryParams.customerCity" placeholder="请选择客户归属城市" clearable
               @change="handleQuery" style="width: 160px">
@@ -55,11 +52,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['myCustomer:customerTransfer:add']">新增
@@ -80,7 +78,20 @@
               v-hasPermi="['myCustomer:customerTransfer:export']">导出
             </el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['myCustomer:customerTransfer:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['myCustomer:customerTransfer:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -218,7 +229,7 @@
 
 
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="80%" append-to-body
-      :custom-class="'native-style-dialog'">
+      :custom-class="'native-style-dialog'" draggable>
       <div class="min-h-[800px] bg-white p-4">
         <el-form ref="customerTransferFormRef" :model="form" :rules="rules" label-width="0" hide-required-asterisk>
           <!-- 头部区域 -->
@@ -715,7 +726,71 @@
 
 
 
-    <el-dialog v-model="auditDialogVisible" title="审核" width="500px" append-to-body>
+    <!-- 搜索按钮弹窗内容 -->
+  <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+  <!-- <template> -->
+  <div class="p-2">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">  
+       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="财务确认" prop="financeConfirmed" label-width="68px">
+              <el-select v-model="queryParams.financeConfirmed" placeholder="请选择财务确认状态" clearable
+                @keyup.enter="handleQuery" style="width: 160px">
+                <el-option v-for="item in financeStatusList" :key="item.value" :label="item.label"
+                  :value="item.value" align="center" ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="公司名称" prop="companyName" label-width="68px">
+              <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" style="width: 160px" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="对接人" prop="contactPerson" label-width="68px">
+              <el-input v-model="queryParams.contactPerson" placeholder="请输入公司对接人" style="width: 160px" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="尾款金额" prop="balanceStatus" label-width="68px">
+              <el-input v-model="queryParams.balanceStatus" placeholder="尾款金额" style="width: 160px" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <!-- <el-form-item label="签约类型" prop="signType" label-width="68px">
+              <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
+            </el-form-item> -->
+            <el-form-item label="归属城市" prop="customerCity" label-width="88px">
+              <el-select v-model="queryParams.customerCity" placeholder="请选择客户归属城市" clearable
+              @change="handleQuery" style="width: 160px">
+                <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                  :value="dict.value" align="center" ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="开票状态" prop="invoiceStatus" label-width="68px">
+              <el-select v-model="queryParams.invoiceStatus" placeholder="请选择开票状态" clearable
+                @keyup.enter="handleQuery" style="width: 160px">
+                <el-option v-for="item in invoiceStatusList" :key="item.value" :label="item.label"
+                  :value="item.value" align="center" ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="开始时间" prop="serviceStart" label-width="68px">
+              <el-date-picker clearable v-model="queryParams.serviceStart" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择服务开始时间" style="width: 160px" />
+            </el-form-item>
+            <el-form-item label="结束时间" prop="serviceEnd" label-width="68px">
+              <el-date-picker clearable v-model="queryParams.serviceEnd" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择服务结束时间" style="width: 160px" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+       </el-card>
+      </div>
+    </transition>
+  </div>
+<!-- </template> -->
+  </el-dialog>
+    <!-- 处置按钮弹窗内容 -->
+    <el-dialog v-model="auditDialogVisible" title="审核" width="500px" append-to-body draggable>
       <el-form :model="auditForm" label-width="100px">
         <!-- 审核状态 -->
         <el-form-item label="审核">
@@ -746,7 +821,7 @@
 
     <!-- 替换原有的查看对话框 -->
     <!-- 替换原有的查看对话框 -->
-    <el-dialog v-model="viewDialogVisible" title="客户流转单详情" width="700px" append-to-body>
+    <el-dialog v-model="viewDialogVisible" title="客户流转单详情" width="700px" append-to-body draggable>
       <div class="customer-transfer-detail">
         <el-scrollbar max-height="600px">
           <el-descriptions :column="1" border size="small">
@@ -918,6 +993,7 @@ import {
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
 
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
@@ -1013,7 +1089,7 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     companyName: undefined,
     contactPerson: undefined,
     contactInfo: undefined,
@@ -1308,7 +1384,8 @@ const auditDialogVisible = ref(false)
 const currentRow = ref<any>(null)
 // 提交状态
 const submitting = ref(false)
-
+//查找相关
+const searchDialogVisible = ref(false)
 // 上传相关
 const localFileList = ref([])
 const auditForm = ref({ auditStatus: '1', pictureUrl: '' })
@@ -1432,6 +1509,11 @@ const handleExport = () => {
   }, `customerTransfer_${new Date().getTime()}.xlsx`)
 }
 
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
+
 // 查看对话框相关变量
 const viewDialogVisible = ref(false)
 const viewForm = ref<CustomerTransferVO>({} as CustomerTransferVO)
@@ -1441,6 +1523,7 @@ const handleView = (row: CustomerTransferVO) => {
   viewForm.value = { ...row }
   viewDialogVisible.value = true
 }
+
 
 // 根据用户ID获取用户名
 const getUserNameById = (userId: string) => {
@@ -1661,4 +1744,5 @@ table td {
     background: $color-bg-neutral !important; // 中性浅灰（替代原蓝色背景）
   }
 }
+
 </style>

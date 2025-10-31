@@ -6,7 +6,7 @@
       <div v-show="showSearch" class="mb-[10px]">
       <el-card shadow="hover">
     <!-- 查询条件 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="90px">
       <el-form-item label="客户名称" prop="customerId">
         <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList" :props="selectProps"
           filterable clearable :loading="loading">

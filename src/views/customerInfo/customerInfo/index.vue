@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -20,12 +20,6 @@
                 <el-option label="是" :value="1"></el-option>
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="签约类型" prop="contractType">
-              <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
-                <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item> -->
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" style="width: 120px" />
@@ -58,11 +52,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <!-- <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerInfo:customerInfo:add']">新增</el-button>
@@ -79,7 +74,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['customerInfo:customerInfo:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerInfo:customerInfo:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerInfo:customerInfo:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -447,6 +455,74 @@
         </div>
       </template>
     </el-dialog>
+
+ <!-- 搜索按钮弹窗内容 -->
+ <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+  <!-- <template> -->
+  <div class="p-2">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">  
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="客户名称" prop="customerName">
+              <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="负责人" prop="principal">
+              <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="负责人电话" prop="contractCode" label-width="80px">
+              <el-input v-model="queryParams.contractCode" placeholder="请输入负责人电话" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="分配状态" prop="isAssigned" >
+              <el-select v-model="queryParams.isAssigned" placeholder="是否分配法务支持" clearable style="width: 120px">
+                <el-option label="否" :value="0"></el-option>
+                <el-option label="是" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
+            <!-- <el-form-item label="签约类型" prop="contractType">
+              <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
+                <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item> -->
+            <el-form-item label="到期时间" prop="expireDate">
+              <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择到期时间" style="width: 120px" />
+            </el-form-item>
+            <el-form-item label="法务支持" prop="lawyerId">
+              <el-input v-model="queryParams.lawyerId" placeholder="请输入法务支持" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="客户类型" prop="customerType">
+              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable style="width: 120px" >
+                <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="实收金额" prop="actualReceipt">
+              <el-input v-model="queryParams.actualReceipt" placeholder="请输入实收金额" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="尾款金额" prop="balance">
+              <el-input v-model="queryParams.balance" placeholder="请输入尾款金额" clearable style="width: 120px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="归属城市" prop="customerCity">
+              <el-select v-model="queryParams.customerCity" placeholder="请选择归属城市" clearable style="width: 120px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+  </div>
+  </el-dialog>
+
+
     <!-- 添加客户意向登记对话框 -->
     <el-dialog :title="intentionDialog.title" v-model="intentionDialog.visible" width="500px" append-to-body>
       <el-form ref="customerIntentionFormRef" :model="intentionForm" :rules="intentionRules" label-width="120px">
@@ -522,7 +598,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog title="客户详情" v-model="viewDialog.visible" width="700px" append-to-body>
+    <el-dialog title="客户详情" v-model="viewDialog.visible" width="700px" append-to-body draggable>
       <el-descriptions :column="1" border size="small">
         <el-descriptions-item label="签约日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
         <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
@@ -741,7 +817,8 @@ const handleView = (row: CustomerInfoVO) => {
   viewForm.value = { ...row };
   viewDialog.visible = true;
 };
-
+//查找相关
+const searchDialogVisible = ref(false)
 
 const customerRiskRefundFormRef = ref<ElFormInstance>();
 const CustomerRiskRefundFormInitFormData: CustomerRiskRefundForm = {
@@ -1107,6 +1184,10 @@ const reset = () => {
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
   getList();
+}
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 /** 重置按钮操作 */
