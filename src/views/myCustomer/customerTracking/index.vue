@@ -287,7 +287,6 @@ import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from 
 import { addCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { useRoute } from 'vue-router';  // 用于接收路由参数
-import { c } from 'node_modules/vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf';
 
 
 const route = useRoute();

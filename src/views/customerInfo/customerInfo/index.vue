@@ -1376,7 +1376,7 @@ const submitAssignForm = async () => {
 const handleTrackingDetail = (id: number | string) => {
   // 跳转到目标路由，并通过query参数传递id
   router.push({
-    path: '/legalSupport/customerTracking',  // 目标路由路径（需与实际路由配置一致）
+    path: '/legalSupport/customerAllTracking',  // 目标路由路径（需与实际路由配置一致）
     query: { customerId: id }  // 传递id参数（键名可自定义，如customerId）
   });
 };

@@ -4,28 +4,31 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="客户名称" prop="customerName">
-              <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
+           <el-form-item label="客户名称" prop="customerId">
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="客户id" prop="customerId">
-              <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="法务支持" prop="legalSupportName">
-              <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="法务支持ID" prop="legalSupportId">
-              <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持ID" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+              <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable>
+                <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+                  :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="创建时间" prop="createTime">
               <el-date-picker clearable
                 v-model="queryParams.createTime"
                 type="date"
-                value-format="YYYY-MM-DD"
                 placeholder="请选择创建时间"
               />
             </el-form-item>
-            <el-form-item label="创建人" prop="createBy">
-              <el-input v-model="queryParams.createBy" placeholder="请输入创建人" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="操作人" prop="createBy">
+              <el-select v-model="queryParams.createBy" placeholder="请选择操作人" filterable clearable>
+                <el-option v-for="user in userList" :key="user.userId"
+                    :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -59,15 +62,15 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="客户名称" align="center" prop="customerName" />
-        <el-table-column label="客户id" align="center" prop="customerId" />
+        <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="法务支持" align="center" prop="legalSupportName" />
-        <el-table-column label="法务支持ID" align="center" prop="legalSupportId" />
+        <!-- <el-table-column label="法务支持ID" align="center" prop="legalSupportId" /> -->
         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-          <template #default="scope">
+          <!-- <template #default="scope">
             <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
-          </template>
+          </template> -->
         </el-table-column>
-        <el-table-column label="创建人" align="center" prop="createBy" />
+        <el-table-column label="操作人" align="center" prop="remark1" />
         <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -120,6 +123,8 @@
 </template>
 
 <script setup name="LegalSupportChange" lang="ts">
+import { getCustomerByUserId } from '@/api/common';
+import { listLawyerSupport, listUser } from '@/api/customerInfo/customerInfo';
 import { listLegalSupportChange, getLegalSupportChange, delLegalSupportChange, addLegalSupportChange, updateLegalSupportChange } from '@/api/legalSupportChange/legalSupportChange';
 import { LegalSupportChangeVO, LegalSupportChangeQuery, LegalSupportChangeForm } from '@/api/legalSupportChange/legalSupportChange/types';
 
@@ -176,6 +181,18 @@ const data = reactive<PageData<LegalSupportChangeForm, LegalSupportChangeQuery>>
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+const customerList = ref<any[]>([]);
+
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
 
 /** 查询法务支持变更列表 */
 const getList = async () => {
@@ -251,6 +268,30 @@ const submitForm = () => {
   });
 }
 
+const lawyerList = ref([]);
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    // console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    // console.error('法务人员列表加载异常：', error);
+  }
+};
+
+const userList = ref([]);
+const loadUserList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listUser();
+    userList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载人员失败，请稍后重试');
+    console.error('人员列表加载异常：', error);
+  }
+};
 /** 删除按钮操作 */
 const handleDelete = async (row?: LegalSupportChangeVO) => {
   const _ids = row?.id || ids.value;
@@ -268,6 +309,9 @@ const handleExport = () => {
 }
 
 onMounted(() => {
+  loadUserList();
+  loadCustomerList();
+  loadLawyerSupportList();
   getList();
 });
 </script>

@@ -129,12 +129,12 @@
           <el-tag v-else-if="scope.row.trackingType === 5" type="info">案件</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="180">
-        <!-- <template #default="scope">
+      <!-- <el-table-column label="操作" align="center" width="180">
+        <template #default="scope">
           <el-button type="primary" link icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button type="danger" link icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
-        </template> -->
-      </el-table-column>
+        </template>
+      </el-table-column> -->
     </el-table>
     <!-- 分页 -->
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
@@ -189,6 +189,7 @@ import { ElForm, ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { getCustomerByUserId } from '@/api/common';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
+
 // 定义变量
 const loading = ref(true);
 const showSearch = ref(true);
@@ -197,6 +198,7 @@ const total = ref(0);
 const title = ref('');
 const open = ref(false);
 const router = useRouter();
+const route = useRoute();
 // 查询参数
 const queryParams = reactive<TrackingQueryParams>({
   pageNum: 0,
@@ -414,6 +416,39 @@ const handleTrackingDetail = (data) => {
     query: { customerId: customerId }
   });
 };
+
+
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    if (newCustomerId) {
+      // 确保客户列表已加载
+      if (customerList.value.length === 0) {
+        await loadCustomerList();
+      }
+
+      queryParams.customerId = newCustomerId;
+
+      // 验证客户ID是否在客户列表中
+      const customerExists = customerList.value.some(
+        item => item.customer_id === newCustomerId
+      );
+
+      if (!customerExists) {
+        console.warn(`客户ID ${newCustomerId} 不在客户列表中`);
+        // 可以选择清空或保留显示ID
+        // queryParams.value.customerId = undefined;
+      }
+
+      await handleQuery();
+    } else {
+      queryParams.customerId = undefined;
+      await getList();
+    }
+  },
+  { immediate: true }
+);
+
 
 /* onMounted(() => {
   loadLawyerSupportList();
