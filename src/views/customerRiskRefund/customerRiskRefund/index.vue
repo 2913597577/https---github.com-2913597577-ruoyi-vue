@@ -126,7 +126,7 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
-    
+
     <!-- 筛选按钮弹窗 -->
     <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
       <div class="p-2">
@@ -171,7 +171,7 @@
 
 
     <!-- 添加或修改客户风险/退费对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerRiskRefundFormRef" :model="form" :rules="rules" label-width="80px">
         <!-- <el-form-item label="法务支持" prop="lawyerId" label-width="90px">
           <el-input v-model="form.lawyerId" placeholder="请输入法务支持" />

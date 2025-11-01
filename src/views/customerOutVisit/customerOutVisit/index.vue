@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -13,9 +13,9 @@
               </el-select>
             </el-form-item>
 
-            <!-- <el-form-item label="法务支持姓名" prop="legalSupportName">
+            <el-form-item label="法务支持姓名" prop="legalSupportName">
               <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item label="出访时间" prop="visitTime">
               <el-date-picker clearable v-model="queryParams.visitTime" type="date" placeholder="请选择出访时间" />
             </el-form-item>
@@ -42,11 +42,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerOutVisit:customerOutVisit:add']">新增</el-button>
@@ -63,7 +64,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['customerOutVisit:customerOutVisit:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerInfo:customerInfo:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerInfo:customerInfo:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -137,6 +151,59 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+
+ <!-- 搜索按钮弹窗内容 -->
+ <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+  <!-- <template> -->
+  <div class="p-2">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="对接客户" prop="customerId">
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+
+            <!-- <el-form-item label="法务支持姓名" prop="legalSupportName">
+              <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
+            </el-form-item> -->
+            <el-form-item label="出访时间" prop="visitTime">
+              <el-date-picker clearable v-model="queryParams.visitTime" type="date" placeholder="请选择出访时间" />
+            </el-form-item>
+            <el-form-item label="下次出访时间" prop="nextVisitTime">
+              <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" placeholder="请选择下次出访时间" />
+            </el-form-item>
+            <el-form-item label="是否本月第一次出访" prop="isFirstVisit">
+              <el-select v-model="queryParams.isFirstVisit" placeholder="请选择是否本月第一次出访" clearable>
+                <el-option v-for="dict in dc_true_or_false" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="是否计入外勤项数" prop="isOutCount">
+              <el-select v-model="queryParams.isOutCount" placeholder="请选择是否计入外勤项数" clearable>
+                <el-option v-for="dict in dc_true_or_false" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="面访地点" prop="visitAddress">
+              <el-input v-model="queryParams.visitAddress" placeholder="请输入面访地点" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+  </div>
+  <!-- </template> -->
+</el-dialog>
+
+
     <!-- 添加或修改客户出访记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerOutVisitFormRef" :model="form" :rules="rules" label-width="80px">
@@ -256,7 +323,7 @@ const data = reactive<PageData<CustomerOutVisitForm, CustomerOutVisitQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     customerId: undefined,
     customerName: undefined,
     legalSupportId: undefined,
@@ -296,6 +363,8 @@ const cancel = () => {
   dialog.visible = false;
 }
 
+//查找相关
+const searchDialogVisible = ref(false)
 /** 表单重置 */
 const reset = () => {
   form.value = { ...initFormData };
@@ -375,6 +444,11 @@ const submitForm = () => {
       await getList();
     }
   });
+} 
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 /** 删除按钮操作 */

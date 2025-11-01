@@ -1,17 +1,17 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <!-- <el-form-item label="法务支持" prop="legalSupport">
+            <el-form-item label="法务支持" prop="legalSupport">
               <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
-            </el-form-item> -->
-            <!-- <el-form-item label="法务支持id" prop="legalSupportId">
+            </el-form-item>
+            <el-form-item label="法务支持id" prop="legalSupportId">
               <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable
                 @keyup.enter="handleQuery" />
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
               <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
                 style="width: 100%;" @change="handleLegalSupportChange">
@@ -34,10 +34,10 @@
             <el-form-item label="跟踪记录" prop="trackingId">
               <el-input v-model="queryParams.trackingId" placeholder="请输入跟踪记录id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <!-- <el-form-item label="处理人id" prop="contractHandler">
+            <el-form-item label="处理人id" prop="contractHandler">
               <el-input v-model="queryParams.contractHandler" placeholder="请输入处理人id" clearable
                 @keyup.enter="handleQuery" />
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item label="处理人" prop="contractHandlerName">
               <el-input v-model="queryParams.contractHandlerName" placeholder="请输入处理人" clearable
                 @keyup.enter="handleQuery" />
@@ -55,11 +55,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerJobOrder:customerJobOrder:add']">新增</el-button>
@@ -76,7 +77,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['customerJobOrder:customerJobOrder:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerInfo:customerInfo:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerInfo:customerInfo:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -156,8 +170,73 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+
+ <!-- 搜索按钮弹窗内容 -->
+ <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+  <!-- <template> -->
+  <div class="p-2">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <!-- <el-form-item label="法务支持" prop="legalSupport">
+              <el-input v-model="queryParams.legalSupport" placeholder="请输入法务支持" clearable @keyup.enter="handleQuery" />
+            </el-form-item> -->
+            <!-- <el-form-item label="法务支持id" prop="legalSupportId">
+              <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item> -->
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+              <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+                style="width: 100%;" @change="handleLegalSupportChange">
+                <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+                  :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+              </el-select>
+            </el-form-item>
+
+            <el-form-item label="客户名称" prop="customerId">
+              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
+            </el-form-item>
+            <el-form-item label="交付时间" prop="deliveryTime">
+              <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" placeholder="请选择交付时间" />
+            </el-form-item>
+            <el-form-item label="跟踪记录" prop="trackingId">
+              <el-input v-model="queryParams.trackingId" placeholder="请输入跟踪记录id" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <!-- <el-form-item label="处理人id" prop="contractHandler">
+              <el-input v-model="queryParams.contractHandler" placeholder="请输入处理人id" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item> -->
+            <el-form-item label="处理人" prop="contractHandlerName">
+              <el-input v-model="queryParams.contractHandlerName" placeholder="请输入处理人" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="处理状态" prop="processingStatus">
+              <el-select v-model="queryParams.processingStatus" placeholder="请选择工单处理状态" clearable>
+                <el-option v-for="dict in processing_status" :key="dict.value" :label="dict.label"
+                  :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+  </div>
+  <!-- </template> -->
+ </el-dialog>
+
     <!-- 添加或修改工单管理对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerJobOrderFormRef" :model="form" :rules="rules" label-width="100px">
         <!-- <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
@@ -226,7 +305,7 @@
     </el-dialog>
 
     <!-- 在现有 el-dialog 后面添加新的确认对话框 -->
-    <el-dialog title="确认接单信息" v-model="acceptDialog.visible" width="500px" append-to-body>
+    <el-dialog title="确认接单信息" v-model="acceptDialog.visible" width="500px" append-to-body draggable>
       <el-form :model="acceptDialog.form" label-width="100px">
         <el-form-item label="法务支持">
           <el-input v-model="acceptDialog.form.legalSupport" disabled />
@@ -250,7 +329,7 @@
     </el-dialog>
 
     <!-- 在现有 el-dialog 后面添加新的新增工单对话框 -->
-    <el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
+    <el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body draggable>
       <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="90px">
         <el-form-item label="客户" prop="customerId">
           <el-select v-model="addForm.customerId" placeholder="请选择客户" filterable>
@@ -382,7 +461,7 @@ const data = reactive<PageData<CustomerJobOrderForm, CustomerJobOrderQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     legalSupport: undefined,
     legalSupportId: undefined,
     preContractAddress: undefined,
@@ -447,7 +526,8 @@ const cancel = () => {
   reset();
   dialog.visible = false;
 }
-
+//查找相关
+const searchDialogVisible = ref(false)
 /** 表单重置 */
 const reset = () => {
   form.value = { ...initFormData };
@@ -655,7 +735,10 @@ const cancelAdd = () => {
   addNewFile.value = null;
   addDialog.visible = false;
 }
-
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
 /**
  * 新增法务支持选择变化处理
  */

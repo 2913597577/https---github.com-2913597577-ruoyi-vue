@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -13,30 +13,30 @@
                 </template>
               </el-select-v2>
             </el-form-item>
-            <!-- <el-form-item label="跟踪状态" prop="cumtomerStatus">
+            <el-form-item label="跟踪状态" prop="cumtomerStatus">
               <el-select v-model="queryParams.cumtomerStatus" placeholder="请选择跟踪状态" clearable>
                 <el-option v-for="dict in cumtomer_status" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item label="回访时间" prop="trackingTime">
               <el-date-picker clearable v-model="queryParams.trackingTime" type="date" 
                 placeholder="请选择回访时间" />
             </el-form-item>
-            <!-- <el-form-item label="提交状态" prop="submitStatus">
+            <el-form-item label="提交状态" prop="submitStatus">
               <el-select v-model="queryParams.submitStatus" placeholder="请选择提交状态" clearable>
                 <el-option v-for="dict in submit_status" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item label="下次回访时间" prop="nextTime">
               <el-date-picker clearable v-model="queryParams.nextTime" type="date" 
                 placeholder="请选择下次回访时间" />
             </el-form-item>
-            <!-- <el-form-item label="日志类型" prop="isReturn">
+            <el-form-item label="日志类型" prop="isReturn">
               <el-select v-model="queryParams.isReturn" placeholder="请选择日志类型" clearable>
                 <el-option :key=0 label="普通日志" value=0></el-option>
                 <el-option :key=1 label="回访日志" value=1></el-option>
               </el-select>
-            </el-form-item> -->
+            </el-form-item>
 
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -45,11 +45,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['myCustomer:customerTracking:add']">新增</el-button>
@@ -66,7 +67,21 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['myCustomer:customerTracking:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerInfo:customerInfo:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerInfo:customerInfo:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -138,8 +153,61 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
-    <!-- 添加或修改客户跟踪对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+     
+    <!-- 筛选按钮弹窗 -->
+    <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+      <div class="p-2">
+        <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="客户名称" prop="customerId">
+              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
+            </el-form-item>
+            <!-- <el-form-item label="跟踪状态" prop="cumtomerStatus">
+              <el-select v-model="queryParams.cumtomerStatus" placeholder="请选择跟踪状态" clearable>
+                <el-option v-for="dict in cumtomer_status" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item> -->
+            <el-form-item label="回访时间" prop="trackingTime">
+              <el-date-picker clearable v-model="queryParams.trackingTime" type="date" 
+                placeholder="请选择回访时间" />
+            </el-form-item>
+            <!-- <el-form-item label="提交状态" prop="submitStatus">
+              <el-select v-model="queryParams.submitStatus" placeholder="请选择提交状态" clearable>
+                <el-option v-for="dict in submit_status" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item> -->
+            <el-form-item label="下次回访时间" prop="nextTime">
+              <el-date-picker clearable v-model="queryParams.nextTime" type="date" 
+                placeholder="请选择下次回访时间" />
+            </el-form-item>
+            <!-- <el-form-item label="日志类型" prop="isReturn">
+              <el-select v-model="queryParams.isReturn" placeholder="请选择日志类型" clearable>
+                <el-option :key=0 label="普通日志" value=0></el-option>
+                <el-option :key=1 label="回访日志" value=1></el-option>
+              </el-select>
+            </el-form-item> -->
+
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+      </div>
+    </el-dialog>
+
+    <!-- 添加或修改客户跟踪对话框 --> 
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="客户" prop="customerId">
           <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
@@ -242,7 +310,7 @@
     </el-dialog>
 
     <!-- 查看客户跟踪记录对话框 -->
-    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body>
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body draggable>
       <el-table :data="viewCustomerTrackings" border>
         <el-table-column label="回访时间" align="center" width="100">
           <template #default="scope">
@@ -339,7 +407,7 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     customerId: undefined,
     customerRemark: undefined,
     trackingType: undefined,
@@ -400,6 +468,9 @@ const selectProps = {
 
 const lawyerList = ref([]);
 
+//查找相关
+const searchDialogVisible = ref(false)
+
 /**
  * 法务支持选择变化处理
  */
@@ -445,7 +516,10 @@ const cancel = () => {
   reset();
   dialog.visible = false;
 }
-
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
 /** 表单重置 */
 const reset = () => {
   form.value = { ...initFormData };
