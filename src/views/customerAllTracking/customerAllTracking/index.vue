@@ -326,14 +326,17 @@ const customerList = ref([]);
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
   label: 'customer_name',
-  value: 'transfer_id'
+  value: 'customer_id'
 }
 
 const getCustomerNameById = (customerId: string | number) => {
   if (!customerId) return '';
   // console.log(customerId, '客户id')
   // console.log(customerList.value, '客户列表')
-  const customer = customerList.value.find(item => item.transfer_id === customerId);
+  let customer = customerList.value.find(item => item.transfer_id === customerId);
+  if (!customer) {
+     customer = customerList.value.find(item => item.customer_id === customerId);
+  }
   // console.log(customer)
   return customer ? customer.customer_realName : '';
 };

@@ -7,8 +7,8 @@
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="对接客户" prop="customerId">
               <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
-                <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
-                  :value="item.transfer_id">
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -142,8 +142,8 @@
       <el-form ref="customerOutVisitFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="客户" prop="customerId">
           <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
-            <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
-              :value="item.transfer_id">
+            <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+              :value="item.customer_id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -399,7 +399,10 @@ const loadCustomerList = async () => {
 
 const getCustomerNameById = (customerId: string | number) => {
   if (!customerId) return '';
-  const customer = customerList.value.find(item => item.transfer_id === customerId);
+  let customer = customerList.value.find(item => item.transfer_id === customerId);
+  if (!customer) {
+    customer = customerList.value.find(item => item.customer_id === customerId);
+  }
   return customer ? customer.customer_realName : '';
 };
 

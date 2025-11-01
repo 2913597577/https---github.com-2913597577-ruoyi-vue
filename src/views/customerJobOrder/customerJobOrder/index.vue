@@ -254,8 +254,8 @@
       <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="90px">
         <el-form-item label="客户" prop="customerId">
           <el-select v-model="addForm.customerId" placeholder="请选择客户" filterable>
-            <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
-              :value="item.transfer_id">
+            <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+              :value="item.customer_id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -706,7 +706,10 @@ const getCustomerNameById = (customerId: string | number) => {
   if (!customerId) return '';
   // console.log(customerId, '客户id')
   // console.log(customerList.value, '客户列表')
-  const customer = customerList.value.find(item => item.transfer_id === customerId);
+  let customer = customerList.value.find(item => item.transfer_id === customerId);
+  if (!customer) {
+    customer = customerList.value.find(item => item.customer_id === customerId);
+  }
   // console.log(customer)
   return customer ? customer.customer_realName : '';
 };
@@ -722,7 +725,7 @@ const handleAdd = () => {
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
   label: 'customer_name',
-  value: 'transfer_id'
+  value: 'customer_id'
 }
 const customerList = ref<any[]>([]);
 const loadCustomerList = async () => {

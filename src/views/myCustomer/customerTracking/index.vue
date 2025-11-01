@@ -143,8 +143,8 @@
       <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="客户" prop="customerId">
           <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
-            <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
-              :value="item.transfer_id">
+            <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+              :value="item.customer_id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -287,6 +287,7 @@ import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from 
 import { addCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { useRoute } from 'vue-router';  // 用于接收路由参数
+import { c } from 'node_modules/vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf';
 
 
 const route = useRoute();
@@ -395,7 +396,7 @@ const jobOrderForm = ref({
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
   label: 'customer_name',
-  value: 'transfer_id'
+  value: 'customer_id'
 }
 
 const lawyerList = ref([]);
@@ -569,7 +570,10 @@ const submitJobOrderForm = async () => {
 // 根据客户ID获取客户名称
 const getCustomerNameById = (customerId: string | number) => {
   if (!customerId) return '';
-  const customer = customerList.value.find(item => item.transfer_id === customerId);
+  let customer = customerList.value.find(item => item.transfer_id === customerId);
+  if (!customer) {
+    customer = customerList.value.find(item => item.customer_id === customerId);
+  }
   return customer ? customer.customer_realName : '';
 };
 
@@ -611,7 +615,7 @@ watch(
 
       // 验证客户ID是否在客户列表中
       const customerExists = customerList.value.some(
-        item => item.transfer_id === newCustomerId
+        item => item.customer_id === newCustomerId
       );
 
       if (!customerExists) {

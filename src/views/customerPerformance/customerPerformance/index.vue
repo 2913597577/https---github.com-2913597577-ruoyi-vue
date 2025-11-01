@@ -15,8 +15,8 @@
                 collapse-tags
                 collapse-tags-tooltip
                 @change="handleQuery">
-                <el-option v-for="item in customerList" :key="item.transfer_id" :label="item.customer_name"
-                  :value="item.transfer_id">
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
                 </el-option>
               </el-select>
             </el-form-item>
