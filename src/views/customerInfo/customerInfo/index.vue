@@ -228,7 +228,7 @@
     </el-card>
     <!-- 添加或修改客户总表对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="650px" append-to-body
-      :close-on-click-modal="false">
+      :close-on-click-modal="false" draggable>
       <!-- 添加带边框的卡片容器 -->
       <el-card class="customer-form-card" shadow="always">
         <el-form ref="customerInfoFormRef" :model="form" :rules="rules" label-width="100px" size="medium">
@@ -364,7 +364,7 @@
     </el-dialog>
     <!-- 客户流转操作对话框 -->
     <el-dialog title="客户流转" v-model="transferDialog.visible" width="450px" append-to-body
-      :before-close="handleTransferClose">
+      :before-close="handleTransferClose" draggable>
       <el-form ref="transferFormRef" :model="transferForm" label-width="100px" class="mt-2">
         <!-- 流转类型单选框 -->
         <el-form-item label="流转类型" prop="transferType"
@@ -524,7 +524,7 @@
 
 
     <!-- 添加客户意向登记对话框 -->
-    <el-dialog :title="intentionDialog.title" v-model="intentionDialog.visible" width="500px" append-to-body>
+    <el-dialog :title="intentionDialog.title" v-model="intentionDialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerIntentionFormRef" :model="intentionForm" :rules="intentionRules" label-width="120px">
         <el-form-item label="提报日期" prop="submissionDate">
           <el-date-picker clearable v-model="intentionForm.submissionDate" type="datetime"
@@ -576,7 +576,7 @@
       </template>
     </el-dialog>
     <!-- 新增分配法务支持弹窗 -->
-    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="400px" append-to-body>
+    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="400px" append-to-body draggable>
       <el-form ref="assignFormRef" :model="assignForm" :rules="assignRules" label-width="120px" class="mt-4">
 
         <el-form-item label="法务支持人员" prop="lawyerId">

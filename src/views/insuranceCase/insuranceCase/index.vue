@@ -1,5 +1,149 @@
 <template>
   <div class="p-2">
+    <!-- <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="对接客户" prop="customerId">
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="下单日期" prop="orderDate">
+              <el-date-picker clearable v-model="queryParams.orderDate" type="date" 
+                placeholder="请选择下单日期" />
+            </el-form-item>
+            <el-form-item label="工单号" prop="insuranceNumber">
+              <el-input v-model="queryParams.insuranceNumber" placeholder="请输入工单号" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="法务支持id" prop="legalSupportId">
+              <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+              <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+                style="width: 100%;" @change="handleLegalSupportChange">
+                <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+                  :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="原告方" prop="plaintiff">
+              <el-input v-model="queryParams.plaintiff" placeholder="请输入原告方" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="被告方" prop="defendant">
+              <el-input v-model="queryParams.defendant" placeholder="请输入被告方" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="标的额" prop="subjectAmount">
+              <el-input v-model="queryParams.subjectAmount" placeholder="请输入标的额" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="案由" prop="caseReason">
+              <el-input v-model="queryParams.caseReason" placeholder="请输入案由" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="法院" prop="jurisdictionCourt">
+              <el-input v-model="queryParams.jurisdictionCourt" placeholder="请输入管辖权法院" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="保费" prop="premium">
+              <el-input v-model="queryParams.premium" placeholder="请输入保费" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition> -->
+
+    <el-card shadow="never">
+      <template #header>
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary" plain icon="Plus" @click="handleAdd"
+              v-hasPermi="['insuranceCase:insuranceCase:add']">新增</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
+              v-hasPermi="['insuranceCase:insuranceCase:edit']">修改</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
+              v-hasPermi="['insuranceCase:insuranceCase:remove']">删除</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['insuranceCase:insuranceCase:export']">导出</el-button>
+          </el-col>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerInfo:customerInfo:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerInfo:customerInfo:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
+        </el-row>
+      </template>
+
+      <el-table v-loading="loading" border :data="insuranceCaseList" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" /> -->
+        <!-- <el-table-column label="客户id(客户编号)" align="center" prop="customerId" /> -->
+        <el-table-column label="客户名称" align="center" prop="customerId" width="120" show-overflow-tooltip >
+          <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
+        <el-table-column label="下单日期" align="center" prop="orderDate" width="100">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="保费" align="center" prop="premium" width="80" />
+        <el-table-column label="工单号" align="center" prop="insuranceNumber" width="100" />
+        <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
+        <el-table-column label="案由" align="center" prop="caseReason" width="140" show-overflow-tooltip />
+        <el-table-column label="标的额" align="center" prop="subjectAmount" width="80" />
+       
+        <el-table-column label="原告方" align="center" prop="plaintiff" width="120" show-overflow-tooltip />
+        <el-table-column label="被告方" align="center" prop="defendant" width="120" show-overflow-tooltip />
+        <el-table-column label="管辖权法院" align="center" prop="jurisdictionCourt" width="100" show-overflow-tooltip />
+        <el-table-column label="备注" align="center" prop="remark" width="100" show-overflow-tooltip />
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px" 
+          fixed="right">
+          <template #default="scope">
+            <el-tooltip content="修改" placement="top">
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                v-hasPermi="['insuranceCase:insuranceCase:edit']">修改</el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['insuranceCase:insuranceCase:remove']">删除</el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize" @pagination="getList" />
+    </el-card>
+
+     <!-- 搜索按钮弹窗内容 -->
+ <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+  <!-- <template> -->
+  <div class="p-2">
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
@@ -57,75 +201,13 @@
         </el-card>
       </div>
     </transition>
+  </div>
+  <!-- </template> -->
+</el-dialog>
 
-    <el-card shadow="never">
-      <template #header>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd"
-              v-hasPermi="['insuranceCase:insuranceCase:add']">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()"
-              v-hasPermi="['insuranceCase:insuranceCase:edit']">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
-              v-hasPermi="['insuranceCase:insuranceCase:remove']">删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport"
-              v-hasPermi="['insuranceCase:insuranceCase:export']">导出</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-        </el-row>
-      </template>
 
-      <el-table v-loading="loading" border :data="insuranceCaseList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" /> -->
-        <!-- <el-table-column label="客户id(客户编号)" align="center" prop="customerId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerId" width="120" show-overflow-tooltip >
-          <template #default="scope">
-            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
-        <el-table-column label="下单日期" align="center" prop="orderDate" width="100">
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="保费" align="center" prop="premium" width="80" />
-        <el-table-column label="工单号" align="center" prop="insuranceNumber" width="100" />
-        <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
-        <el-table-column label="案由" align="center" prop="caseReason" width="140" show-overflow-tooltip />
-        <el-table-column label="标的额" align="center" prop="subjectAmount" width="80" />
-       
-        <el-table-column label="原告方" align="center" prop="plaintiff" width="120" show-overflow-tooltip />
-        <el-table-column label="被告方" align="center" prop="defendant" width="120" show-overflow-tooltip />
-        <el-table-column label="管辖权法院" align="center" prop="jurisdictionCourt" width="100" show-overflow-tooltip />
-        <el-table-column label="备注" align="center" prop="remark" width="100" show-overflow-tooltip />
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px" 
-          fixed="right">
-          <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['insuranceCase:insuranceCase:edit']">修改</el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['insuranceCase:insuranceCase:remove']">删除</el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize" @pagination="getList" />
-    </el-card>
     <!-- 添加或修改保险记录表对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="insuranceCaseFormRef" :model="form" :rules="rules" label-width="80px">
         <!-- <el-form-item label="客户id(客户编号)" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id(客户编号)" />
@@ -237,7 +319,7 @@ const data = reactive<PageData<InsuranceCaseForm, InsuranceCaseQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     customerId: undefined,
     orderDate: undefined,
     insuranceNumber: undefined,
@@ -290,6 +372,8 @@ const cancel = () => {
   reset();
   dialog.visible = false;
 }
+//查找相关
+const searchDialogVisible = ref(false)
 
 /** 表单重置 */
 const reset = () => {
@@ -322,7 +406,10 @@ const handleAdd = () => {
   dialog.visible = true;
   dialog.title = "添加保险记录表";
 }
-
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
 /** 修改按钮操作 */
 const handleUpdate = async (row?: InsuranceCaseVO) => {
   reset();

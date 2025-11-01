@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -58,11 +58,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+         <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['caseDetail:caseDetail:add']">新增</el-button>
@@ -79,7 +80,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['caseDetail:caseDetail:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerInfo:customerInfo:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerInfo:customerInfo:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -147,8 +161,75 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+
+<!-- 搜索按钮弹窗内容 -->
+<el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+  <!-- <template> -->
+  <div class="p-2">
+  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="对接客户" prop="customerId">
+              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="欠款人" prop="debtorName">
+              <el-input v-model="queryParams.debtorName" placeholder="请输入欠款人" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="欠款金额" prop="debtAmount">
+              <el-input v-model="queryParams.debtAmount" placeholder="请输入欠款金额" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="剩余欠款" prop="remainingAmount">
+              <el-input v-model="queryParams.remainingAmount" placeholder="请输入剩余欠款" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="联系电话" prop="contactPhone">
+              <el-input v-model="queryParams.contactPhone" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="身份证号" prop="idCard">
+              <el-input v-model="queryParams.idCard" placeholder="请输入身份证号" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="需求接收时间" prop="requestReceiveTime">
+              <el-date-picker clearable v-model="queryParams.requestReceiveTime" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择需求接收时间" />
+            </el-form-item>
+            <el-form-item label="备注" prop="evidenceNotes">
+              <el-input v-model="queryParams.evidenceNotes" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="立案系统账号" prop="filingSystemAccount">
+              <el-input v-model="queryParams.filingSystemAccount" placeholder="请输入立案系统账号" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="立案密码" prop="filingPassword">
+              <el-input v-model="queryParams.filingPassword" placeholder="请输入立案密码" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="立案日期" prop="filingDate">
+              <el-date-picker clearable v-model="queryParams.filingDate" type="date" 
+                placeholder="请选择立案日期" />
+            </el-form-item>
+            <el-form-item label="下次联系时间" prop="nextContactTime">
+              <el-date-picker clearable v-model="queryParams.nextContactTime" type="date" 
+                placeholder="请选择下次联系时间" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+  </div>
+ </el-dialog>
+
     <!-- 添加或修改欠款案件表对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="caseDetailFormRef" :model="form" :rules="rules" label-width="80px">
         <!-- <el-form-item label="客户id(客户编号)" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id(客户编号)" />
@@ -279,7 +360,7 @@ const data = reactive<PageData<CaseDetailForm, CaseDetailQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     customerId: undefined,
     debtorName: undefined,
     debtAmount: undefined,
@@ -347,6 +428,14 @@ const getList = async () => {
 const cancel = () => {
   reset();
   dialog.visible = false;
+}
+
+//查找相关
+const searchDialogVisible = ref(false)
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 /** 表单重置 */

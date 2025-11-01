@@ -171,7 +171,7 @@
 </el-dialog>
 
     <!-- 添加或修改客户意向登记对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerIntentionFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="来源" prop="source" label-width="90px">
           <el-input v-model="form.source" placeholder="请输入来源" />
@@ -291,7 +291,7 @@ const data = reactive<PageData<CustomerIntentionForm, CustomerIntentionQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     submissionDate: undefined,
     legalSupport: undefined,
     legalSupportId: undefined,

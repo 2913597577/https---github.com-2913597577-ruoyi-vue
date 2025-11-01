@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+    <!-- <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -18,9 +18,9 @@
                   :value="dict.value" />
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="客户id" prop="customerId">
+            <el-form-item label="客户id" prop="customerId">
               <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item label="客户名称" prop="customerId">
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
                 :props="selectProps" filterable clearable :loading="loading">
@@ -37,10 +37,11 @@
         </el-card>
       </div>
     </transition>
-
+ -->
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['caseProgress:caseProgress:add']">新增</el-button>
@@ -57,7 +58,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['caseProgress:caseProgress:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerInfo:customerInfo:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerInfo:customerInfo:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -102,8 +116,54 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+
+<!-- 搜索按钮弹窗内容 -->
+<el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+  <!-- <template> -->
+  <div class="p-2">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="案件" prop="caseId">
+              <el-select v-model="queryParams.caseId" placeholder="请选择案件" filterable clearable>
+                <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
+                  :value="item.case_id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="案件类型" prop="caseType">
+              <el-select v-model="queryParams.caseType" placeholder="请选择案件类型" clearable>
+                <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label"
+                  :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="客户id" prop="customerId">
+              <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="客户名称" prop="customerId">
+              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+  </div>
+  <!-- </template> -->
+</el-dialog>
+
     <!-- 添加或修改案件进展表对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="caseProgressFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="案件" prop="caseId">
           <el-select v-model="form.caseId" placeholder="请选择案件" filterable clearable>
@@ -199,7 +259,7 @@ const data = reactive<PageData<CaseProgressForm, CaseProgressQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     caseId: undefined,
     caseType: undefined,
     customerId: undefined,
@@ -236,6 +296,13 @@ const getList = async () => {
   caseProgressList.value = res.rows;
   total.value = res.total;
   loading.value = false;
+}
+
+//查找相关
+const searchDialogVisible = ref(false)
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 /** 取消按钮 */
