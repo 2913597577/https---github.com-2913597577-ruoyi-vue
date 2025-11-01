@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+    <!-- <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -39,11 +39,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerIntention:customerIntention:add']">新增</el-button>
@@ -59,7 +60,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['customerIntention:customerIntention:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+          </div>
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['myCustomer:customerTransfer:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['myCustomer:customerTransfer:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -109,6 +123,53 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+
+ <!-- 筛选按钮弹窗 -->
+ <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+  <div class="p-2">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+              <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+                style="width: 100%;" @change="handleLegalSupportChange">
+                <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+                  :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="意向客户" prop="intendedCustomer" label-width="68px">
+              <el-input v-model="queryParams.intendedCustomer" placeholder="请输入意向客户" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="类型" prop="type" label-width="68px">
+              <el-select v-model="queryParams.type" placeholder="请选择类型" clearable>
+                <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="介绍人" prop="introducer" label-width="68px">
+              <el-input v-model="queryParams.introducer" placeholder="请输入介绍人" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="跟进结果" prop="followUpResult" label-width="68px">
+              <el-input v-model="queryParams.followUpResult" placeholder="请输入跟进结果" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="提报日期" prop="submissionDate" label-width="68px">
+              <el-date-picker clearable v-model="queryParams.submissionDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择提报日期" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+  </div>
+</el-dialog>
+
     <!-- 添加或修改客户意向登记对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerIntentionFormRef" :model="form" :rules="rules" label-width="80px">
@@ -248,7 +309,8 @@ const data = reactive<PageData<CustomerIntentionForm, CustomerIntentionQuery>>({
 });
 
 const { queryParams, form, rules } = toRefs(data);
-
+//查找相关
+const searchDialogVisible = ref(false)
 /** 查询客户意向登记列表 */
 const getList = async () => {
   loading.value = true;
@@ -263,7 +325,10 @@ const cancel = () => {
   reset();
   dialog.visible = false;
 }
-
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
 /** 表单重置 */
 const reset = () => {
   form.value = { ...initFormData };

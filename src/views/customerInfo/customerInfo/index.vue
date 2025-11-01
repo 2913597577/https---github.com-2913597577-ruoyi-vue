@@ -746,7 +746,7 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     signDate: undefined,
     contractNo: undefined,
     customerName: undefined,

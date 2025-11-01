@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -22,12 +22,12 @@
             <el-form-item label="服务时长" prop="serviceHours" label-width="68px">
               <el-input v-model="queryParams.serviceHours" placeholder="请输入服务时长" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <!-- <el-form-item label="风险" prop="customerType" label-width="68px">
+            <el-form-item label="风险" prop="customerType" label-width="68px">
               <el-select v-model="queryParams.customerType" placeholder="请选择风险" clearable>
                 <el-option label="风险" value="1"></el-option>
                 <el-option label="退费" value="2"></el-option>
               </el-select>
-            </el-form-item> -->
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -35,11 +35,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <!-- <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerRiskRefund:customerRiskRefund:add']">新增</el-button>
@@ -56,7 +57,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['customerRiskRefund:customerRiskRefund:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+          </div>
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['myCustomer:customerTransfer:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['myCustomer:customerTransfer:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -112,6 +126,50 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+    
+    <!-- 筛选按钮弹窗 -->
+    <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+      <div class="p-2">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="客户名称" prop="customerName" label-width="68px">
+              <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="对接人" prop="principal" label-width="68px">
+              <el-input v-model="queryParams.principal" placeholder="请输入客户对接人" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="负责人" prop="inviterId" label-width="68px"
+              :style="{ '--el-form-label-font-size': '14px' }">
+              <el-input v-model="queryParams.inviterId" placeholder="请输入大成负责人id" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="到期时间" prop="expireDate" label-width="68px">
+              <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择到期时间" />
+            </el-form-item>
+            <el-form-item label="服务时长" prop="serviceHours" label-width="68px">
+              <el-input v-model="queryParams.serviceHours" placeholder="请输入服务时长" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <!-- <el-form-item label="风险" prop="customerType" label-width="68px">
+              <el-select v-model="queryParams.customerType" placeholder="请选择风险" clearable>
+                <el-option label="风险" value="1"></el-option>
+                <el-option label="退费" value="2"></el-option>
+              </el-select>
+            </el-form-item> -->
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+      </div>
+    </el-dialog>
+
+
     <!-- 添加或修改客户风险/退费对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerRiskRefundFormRef" :model="form" :rules="rules" label-width="80px">
@@ -222,7 +280,7 @@ const data = reactive<PageData<CustomerRiskRefundForm, CustomerRiskRefundQuery>>
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     lawyerId: undefined,
     customerId: undefined,
     customerName: undefined,
@@ -285,6 +343,9 @@ const getList = async () => {
   loading.value = false;
 }
 
+//查找相关
+const searchDialogVisible = ref(false)
+
 /** 取消按钮 */
 const cancel = () => {
   reset();
@@ -303,6 +364,10 @@ const handleQuery = () => {
   getList();
 }
 
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
