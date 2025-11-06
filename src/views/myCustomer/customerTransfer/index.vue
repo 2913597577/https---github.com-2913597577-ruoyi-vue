@@ -108,12 +108,11 @@
             <span>{{ parseTime(scope.row.auditTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="合同操作" align="center" prop="contractOssId" width="100" show-overflow-tooltip>
+        <el-table-column label="合同操作" align="center" prop="contractUrl" width="100" show-overflow-tooltip>
           <template #default="scope">
             <div class="contract-cell">
-              <el-button v-if="scope.row.contractOssId" class="contract-code" @click="handleViewContract(scope.row)"
-                link type="danger" icon="Download">合同下载</el-button>
-              <el-button v-if="!scope.row.contractOssId" link type="primary" icon="Upload"
+              <image-preview v-if="scope.row.contractUrl" :src="scope.row.contractUrl" :width="20" :height="20" />
+              <el-button v-if="!scope.row.contractUrl" link type="primary" icon="Upload"
                 @click="handleUpload(scope.row)">
                 上传合同
               </el-button>
@@ -969,8 +968,8 @@
 
     <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
       <el-form ref="customerintentionFormRef" :model="transferFormData" :rules="rules" label-width="80px">
-        <el-form-item label="合同文件" prop="contractOssId">
-          <file-upload :limit="1" :fileSize="10" v-model="contract" />
+        <el-form-item label="合同照片" prop="contractOssId">
+          <image-upload v-model="contract" />
         </el-form-item>
       </el-form>
 
@@ -1379,8 +1378,9 @@ const customerInfoDialogCancel = () => {
 // 替换原有的 submitintentionForm 方法为以下代码：
 const submitintentionForm = async () => {
   // 使用正确的表单引用
+  console.log(contract.value);
   if (contract.value) {
-    transferFormData.value.contractOssId = contract.value[0].ossId;
+    transferFormData.value.contractOssId = contract.value;
   }
 
   await updateCustomerTransfer(transferFormData.value).finally(() => buttonLoading.value = false);
