@@ -95,7 +95,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerTransferList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" border :data="customerTransferList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries"> 
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
           <template #default="scope">
@@ -1225,6 +1225,37 @@ const invoiceStatusList = [
   { value: 0, label: '未开票' },
   { value: 1, label: '已开票' }
 ];
+
+//列表最后一行添加合计
+const getSummaries = (param) => {
+  const { columns, data } = param;
+  const sums = [];
+  columns.forEach((column, index) => {
+    if (index === 1) {
+      sums[index] = '合计';
+      return;
+  }
+  // 处理需要合计的列，这里应该根据实际业务需求修改列名
+    const values = data.map(item => Number(item[column.property]));
+    if (column.label == "实付金额" || column.label == "尾款金额") {
+    if (!values.every(value => isNaN(value))) {
+    sums[index] = values.reduce((prev, curr) => {
+          const value = Number(curr);
+   if (!isNaN(value)) {
+   return prev + curr;
+    } else {
+      return prev;
+   }
+  }, 0);
+         sums[index] = sums[index].toFixed(2);
+ } else {
+        //  sums[index] = 'N/A';
+}
+  }
+});
+return sums;
+}
+
 /** 查询客户信息录入列表 */
 const getList = async () => {
   loading.value = true;
@@ -1744,5 +1775,24 @@ table td {
     background: $color-bg-neutral !important; // 中性浅灰（替代原蓝色背景）
   }
 }
+
+// 合计行样式
+::v-deep .el-table__footer-wrapper {
+  font-weight: bold;
+  font-size: 14px;
+  
+  // 合计单元格样式
+  .el-table__cell {
+    background-color: #f5f7fa !important;
+    font-size: 14px;
+    
+    // 第一列"合计"文字样式
+    &:first-child {
+      color: #303133;
+      font-weight: bold;
+    }
+  }
+}
+
 
 </style>

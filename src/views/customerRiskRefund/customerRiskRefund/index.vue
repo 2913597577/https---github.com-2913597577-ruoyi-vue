@@ -74,7 +74,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerRiskRefundList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" border :data="customerRiskRefundList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="客户名称" align="center" prop="customerName" width="120" show-overflow-tooltip />
@@ -342,6 +342,37 @@ const getList = async () => {
   total.value = res.total;
   loading.value = false;
 }
+//列表最后一行添加合计
+const getSummaries = (param) => {
+  const { columns, data } = param;
+  const sums = [];
+  columns.forEach((column, index) => {
+    if (index === 1) {
+      sums[index] = '合计';
+      return;
+  }
+
+  // 处理需要合计的列，这里应该根据实际业务需求修改列名
+    const values = data.map(item => Number(item[column.property]));
+    if (column.label == "签单金额" || column.label == "退款金额") {
+    if (!values.every(value => isNaN(value))) {
+    sums[index] = values.reduce((prev, curr) => {
+          const value = Number(curr);
+   if (!isNaN(value)) {
+   return prev + curr;
+    } else {
+      return prev;
+   }
+  }, 0);
+        sums[index] = sums[index].toFixed(2);
+ } else {
+        //  sums[index] = 'N/A';
+}
+  }
+});
+return sums;
+}
+
 
 //查找相关
 const searchDialogVisible = ref(false)
@@ -478,3 +509,23 @@ onMounted(() => {
   getList();
 });
 </script>
+
+
+
+
+<style scoped>
+::v-deep .el-table__footer-wrapper {
+  font-weight: bold;
+  font-size: 14px;
+  
+  .el-table__cell {
+    background-color: #f5f7fa !important;
+    font-size: 14px;
+    
+    &:first-child {
+      color: #303133;
+      font-weight: bold;
+    }
+  }
+}
+</style>
