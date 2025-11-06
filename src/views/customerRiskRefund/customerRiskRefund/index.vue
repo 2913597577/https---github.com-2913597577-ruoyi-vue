@@ -87,8 +87,8 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="签单金额" align="center" prop="contractAmount" width="90" show-overflow-tooltip />
-        <el-table-column label="退款金额" align="center" prop="refundAmount" width="90" show-overflow-tooltip
+        <el-table-column label="签单金额" align="center" prop="contractAmount" width="140" show-overflow-tooltip />
+        <el-table-column label="退款金额" align="center" prop="refundAmount" width="140" show-overflow-tooltip
         v-if="customerTypeLabel == '退费'" />
         <!-- <el-table-column label="大成负责人" align="center" prop="inviterId" width="90" show-overflow-tooltip /> -->
         <el-table-column label="签约日期" align="center" prop="signDate" width="100" show-overflow-tooltip>
@@ -364,7 +364,12 @@ const getSummaries = (param) => {
       return prev;
    }
   }, 0);
-        sums[index] = sums[index].toFixed(2);
+       
+    sums[index] = new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  }).format(sums[index]);
  } else {
         //  sums[index] = 'N/A';
 }

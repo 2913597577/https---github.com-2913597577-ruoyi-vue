@@ -111,7 +111,7 @@
             <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="保费" align="center" prop="premium" width="80" />
+        <el-table-column label="保费" align="center" prop="premium" width="140" />
         <el-table-column label="工单号" align="center" prop="insuranceNumber" width="100" />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <el-table-column label="案由" align="center" prop="caseReason" width="140" show-overflow-tooltip />
@@ -368,7 +368,12 @@ const getSummaries = (param) => {
       return prev;
    }
   }, 0);
-        sums[index] = sums[index].toFixed(2);
+    
+    sums[index] = new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  }).format(sums[index]);
  } else {
         //  sums[index] = 'N/A';
 }

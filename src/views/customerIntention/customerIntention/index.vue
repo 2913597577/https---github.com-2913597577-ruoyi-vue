@@ -101,7 +101,7 @@
           </template>
         </el-table-column>
         <el-table-column label="来源" align="center" prop="source" width="100" show-overflow-tooltip />
-        <el-table-column label="预计金额" align="center" prop="expectedAmount" width="100" show-overflow-tooltip />
+        <el-table-column label="预计金额" align="center" prop="expectedAmount" width="140" show-overflow-tooltip />
         <el-table-column label="介绍人" align="center" prop="introducer" width="120" show-overflow-tooltip />
         <el-table-column label="跟进结果" align="center" prop="followUpResult" width="100" show-overflow-tooltip>
           <template #default="scope">
@@ -342,7 +342,12 @@ const getSummaries = (param) => {
       return prev;
    }
   }, 0);
-        sums[index] = sums[index].toFixed(2);
+    
+    sums[index] = new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  }).format(sums[index]);
  } else {
         //  sums[index] = 'N/A';
 }

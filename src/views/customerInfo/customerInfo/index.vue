@@ -135,8 +135,8 @@
             <dict-tag :options="combo_type" :value="scope.row.packageType" />
           </template>
         </el-table-column>
-        <el-table-column label="实收金额" width="100" align="center" prop="actualReceipt" show-overflow-tooltip />
-        <el-table-column label="尾款金额" width="100" align="center" prop="balance" show-overflow-tooltip />
+        <el-table-column label="实收金额" width="140" align="center" prop="actualReceipt" show-overflow-tooltip />
+        <el-table-column label="尾款金额" width="140" align="center" prop="balance" show-overflow-tooltip />
         <!-- <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip>
         <template #default="scope">
          <div class="contract-cell">
@@ -816,7 +816,11 @@ const getSummaries = (param) => {
       return prev;
    }
   }, 0);
-        sums[index] = sums[index].toFixed(2);
+    sums[index] = new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  }).format(sums[index]);
  } else {
         //  sums[index] = 'N/A';
 }

@@ -146,8 +146,8 @@
             <span>{{ parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="实付金额" align="center" prop="actualPayment" width="100" show-overflow-tooltip />
-        <el-table-column label="尾款金额" align="center" prop="balanceStatus" width="100" show-overflow-tooltip />
+        <el-table-column label="实付金额" align="center" prop="actualPayment" width="140" show-overflow-tooltip />
+        <el-table-column label="尾款金额" align="center" prop="balanceStatus" width="140" show-overflow-tooltip />
         <el-table-column label="尾款支付条件" align="center" prop="balancePayType" width="100" show-overflow-tooltip />
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
           <template #default="scope">
@@ -318,8 +318,13 @@
                     hide-required-asterisk>
                     <el-input v-model="form.contactPerson" placeholder="对接人姓名" />
                   </el-form-item> -->
-                  <input type="text" v-model="form.contactPerson" placeholder="对接人姓名"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
+                  <!-- <input type="text" v-model="form.contactPerson" placeholder="对接人姓名"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"> -->
+                    <el-form-item prop="contactPerson" style="margin-bottom: 0;" :show-message="false" hide-required-asterisk>
+                   <el-input v-model="form.contactPerson" placeholder="对接人姓名" size="default"
+                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
+                    />
+                   </el-form-item>
                 </td>
                 <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）<span class="text-red-500">*</span>
                 </td>
@@ -771,11 +776,11 @@
               </el-select>
             </el-form-item>
             <el-form-item label="开始时间" prop="serviceStart" label-width="68px">
-              <el-date-picker clearable v-model="queryParams.serviceStart" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.serviceStart" type="date" 
                 placeholder="请选择服务开始时间" style="width: 160px" />
             </el-form-item>
             <el-form-item label="结束时间" prop="serviceEnd" label-width="68px">
-              <el-date-picker clearable v-model="queryParams.serviceEnd" type="date" value-format="YYYY-MM-DD"
+              <el-date-picker clearable v-model="queryParams.serviceEnd" type="date" 
                 placeholder="请选择服务结束时间" style="width: 160px" />
             </el-form-item>
             <el-form-item>
@@ -957,7 +962,7 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="viewDialogVisible = false">关闭</el-button>
+          <el-button @click="viewDialogVisible = false" icon="Close">关闭</el-button>
         </div>
       </template>
     </el-dialog>
@@ -992,6 +997,7 @@ import {
 } from '@/api/myCustomer/customerTransfer';
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
+import { c } from 'node_modules/vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -1130,17 +1136,29 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     params: {}
   },
   rules: {
+    customerCity: [
+      { required: true, message: "客户归属城市不能为空", trigger: "blur" }
+    ],
+    contractCode: [
+      { required: true, message: "合同编号不能为空", trigger: "blur" }
+    ],
     companyName: [
       { required: true, message: "公司名称不能为空", trigger: "blur" }
     ],
     contactPerson: [
-      { required: true, message: "公司对接人不能为空", trigger: "blur" }
+      { required: true, message: "公司对接人姓名不能为空", trigger: "blur" }
+    ],
+    contactInfo: [
+      { required: true, message: "公司对接人联系方式不能为空", trigger: "blur" }
     ],
     actualPayment: [
-      { required: true, message: "支付金额不能为空", trigger: "blur" }
+      { required: true, message: "实收金额不能为空", trigger: "blur" }
     ],
-    contractType: [
-      { required: true, message: "签约类型不能为空", trigger: "change" }
+    balanceStatus: [
+      { required: true, message: "尾款金额不能为空", trigger: "blur" }
+    ],
+    serviceType: [
+      { required: true, message: "套餐类型不能为空，没有填0", trigger: "change" }
     ],
     serviceStart: [
       { required: true, message: "服务周期开始日期不能为空", trigger: "change" }
@@ -1148,10 +1166,22 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     serviceEnd: [
       { required: true, message: "服务周期结束日期不能为空", trigger: "change" }
     ],
-    balanceStatus: [
-      { required: true, message: "尾款金额", trigger: "blur" }
+    invoiceRequirements: [
+      { required: true, message: "开票要求不能为空", trigger: "blur" }
     ],
-
+    invoiceStatus: [
+      { required: true, message: "开票状态不能为空", trigger: "blur" }
+    ],
+    /* 'performanceInfo.0.userId': [
+      { required: true, message: "业绩所属人1不能为空", trigger: "blur" }
+    ],
+   'performanceInfo.0.balance': [
+      { required: true, message: "业绩所属金额不能为空", trigger: "blur" }
+    ],
+    'performanceInfo.0.city': [
+      { required: true, message: "业绩所属城市不能为空", trigger: "blur" }
+    ],  
+ */
   }
 });
 
@@ -1247,7 +1277,13 @@ const getSummaries = (param) => {
       return prev;
    }
   }, 0);
-         sums[index] = sums[index].toFixed(2);
+        //  sums[index] = sums[index].toFixed(2);
+    sums[index] = new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  }).format(sums[index]);
+
  } else {
         //  sums[index] = 'N/A';
 }
@@ -1793,6 +1829,5 @@ table td {
     }
   }
 }
-
 
 </style>
