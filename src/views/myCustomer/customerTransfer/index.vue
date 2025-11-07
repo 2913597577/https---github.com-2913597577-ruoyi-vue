@@ -460,7 +460,7 @@
                     v-for="dict in combo_type" 
                     :key="dict.value" 
                     :label="dict.label"
-                    :value="dict.value"
+                    :value="parseInt(dict.value)"
                   />
                 </el-select>
               </el-form-item>
@@ -514,7 +514,7 @@
                     v-for="dict in dc_invoice_status" 
                     :key="dict.value" 
                     :label="dict.label"
-                    :value="dict.value"
+                    :value="parseInt(dict.value)"
                   />
                 </el-select>
               </el-form-item>
@@ -1016,6 +1016,7 @@ const { dc_accounting_company } = toRefs<any>(proxy?.useDict('dc_accounting_comp
 const { dc_legal_affairs } = toRefs<any>(proxy?.useDict('dc_legal_affairs'));
 const { dc_invoice_requirement } = toRefs<any>(proxy?.useDict('dc_invoice_requirement'));
 const { dc_invoice_status } = toRefs<any>(proxy?.useDict('dc_invoice_status'));
+const { finance_confirmed, combo_type } = toRefs<any>(proxy?.useDict('finance_confirmed', 'combo_type'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -1025,12 +1026,6 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const userList = ref([]); // 用户列表
-const {
-  contract_type,
-  finance_confirmed,
-  combo_type
-} = toRefs<any>(proxy?.useDict('contract_type', 'finance_confirmed', 'combo_type'));
-
 
 const queryFormRef = ref<ElFormInstance>();
 const customerTransferFormRef = ref<ElFormInstance>();
