@@ -226,508 +226,520 @@
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
 
-
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="80%" append-to-body
-      :custom-class="'native-style-dialog'" draggable>
-      <div class="min-h-[800px] bg-white p-4">
-        <el-form ref="customerTransferFormRef" :model="form" :rules="rules" label-width="0" hide-required-asterisk>
-          <!-- 头部区域 -->
-          <div class="border-b-2 border-black p-4 flex justify-between items-start mb-1">
-            <div class="flex items-center gap-2">
-              <img src="@/assets/images/logo.jpg" alt="logo" class="w-30 h-8" />
-            </div>
-            <div class="text-right text-sm text-gray-600">
-              <div>让每一家公司都拥有自己的法务部</div>
-            </div>
+ <!-- 新增和修改按钮弹窗内容 -->
+<template>
+  <el-dialog  :title="dialog.title" v-model="dialog.visible" width="75%" append-to-body draggable
+    class="customer-transfer-dialog"
+  >
+    <div class="dialog-content">
+      <el-form  ref="customerTransferFormRef" :model="form" :rules="rules" label-width="120px hide-required-asterisk">
+        
+        <!-- 头部区域 -->
+        <div class="header-section">
+          <div class="logo-area">
+            <img src="@/assets/images/logo.jpg" alt="logo" class="logo" />
           </div>
-
-          <!-- 流转单标题 -->
-          <div class="text-center py-3 border-b border-black mb-1 mt-0">
-            <h1 class="text-2xl font-bold text-blue-500">成交客户内部流转单</h1>
-          </div>
-
-          <!-- 交易日期与人员信息 -->
-          <div class="border-b border-black mb-1 mt-0">
-            <table class="w-full border-collapse">
-              <tr>
-               <!--  <td class="border-r border-black p-2 w-32 bg-blue-50">交易日期：<span class="text-red-500">*</span></td>
-                <td class="p-2 w-32">
-                  <input type="date"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td> -->
-                <!-- <td class="border-l border-black p-2 w-32 bg-blue-50">邀约人：<span class="text-red-500">*</span></td>
-                <td class="p-2 w-64">
-                  <el-select v-model="form.inviterId" placeholder="请选择邀约人" filterable>
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
-                </td>
-                <td class="border-l border-black p-2 w-32 bg-blue-50">客户经理：<span class="text-red-500">*</span></td>
-                <td class="p-2">
-                  <el-select v-model="form.accountManagerId" placeholder="请选择客户经理" filterable>
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
-                </td> -->
-                <td class="border-l border-black p-2 w-32 bg-blue-50">客户归属城市：<span class="text-red-500">*</span></td>
-                <td class="p-2">
-                  <el-select v-model="form.customerCity" placeholder="请选择服务城市" size="default" style="width: 140px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
-                </td>
-                <td class="border-l border-black p-2 w-24 bg-blue-50" style="width: 100px">合同编号：<span
-                    class="text-red-500">*</span> </td>
-                <td class="p-2">
-                  <input type="text" v-model="form.contractCode" placeholder="请输入合同编号" style="width: 180px;"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-
-                <!-- <input type="text" v-model="form.contractCode" placeholder="请输入录入人姓名" style="width: 140px;"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"></input> -->
-                <!-- <td class="border-l border-black p-2 w-32 bg-blue-50" style="width: 80px">录入人：<span class="text-red-500">*</span></td>
-                    <td class="p-2">
-                  <el-select v-model="form.inviterId" placeholder="请选择录入人" filterable>
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
-                    </td> -->
-              </tr>
-            </table>
-          </div>
-
-          <!-- 公司对接人/自然人信息 -->
-          <div class="border-b border-black mb-1 mt-0">
-            <table class="w-full border-collapse">
-              <!-- 公司名称（必填） -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">公司名称：<span class="text-red-500">*</span></td>
-                <td colspan="7" class="p-2">
-                  <input type="text" v-model="form.companyName" placeholder="请输入公司名称（必填）"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                    required>
-                </td>
-              </tr>
-              <!-- 公司对接人信息 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">公司对接人<br>姓名：<span class="text-red-500">*</span>
-                </td>
-                <td class="border-r border-black p-2 w-40">
-                  <!-- <el-form-item prop="contactPerson" style="margin-bottom: 0" :show-message="false"
-                    hide-required-asterisk>
-                    <el-input v-model="form.contactPerson" placeholder="对接人姓名" />
-                  </el-form-item> -->
-                  <!-- <input type="text" v-model="form.contactPerson" placeholder="对接人姓名"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"> -->
-                    <el-form-item prop="contactPerson" style="margin-bottom: 0;" :show-message="false" hide-required-asterisk>
-                   <el-input v-model="form.contactPerson" placeholder="对接人姓名" size="default"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                    />
-                   </el-form-item>
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）<span class="text-red-500">*</span>
-                </td>
-                <td class="border-r border-black p-2 w-40">
-                  <input type="text" v-model="form.contactInfo" placeholder="联系方式"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-24 bg-blue-50">职务：</td>
-                <td class="border-r border-black p-2 w-32">
-                  <input type="text" v-model="form.contactPosition" placeholder="职务"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-24 bg-blue-50">年龄：</td>
-                <td class="p-2">
-                  <input type="number" v-model="form.contactAge" placeholder="年龄"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-              </tr>
-
-              <!-- 附赠自然人信息 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">附赠自然人：</td>
-                <td class="border-r border-black p-2 w-40">
-                  <input type="text" v-model="form.additionalPerson" placeholder="自然人姓名"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">联系方式：<br>（微信）</td>
-                <td class="border-r border-black p-2 w-40">
-                  <input type="text" v-model="form.additionalContact" placeholder="联系方式"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-24 bg-blue-50">职务：</td>
-                <td class="border-r border-black p-2 w-32">
-                  <input type="text" v-model="form.additionalPosition" placeholder="职务"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-24 bg-blue-50">年龄：</td>
-                <td class="p-2">
-                  <input type="number" v-model="form.additionalAge" placeholder="年龄"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-              </tr>
-
-              <!-- 公司行业与地址 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">公司所属行业：</td>
-                <td colspan="3" class="border-r border-black p-2">
-                  <input type="text" v-model="form.companyIndustry" placeholder="请输入所属行业"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">公司地址：</td>
-                <td colspan="3" class="p-2">
-                  <input type="text" v-model="form.companyAddress" placeholder="请输入公司地址"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-              </tr>
-
-              <!-- 员工人数与代账公司 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">员工人数：</td>
-                <td class="border-r border-black p-2 w-40">
-                  <input type="number" v-model="form.employeeCount" placeholder="员工人数"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td colspan="2" class="border-r border-black p-2 w-64 bg-blue-50">是否有代账公司：</td>
-                <td colspan="4" class="p-2">
-                  <div class="flex items-center gap-4">
-                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                      <input type="radio" name="accountingCompany" value="0" v-model="form.accountingCompany"
-                        class="w-4 h-4 cursor-pointer accent-blue-500">
-                      <span>是</span>
-                    </label>
-                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                      <input type="radio" name="accountingCompany" value="1" v-model="form.accountingCompany"
-                        class="w-4 h-4 cursor-pointer accent-blue-500">
-                      <span>否</span>
-                    </label>
-                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                      <input type="radio" name="accountingCompany" value="2" v-model="form.accountingCompany"
-                        class="w-4 h-4 cursor-pointer accent-blue-500">
-                      <span>不确定</span>
-                    </label>
-                  </div>
-                </td>
-              </tr>
-
-              <!-- 客户性格描述 -->
-              <tr>
-                <td colspan="8" class="p-2 bg-blue-50">客户性格及工作习惯描述：</td>
-              </tr>
-              <tr>
-                <td colspan="8" class="p-2 border-b border-black">
-                  <textarea v-model="form.customerDescription" placeholder="请描述客户性格及工作习惯"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                    rows="2"></textarea>
-                </td>
-              </tr>
-            </table>
-          </div>
-
-          <!-- 签约情况区域 -->
-          <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
-            <h2 class="text-lg font-bold text-blue-500">签约情况</h2>
-          </div>
-          <div class="border-b border-black mb-1 mt-0">
-            <table class="border-collapse">
-              <!-- 金额与签约类型 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 bg-blue-50" style="width: 300px">实收金额：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2" style="width: 180px">
-                  <!-- <el-form-item prop="actualPayment" style="margin-bottom: 0;" :show-message="false"
-                    hide-required-asterisk>
-                    <el-input v-model="form.actualPayment" placeholder="实收金额(数字)" type="number" />
-                  </el-form-item> -->
-                  <input type="number" v-model="form.actualPayment" placeholder="实收金额(数字)" style="width: 180px"
-                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 bg-blue-50" style="width: 220px">尾款金额：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2" style="width: 180px">
-                  <input type="number" v-model="form.balanceStatus" placeholder="尾款金额(数字),没有填0" style="width: 180px"
-                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 bg-blue-50" style="width: 200px">尾款支付条件：</td>
-                <td class="p-2" style="width: 160px">
-                  <input type="text" v-model="form.balancePayType" placeholder="尾款支付条件" style="width: 160px"
-                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-              </tr>
-
-              <!-- 常法版本与服务周期 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 bg-blue-50">套餐类型：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2">
-                  <select v-model="form.serviceType"  style="width: 180px"
-                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                    <option v-for="dict in combo_type" :key="dict.value" :value="dict.value">
-                      {{ dict.label }}
-                    </option>
-                  </select>
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">服务周期：<span class="text-red-500">*</span></td>
-                <td colspan="2" class="border-r border-black p-2">
-                  <div class="flex gap-2">
-                    <input type="date" v-model="form.serviceStart" placeholder="开始日期"  style="width: 180px"
-                      class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                    <span class="self-center text-gray-500">至</span>
-                    <input type="date" v-model="form.serviceEnd" placeholder="结束日期"  style="width: 180px"
-                      class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  </div>
-                </td>
-              </tr>
-              <!-- 财务签字 -->
-              <!-- <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">财务签字：</td>
-                <td colspan="5" class="p-2">
-                  <input type="text" v-model="form.financeSignature" placeholder="请输入财务签字信息"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-              </tr> -->
-              <!--发票情况-->
-           <tr class="border-b border-black">
-                <td class="p-2 bg-blue-50" style="width: 100px">开票要求：<span class="text-red-500">*</span></td>
-                <td class="p-2" style="width: 120px">
-                  <select v-model="form.invoiceRequirements" style="width: 180px"
-                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300" >
-                    <option v-for="dict in dc_invoice_requirement" :key="dict.value" :value="dict.value">
-                      {{ dict.label }}
-                    </option>
-                  </select>
-                </td>
-
-                <td class="p-2 bg-blue-50" style="width: 100px">开票状态：<span class="text-red-500">*</span></td>
-                <td class="p-2" style="width: 120px">
-                  <select v-model="form.invoiceStatus" style="width: 180px"
-                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300" >
-                    <option v-for="dict in dc_invoice_status" :key="dict.value" :value="dict.value">
-                      {{ dict.label }}
-                    </option>
-                  </select>
-                </td>
-                <td class="border-r border-black p-2 bg-blue-50" style="width: 200px">开票内容：</td>
-                <td class="p-2" style="width: 160px">
-                  <input type="text" v-model="form.invoiceContent" placeholder="请输入开票内容" style="width: 160px"
-                    class="p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-              </tr>
-
-
-
-              <!-- 律师咨询情况 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 bg-blue-50">律师咨询情况：</td>
-                <td colspan="5" class="p-2">
-                  <textarea v-model="form.lawyerConsultation" placeholder="请描述是否咨询律师、是否给客户约定所交费用包含律师费等"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300"
-                    rows="2"></textarea>
-                </td>
-              </tr>
-
-              <!-- 其他费用沟通 -->
-              <tr>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">其他费用沟通：</td>
-                <td colspan="5" class="p-2">
-                  <textarea v-model="form.otherFee" placeholder="请描述是否给客户讲清调档费、保险费、诉讼费等其他费用"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300 placeholder-gray-500"
-                    rows="2"></textarea>
-                </td>
-              </tr>
-            </table>
-          </div>
-
-          <!--业绩归属登记-->
-          <div class="text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
-            <h2 class="text-lg font-bold text-blue-500">业绩归属登记</h2>
-          </div>
-          <div class="border-b border-black mb-1 mt-0">
-            <table class="w-full border-collapse">
-              <!-- 业绩归属类型1 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人1：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[0].userId" size="default" placeholder="请选择业绩所属人1" filterable @change="changeUser(0)">
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2 flex-1">
-                  <input type="number" placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[0].balance"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：<span class="text-red-500">*</span></td>
-                <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[0].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
-                </td>
-              </tr>
-              <!-- 业绩归属类型2 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人2：</td>
-                <td class="border-r border-black p-2 flex-1">
-                 <el-select v-model="form.performanceInfo[1].userId" size="default" placeholder="请选择业绩所属人2" filterable @change="changeUser(1)">
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
-                <td class="border-r border-black p-2 flex-1">
-                  <input type="number"  placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[1].balance"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
-                <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[1].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
-                </td>
-              </tr>
-              <!-- 业绩归属类型3 -->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人3：</td>
-                <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[2].userId" size="default" placeholder="请选择业绩所属人3" filterable @change="changeUser(2)">
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
-                <td class="border-r border-black p-2 flex-1">
-                  <input type="number"  placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[2].balance"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属城市：</td>
-                <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[2].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
-                </td>
-              </tr>
-              <!-- 业绩归属类型4-->
-              <tr class="border-b border-black">
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属人4：</td>
-                <td class="border-r border-black p-2 flex-1">
-                  <el-select v-model="form.performanceInfo[3].userId" size="default" placeholder="请选择业绩所属人4" filterable @change="changeUser(3)">
-                    <el-option v-for="user in userList" :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId"></el-option>
-                  </el-select>
-                </td>
-                <td class="border-r border-black p-2 w-32 bg-blue-50">业绩所属金额：</td>
-                <td class="border-r border-black p-2 flex-1">
-                  <input type="number"  placeholder="分配业绩金额(数字)" v-model="form.performanceInfo[3].balance"
-                    class="w-full p-1 border border-gray-300 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                </td>
-                <td class="border-r border-black p-2 w-48 bg-blue-50">业绩所属城市：</td>
-                <td class="p-2">
-                  <el-select v-model="form.performanceInfo[3].city" size="default" placeholder="请选择业绩所属城市" style="width: 200px">
-                  <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                    :value="dict.value"></el-option>
-                </el-select>
-                </td>
-              </tr>
-            </table>
-          </div>
-
-
-          <!-- 客户情况概述 -->
-          <div class=" text-center py-2 border-b border-black bg-blue-100 mb-1 mt-0">
-            <h2 class="text-lg font-bold text-blue-500">客户情况概述</h2>
-          </div>
-          <div class="border border-black mb-1 mt-0">
-            <table class="w-full border-collapse">
-              <!-- 以前是否有法务 -->
-              <tr class="border-b border-black">
-                <td class="p-3">
-                  <div class="flex items-center gap-4 flex-wrap">
-                    <span class="whitespace-nowrap text-gray-700">以前是否有过公司法务：</span>
-                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                      <input type="radio" name="preLegal" value="1" v-model="form.preLegal"
-                        class="w-4 h-4 cursor-pointer accent-blue-500">
-                      <span>是</span>
-                    </label>
-                    <label class="flex items-center gap-1 cursor-pointer text-gray-700">
-                      <input type="radio" name="preLegal" value="0" v-model="form.preLegal"
-                        class="w-4 h-4 cursor-pointer accent-blue-500">
-                      <span>否</span>
-                    </label>
-                    <span class="ml-4 whitespace-nowrap text-gray-700">合作公司名称：</span>
-                    <input type="text" v-model="form.preCompany" placeholder="合作公司名称"
-                      class="flex-1 p-1 border border-gray-300 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                    <span class="ml-4 whitespace-nowrap text-gray-700">不合作原因：</span>
-                    <input type="text" v-model="form.preReason" placeholder="不合作原因"
-                      class="flex-1 p-1 border border-gray-300 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  </div>
-                </td>
-              </tr>
-
-              <!-- 以前纠纷及解决方式 -->
-              <tr class="border-b border-black">
-                <td class="p-3">
-                  <div class="flex items-start gap-2">
-                    <span class="whitespace-nowrap pt-1 text-gray-700">公司以前出现过的纠纷及解决方式：</span>
-                    <textarea v-model="form.preDiscuss" placeholder="请详细描述纠纷及解决方式"
-                    class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[50px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  </textarea>
-                  </div>
-                </td>
-              </tr>
-
-              <!-- 待处理事项登记 -->
-              <tr class="border-b border-black">
-                <td class="p-3">
-                  <div class="leading-relaxed">
-                    <span class="text-gray-700">待处理事项登记：劳资纠纷、合同纠纷、借贷纠纷、承揽纠纷、财税问题、执行案件等</span>
-                    <textarea v-model="form.pendingRemark"
-                    class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[50px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  </textarea>
-                  </div>
-                </td>
-              </tr>
-
-              <!-- 欠款问题登记 -->
-              <tr>
-                <td class="p-3">
-                  <div class="leading-relaxed">
-                    <span class="text-gray-700">欠款问题请详细登记：相关主体、已知债务人信息、标的额、证据情况、案件处理要求等</span>
-                    <textarea v-model="form.debtRemark"
-                    class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[50px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300">
-                  </textarea>
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-
-          <!-- 备注大文本区域 -->
-          <div class="min-h-[100px] border border-black p-4 mb-4 mt-0">
-            <div class="font-medium mb-2 text-gray-700">其他备注信息：</div>
-            <textarea v-model="form.remark" placeholder="请输入其他需要补充的备注信息"
-              class="w-full p-2 border border-gray-300 text-sm resize-none min-h-[50px] focus:border-blue-500 focus:ring-1 focus:ring-blue-300"></textarea>
-          </div>
-        </el-form>
-      </div>
-
-      <!-- 对话框底部按钮 -->
-      <template #footer>
-        <div class="dialog-footer flex justify-end gap-4">
-          <button
-            :class="['px-4 py-2 text-sm rounded-md transition-all duration-200', buttonLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-sm active:bg-blue-800']"
-            :disabled="buttonLoading" @click="submitForm">
-            {{ buttonLoading ? '提交中...' : '确 定' }}
-          </button>
-          <button
-            class="px-4 py-2 border border-gray-300 text-sm rounded-md hover:bg-gray-100 transition-all duration-200"
-            @click="cancel">
-            取 消
-          </button>
+       <!-- 流转单标题 -->
+          <div class="title-section">
+          <h1 class="blue-title">成交客户内部流转单</h1>
         </div>
-      </template>
-    </el-dialog>
+          <div class="slogan-area">
+            <div>让每一家公司都拥有自己的法务部</div>
+          </div>
+        </div>
 
+       
+
+        <!-- 客户基本信息 -->
+        <div class="form-section-1">
+          <div class="section-title">客户基本信息</div>
+          
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="8">
+              <el-form-item label="客户归属城市" prop="customerCity" class="form-item">
+                <el-select 
+                  v-model="form.customerCity" 
+                  placeholder="请选择服务城市" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_sercive_city" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="合同编号" prop="contractCode" class="form-item">
+                <el-input 
+                  v-model="form.contractCode" 
+                  placeholder="请输入合同编号" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="10">
+          <el-form-item label="公司名称" prop="companyName" class="form-item">
+            <el-input 
+              v-model="form.companyName" 
+              placeholder="请输入公司名称" 
+            />
+          </el-form-item>
+          </el-col>
+          </el-row>
+      
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="6">
+              <el-form-item label="对接人姓名" prop="contactPerson" class="form-item">
+                <el-input 
+                  v-model="form.contactPerson" 
+                  placeholder="对接人姓名" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="联系方式" prop="contactInfo" class="form-item">
+                <el-input 
+                  v-model="form.contactInfo" 
+                  placeholder="联系方式" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="职务" class="form-item">
+                <el-input 
+                  v-model="form.contactPosition" 
+                  placeholder="职务" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="年龄" class="form-item">
+                <el-input 
+                  v-model="form.contactAge" 
+                  placeholder="年龄" 
+                  type="number"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="6">
+              <el-form-item label="附赠自然人" class="form-item">
+                <el-input 
+                  v-model="form.additionalPerson" 
+                  placeholder="自然人姓名" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="联系方式" class="form-item">
+                <el-input 
+                  v-model="form.additionalContact" 
+                  placeholder="联系方式" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="职务" class="form-item">
+                <el-input 
+                  v-model="form.additionalPosition" 
+                  placeholder="职务" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="年龄" class="form-item">
+                <el-input 
+                  v-model="form.additionalAge" 
+                  placeholder="年龄" 
+                  type="number"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="8">
+              <el-form-item label="公司行业" class="form-item">
+                <el-input 
+                  v-model="form.companyIndustry" 
+                  placeholder="请输入所属行业" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="10">
+            <el-form-item label="公司地址" class="form-item">
+            <el-input 
+              v-model="form.companyAddress" 
+              placeholder="请输入公司地址" 
+            />
+          </el-form-item>
+          </el-col>
+          <el-col :span="6">
+              <el-form-item label="员工人数" class="form-item">
+                <el-input 
+                  v-model="form.employeeCount" 
+                  placeholder="员工人数" 
+                  type="number"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="20" class="form-row">
+           <el-col :span="16">
+             <el-form-item label="是否有代账公司" class="form-item">
+               <el-radio-group v-model="form.accountingCompany">
+                 <el-radio label="0">是</el-radio>
+                 <el-radio label="1">否</el-radio>
+                 <el-radio label="2">不确定</el-radio>
+               </el-radio-group>
+             </el-form-item>
+           </el-col>
+         </el-row>
+         <el-form-item label="客户性格及工作习惯描述:" class="form-item">
+            <el-input
+              v-model="form.customerDescription"
+              type="textarea"
+              :rows="2"
+              placeholder="请描述客户性格及工作习惯"
+            />
+          </el-form-item>
+        </div>
+
+
+        <!-- 签约情况 -->
+        <div class="form-section-2">
+          <div class="section-title">签约情况</div>
+          
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="8">
+              <el-form-item label="实收金额" prop="actualPayment" class="form-item">
+                <el-input 
+                  v-model="form.actualPayment" 
+                  placeholder="实收金额" 
+                  type="number"
+                >
+                  <template #append>元</template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="尾款金额" prop="balanceStatus" class="form-item">
+                <el-input 
+                  v-model="form.balanceStatus" 
+                  placeholder="尾款金额,没有填0" 
+                  type="number"
+                >
+                  <template #append>元</template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="尾款支付条件" class="form-item">
+                <el-input 
+                  v-model="form.balancePayType" 
+                  placeholder="尾款支付条件" 
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="8">
+              <el-form-item label="套餐类型" prop="serviceType" class="form-item">
+                <el-select 
+                  v-model="form.serviceType" 
+                  placeholder="请选择套餐类型" 
+                  style="width: 90%"
+                >
+                  <el-option 
+                    v-for="dict in combo_type" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="16">
+              <el-form-item label="服务周期" class="form-item" prop="serviceEnd">
+                <div class="date-range">
+                  <el-date-picker
+                    v-model="form.serviceStart"
+                    type="date"
+                    placeholder="开始日期"
+                    style="width: 60%"
+                  />
+                  <span class="date-separator">至</span>
+                  <el-date-picker
+                    v-model="form.serviceEnd"
+                    type="date"
+                    placeholder="结束日期"
+                    style="width: 60%"
+                  />
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="8">
+              <el-form-item label="开票要求" prop="invoiceRequirements" class="form-item">
+                <el-select 
+                  v-model="form.invoiceRequirements" 
+                  placeholder="请选择开票要求" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_invoice_requirement" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="开票状态" prop="invoiceStatus" class="form-item">
+                <el-select 
+                  v-model="form.invoiceStatus" 
+                  placeholder="请选择开票状态" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_invoice_status" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="开票内容" class="form-item">
+                <el-input 
+                  v-model="form.invoiceContent" 
+                  placeholder="请输入开票内容" 
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+         
+          <el-form-item label="律师咨询情况:" class="form-item" style="margin-bottom: 20px;">
+            <el-input
+              v-model="form.lawyerConsultation"
+              type="textarea"
+              :rows="2"
+              placeholder="请描述是否咨询律师、是否给客户约定所交费用包含律师费等"
+            />
+          </el-form-item>
+       
+          <el-form-item label="其他费用沟通:" class="form-item" style="margin-bottom: 20px;">
+            <el-input
+              v-model="form.otherFee"
+              type="textarea"
+              :rows="2"
+              placeholder="请描述是否给客户讲清调档费、保险费、诉讼费等其他费用"
+            />
+          </el-form-item>
+        
+        </div>
+
+        <!-- 业绩归属登记 -->
+        <div class="form-section-3">
+          <div class="section-title">业绩归属登记</div>
+          <!-- 业绩金额汇总提示 -->
+     <div class="performance-summary" :class="{ 'error': hasPerformanceSumError }">
+      <span>分配业绩金额总和: {{ performanceTotal }} 元</span>
+       <span v-if="hasPerformanceSumError" class="error-text">
+      （与实收金额 {{ form.actualPayment || 0 }} 元不一致）
+       </span>
+      <span v-else class="success-text">✓ 金额匹配</span>
+      </div>
+          <div 
+            v-for="(performance, index) in form.performanceInfo" 
+            :key="index"
+            class="performance-row"
+          >
+            <el-row :gutter="20" class="form-row">
+              <el-col :span="8">
+                <el-form-item 
+                  :label="`业绩所属人${index + 1}`" 
+                  :prop="`performanceInfo[${index}].userId`"
+                  :rules="index === 0 ? rules.performanceUserId : []"
+                  class="form-item"
+                >
+                  <el-select 
+                    v-model="performance.userId" 
+                    :placeholder="`请选择业绩所属人${index + 1}`" 
+                    filterable
+                    @change="changeUser(index)"
+                    style="width: 100%"
+                  >
+                    <el-option 
+                      v-for="user in userList" 
+                      :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" 
+                      :value="user.userId"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item 
+                  :label="`业绩所属金额`" 
+                  :prop="`performanceInfo[${index}].balance`"
+                  :rules="index === 0 ? rules.performanceBalance : []"
+                  class="form-item"
+                >
+                  <el-input 
+                    v-model="performance.balance" 
+                    :placeholder="`请分配业绩金额`" 
+                    type="number"
+                  >
+                    <template #append>元</template>
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item 
+                  :label="`业绩所属城市`" 
+                  :prop="`performanceInfo[${index}].city`"
+                  :rules="index === 0 ? rules.performanceCity : []"
+                  class="form-item"
+                >
+                  <el-select 
+                    v-model="performance.city" 
+                    :placeholder="`请选择业绩所属城市`" 
+                    style="width: 100%"
+                  >
+                    <el-option 
+                      v-for="dict in dc_sercive_city" 
+                      :key="dict.value" 
+                      :label="dict.label"
+                      :value="dict.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="2" v-if="index > 0">
+                <div class="remove-btn-container">
+                  <el-button 
+                    type="danger" 
+                    plain 
+                    size="small"
+                    @click="removePerformance(index)"
+                    class="remove-btn"
+                  >
+                    删除
+                  </el-button>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+          
+          <div class="add-btn-container" v-if="form.performanceInfo.length < 4">
+            <el-button 
+              type="primary" 
+              plain 
+              @click="addPerformance"
+              class="add-btn"
+            >
+              + 添加业绩归属人
+            </el-button>
+          </div>
+        </div>
+
+        <!-- 客户情况概述 -->
+        <div class="form-section-4">
+          <div class="section-title">客户情况概述</div>
+          
+          <el-form-item label="以前是否有过公司法务" class="form-item" style="margin-bottom: 20px;">
+            <el-radio-group v-model="form.preLegal">
+              <el-radio label="1">是</el-radio>
+              <el-radio label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+
+          <el-row :gutter="20" class="form-row" v-if="form.preLegal === '1'">
+            <el-col :span="8">
+              <el-form-item label="合作公司名称" class="form-item">
+                <el-input 
+                  v-model="form.preCompany" 
+                  placeholder="合作公司名称" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="不合作原因" class="form-item">
+                <el-input 
+                  v-model="form.preReason" 
+                  placeholder="不合作原因" 
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          
+          <el-form-item label="公司以前出现过的纠纷及解决方式:" class="form-item" style="margin-bottom: 20px;">
+            <el-input
+              v-model="form.preDiscuss"
+              type="textarea"
+              :rows="2"
+              placeholder="请详细描述纠纷及解决方式"
+            />
+          </el-form-item>
+          
+          <el-form-item label="待处理事项登记：" class="form-item" style="margin-bottom: 20px;">
+            <el-input
+              v-model="form.pendingRemark"
+              type="textarea"
+              :rows="2"
+              placeholder="劳资纠纷、合同纠纷、借贷纠纷、承揽纠纷、财税问题、执行案件等"
+            />
+          </el-form-item>
+          
+          <el-form-item label="欠款问题请详细登记:" class="form-item" style="margin-bottom: 20px;">
+            <el-input
+              v-model="form.debtRemark"
+              type="textarea"
+              :rows="2"
+              placeholder="相关主体、已知债务人信息、标的额、证据情况、案件处理要求等"
+            />
+          </el-form-item>
+
+          <el-form-item label="其他备注信息:" class="form-item" style="margin-bottom: 20px;">
+            <el-input
+              v-model="form.remark"
+              type="textarea"
+              :rows="2"
+              placeholder="请输入其他需要补充的备注信息"
+            />
+          </el-form-item>
+
+        </div>
+      </el-form>
+    </div>
+
+    <!-- 对话框底部按钮 -->
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button 
+          type="primary" 
+          :loading="buttonLoading" 
+          @click="submitForm"
+          size="default"
+        >
+          {{ buttonLoading ? '提交中...' : '确 定' }}
+        </el-button>
+        <el-button @click="cancel" size="default">取 消</el-button>
+      </div>
+    </template>
+  </el-dialog>
+</template>
 
 
     <!-- 搜索按钮弹窗内容 -->
@@ -915,8 +927,7 @@
                 :value="viewForm.serviceType !== undefined && viewForm.serviceType !== null ? viewForm.serviceType : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="服务周期">
-              {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')
-              }}
+              {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')}}
             </el-descriptions-item>
 
             <!-- <el-descriptions-item label="财务签字">
@@ -996,7 +1007,6 @@ import {
 } from '@/api/myCustomer/customerTransfer';
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
-import { c } from 'node_modules/vite/dist/node/moduleRunnerTransport.d-DJ_mE5sf';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -1017,10 +1027,9 @@ const total = ref(0);
 const userList = ref([]); // 用户列表
 const {
   contract_type,
-  dc_service_type,
   finance_confirmed,
   combo_type
-} = toRefs<any>(proxy?.useDict('contract_type', 'dc_service_type', 'finance_confirmed', 'combo_type'));
+} = toRefs<any>(proxy?.useDict('contract_type', 'finance_confirmed', 'combo_type'));
 
 
 const queryFormRef = ref<ElFormInstance>();
@@ -1085,8 +1094,8 @@ const initFormData: CustomerTransferForm = {
 performanceInfo: [
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
-  { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
-  { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined }
+  /* { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
+  { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined } */
 ]
 
 }
@@ -1157,21 +1166,21 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
       { required: true, message: "尾款金额不能为空", trigger: "blur" }
     ],
     serviceType: [
-      { required: true, message: "套餐类型不能为空，没有填0", trigger: "change" }
+      { required: true, message: "套餐类型不能为空", trigger: "change" }
     ],
     serviceStart: [
       { required: true, message: "服务周期开始日期不能为空", trigger: "change" }
     ],
     serviceEnd: [
-      { required: true, message: "服务周期结束日期不能为空", trigger: "change" }
+      { required: true, message: "服务周期日期不能为空", trigger: "change" }
     ],
     invoiceRequirements: [
-      { required: true, message: "开票要求不能为空", trigger: "blur" }
+      { required: true, message: "开票要求不能为空", trigger: "change" }
     ],
     invoiceStatus: [
-      { required: true, message: "开票状态不能为空", trigger: "blur" }
+      { required: true, message: "开票状态不能为空", trigger: "change" }
     ],
-    /* 'performanceInfo.0.userId': [
+   /*  'performanceInfo.0.userId': [
       { required: true, message: "业绩所属人1不能为空", trigger: "blur" }
     ],
    'performanceInfo.0.balance': [
@@ -1179,8 +1188,11 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     ],
     'performanceInfo.0.city': [
       { required: true, message: "业绩所属城市不能为空", trigger: "blur" }
-    ],  
- */
+    ],   */
+   performanceUserId: [{ required: true, message: '请选择业绩所属人', trigger: 'change' }],
+   performanceBalance: [{ required: true, message: '请输入分配业绩金额', trigger: 'blur' }],
+   performanceCity: [{ required: true, message: '请选择业绩所属城市', trigger: 'change' }],
+ 
   }
 });
 
@@ -1264,7 +1276,7 @@ const getSummaries = (param) => {
       sums[index] = '合计';
       return;
   }
-  // 处理需要合计的列，这里应该根据实际业务需求修改列名
+  //这里应该根据实际业务需求修改列名
     const values = data.map(item => Number(item[column.property]));
     if (column.label == "实付金额" || column.label == "尾款金额") {
     if (!values.every(value => isNaN(value))) {
@@ -1276,7 +1288,7 @@ const getSummaries = (param) => {
       return prev;
    }
   }, 0);
-        //  sums[index] = sums[index].toFixed(2);
+    //  sums[index] = sums[index].toFixed(2);
     sums[index] = new Intl.NumberFormat('zh-CN', {
     style: 'currency',
     currency: 'CNY',
@@ -1375,6 +1387,7 @@ const customerInfoDialogCancel = () => {
   transferInfoDialog.visible = false;
 };
 
+
 // 替换原有的 submitintentionForm 方法为以下代码：
 const submitintentionForm = async () => {
   // 使用正确的表单引用
@@ -1468,6 +1481,19 @@ function auditCancel() {
   auditDialogVisible.value = false
 }
 
+//流转单业绩归属登记新增按钮
+const addPerformance = () => {
+  if (form.value.performanceInfo.length < 4) {
+    form.value.performanceInfo.push({ userId: '', balance: '', city: '' })
+  }
+}
+//流转单业绩归属登记删除按钮
+const removePerformance = (index) => {
+  if (form.value.performanceInfo.length > 1) {
+    form.value.performanceInfo.splice(index, 1)
+  }
+}
+
 // 提交审核
 async function submitAudit() {
   console.log('提交审核')
@@ -1511,6 +1537,45 @@ async function submitAudit() {
   }
 }
 
+//分配业绩金额总和验证相关代码
+// 计算属性 - 业绩金额总和
+const performanceTotal = computed(() => {
+  return form.value.performanceInfo.reduce((sum, item) => {
+    const amount = Number(item.balance) || 0
+    return sum + amount
+  }, 0)
+})
+
+// 计算属性 - 是否有业绩金额总和错误
+const hasPerformanceSumError = computed(() => {
+  const actualPayment = Number(form.value.actualPayment) || 0
+  return Math.abs(performanceTotal.value - actualPayment) > 0.01 // 允许0.01的精度误差
+})
+
+// 监听实收金额变化，自动验证业绩金额总和
+watch(() => form.value.actualPayment, () => {
+  validatePerformanceSum()
+})
+
+// 监听业绩金额变化，自动验证
+watch(() => form.value.performanceInfo.map(p => p.balance), () => {
+  validatePerformanceSum()
+}, { deep: true })
+
+
+// 验证业绩金额总和
+function validatePerformanceSum() {
+  if (customerTransferFormRef.value) {
+    // 触发实收金额字段的验证
+    customerTransferFormRef.value.validateField('actualPayment')
+    
+    // 触发所有业绩金额字段的验证
+    form.value.performanceInfo.forEach((item, index) => {
+      customerTransferFormRef.value.validateField(`performanceInfo[${index}].balance`)
+    })
+  }
+}
+
 /** 提交按钮 */
 const submitForm = () => {
 
@@ -1522,6 +1587,11 @@ const submitForm = () => {
     proxy?.$modal.msgError("表单初始化失败，请刷新页面重试");
     return;
   }
+// 先验证业绩金额总和
+if (hasPerformanceSumError.value) {
+      ElMessage.error('业绩金额总和必须等于实收金额，请检查并修正')
+      return
+    }
 
   customerTransferFormRef.value.validate(async (valid: boolean) => {
     console.log('Form validation result:', valid);
@@ -1605,224 +1675,237 @@ onMounted(() => {
   getList();
 });
 </script>
-<style lang="scss" scoped>
-// -------------------------- 1. 基础变量定义（移除蓝色背景相关配置）--------------------------
-$color-primary: #1890ff; // 主色调（仅用于文字、边框、聚焦效果，不用于背景）
-$color-primary-light: rgba(24, 144, 255, 0.2); // 仅用于边框/下划线，不用于背景
-$color-primary-shadow: rgba(24, 144, 255, 0.4); // 仅用于输入框聚焦阴影
-
-// 关键：移除蓝色背景变量，替换为中性背景色
-$color-text-main: #333; // 主要文本色
-$color-text-secondary: #666; // 次要文本色
-$color-border-light: #cfd8dc; // 浅色边框（保持中性）
-$color-border-dashed: #e0e0e0; // 虚线边框（保持中性）
-$color-bg-card: #f9f9fb; // 卡片外层背景（浅灰，非蓝色）
-$color-bg-group: #fff; // 表单分组背景（纯白，非蓝色）
-$color-bg-preview: #fff; // 签名预览背景（纯白）
-$color-bg-neutral: #f5f5f5; // 新增中性浅灰背景（用于标签列/标题栏，替代原蓝色背景）
-
-$radius-main: 8px; // 主要圆角
-$radius-small: 6px; // 小圆角
-$radius-xs: 2px; // 超小圆角
-
-$shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06); // 卡片阴影
-$shadow-group: 0 1px 6px rgba(0, 0, 0, 0.05); // 分组阴影
-
-$font-size-base: 14px; // 基础字体大小
-$font-size-sm: 13px; // 小字体大小
-$font-size-md: 15px; // 中字体大小
-
-$spacing-xs: 2px; // 超小间距
-$spacing-sm: 4px; // 小间距
-$spacing-md: 8px; // 中间距
-$spacing-lg: 10px; // 大间距
-$spacing-xl: 14px; // 超大间距
-$spacing-xxl: 20px; // 特大间距
-$spacing-xxxl: 28px; // 极大间距
 
 
-// -------------------------- 2. 混入定义（保留核心逻辑，无蓝色背景相关修改）--------------------------
-// 输入框聚焦样式混入（仅用于边框/阴影，无背景色）
-@mixin input-focus-style {
-  border-color: $color-primary;
-  box-shadow: 0 0 3px $color-primary-shadow;
-  transition: all 0.2s ease;
+<style scoped>
+.customer-transfer-dialog {
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
-// 按钮基础样式混入（无背景色配置，保持原逻辑）
-@mixin button-base-style {
-  min-width: 100px;
-  font-size: $font-size-base;
-  font-weight: 500;
-  border-radius: $radius-small;
+.dialog-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 4px;
 }
 
-// 卡片基础样式混入（背景为浅灰，非蓝色）
-@mixin card-base-style {
-  border-radius: $radius-main;
-  background: $color-bg-card; // 浅灰背景，非蓝色
-  box-shadow: $shadow-card;
-  padding: $spacing-xxl (
-    $spacing-xxl + $spacing-sm
-  ); // 28px 32px
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--el-border-color);
+  margin-bottom: 10px;
 }
 
-
-// -------------------------- 3. 具体样式实现（移除所有蓝色背景）--------------------------
-// 签名预览区域（纯白背景，无蓝色）
-.signature-preview {
-  width: 160px;
-  height: 120px;
-  object-fit: contain;
-  border: 1px solid #eee; // 中性边框
-  border-radius: $radius-small;
-  padding: $spacing-sm;
-  background: $color-bg-preview; // 纯白背景
+.logo {
+  width: 100px;
+  height: 30px;
 }
 
-// 流转表单卡片（外层容器：浅灰背景，非蓝色）
-.transfer-form-card {
-  @include card-base-style;
+.slogan-area {
+  text-align: right;
+  font-size: 14px;
+  color: var(--el-text-color-secondary);
+  margin-bottom:10px;
 }
 
-.textarea-red-placeholder::placeholder {
-  color: red;
-  opacity: 1;
+.title-section {
+
+  text-align: center;
+  padding: 8px 0;
+  margin-bottom: 10px;
 }
 
-// 表单分组容器（关键：移除蓝色背景，改用纯白+中性边框）
-.form-group {
-  background: $color-bg-group; // 纯白背景（替代原蓝色背景）
-  border: 1px solid $color-border-light; // 中性边框
-  border-radius: $radius-main;
-  padding: $spacing-xxl $spacing-xxl; // 20px 24px
-  margin-bottom: $spacing-xxxl; // 28px
-  box-shadow: $shadow-group;
+.blue-title {
+  color:cornflowerblue;
 }
 
-// 分组标题（关键：移除蓝色背景，下划线改用中性色）
-.group-title {
-  font-size: $font-size-md;
+.title-section h1 {
+  margin: 0;
+  font-size: 22px;
   font-weight: 600;
-  color: #333; // 中性文字色（替代原蓝色系文字）
-  margin-bottom: $spacing-xl; // 14px
-  padding-bottom: $spacing-md; // 8px
-  border-bottom: 2px solid $color-border-light; // 中性下划线（替代原蓝色）
-  letter-spacing: 0.5px;
+  color: var(--el-text-color-primary);
 }
 
-// 表单整体字体（无背景色配置，保持原逻辑）
-.el-form {
-  font-size: $font-size-base;
-  color: $color-text-main;
-
-  // 表单项（增加行距，无背景色）
-  .el-form-item {
-    margin-bottom: $spacing-xl !important; // 14px
-
-    // 表单项标签（无蓝色背景，保持中性）
-    .el-form-item__label {
-      background: transparent; // 确保无背景
-    }
-  }
+.form-section-1 {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  background-color: var(--el-bg-color);
+  height: 370px;
+}
+.form-section-2 {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  background-color: var(--el-bg-color);
+  height: 360px;
 }
 
-// 输入框/文本域（关键：输入框背景改为纯白，无蓝色）
-.el-input,
-.el-textarea {
+.form-section-3 {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  background-color: var(--el-bg-color);
+  height: 460px;
+}
+.form-section-4 {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  background-color: var(--el-bg-color);
+  height: 400px;
+}
+
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--el-border-color-light);
+  color:dodgerblue;
+  text-align: center;
+  background-color: var(--el-color-primary-light-9); 
+  padding-top: 12px;
+  border-radius: 4px 4px 0 0;
+}
+
+.form-row {
+  margin-bottom: 20px;
+}
+
+.form-item {
+  margin-bottom: 0;
+}
+
+.performance-row {
+  margin-bottom: 16px;
+  padding: 16px;
+  background-color: var(--el-fill-color-lighter);
+  border-radius: 6px;
+  border: 1px solid var(--el-border-color-light);
+  height: 60px;
+}
+
+.remove-btn-container {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  padding-bottom: 6px;
+}
+
+.remove-btn {
   width: 100%;
-  font-size: $font-size-base;
-
-  // 输入框内部样式（纯白背景，中性边框）
-  &__inner {
-    border-radius: $radius-small;
-    border: 1px solid $color-border-light; // 中性边框
-    background: #fff; // 纯白背景（确保无蓝色）
-    transition: all 0.2s ease;
-
-    // 聚焦状态（仅边框/阴影变化，无背景色）
-    &:focus {
-      @include input-focus-style;
-    }
-  }
 }
 
-// 行容器（无背景色配置，保持原逻辑）
-.el-row {
-  margin-bottom: $spacing-lg; // 10px;
-
-  // 列容器（均匀排列，无背景色）
-  .el-col {
-    padding-right: ($spacing-md + $spacing-sm); // 12px
-    background: transparent; // 确保无背景
-  }
+.add-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }
 
-// 日期选择器（统一宽度，输入框背景为纯白）
-.el-date-editor {
-  width: 100%;
-
-  .el-input__inner {
-    background: #fff; // 纯白背景（无蓝色）
-  }
+.add-btn {
+  width: 200px;
 }
 
-// 对话框底部按钮区（关键：移除蓝色背景，改用中性分割线）
+.date-range {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.date-separator {
+  padding: 0 8px;
+  color: var(--el-text-color-secondary);
+  white-space: nowrap;
+}
+
 .dialog-footer {
   display: flex;
   justify-content: center;
-  gap: $spacing-xxl; // 20px
-  padding-top: $spacing-xxl; // 20px
-  border-top: 1px dashed $color-border-dashed; // 中性分割线
-  margin-top: $spacing-lg; // 10px
-  background: transparent; // 确保无背景
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--el-border-color-light);
 
-  // 按钮样式（无蓝色背景，保持原混入逻辑）
-  .el-button {
-    @include button-base-style;
+}
 
-    // 确保按钮无额外蓝色背景（仅保留默认主题色）
-    &:not(.el-button--primary) {
-      background: #fff; // 普通按钮纯白背景
-    }
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .form-row {
+    margin-bottom: 12px;
+  }
+  
+  .form-section {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .performance-row {
+    padding: 12px;
   }
 }
 
-// 表格操作按钮组（无背景色，保持原逻辑）
-.table-action-buttons {
+.performance-summary {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background-color: var(--el-fill-color-lighter);
+  border-radius: 6px;
+  border: 1px solid var(--el-border-color-light);
+  font-size: 12px;
   display: flex;
-  justify-content: center;
-  gap: $spacing-xs; // 2px
-  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  /* font-weight: bold; */
+}
 
-  // 表格内按钮样式（无背景色，透明风格）
-  .el-button {
-    font-size: $font-size-sm;
-    margin: 0;
-    padding: 0;
-    border: none;
-    background: transparent; // 透明背景
+.performance-summary.error {
+  border-color: var(--el-color-error);
+  background-color: var(--el-color-error-light-9);
+}
+
+.error-text {
+  color: var(--el-color-error);
+  font-weight: 500;
+}
+
+.success-text {
+  color: var(--el-color-success);
+  font-weight: 500;
+}
+
+.auto-distribute-btn {
+  margin-left: 12px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .performance-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }
 
-// 补充：确保表格标签列无蓝色背景（改用中性浅灰）
-table td {
-  &[class*="bg-"] {
-    background: $color-bg-neutral !important; // 中性浅灰（替代原蓝色背景）
-  }
-}
 
-// 合计行样式
+
+
+
 ::v-deep .el-table__footer-wrapper {
   font-weight: bold;
   font-size: 14px;
   
-  // 合计单元格样式
   .el-table__cell {
     background-color: #f5f7fa !important;
     font-size: 14px;
     
-    // 第一列"合计"文字样式
     &:first-child {
       color: #303133;
       font-weight: bold;
