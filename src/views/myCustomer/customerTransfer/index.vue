@@ -805,9 +805,11 @@
   </div>
 <!-- </template> -->
   </el-dialog>
+
     <!-- 处置按钮弹窗内容 -->
     <el-dialog v-model="auditDialogVisible" title="审核" width="500px" append-to-body draggable>
-      <el-form :model="auditForm" label-width="100px">
+    
+      <el-form :model="auditForm" label-width="100px" class="audit-signature-form">
         <!-- 审核状态 -->
         <el-form-item label="审核">
           <el-radio-group v-model="auditForm.auditStatus">
@@ -827,13 +829,13 @@
       </el-form>
 
       <template #footer>
-        <div class="dialog-footer" style="text-align: right;">
-          <el-button @click="auditCancel" :disabled="submitting">取消</el-button>
+        <div class="dialog-footer" style="text-align: right">
           <el-button type="primary" :loading="submitting" @click="submitAudit">确定</el-button>
+          <el-button @click="auditCancel" :disabled="submitting">取消</el-button>
         </div>
       </template>
     </el-dialog>
-
+  
 
     <!-- 替换原有的查看对话框 -->
     <!-- 替换原有的查看对话框 -->
@@ -1497,9 +1499,14 @@ async function submitAudit() {
   // 如果审核通过，必须上传签名图片
   if (auditForm.value.auditStatus === '1') {
     if (localFileList.value.length === 0 || !(localFileList.value[0].raw instanceof File)) {
-      ElMessage.warning('请先上传签名图片（必须是文件）')
+      ElMessage.warning('请先上传个人签名图片！')
       return
     }
+  }
+ // 合同文件是否上传验证
+if (!currentRow.value?.contractOssId) {
+    ElMessage.warning('请先上传合同文件！')
+    return
   }
 
   submitting.value = true
@@ -1516,7 +1523,7 @@ async function submitAudit() {
     )
 
     if (res && res.code === 200) {
-      ElMessage.success('操作成功')
+      ElMessage.success('审核操作成功，此客户信息已录入客户总表！')
       auditDialogVisible.value = false
       getList()
       // 刷新列表
@@ -1889,7 +1896,14 @@ onMounted(() => {
   }
 }
 
-
+.audit-signature-form {
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  padding: 60px;
+  background-color: var(--el-bg-color);
+  height: 200px;
+  margin-bottom: 1px;
+}
 
 
 

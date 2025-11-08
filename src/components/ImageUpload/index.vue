@@ -55,7 +55,7 @@ const props = defineProps({
   // 图片数量限制
   limit: propTypes.number.def(5),
   // 大小限制(MB)
-  fileSize: propTypes.number.def(5),
+  fileSize: propTypes.number.def(20),
   // 文件类型, 例如['png', 'jpg', 'jpeg']
   fileType: propTypes.array.def(['png', 'jpg', 'jpeg']),
   // 是否显示提示
