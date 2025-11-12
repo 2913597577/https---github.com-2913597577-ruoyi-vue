@@ -82,12 +82,12 @@
         <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary"  icon="Search" @click="handleSearch"
-              v-hasPermi="['customerInfo:customerInfo:search']">筛选
+              v-hasPermi="['insuranceCase:insuranceCase:search']">筛选
             </el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button   icon="Refresh" @click="getList"
-              v-hasPermi="['customerInfo:customerInfo:refresh']">刷新
+              v-hasPermi="['insuranceCase:insuranceCase:refresh']">刷新
             </el-button>
           </el-col>
         </div>

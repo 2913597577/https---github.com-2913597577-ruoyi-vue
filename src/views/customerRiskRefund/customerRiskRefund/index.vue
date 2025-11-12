@@ -61,12 +61,12 @@
           <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary"  icon="Search" @click="handleSearch"
-              v-hasPermi="['myCustomer:customerTransfer:search']">筛选
+              v-hasPermi="['customerRiskRefund:customerRiskRefund:search']">筛选
             </el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button   icon="Refresh" @click="getList"
-              v-hasPermi="['myCustomer:customerTransfer:refresh']">刷新
+              v-hasPermi="['customerRiskRefund:customerRiskRefund:refresh']">刷新
             </el-button>
           </el-col>
         </div>

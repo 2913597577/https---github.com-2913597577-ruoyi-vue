@@ -576,11 +576,11 @@
       </template>
     </el-dialog>
     <!-- 新增分配法务支持弹窗 -->
-    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="400px" append-to-body draggable>
-      <el-form ref="assignFormRef" :model="assignForm" :rules="assignRules" label-width="120px" class="mt-4">
+    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="520px" append-to-body draggable>
+      <el-form ref="assignFormRef" :model="assignForm" :rules="assignRules" label-width="120px" class="assign-legalsupport-form">
 
-        <el-form-item label="法务支持人员" prop="lawyerId">
-          <el-select filterable v-model="assignForm.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;">
+        <el-form-item label="法务支持人员" prop="lawyerId" class="assignlegalsupport-form-item">
+          <el-select filterable v-model="assignForm.lawyerId" placeholder="请选择法务支持人员" clearable  style="width: 100%;">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
@@ -1557,6 +1557,17 @@ onMounted(() => {
   width: 100%;
   margin-bottom: 15px;
 }
+
+.assign-legalsupport-form {
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  padding: 60px;
+  background-color: var(--el-bg-color);
+  height: 200px;
+  margin-bottom: 1px;
+}
+
+
 
 /* 调整最后一个表单项的margin */
 .el-form-item:last-child {
