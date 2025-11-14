@@ -245,8 +245,9 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: CustomerIntentionTrackingVO) => {
-  const _ids = row?.intentionId || ids.value;
-  await proxy?.$modal.confirm('是否确认删除意向客户跟踪记录编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  const customerName = row?.customerName;
+  const _ids = row?.id || ids.value;
+  await proxy?.$modal.confirm('是否确认删除跟踪记录 编号为:"' + _ids + '",客户名称为:"'+ customerName +'"的数据项？').finally(() => loading.value = false);
   await delCustomerIntentionTracking(_ids);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();

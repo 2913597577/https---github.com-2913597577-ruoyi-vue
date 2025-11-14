@@ -1634,8 +1634,9 @@ if (hasPerformanceSumError.value) {
 }
 /** 删除按钮操作 */
 const handleDelete = async (row?: CustomerTransferVO) => {
+  const companyName = row?.companyName || '';
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除客户信息录入编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除客户信息 编号为:"' + _ids + '",公司名称为:"'+ companyName +'"的数据项？').finally(() => loading.value = false);
   await delCustomerTransfer(_ids);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();

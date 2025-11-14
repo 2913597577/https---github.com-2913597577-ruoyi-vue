@@ -85,7 +85,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" width="160" show-overflow-tooltip />
+        <el-table-column label="客户名称" align="center" prop="customerName" width="160" show-overflow-tooltip />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
         <el-table-column label="出访时间" align="center" prop="visitTime" width="100">
@@ -205,8 +205,8 @@
 
 
     <!-- 添加或修改客户出访记录对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
-      <el-form ref="customerOutVisitFormRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body draggable>
+      <el-form ref="customerOutVisitFormRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="客户" prop="customerId">
           <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -220,7 +220,7 @@
         <el-form-item label="法务支持姓名" prop="legalSupportName">
           <el-input v-model="form.legalSupportName" placeholder="请输入法务支持姓名" />
         </el-form-item> -->
-        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+        <el-form-item label="法务支持" prop="legalSupport" >
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
@@ -453,10 +453,11 @@ const handleSearch = () => {
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: CustomerOutVisitVO) => {
+  const customerName = row?.customerName;
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除客户出访记录编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除客户出访 编号为:"' + _ids + '",客户名称为:"'+ customerName +'"的数据项？').finally(() => loading.value = false);
   await delCustomerOutVisit(_ids);
-  proxy?.$modal.msgSuccess("删除成功");
+  proxy?.$modal.msgSuccess("删除成功!");
   await getList();
 }
 

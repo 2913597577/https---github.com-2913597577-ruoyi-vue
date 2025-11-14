@@ -79,7 +79,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="案件" align="center" prop="caseId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" width="180" show-overflow-tooltip />
+        <el-table-column label="客户名称" align="center" prop="customerName" width="180" show-overflow-tooltip />
         <el-table-column label="跟进日期" align="center" prop="trackingTime" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
@@ -372,8 +372,9 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: CaseProgressVO) => {
+  const customerName = row?.customerName || '';
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除案件进展表编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除案件进展 编号为:"' + _ids + '",客户名称为:"'+ customerName +'"的数据项？').finally(() => loading.value = false);
   await delCaseProgress(_ids);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();

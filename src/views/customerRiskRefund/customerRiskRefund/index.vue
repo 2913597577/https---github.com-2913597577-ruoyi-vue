@@ -192,9 +192,9 @@
         <el-form-item label="对接人电话" prop="principalPhone" label-width="90px">
           <el-input v-model="form.principalPhone" placeholder="请输入对接人联系方式" />
         </el-form-item>
-        <el-form-item label="大成负责人" prop="inviterId" label-width="90px">
+       <!--  <el-form-item label="大成负责人" prop="inviterId" label-width="90px">
           <el-input v-model="form.inviterId" placeholder="请输入大成负责人" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="签单金额" prop="contractAmount" label-width="90px">
           <el-input v-model="form.contractAmount" placeholder="请输入签单金额" />
         </el-form-item>
@@ -462,8 +462,9 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: CustomerRiskRefundVO) => {
+  const customerName = row?.customerName;
   const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('是否确认删除客户风险/退费编号为"' + _ids + '"的数据项？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除表中 客户编号为:"' + _ids + '", 客户名称为:"'+ customerName +'"的数据项？').finally(() => loading.value = false);
   await delCustomerRiskRefund(_ids);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();
