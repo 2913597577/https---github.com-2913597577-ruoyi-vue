@@ -363,9 +363,13 @@
       </template>
     </el-dialog>
     <!-- 客户流转操作对话框 -->
-    <el-dialog title="客户流转" v-model="transferDialog.visible" width="450px" append-to-body
+    <el-dialog title="客户流转" v-model="transferDialog.visible" width="550px" append-to-body
       :before-close="handleTransferClose" draggable>
-      <el-form ref="transferFormRef" :model="transferForm" label-width="100px" class="mt-2">
+      <el-form ref="transferFormRef" :model="transferForm" label-width="100px" class="customer-flow-form">
+         <!-- 显示客户名称 -->
+    <el-form-item label="客户名称" class="customerflow-form-item">
+      <el-input v-model="transferDialog.currentRow.customerName" readonly />
+    </el-form-item>
         <!-- 流转类型单选框 -->
         <el-form-item label="流转类型" prop="transferType"
           :rules="[{ required: true, message: '请选择流转类型', trigger: 'change' }]">
@@ -381,17 +385,17 @@
       <!-- 弹窗底部按钮 -->
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleTransferClose">取消</el-button>
           <el-button type="primary" :loading="transferLoading" @click="handleTransferConfirm">
             确定
           </el-button>
+          <el-button @click="handleTransferClose">取消</el-button>
         </div>
       </template>
     </el-dialog>
     <!--转为风险或退费客户操作对话框 -->
-    <el-dialog :title="riskRefundDialog.title" v-model="riskRefundDialog.visible" width="500px" append-to-body>
-      <el-form ref="customerRiskRefundFormRef" :model="CRRform" :rules="CRRrules" label-width="120px">
-        <el-form-item label="法务支持" prop="lawyerId" label-width="68px">
+    <el-dialog :title="riskRefundDialog.title" v-model="riskRefundDialog.visible" width="600px" append-to-body draggable>
+      <el-form ref="customerRiskRefundFormRef" :model="CRRform" :rules="CRRrules" label-width="120px" class="customer-risk-refund-form">
+        <el-form-item label="法务支持" prop="lawyerId">
           <el-select filterable v-model="CRRform.lawyerId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
@@ -407,14 +411,14 @@
           <!-- 客户名称同理，只读 -->
         </el-form-item>
         <el-form-item label="客户对接人" prop="principal">
-          <el-input v-model="CRRform.principal" placeholder="请输入客户对接人" />
+          <el-input v-model="CRRform.principal" placeholder="请输入客户对接人" readonly />
         </el-form-item>
-        <el-form-item label="客户对接人联系方式" prop="principalPhone">
-          <el-input v-model="CRRform.principalPhone" placeholder="请输入客户对接人联系方式" />
+        <el-form-item label="联系方式" prop="principalPhone" readonly>
+          <el-input v-model="CRRform.principalPhone" placeholder="请输入客户对接人联系方式" readonly />
         </el-form-item>
-        <el-form-item label="大成负责人id" prop="inviterId">
+       <!--  <el-form-item label="大成负责人id" prop="inviterId">
           <el-input v-model="CRRform.inviterId" placeholder="请输入大成负责人id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="签约日期" prop="signDate">
           <el-date-picker clearable v-model="CRRform.signDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择签约日期" />
@@ -438,20 +442,20 @@
         <el-form-item label="退款金额" prop="refundAmount" v-if="CRRform.customerType === 2">
           <el-input v-model="CRRform.refundAmount" placeholder="请输入退款金额" />
         </el-form-item>
-        <el-form-item label="备注1" prop="remark1">
-          <el-input v-model="CRRform.remark1" type="textarea" placeholder="请输入备注（非必填）" />
+        <el-form-item label="备注" prop="remark1">
+          <el-input v-model="CRRform.remark1" type="textarea" placeholder="请输入客户备注信息" />
         </el-form-item>
-        <el-form-item label="备注2" prop="remark2">
+       <!--  <el-form-item label="备注2" prop="remark2">
           <el-input v-model="CRRform.remark2" type="textarea" placeholder="请输入备注（非必填）" />
         </el-form-item>
         <el-form-item label="备注3" prop="remark3">
           <el-input v-model="CRRform.remark3" type="textarea" placeholder="请输入备注（非必填）" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="riskRefundDialog.visible = false">取消</el-button>
           <el-button type="primary" :loading="riskRefundLoading" @click="submitRiskRefundForm">确 定</el-button>
+          <el-button @click="riskRefundDialog.visible = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -524,8 +528,8 @@
 
 
     <!-- 添加客户意向登记对话框 -->
-    <el-dialog :title="intentionDialog.title" v-model="intentionDialog.visible" width="500px" append-to-body draggable>
-      <el-form ref="customerIntentionFormRef" :model="intentionForm" :rules="intentionRules" label-width="120px">
+    <el-dialog :title="intentionDialog.title" v-model="intentionDialog.visible" width="550px" append-to-body draggable>
+      <el-form ref="customerIntentionFormRef" :model="intentionForm" :rules="intentionRules" label-width="120px" class="intention-customer-form">
         <el-form-item label="提报日期" prop="submissionDate">
           <el-date-picker clearable v-model="intentionForm.submissionDate" type="datetime"
             value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择提报日期" required />
@@ -570,17 +574,20 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="intentionDialog.visible = false">取消</el-button>
           <el-button type="primary" :loading="intentionLoading" @click="submitIntentionForm">确 定</el-button>
+          <el-button @click="intentionDialog.visible = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
     <!-- 新增分配法务支持弹窗 -->
-    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="520px" append-to-body draggable>
+    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="550px" append-to-body draggable>
       <el-form ref="assignFormRef" :model="assignForm" :rules="assignRules" label-width="120px" class="assign-legalsupport-form">
-
-        <el-form-item label="法务支持人员" prop="lawyerId" class="assignlegalsupport-form-item">
-          <el-select filterable v-model="assignForm.lawyerId" placeholder="请选择法务支持人员" clearable  style="width: 100%;">
+    <!-- 新增客户名称显示行 -->
+    <el-form-item label="客户名称" prop="customerName">
+      <el-input v-model="assignDialog.currentRow.customerName" readonly class="assigncustomer-form-item"/>
+    </el-form-item>
+        <el-form-item :label="assignDialog.currentRow.lawyerId ? '变更法务支持' : '分配法务支持'"  prop="lawyerId" class="assignlegalsupport-form-item">
+          <el-select filterable v-model="assignForm.lawyerId" :placeholder="assignDialog.currentRow.lawyerId ? '请变更新法务支持' : '请分配法务支持'" clearable  style="width: 100%;">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
@@ -592,8 +599,8 @@
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="assignDialog.visible = false">取消</el-button>
           <el-button type="primary" :loading="assignLoading" @click="submitAssignForm()">确 定</el-button>
+          <el-button @click="assignDialog.visible = false">取消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -653,7 +660,7 @@
       </el-descriptions>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="viewDialog.visible = false">关闭</el-button>
+          <el-button @click="viewDialog.visible = false" icon="close">关闭</el-button>
         </div>
       </template>
     </el-dialog>
@@ -1167,6 +1174,7 @@ const handleTransferConfirm = async () => {
         resetRiskRefundForm(); // 重置表单
         CRRform.value.customerType = 2; // 标记为退费客户
         // 自动填充客户基础信息
+        CRRform.value.lawyerId = currentCustomer.lawyerId;
         CRRform.value.customerId = currentCustomer.transferId;
         CRRform.value.customerName = currentCustomer.customerName;
         CRRform.value.principal = currentCustomer.principal;
@@ -1187,7 +1195,8 @@ const handleTransferConfirm = async () => {
         intentionForm.value.introducerId = currentCustomer.transferId;
         intentionForm.value.followUpResult = 0;
 
-        intentionForm.value.legalSupport = String(currentCustomer.lawyerId);
+        // intentionForm.value.legalSupport = String(currentCustomer.lawyerId);
+        intentionForm.value.legalSupportId = currentCustomer.lawyerId;
         // 设置当前日期为默认提报日期
         intentionForm.value.submissionDate = getLocalDateTime();
 
@@ -1558,16 +1567,47 @@ onMounted(() => {
   margin-bottom: 15px;
 }
 
+
+.assigncustomer-form-item {
+  margin-bottom: 20px;
+}
 .assign-legalsupport-form {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
-  padding: 60px;
+  padding: 50px;
   background-color: var(--el-bg-color);
   height: 200px;
   margin-bottom: 1px;
 }
+.customerflow-form-item {
+  margin-bottom: 30px;
+}
+.customer-flow-form {
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  padding: 50px;
+  background-color: var(--el-bg-color);
+  height: 210px;
+  margin-bottom: 1px;
+}
 
+.customer-risk-refund-form {
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: var(--el-bg-color);
+  height: 510px;
+  margin-bottom: 1px;
+}
 
+.intention-customer-form {
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  padding: 30px;
+  background-color: var(--el-bg-color);
+  height: 350px;
+  margin-bottom: 1px;
+}
 
 /* 调整最后一个表单项的margin */
 .el-form-item:last-child {

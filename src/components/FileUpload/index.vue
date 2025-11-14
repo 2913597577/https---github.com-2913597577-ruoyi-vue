@@ -5,7 +5,7 @@
       :on-success="handleUploadSuccess" :show-file-list="false" :headers="headers" class="upload-file-uploader"
       v-if="!disabled">
       <!-- 上传按钮 -->
-      <el-button type="primary" plain> + 个人签名图片</el-button>
+      <el-button type="primary" plain> + 上传图片</el-button>
     </el-upload>
     <!-- 上传提示 -->
     <div v-if="showTip && !disabled" class="el-upload__tip">

@@ -141,11 +141,11 @@
               <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                 v-hasPermi="['myCustomer:customerTracking:remove']">删除</el-button>
             </el-tooltip>
-            <el-tooltip content="提交" placement="top">
+            <!-- <el-tooltip content="提交" placement="top">
               <el-button link type="success" icon="Upload" @click="handleSubmit(scope.row)"
                 v-hasPermi="['myCustomer:customerTracking:submit']"
                 v-if="scope.row.submitStatus == 0 && scope.row.trackingType == 2">提交</el-button>
-            </el-tooltip>
+            </el-tooltip> -->
           </template>
         </el-table-column>
       </el-table>
@@ -667,7 +667,7 @@ const handleView = async (row: CustomerTrackingVO) => {
   try {
     const res = await listCustomerTracking({ customerId });
     viewCustomerTrackings.value = res.rows;
-    viewDialog.title = `查看【${customerName}】的跟踪记录`;
+    viewDialog.title = `【${customerName}】的跟踪记录`;
     viewDialog.visible = true;
   } catch (error) {
     proxy?.$modal.msgError('获取客户跟踪记录失败');
