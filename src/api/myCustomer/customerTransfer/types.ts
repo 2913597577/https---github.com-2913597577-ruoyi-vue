@@ -266,6 +266,8 @@ export interface CustomerTransferVO {
   invoiceContent: string;
 
   invoiceStatus: number;
+  
+  customerId: string| number;
 }
 
 export interface CustomerTransferForm extends BaseEntity {
@@ -278,6 +280,8 @@ export interface CustomerTransferForm extends BaseEntity {
    * 公司名称
    */
   companyName?: string;
+
+    customerId: string| number;
 
   /**
    * 公司对接人
@@ -561,6 +565,8 @@ export interface CustomerTransferForm extends BaseEntity {
    * 主键ID
    */
   id?: string | number;
+
+    customerId: string| number;
 
   /**
    * 公司名称

@@ -1116,6 +1116,8 @@ const initFormData: CustomerTransferForm = {
 
   invoiceStatus: undefined,
 
+  customerId: undefined,
+
 performanceInfo: [
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
@@ -1165,6 +1167,8 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     invoiceContent: undefined,
     
     invoiceStatus: undefined,
+    
+    customerId: undefined,
 
     params: {}
   },
@@ -1263,6 +1267,7 @@ const transferFormData = ref({
   inviterId: undefined,
   remark: undefined,
   balancePayType: undefined,
+    customerId: undefined,
 
   contractCode: undefined,
 
@@ -1662,6 +1667,7 @@ if (hasPerformanceSumError.value) {
         form.value.province = getAddressNameByCode(addressModel.value.province)
         form.value.city = getAddressNameByCode(addressModel.value.city)
         form.value.district = getAddressNameByCode(addressModel.value.district)
+        form.value.isSecondaryCharge=1; // 标记为二次收费流转单
         // 处理数组字段
         if (Array.isArray(form.value.pendingMatters)) {
           form.value.pendingMatters = form.value.pendingMatters.join(",");
@@ -1796,6 +1802,7 @@ const handleCompanyChange = (companyId: string) => {
     form.value.additionalAge = selectedCompany.additionalAge || ''
     form.value.contactPosition = selectedCompany.contactPosition || '';
     form.value.customerDescription = selectedCompany.customerDescription || ''
+    form.value.customerId = selectedCompany.customerId || ''
     
     if (selectedCompany.accountingCompany !== undefined && selectedCompany.accountingCompany !== null) {
       form.value.accountingCompany = String(selectedCompany.accountingCompany);

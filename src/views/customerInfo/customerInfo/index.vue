@@ -166,7 +166,15 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="续费" align="center" prop="actionType" width="100" show-overflow-tooltip />
+        <el-table-column label="续费" align="center" prop="actionType" width="100" show-overflow-tooltip >
+           <template #default="scope">
+            <!-- 详情按钮：点击携带当前行id跳转 -->
+            <el-button link type="primary" icon="View" size="small"
+              @click="handleCustomerInfoLog(scope.row.id)" style="padding: 0 6px;">
+              详情
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
          <!--  <template #default="scope"> -->
             <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
@@ -1424,6 +1432,14 @@ const handleTrackingDetail = (id: number | string) => {
   router.push({
     path: '/legalSupport/customerAllTracking',  // 目标路由路径（需与实际路由配置一致）
     query: { customerId: id }  // 传递id参数（键名可自定义，如customerId）
+  });
+};
+
+const handleCustomerInfoLog = (id: number | string) => {
+  // 跳转到目标路由，并通过query参数传递id
+  router.push({
+    path: '/customer/customerInformationLog',  // 目标路由路径（需与实际路由配置一致）
+    query: { customerInfoId: id }  // 传递id参数（键名可自定义，如customerId）
   });
 };
 

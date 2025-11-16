@@ -295,7 +295,7 @@ import { listCustomerInformationLog, getCustomerInformationLog, delCustomerInfor
 import { CustomerInformationLogVO, CustomerInformationLogQuery, CustomerInformationLogForm } from '@/api/customerInformationLog/customerInformationLog/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { dc_customer_type, combo_type } = toRefs<any>(proxy?.useDict('dc_customer_type', 'combo_type'));
+const { dc_false_true, dc_true_or_false,dc_customer_type, combo_type } = toRefs<any>(proxy?.useDict('dc_false_true', 'dc_true_or_false','dc_customer_type', 'combo_type'));
 
 const customerInformationLogList = ref<CustomerInformationLogVO[]>([]);
 const buttonLoading = ref(false);
@@ -305,6 +305,7 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
+const route = useRoute();
 
 const queryFormRef = ref<ElFormInstance>();
 const customerInformationLogFormRef = ref<ElFormInstance>();
@@ -364,6 +365,7 @@ const data = reactive<PageData<CustomerInformationLogForm, CustomerInformationLo
     customerType: undefined,
     customerCity: undefined,
     isAssigned: undefined,
+    customerInfoId: undefined,
     params: {
     }
   },
@@ -481,6 +483,25 @@ const handleExport = () => {
   }, `customerInformationLog_${new Date().getTime()}.xlsx`)
 }
 
+watch(
+  () => route.query.customerInfoId,
+  (newCustomerInfoId) => {
+    if (newCustomerInfoId) {
+      // 2. 有CustomerId：查询该客户的单条跟踪记录，并渲染到表格
+      try {
+        queryParams.value.customerInfoId = newCustomerInfoId;
+        handleQuery();
+      } catch (error) {
+        console.error('获记录失败:', error);
+        proxy?.$modal.msgError('获记录失败');
+      }
+    } else {
+      // 如果 intentionCustomerId 为空，则加载所有数据
+      getList();
+    }
+  },
+  { immediate: true } // 立即执行一次
+);
 onMounted(() => {
   getList();
 });

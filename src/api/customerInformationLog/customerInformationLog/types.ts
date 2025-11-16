@@ -332,6 +332,7 @@ export interface CustomerInformationLogForm extends BaseEntity {
    */
   isAssigned?: number;
 
+
 }
 
 export interface CustomerInformationLogQuery extends PageQuery {
@@ -385,6 +386,8 @@ export interface CustomerInformationLogQuery extends PageQuery {
    * 是否分配法务支持 0-未分配 1-已分配
    */
   isAssigned?: number;
+
+  customerInfoId?: string | number;
 
     /**
      * 日期范围参数
