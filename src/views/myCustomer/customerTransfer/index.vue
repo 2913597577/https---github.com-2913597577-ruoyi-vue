@@ -361,8 +361,8 @@
             </el-col>
           </el-row>
 
-          <el-row :gutter="20" class="form-row">
-            <el-col :span="8">
+          <el-row :gutter="10" class="form-row">
+            <el-col :span="6">
               <el-form-item label="公司行业" class="form-item">
                 <el-input 
                   v-model="form.companyIndustry" 
@@ -370,15 +370,25 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="10">
-            <el-form-item label="公司地址" class="form-item">
-            <el-input 
-              v-model="form.companyAddress" 
-              placeholder="请输入公司地址" 
-            />
-          </el-form-item>
+            <el-col :span="18">
+           <el-form-item label="公司地址" class="form-item">
+              <el-row :gutter="10">
+                <el-col :span="14">
+                  <address-selector v-model="addressModel" />
+                </el-col>
+                <el-col :span="6">
+                  <el-input 
+                    v-model="form.companyAddress" 
+                    placeholder="请输入详细地址" 
+                  />
+                </el-col>
+              </el-row>
+            </el-form-item>
+            
           </el-col>
-          <el-col :span="6">
+          </el-row>
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="6">
               <el-form-item label="员工人数" class="form-item">
                 <el-input 
                   v-model="form.employeeCount" 
@@ -387,10 +397,7 @@
                 />
               </el-form-item>
             </el-col>
-          </el-row>
-
-          <el-row :gutter="20" class="form-row">
-           <el-col :span="16">
+            <el-col :span="16">
              <el-form-item label="是否有代账公司" class="form-item">
                <el-radio-group v-model="form.accountingCompany">
                  <el-radio label="0">是</el-radio>
@@ -399,6 +406,7 @@
                </el-radio-group>
              </el-form-item>
            </el-col>
+           
          </el-row>
          <el-form-item label="客户性格及工作习惯描述:" class="form-item">
             <el-input
@@ -998,6 +1006,9 @@
 </template>
 
 <script setup name="CustomerTransfer" lang="ts">
+import provinceCityAreaData from '@/assets/address.json'
+import addressSelector from '@/components/address/address.vue';
+import { getNameByCode, getCodeByName } from '@/components/address/addressMethod';
 import { listSeller, listUser } from '@/api/customerInfo/customerInfo';
 import {
   addCustomerTransfer,
@@ -1303,6 +1314,7 @@ return sums;
 /** 查询客户信息录入列表 */
 const getList = async () => {
   loading.value = true;
+  queryParams.value.isSecondaryCharge=0; // 只查询初次收费的流转单
   const res = await listCustomerTransfer(queryParams.value);
   customerTransferList.value = res.rows;
   total.value = res.total;
@@ -1346,6 +1358,13 @@ const cancel = () => {
 /** 表单重置 */
 const reset = () => {
   form.value = { ...initFormData };
+  
+    addressModel.value = {
+      province: getCodeByName(form.value.province || ''),
+      city: getCodeByName(form.value.city || ''),
+      district: getCodeByName(form.value.district || '')
+    };
+  
   customerTransferFormRef.value?.resetFields();
 }
 
@@ -1383,6 +1402,19 @@ const handleUpload = async (row: CustomerTransferVO) => {
 const customerInfoDialogCancel = () => {
   transferInfoDialog.visible = false;
 };
+
+// 添加地址模型的响应式引用
+const addressModel = ref({
+  province: '',
+  city: '',
+  district: ''
+})
+
+// 监听地址模型变化，更新表单数据
+watch(addressModel, (newVal) => {
+  // 可以在这里处理选中的省市区数据，例如保存名称而不是代码
+   console.log('地址选择变化:', newVal)
+}, { deep: true })
 
 
 // 替换原有的 submitintentionForm 方法为以下代码：
@@ -1601,6 +1633,10 @@ if (hasPerformanceSumError.value) {
       buttonLoading.value = true;
       try {
         form.value.financeConfirmed = 0; // 默认未确认
+
+        form.value.province = getNameByCode(addressModel.value.province)
+        form.value.city = getNameByCode(addressModel.value.city)
+        form.value.district = getNameByCode(addressModel.value.district)
         // 处理数组字段
         if (Array.isArray(form.value.pendingMatters)) {
           form.value.pendingMatters = form.value.pendingMatters.join(",");
@@ -1671,6 +1707,9 @@ const getUserNameById = (userId: string) => {
   const user = userList.value.find((item: any) => item.userId === userId)
   return user ? `${user.nickName}` : ''
 }
+
+
+
 
 onMounted(() => {
 

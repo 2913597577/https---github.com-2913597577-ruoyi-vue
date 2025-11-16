@@ -73,4 +73,11 @@ export const getLegalSupportPerformance = () => {
     url: '/common/getLegalSupportPerformance',
     method: 'get'
   })
-}
+  }
+// 获取客户流转单列表
+  export const getTransferList = () => {
+  return request({
+    url: '/common/getTransferList',
+    method: 'get'
+  })
+  }
