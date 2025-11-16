@@ -1551,6 +1551,7 @@ if (!currentRow.value?.contractOssId) {
     const res = await audit(
       currentRow.value?.id || '',
       auditForm.value.auditStatus,
+      "0",
       pictureFile
     )
 

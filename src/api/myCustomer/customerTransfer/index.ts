@@ -68,10 +68,11 @@ export const delCustomerTransfer = (id: string | number | Array<string | number>
  * @param auditStatus
  * @param pictureFile
  */
-export const audit = (id: string | number, auditStatus: string, pictureFile:  File | string) => {
+export const audit = (id: string | number, auditStatus: string,isSecondaryCharge:string, pictureFile:  File | string) => {
   const formData = new FormData();
   formData.append('id', id.toString());
   formData.append('auditStatus', auditStatus);
+  formData.append('isSecondaryCharge', isSecondaryCharge);
   formData.append('pictureUrl', pictureFile || '');
 
   return request({
