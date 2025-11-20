@@ -273,7 +273,7 @@
               <el-form-item label="客户类型" prop="customerType" class="form-item">
                 <el-select v-model="form.customerType" placeholder="请选择客户类型" style="width: 100%">
                   <el-option v-for="dict in dc_customer_type" :key="dict.value" :label="dict.label"
-                    :value="parseInt(dict.value)"></el-option>
+                    :value="parseInt(dict.value)" :disabled="dict.value == '3'"></el-option>
                 </el-select>
               </el-form-item>
             </div>
@@ -382,12 +382,13 @@
         <el-form-item label="流转类型" prop="transferType"
           :rules="[{ required: true, message: '请选择流转类型', trigger: 'change' }]">
           <el-radio-group v-model="transferForm.transferType">
-            <el-radio label="1" class="mb-2">1 转为风险客户</el-radio>
-            <el-radio label="2" class="mb-2">2 转为退费客户</el-radio>
-            <el-radio label="3">3 转介绍意向客户</el-radio>
+            <el-radio label="1" class="mb-2"> 转为风险客户</el-radio>
+            <el-radio label="4" class="mb-2"> 转为高风险客户</el-radio>
+            <el-radio label="2" class="mb-2"> 转为退费客户</el-radio>
+            <el-radio label="3"> 转介绍意向客户</el-radio>
+            <el-radio label="5"> 转为D类客户(流失客户)</el-radio>
           </el-radio-group>
         </el-form-item>
-
 
       </el-form>
       <!-- 弹窗底部按钮 -->
@@ -1211,6 +1212,32 @@ const handleTransferConfirm = async () => {
         // 关闭流转弹窗，打开意向登记弹窗
         transferDialog.visible = false;
         intentionDialog.visible = true;
+        break;
+      case '4': // 转为高风险客户
+        // 关闭流转弹窗
+        transferDialog.visible = false;
+        
+        // 跳转到高风险客户申请页面，携带客户数据
+        router.push({
+          path: '/workflow/highRiskCustomerEdit/index', // 更新的路由路径
+          query: {
+            customerId: currentCustomer.id,
+            type: 'add'
+          }
+        });
+        break;
+      case '5': // 转为流失客户
+        // 关闭流转弹窗
+        transferDialog.visible = false;
+        
+        // 跳转到高风险客户申请页面，携带客户数据
+        router.push({
+          path: '/workflow/customerChurnApproveEdit/index', // 更新的路由路径
+          query: {
+            customerId: currentCustomer.id,
+            type: 'add'
+          }
+        });
         break;
     }
   } catch (error) {

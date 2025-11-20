@@ -3,9 +3,9 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="search">
         <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-          <el-form-item label="客户id" prop="customerId">
+          <!-- <el-form-item label="客户id" prop="customerId">
             <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="客户姓名" prop="customerName">
             <el-input v-model="queryParams.customerName" placeholder="请输入客户姓名" clearable />
           </el-form-item>
@@ -23,9 +23,9 @@
     <el-card shadow="never">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button v-hasPermi="['workflow:high:risk:customer:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button v-hasPermi="['workflow:high:risk:customer:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
           </el-col>
@@ -70,9 +70,9 @@
               <el-col :span="1.5">
                 <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
-              <el-col :span="1.5" v-if="scope.row.status === 'waiting'">
+              <!-- <el-col :span="1.5" v-if="scope.row.status === 'waiting'">
                 <el-button size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
-              </el-col>
+              </el-col> -->
             </el-row>
           </template>
         </el-table-column>

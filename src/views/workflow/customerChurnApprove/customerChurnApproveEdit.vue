@@ -14,14 +14,17 @@
     <el-card shadow="never" style="height: 78vh; overflow-y: auto">
       <el-form ref="customerChurnApproveFormRef" v-loading="loading" :disabled="routeParams.type === 'view'" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="审批类型" prop="applyType">
-          <el-input v-model="form.applyType" placeholder="请输入审批类型" />
+          <el-input v-model="form.applyType" placeholder="客户流失审批" readonly />
         </el-form-item>
-        <el-form-item label="客户id" prop="customerId">
-          <el-input v-model.number="form.customerId" type="number" placeholder="请输入客户id" />
-        </el-form-item>
-        <el-form-item label="客户姓名" prop="customerName">
-          <el-input v-model="form.customerName" placeholder="请输入客户姓名" />
-        </el-form-item>
+        
+          <el-form-item label="客户名称" prop="customerId">
+              <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable  @change="handleCustomerChange"  :disabled="isCustomerSelectDisabled">
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+      
         <el-form-item label="原因" prop="remark">
           <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入原因" />
         </el-form-item>
@@ -54,6 +57,8 @@ import ApprovalRecord from '@/components/Process/approvalRecord.vue';
 import ApprovalButton from '@/components/Process/approvalButton.vue';
 import { AxiosResponse } from 'axios';
 import { StartProcessBo } from '@/api/workflow/workflowCommon/types';
+import { get } from 'http';
+import { getCustomerByUserId } from '@/api/common';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const buttonLoading = ref(false);
@@ -93,7 +98,7 @@ const taskVariables = ref<Record<string, any>>({});
 const initFormData: DcCustomerChurnApproveForm = {
   id: undefined,
   tenantId: undefined,
-  applyType: undefined,
+  applyType: '客户流失审批',
   customerId: undefined,
   customerName: undefined,
   remark: undefined,
@@ -141,6 +146,9 @@ const getInfo = () => {
 /** Submit button */
 const submitForm = (status: string) => {
   try {
+
+    form.value.applyType = '客户流失审批';
+
     customerChurnApproveFormRef.value?.validate(async (valid: boolean) => {
       if (valid) {
         buttonLoading.value = true;
@@ -213,12 +221,53 @@ const submitCallback = async () => {
 const approvalVerifyOpen = async () => {
   submitVerifyRef.value.openDialog(routeParams.value.taskId);
 };
+const customerList = ref<any[]>([]);
 
-onMounted(() => {
-  nextTick(async () => {
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
+
+const handleCustomerChange = (customerId) => {
+  if (customerId) {
+    const selectedCustomer = customerList.value.find(
+      item => item.customer_id === customerId
+    );
+    if (selectedCustomer) {
+      form.value.customerName = selectedCustomer.customer_name;
+    }
+  } else {
+    form.value.customerName = '';
+  }
+};
+
+const isCustomerSelectDisabled = computed(() => {
+  return routeParams.value.type === 'add' && routeParams.value.customerId;
+});
+
+onMounted(async () => {
+  // 1. 先等待客户列表加载完成
+  await loadCustomerList(); 
+  
+  // 2. 列表加载完成后，再处理路由参数
+  nextTick(() => {
     routeParams.value = proxy.$route.query;
     reset();
+    
+    if (routeParams.value.type === 'add' && routeParams.value.customerId) {
+      // 此时 customerList 已经有数据了
+      form.value.customerId = routeParams.value.customerId;
+      form.value.customerName = customerList.value.find(item => item.customer_id === routeParams.value.customerId)?.customer_name;
+    }
+    
     loading.value = false;
+    
+    // 对于编辑、查看、审批，也在列表加载后再获取详情
     if (routeParams.value.type === 'update' || routeParams.value.type === 'view' || routeParams.value.type === 'approval') {
       getInfo();
     }
