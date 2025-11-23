@@ -11,27 +11,27 @@
           <div class="statistic-content">
             <div class="stat-item">
               <span class="label">客户数量：</span>
-              <span class="value">{{ customerCount.customerTotal }}</span>
+               <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.customerTotal }}</span>
               <span class="label">近30天未跟进客户：</span>
-              <span class="value">{{ customerCount.trackingTotal }}</span>
+              <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.trackingTotal }}</span>
             </div>
             <div class="stat-item">
               <span class="label">意向客户数量：</span>
-              <span class="value">{{ customerCount.intentionTotal }}</span>
+              <span class="value" @click="$router.push('/customer/customerIntention')">{{ customerCount.intentionTotal }}</span>
               <span class="label">临期客户数量：</span>
-              <span class="value">{{ customerCount.expiringTotal }}</span>
+              <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.expiringTotal }}</span>
               <span class="label">尾款客户数量：</span>
-              <span class="value">{{ customerCount.balanceTotal }}</span>
+              <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.balanceTotal }}</span>
             </div>
             <div class="stat-item">
               <span class="label">本月内勤数量：</span>
-              <span class="value">{{ customerCount.trackingTotal }}</span>
+              <span class="value" @click="$router.push('/legalSupport/customerTracking')" >{{ customerCount.trackingTotal }}</span>
               <span class="label">外勤数量：</span>
-              <span class="value">{{ customerCount.outVisitTotal }}</span>
+              <span class="value" @click="$router.push('/legalSupport/customerOutVisit')">{{ customerCount.outVisitTotal }}</span>
               <span class="label">保单数量：</span>
-              <span class="value">{{ customerCount.insuranceTotal }}</span>
+              <span class="value" @click="$router.push('/legalSupport/insuranceCase')">{{ customerCount.insuranceTotal }}</span>
               <span class="label">工单数量：</span>
-              <span class="value">{{ customerCount.jobOrderTotal }}</span>
+              <span class="value" @click="$router.push('/legalSupport/customerJobOrder')">{{ customerCount.jobOrderTotal }}</span>
             </div>
           </div>
         </el-card>
@@ -44,17 +44,17 @@
           <div class="performance-content">
             <div class="performance-item">
               <span class="label">本月业绩任务：</span>
-              <span class="value">{{ performanceCount.monthPerformanceGoal }}</span>
+              <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.monthPerformanceGoal }}</span>
               <span class="label">已完成金额：</span>
-              <span class="value">{{ performanceCount.monthAchievedBalance }}</span>
+              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ performanceCount.monthAchievedBalance }}</span>
               <span class="label">出访任务：</span>
-              <span class="value">{{ performanceCount.monthVisitGoal }}</span>
+              <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.monthVisitGoal }}</span>
               <span class="label">出访完成：</span>
-              <span class="value">{{ customerCount.outVisitTotal }}</span>
+              <span class="value" @click="$router.push('/legalSupport/customerOutVisit')">{{ customerCount.outVisitTotal }}</span>
             </div>
             <div class="performance-item">
               <span class="label">年度业绩累积金额：</span>
-              <span class="value">{{ performanceCount.yearAchievedBalance }}</span>
+              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ performanceCount.yearAchievedBalance }}</span>
               <span class="label">年度排名：</span>
               <span class="value">{{ performanceCount.yearPerformanceRank }}</span>
             </div>
@@ -119,7 +119,7 @@
       <!-- 右侧待办事项 -->
       <el-col :span="8">
         <el-card class="todo-card">
-          <div class="todo-header">
+          <div class="todo-header" @click="$router.push('/legalSupport/customerAllTracking')">
             <h3>今日待办事项</h3>
           </div>
           <div class="todo-content">
@@ -127,7 +127,7 @@
               <i class="el-icon-check"></i>
               <p>暂无待办事项</p>
             </div>
-            <div v-else class="todo-list">
+            <div v-else class="todo-list" >
               <div v-for="(item, index) in neededInfo" :key="index" class="todo-item">
                 <span class="client-id">客户: {{ item.customerName }}</span>
                 <span class="task-content">事项内容: {{ item.remark }}</span>
@@ -142,6 +142,7 @@
 
 <script setup name="legalSupportPerformance" lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router' // 修改此行
 import { getLegalSupportPerformance } from '@/api/common'
 
 // 统计数据
@@ -149,6 +150,7 @@ const customerCount = ref<any>({})
 const performanceCount = ref<any>({})
 const neededInfo = ref<any[]>([])
 const packageType = ref<any>([])
+const router = useRouter()
 
 // 获取法务支持业绩统计
 const fetchPerformanceData = async () => {
@@ -248,7 +250,13 @@ const getPackageTypePercentage = (type: string): number => {
     font-weight: 600;
     color: #1890ff;
     margin-right: 50px;
+    cursor: pointer;
   }
+
+  .value:hover {
+  color: #409eff;
+  text-decoration: underline;
+}
   
   .sub-label {
     font-size: 12px;
@@ -323,5 +331,9 @@ const getPackageTypePercentage = (type: string): number => {
   .task-content {
     color: #666;
   }
+
+  .stat-clickable {
+  cursor: pointer;
+}
 }
 </style>
