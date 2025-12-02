@@ -130,8 +130,16 @@
         </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip />
-        <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip />
-        <el-table-column label="所属行业" align="center" prop="companyIndustry" width="100" show-overflow-tooltip />
+        <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip>
+        <template #default="scope">
+            <dict-tag :options="dc_employee_count" :value="scope.row.employeeCount ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="所属行业" align="center" prop="companyIndustry" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_company_industry" :value="scope.row.companyIndustry ?? ''" />
+          </template>
+        </el-table-column>
         <el-table-column label="对接人" align="center" prop="contactPerson" width="100" show-overflow-tooltip />
         <el-table-column label="对接人电话" align="center" prop="contactInfo" width="120" show-overflow-tooltip />
         <el-table-column label="对接人职务" align="center" prop="contactPosition" width="100" show-overflow-tooltip />
@@ -438,11 +446,24 @@
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="员工人数" class="form-item">
-                <el-input 
+                <!-- <el-input 
                   v-model="form.employeeCount" 
                   placeholder="员工人数" 
                   type="number"
-                />
+                /> -->
+                <el-select 
+                  v-model="form.employeeCount" 
+                  placeholder="请选择员工人数" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_employee_count" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+
               </el-form-item>
             </el-col>
             <el-col :span="16">
@@ -1079,6 +1100,7 @@ const { dc_legal_affairs } = toRefs<any>(proxy?.useDict('dc_legal_affairs'));
 const { dc_invoice_requirement } = toRefs<any>(proxy?.useDict('dc_invoice_requirement'));
 const { dc_invoice_status } = toRefs<any>(proxy?.useDict('dc_invoice_status'));
 const { dc_company_industry } = toRefs<any>(proxy?.useDict('dc_company_industry'));
+const { dc_employee_count } = toRefs<any>(proxy?.useDict('dc_employee_count'));
 const { finance_confirmed, combo_type } = toRefs<any>(proxy?.useDict('finance_confirmed', 'combo_type'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
@@ -1226,9 +1248,9 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     companyIndustry: [
       { required: true, message: "所属行业不能为空", trigger: "change" }
     ],
-    addressModel: [
+   /*  addressModel: [
       { required: true, message: "公司地址不能为空", trigger: "change" }
-    ],
+    ], */
 
     actualPayment: [
       { required: true, message: "实收金额不能为空", trigger: "blur" }
@@ -1847,7 +1869,7 @@ onMounted(() => {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
   background-color: var(--el-bg-color);
-  height: 470px;
+  height: 430px;
 }
 .form-section-2 {
   margin-bottom: 24px;
