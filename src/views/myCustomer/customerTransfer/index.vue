@@ -243,9 +243,9 @@
           <div class="title-section">
           <h1 class="blue-title">成交客户内部流转单</h1>
         </div>
-          <div class="slogan-area">
+          <!-- <div class="slogan-area">
             <div>让每一家公司都拥有自己的法务部</div>
-          </div>
+          </div> -->
         </div>
 
        
@@ -280,7 +280,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="10">
-          <el-form-item label="公司名称" prop="companyName" class="form-item">
+          <el-form-item label="主体名称" prop="companyName" class="form-item">
             <el-input 
               v-model="form.companyName" 
               placeholder="请输入公司名称" 
@@ -289,6 +289,42 @@
           </el-col>
           </el-row>
       
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="6">
+              <el-form-item label="决策人姓名" prop="decisionMaker" class="form-item">
+                <el-input 
+                  v-model="form.decisionMaker" 
+                  placeholder="决策人姓名" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="联系方式" prop="decisionMakerContact" class="form-item">
+                <el-input 
+                  v-model="form.decisionMakerContact" 
+                  placeholder="联系方式" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="职务" class="form-item">
+                <el-input 
+                  v-model="form.decisionMakerPosition" 
+                  placeholder="职务" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="年龄" class="form-item">
+                <el-input 
+                  v-model="form.decisionMakerAge" 
+                  placeholder="年龄" 
+                  type="number"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="对接人姓名" prop="contactPerson" class="form-item">
@@ -327,10 +363,10 @@
 
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
-              <el-form-item label="附赠自然人" class="form-item">
+              <el-form-item label="附赠主体" class="form-item">
                 <el-input 
                   v-model="form.additionalPerson" 
-                  placeholder="自然人姓名" 
+                  placeholder="附赠主体姓名" 
                 />
               </el-form-item>
             </el-col>
@@ -363,20 +399,32 @@
 
           <el-row :gutter="10" class="form-row">
             <el-col :span="6">
-              <el-form-item label="公司行业" class="form-item">
-                <el-input 
+              <el-form-item label="公司行业" prop="companyIndustry" class="form-item">
+                <!-- <el-input 
                   v-model="form.companyIndustry" 
                   placeholder="请输入所属行业" 
-                />
+                /> -->
+                <el-select 
+                  v-model="form.companyIndustry" 
+                  placeholder="请选择公司行业" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_company_industry" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="18">
-           <el-form-item label="公司地址" class="form-item">
+           <el-form-item label="公司地址" prop="addressModel" class="form-item">
               <el-row :gutter="10">
                 <el-col :span="14">
                   <address-selector v-model="addressModel" />
                 </el-col>
-                <el-col :span="6">
+                <el-col :span="10">
                   <el-input 
                     v-model="form.companyAddress" 
                     placeholder="请输入详细地址" 
@@ -1020,6 +1068,7 @@ import {
 } from '@/api/myCustomer/customerTransfer';
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
+import { de } from 'element-plus/es/locale/index.mjs';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -1029,6 +1078,7 @@ const { dc_accounting_company } = toRefs<any>(proxy?.useDict('dc_accounting_comp
 const { dc_legal_affairs } = toRefs<any>(proxy?.useDict('dc_legal_affairs'));
 const { dc_invoice_requirement } = toRefs<any>(proxy?.useDict('dc_invoice_requirement'));
 const { dc_invoice_status } = toRefs<any>(proxy?.useDict('dc_invoice_status'));
+const { dc_company_industry } = toRefs<any>(proxy?.useDict('dc_company_industry'));
 const { finance_confirmed, combo_type } = toRefs<any>(proxy?.useDict('finance_confirmed', 'combo_type'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
@@ -1161,12 +1211,25 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     companyName: [
       { required: true, message: "公司名称不能为空", trigger: "blur" }
     ],
+    decisionMaker: [
+      { required: true, message: "公司决策人姓名不能为空", trigger: "change" }
+    ],
+    decisionMakerContact: [
+      { required: true, message: "决策人联系方式不能为空", trigger: "blur" }
+    ],
     contactPerson: [
       { required: true, message: "公司对接人姓名不能为空", trigger: "blur" }
     ],
     contactInfo: [
-      { required: true, message: "公司对接人联系方式不能为空", trigger: "blur" }
+      { required: true, message: "对接人联系方式不能为空", trigger: "blur" }
     ],
+    companyIndustry: [
+      { required: true, message: "所属行业不能为空", trigger: "change" }
+    ],
+    addressModel: [
+      { required: true, message: "公司地址不能为空", trigger: "change" }
+    ],
+
     actualPayment: [
       { required: true, message: "实收金额不能为空", trigger: "blur" }
     ],
@@ -1759,15 +1822,21 @@ onMounted(() => {
   text-align: center;
   padding: 8px 0;
   margin-bottom: 10px;
+
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .blue-title {
   color:cornflowerblue;
+ 
 }
 
 .title-section h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--el-text-color-primary);
 }
@@ -1778,7 +1847,7 @@ onMounted(() => {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
   background-color: var(--el-bg-color);
-  height: 370px;
+  height: 470px;
 }
 .form-section-2 {
   margin-bottom: 24px;
