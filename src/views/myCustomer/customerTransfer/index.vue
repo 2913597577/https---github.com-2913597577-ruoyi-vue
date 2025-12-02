@@ -283,7 +283,7 @@
               <el-form-item label="合同编号" prop="contractCode" class="form-item">
                 <el-input 
                   v-model="form.contractCode" 
-                  placeholder="请输入合同编号" 
+                  placeholder="请输入合同编号(8位数字)" 
                 />
               </el-form-item>
             </el-col>
@@ -460,7 +460,7 @@
                     v-for="dict in dc_employee_count" 
                     :key="dict.value" 
                     :label="dict.label"
-                    :value="dict.value"
+                    :value="parseInt(dict.value)"
                   />
                 </el-select>
 
@@ -493,30 +493,45 @@
           <div class="section-title">签约情况</div>
           
           <el-row :gutter="20" class="form-row">
-            <el-col :span="8">
+            <el-col :span="6">
+              <el-form-item label="合同金额" prop="contractAmount" class="form-item">
+                <el-input 
+                  v-model="form.contractAmount" 
+                  placeholder="合同金额" 
+                  type="number"
+                   @input="calculateBalanceAmount"
+                >
+                  <template #append>元</template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
               <el-form-item label="实收金额" prop="actualPayment" class="form-item">
                 <el-input 
                   v-model="form.actualPayment" 
                   placeholder="实收金额" 
                   type="number"
+                 @input="calculateBalanceAmount"
                 >
                   <template #append>元</template>
                 </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            
+            <el-col :span="6">
               <el-form-item label="尾款金额" prop="balanceStatus" class="form-item">
                 <el-input 
                   v-model="form.balanceStatus" 
-                  placeholder="尾款金额,没有填0" 
+                  placeholder="尾款金额" 
                   type="number"
+                  readonly
                 >
                   <template #append>元</template>
                 </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
-              <el-form-item label="尾款支付条件" class="form-item">
+            <el-col :span="6">
+              <el-form-item label="尾款支付条件" class="form-item" prop="balancePayType" :rules="balancePayTypeRules">
                 <el-input 
                   v-model="form.balancePayType" 
                   placeholder="尾款支付条件" 
@@ -526,7 +541,7 @@
           </el-row>
           
           <el-row :gutter="20" class="form-row">
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="套餐类型" prop="serviceType" class="form-item">
                 <el-select 
                   v-model="form.serviceType" 
@@ -542,7 +557,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="16">
+            <el-col :span="12">
               <el-form-item label="服务周期" class="form-item" prop="serviceEnd">
                 <div class="date-range">
                   <el-date-picker
@@ -561,10 +576,26 @@
                 </div>
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+              <el-form-item label="客户来源" prop="customerSource" class="form-item">
+                <el-select 
+                  v-model="form.customerSource" 
+                  placeholder="请选择客户来源" 
+                  style="width: 90%"
+                >
+                  <el-option 
+                    v-for="dict in dc_customer_source" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="parseInt(dict.value)"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         
           <el-row :gutter="20" class="form-row">
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="开票要求" prop="invoiceRequirements" class="form-item">
                 <el-select 
                   v-model="form.invoiceRequirements" 
@@ -580,7 +611,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="开票状态" prop="invoiceStatus" class="form-item">
                 <el-select 
                   v-model="form.invoiceStatus" 
@@ -596,11 +627,19 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="开票内容" class="form-item">
                 <el-input 
                   v-model="form.invoiceContent" 
                   placeholder="请输入开票内容" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="推荐人" class="form-item">
+                <el-input 
+                  v-model="form.referrer" 
+                  placeholder="请输入推荐人" 
                 />
               </el-form-item>
             </el-col>
@@ -1101,6 +1140,7 @@ const { dc_invoice_requirement } = toRefs<any>(proxy?.useDict('dc_invoice_requir
 const { dc_invoice_status } = toRefs<any>(proxy?.useDict('dc_invoice_status'));
 const { dc_company_industry } = toRefs<any>(proxy?.useDict('dc_company_industry'));
 const { dc_employee_count } = toRefs<any>(proxy?.useDict('dc_employee_count'));
+const { dc_customer_source } = toRefs<any>(proxy?.useDict('dc_customer_source'));
 const { finance_confirmed, combo_type } = toRefs<any>(proxy?.useDict('finance_confirmed', 'combo_type'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
@@ -1251,7 +1291,9 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
    /*  addressModel: [
       { required: true, message: "公司地址不能为空", trigger: "change" }
     ], */
-
+    contractAmount: [
+      { required: true, message: "合同金额不能为空", trigger: "blur" }
+    ],
     actualPayment: [
       { required: true, message: "实收金额不能为空", trigger: "blur" }
     ],
@@ -1266,6 +1308,9 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     ],
     serviceEnd: [
       { required: true, message: "服务周期日期不能为空", trigger: "change" }
+    ],
+    customerSource: [
+      { required: true, message: "客户来源不能为空", trigger: "change" }
     ],
     invoiceRequirements: [
       { required: true, message: "开票要求不能为空", trigger: "change" }
@@ -1607,7 +1652,22 @@ const removePerformance = (index) => {
     form.value.performanceInfo.splice(index, 1)
   }
 }
-
+// 尾款金额自动计算方法
+const calculateBalanceAmount = () => {
+  const contractAmount = parseFloat(form.value.contractAmount) || 0;
+  const actualPayment = parseFloat(form.value.actualPayment) || 0;
+  form.value.balanceStatus = contractAmount - actualPayment;
+}
+// 尾款支付条件的动态验证规则
+const balancePayTypeRules = computed(() => {
+  const balanceStatus = parseFloat(form.value.balanceStatus) || 0;
+  if (balanceStatus !== 0) {
+    return [
+      { required: true, message: "尾款金额不为0时,需填写尾款支付条件", trigger: "blur" }
+    ];
+  }
+  return [];
+});
 // 提交审核
 async function submitAudit() {
   console.log('提交审核')
