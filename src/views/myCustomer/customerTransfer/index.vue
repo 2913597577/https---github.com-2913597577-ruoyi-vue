@@ -207,8 +207,8 @@
         <el-table-column label="合作公司名称" align="center" prop="preCompany" width="100" show-overflow-tooltip />
         <el-table-column label="不合作原因" align="center" prop="preReason" width="100" show-overflow-tooltip />
         <el-table-column label="公司纠纷及解决方式" align="center" prop="preDiscuss" width="150" show-overflow-tooltip />
-        <el-table-column label="待处理事项登记" align="center" prop="pendingMatters" width="150" show-overflow-tooltip />
-        <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="200" show-overflow-tooltip />
+        <el-table-column label="待处理事项登记" align="center" prop="pendingRemark" width="150" show-overflow-tooltip />
+        <!-- <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="200" show-overflow-tooltip /> -->
         <el-table-column label="欠款问题登记" align="center" prop="debtDetails" width="120" />
         <el-table-column label="欠款问题备注" align="center" prop="debtRemark" width="120" show-overflow-tooltip />
         <el-table-column label="录入日期" align="center" prop="auditTime" width="80">
@@ -713,7 +713,7 @@
                   class="form-item"
                 >
                   <el-input 
-                    v-model="performance.balance" 
+                    v-model="performance.balance"
                     :placeholder="`请分配业绩金额`" 
                     type="number"
                   >
@@ -809,23 +809,37 @@
             />
           </el-form-item>
           
-          <el-form-item label="待处理事项登记：" class="form-item" style="margin-bottom: 20px;">
+         <!--  <el-form-item label="待处理事项登记：" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.pendingRemark"
               type="textarea"
               :rows="2"
               placeholder="劳资纠纷、合同纠纷、借贷纠纷、承揽纠纷、财税问题、执行案件等"
             />
-          </el-form-item>
-          
-          <el-form-item label="欠款问题请详细登记:" class="form-item" style="margin-bottom: 20px;">
+          </el-form-item> -->
+ <el-form-item label="待处理事项登记：" class="form-item" style="margin-bottom: 20px;">
+  <el-select
+    v-model="form.pendingRemark"
+    multiple
+    placeholder="请选择待处理事项（可多选）"
+    style="width: 100%"
+  >
+    <el-option
+      v-for="item in pendingMattersOptions"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value"
+    />
+  </el-select>
+</el-form-item>
+         <!--  <el-form-item label="欠款问题请详细登记:" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.debtRemark"
               type="textarea"
               :rows="2"
               placeholder="相关主体、已知债务人信息、标的额、证据情况、案件处理要求等"
             />
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item label="其他备注信息:" class="form-item" style="margin-bottom: 20px;">
             <el-input
@@ -839,6 +853,45 @@
         </div>
       </el-form>
     </div>
+     <!-- 案件登记 -->
+     <div class="form-section-5">
+          <div class="section-title">案件登记</div>
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="8">
+              <el-form-item label="债务人" prop="debtor" class="form-item">
+                <el-input 
+                  v-model="form.debtor" 
+                  placeholder="债务人姓名" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="欠款金额" prop="debtAmount" class="form-item">
+                <el-input 
+                  v-model="form.debtAmount" 
+                  placeholder="欠款金额" 
+                  type="number"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="联系电话" prop="debtorContact" class="form-item">
+                <el-input 
+                  v-model="form.debtorContact" 
+                  placeholder="联系电话" 
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="证据备注:" prop="evidenceRemark" class="form-item">
+            <el-input
+              v-model="form.evidenceRemark"
+              type="textarea"
+              :rows="2"
+              placeholder="请输入证据备注信息"
+            />
+          </el-form-item>
+          </div>
 
     <!-- 对话框底部按钮 -->
     <template #footer>
@@ -1405,6 +1458,16 @@ const invoiceStatusList = [
   { value: 1, label: '已开票' }
 ];
 
+//待处理事项登记
+const pendingMattersOptions = [
+  { value: '经济纠纷', label: '经济纠纷' },
+  { value: '劳资纠纷', label: '劳资纠纷' },
+  { value: '合同定审', label: '合同定审' },
+  { value: '公司经营问题', label: '公司经营问题' },
+  { value: '财税问题', label: '财税问题' },
+  { value: '其他问题', label: '其他问题' }
+];
+
 //列表最后一行添加合计
 const getSummaries = (param) => {
   const { columns, data } = param;
@@ -1612,7 +1675,7 @@ const handleUpdate = async (row?: CustomerTransferVO) => {
   }
 
   // 添加空值检查
-  form.value.pendingMatters = form.value.pendingMatters ? form.value.pendingMatters.split(",") : [];
+  form.value.pendingRemark = form.value.pendingRemark ? form.value.pendingRemark.split(",") : [];
   form.value.debtDetails = form.value.debtDetails ? form.value.debtDetails.split(",") : [];
   dialog.visible = true;
   dialog.title = "修改客户信息录入";
@@ -1784,8 +1847,8 @@ if (hasPerformanceSumError.value) {
         form.value.city = getNameByCode(addressModel.value.city)
         form.value.district = getNameByCode(addressModel.value.district)
         // 处理数组字段
-        if (Array.isArray(form.value.pendingMatters)) {
-          form.value.pendingMatters = form.value.pendingMatters.join(",");
+        if (Array.isArray(form.value.pendingRemark)) {
+          form.value.pendingRemark = form.value.pendingRemark.join(",");
         }
         if (Array.isArray(form.value.debtDetails)) {
           form.value.debtDetails = form.value.debtDetails.join(",");
@@ -1954,9 +2017,16 @@ onMounted(() => {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
   background-color: var(--el-bg-color);
-  height: 400px;
+  height: 350px;
 }
-
+.form-section-5 {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  background-color: var(--el-bg-color);
+  height: 200px;
+}
 
 .section-title {
   font-size: 16px;
