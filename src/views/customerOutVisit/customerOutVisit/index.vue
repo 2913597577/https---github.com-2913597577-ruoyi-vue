@@ -404,7 +404,10 @@ const handleAdd = async () => {
     console.log(pos);
 
     const address = await reverseGeocode(pos.lat, pos.lng);
-    console.log(address)
+    if(!address||address==''||address==null||address.length==0){
+      proxy?.$modal.msgWarning('无法获取当前位置');
+      return;
+    }
     form.value.visitAddress = address;
     console.log(address)
     proxy?.$modal.msgSuccess('已自动获取当前位置');
@@ -444,7 +447,7 @@ const submitForm = () => {
       await getList();
     }
   });
-} 
+}
 
 /** 查找按钮操作 */
 const handleSearch = () => {

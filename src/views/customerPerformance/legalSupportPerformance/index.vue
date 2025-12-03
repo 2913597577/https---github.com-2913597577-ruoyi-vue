@@ -13,7 +13,7 @@
               <span class="label">客户数量：</span>
                <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.customerTotal }}</span>
               <span class="label">近30天未跟进客户：</span>
-              <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.trackingTotal }}</span>
+              <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.outstandingTotal }}</span>
             </div>
             <div class="stat-item">
               <span class="label">意向客户数量：</span>
@@ -35,7 +35,7 @@
             </div>
           </div>
         </el-card>
-        
+
         <!-- 业绩展示框 -->
         <el-card class="performance-card" style="margin-top: 20px;">
           <div class="performance-header">
@@ -58,46 +58,46 @@
               <span class="label">年度排名：</span>
               <span class="value">{{ performanceCount.yearPerformanceRank }}</span>
             </div>
-            
+
             <!-- 套餐类型对比图表 -->
             <div class="chart-container">
               <h4>套餐类型对比</h4>
               <div class="chart-wrapper">
-                <el-progress 
-                  type="circle" 
-                  :percentage="getPackageTypePercentage('常法')" 
+                <el-progress
+                  type="circle"
+                  :percentage="getPackageTypePercentage('常法')"
                   :width="80"
                   :stroke-width="10"
                   :format="(percent) => `${percent}%`"
                   color="#1890ff"
                 />
-                <el-progress 
-                  type="circle" 
-                  :percentage="getPackageTypePercentage('单项')" 
+                <el-progress
+                  type="circle"
+                  :percentage="getPackageTypePercentage('单项')"
                   :width="80"
                   :stroke-width="10"
                   :format="(percent) => `${percent}%`"
                   color="#f56a00"
                 />
-                <el-progress 
-                  type="circle" 
-                  :percentage="getPackageTypePercentage('法务增值')" 
+                <el-progress
+                  type="circle"
+                  :percentage="getPackageTypePercentage('法务增值')"
                   :width="80"
                   :stroke-width="10"
                   :format="(percent) => `${percent}%`"
                   color="#7cb342"
                 />
-                <el-progress 
-                  type="circle" 
-                  :percentage="getPackageTypePercentage('财务增值')" 
+                <el-progress
+                  type="circle"
+                  :percentage="getPackageTypePercentage('财务增值')"
                   :width="80"
                   :stroke-width="10"
                   :format="(percent) => `${percent}%`"
                   color="#e6a23c"
                 />
-                <el-progress 
-                  type="circle" 
-                  :percentage="getPackageTypePercentage('咨询费')" 
+                <el-progress
+                  type="circle"
+                  :percentage="getPackageTypePercentage('咨询费')"
                   :width="80"
                   :stroke-width="10"
                   :format="(percent) => `${percent}%`"
@@ -115,7 +115,7 @@
           </div>
         </el-card>
       </el-col>
-      
+
       <!-- 右侧待办事项 -->
       <el-col :span="8">
         <el-card class="todo-card">
@@ -159,12 +159,12 @@ const fetchPerformanceData = async () => {
     if (response && response.data) {
       // 解析客户统计数据
       customerCount.value = response.data.customerCount
-      
+
       // 解析业绩统计数据
       performanceCount.value = response.data.performanceCount
-      
+
       packageType.value = response.data.packageType
-      
+
       // 解析待办事项数据
       neededInfo.value = response.data.neededInfo
     }
@@ -183,10 +183,10 @@ const getPackageTypePercentage = (type: string): number => {
   if (!packageType.value || !Array.isArray(packageType.value)) {
     return 0
   }
-  
+
   const total = packageType.value.reduce((sum, item) => sum + (item.count || 0), 0)
   if (total === 0) return 0
-  
+
   const targetItem = packageType.value.find(item => {
     const typeNameMap = {
       '0': '常法',
@@ -197,7 +197,7 @@ const getPackageTypePercentage = (type: string): number => {
     }
     return typeNameMap[item.package_type] === type
   })
-  
+
   return targetItem ? Math.round((targetItem.count / total) * 100) : 0
 }
 </script>
@@ -205,7 +205,7 @@ const getPackageTypePercentage = (type: string): number => {
 <style lang="scss" scoped>
 .legal-support-performance {
   padding: 20px;
-  
+
   .statistic-card,
   .performance-card,
   .todo-card {
@@ -213,7 +213,7 @@ const getPackageTypePercentage = (type: string): number => {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
   }
-  
+
   .statistic-header,
   .performance-header,
   .todo-header {
@@ -221,30 +221,30 @@ const getPackageTypePercentage = (type: string): number => {
     border-bottom: 1px solid #ebeef5;
     background-color: #f5f7fa;
   }
-  
+
   .statistic-content,
   .performance-content,
   .todo-content {
     padding: 20px;
   }
-  
+
   .stat-item,
   .performance-item {
     margin-bottom: 15px;
     padding: 10px 0;
     border-bottom: 1px dashed #ebeef5;
-    
+
     &:last-child {
       border-bottom: none;
     }
   }
-  
+
   .label {
     font-weight: 500;
     color: #333;
     margin-right: 10px;
   }
-  
+
   .value {
     font-size: 16px;
     font-weight: 600;
@@ -257,27 +257,27 @@ const getPackageTypePercentage = (type: string): number => {
   color: #409eff;
   text-decoration: underline;
 }
-  
+
   .sub-label {
     font-size: 12px;
     color: #666;
     margin-left: 15px;
   }
-  
+
   .performance-header h3 {
     color: #1890ff;
   }
-  
+
   .chart-container {
     margin-top: 20px;
   }
-  
+
   .chart-wrapper {
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
   }
-  
+
   .chart-legend {
     display: flex;
     justify-content: center;
@@ -285,49 +285,49 @@ const getPackageTypePercentage = (type: string): number => {
     font-size: 12px;
     color: #666;
   }
-  
+
   .legend-item {
     display: flex;
     align-items: center;
   }
-  
+
   .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
     margin-right: 5px;
   }
-  
+
   .todo-header h3 {
     color: #f56a00;
   }
-  
+
   .no-todo {
     text-align: center;
     color: #999;
     padding: 40px 0;
   }
-  
+
   .todo-list {
     list-style: none;
     padding: 0;
   }
-  
+
   .todo-item {
     padding: 10px 0;
     border-bottom: 1px solid #ebeef5;
-    
+
     &:last-child {
       border-bottom: none;
     }
   }
-  
+
   .client-id {
     font-weight: 500;
     color: #1890ff;
     margin-right: 10px;
   }
-  
+
   .task-content {
     color: #666;
   }

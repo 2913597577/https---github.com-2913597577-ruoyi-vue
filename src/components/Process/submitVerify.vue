@@ -275,6 +275,9 @@ const handleCompleteTask = async () => {
   form.value.taskId = taskId.value;
   form.value.taskVariables = props.taskVariables;
   let verify = false;
+  if(form.value.fileId!==undefined&&form.value.fileId!==''&&form.value.fileId!=null){
+    form.value.fileId = form.value.fileId[0].ossId;
+  }
   if (buttonObj.value.pop && nestNodeList.value && nestNodeList.value.length > 0) {
     nestNodeList.value.forEach((e) => {
       if (
@@ -334,6 +337,9 @@ const handleBackProcessOpen = async () => {
 /** 驳回流程 */
 const handleBackProcess = async () => {
   backForm.value.taskId = taskId.value;
+  if(backForm.value.fileId!==undefined&&backForm.value.fileId!==''&&backForm.value.fileId!=null){
+  backForm.value.fileId = backForm.value.fileId[0].ossId;
+  }
   await proxy?.$modal.confirm('是否确认驳回到申请人？');
   loading.value = true;
   backLoading.value = true;
