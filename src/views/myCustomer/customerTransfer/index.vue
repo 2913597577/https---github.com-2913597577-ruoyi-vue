@@ -236,7 +236,7 @@
 
  <!-- 新增和修改按钮弹窗内容 -->
 <template>
-  <el-dialog  :title="dialog.title" v-model="dialog.visible" width="75%" append-to-body draggable
+  <el-dialog  :title="dialog.title" v-model="dialog.visible" width="70%" append-to-body draggable
     class="customer-transfer-dialog"
   >
     <div class="dialog-content">
@@ -976,19 +976,79 @@
   </el-dialog>
 
     <!-- 处置按钮弹窗内容 -->
-    <el-dialog v-model="auditDialogVisible" title="审核" width="500px" append-to-body draggable>
-    
+    <el-dialog v-model="auditDialogVisible" title="审核" width="680px" append-to-body draggable>
       <el-form :model="auditForm" label-width="100px" class="audit-signature-form">
+        <el-form-item label="公司名称" prop="companyName" class="audit-form-item">
+            <el-input v-model="currentRow.companyName" readonly />
+        </el-form-item>
+
+      <el-row>
+        <el-col :span="8">
+        <el-form-item label="合同金额" prop="contractAmount" class="audit-form-item">
+            <el-input v-model="currentRow.contractAmount" readonly />
+        </el-form-item>
+         </el-col>
+      <el-col :span="8">
+         <el-form-item label="实收金额" prop="actualPayment" class="audit-form-item">
+            <el-input v-model="currentRow.actualPayment" readonly />
+        </el-form-item>
+         </el-col>
+        <el-col :span="8">
+         <el-form-item label="尾款金额" prop="balanceStatus" class="audit-form-item">
+            <el-input v-model="currentRow.balanceStatus" readonly />
+        </el-form-item>
+         </el-col>
+       </el-row>
+       <el-row>
+            <el-col :span="8">
+              <el-form-item label="开票要求" prop="invoiceRequirements" class="audit-form-item">
+                <el-select 
+                  v-model="currentRow.invoiceRequirements" 
+                  placeholder="请选择开票要求" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_invoice_requirement" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="开票状态" prop="invoiceStatus" class="audit-form-item">
+                <el-select 
+                  v-model="currentRow.invoiceStatus" 
+                  placeholder="请选择开票状态" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_invoice_status" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="parseInt(dict.value)"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="开票内容" prop="invoiceContent" class="audit-form-item">
+                <el-input 
+                  v-model="currentRow.invoiceContent"  />
+              </el-form-item>
+            </el-col>
+          </el-row>
         <!-- 审核状态 -->
-        <el-form-item label="审核">
+        <el-form-item label="财务审核" class="audit-form-item1">
           <el-radio-group v-model="auditForm.auditStatus">
             <el-radio label="1">通过</el-radio>
             <el-radio label="2">未通过</el-radio>
           </el-radio-group>
         </el-form-item>
-
+         <!-- 审核意见 -->
         <!-- 上传签名：仅在通过时显示 -->
-        <el-form-item v-if="auditForm.auditStatus === '1'" label="电子签名">
+        <el-form-item v-if="auditForm.auditStatus === '1'" label="电子签名" class="audit-form-item2">
           <fileUpload v-model="localFileList" :limit="1" :file-size="2" :file-type="['png', 'jpg', 'jpeg']"
             :is-show-tip="false" />
           <div v-if="localFileList.length > 0 && localFileList[0].url" style="margin-top: 8px;">
@@ -2161,13 +2221,24 @@ onMounted(() => {
 .audit-signature-form {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
-  padding: 60px;
+  padding: 25px;
   background-color: var(--el-bg-color);
-  height: 200px;
+  height: 260px;
   margin-bottom: 1px;
 }
 
+.audit-form-item {
+  margin-bottom: 20px;
+}
+.audit-form-item1 {
+ 
+  margin-bottom: 30px;
+  
+}
+.audit-form-item2 {
 
+  margin-bottom: 20px;
+}
 
 ::v-deep .el-table__footer-wrapper {
   font-weight: bold;

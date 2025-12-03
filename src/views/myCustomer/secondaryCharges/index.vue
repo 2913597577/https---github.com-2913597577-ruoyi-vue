@@ -236,7 +236,7 @@
 
  <!-- 新增和修改按钮弹窗内容 -->
 <template>
-  <el-dialog  :title="dialog.title" v-model="dialog.visible" width="75%" append-to-body draggable
+  <el-dialog  :title="dialog.title" v-model="dialog.visible" width="70%" append-to-body draggable
     class="customer-transfer-dialog"
   >
     <div class="dialog-content">
