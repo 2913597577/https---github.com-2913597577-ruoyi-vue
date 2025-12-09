@@ -279,7 +279,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="合同编号" prop="contractCode" class="form-item">
                 <el-input 
                   v-model="form.contractCode" 
@@ -287,7 +287,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="10">
+            <el-col :span="8">
           <el-form-item label="主体名称" prop="companyName" class="form-item">
             <!-- <el-input 
               v-model="form.companyName" 
