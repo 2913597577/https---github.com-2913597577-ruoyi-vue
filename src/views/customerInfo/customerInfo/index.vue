@@ -452,15 +452,15 @@
         <h3 class="group-title">客户状态</h3>
         <el-row :gutter="20" class="form-row">
           <el-col :span="12">
-            <el-form-item label="是否分配" prop="isAssigned" class="form-item">
-              <el-radio-group v-model="form.isAssigned">
+            <el-form-item label="是否风险客户" prop="isRisk" class="form-item">
+              <el-radio-group v-model="form.isRisk">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否高风险" prop="isHighRisk" class="form-item">
+            <el-form-item label="是否高风险客户" prop="isHighRisk" class="form-item">
               <el-radio-group v-model="form.isHighRisk">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
@@ -471,16 +471,16 @@
 
         <el-row :gutter="20" class="form-row">
           <el-col :span="12">
-            <el-form-item label="是否意向" prop="isIntention" class="form-item">
-              <el-radio-group v-model="form.isIntention">
+            <el-form-item label="是否退费客户" prop="isRefund" class="form-item">
+              <el-radio-group v-model="form.isRefund">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否退款" prop="isRefund" class="form-item">
-              <el-radio-group v-model="form.isRefund">
+            <el-form-item label="是否D类客户(流失客户)" prop="is" class="form-item">
+              <el-radio-group v-model="form.is">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
               </el-radio-group>
@@ -490,8 +490,8 @@
 
         <el-row :gutter="20" class="form-row">
           <el-col :span="12">
-            <el-form-item label="是否风险" prop="isRisk" class="form-item">
-              <el-radio-group v-model="form.isRisk">
+            <el-form-item label="是否转介绍意向客户" prop="is" class="form-item">
+              <el-radio-group v-model="form.isIntention">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
               </el-radio-group>
@@ -1027,7 +1027,7 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
     signDate: [
       { required: true, message: "签约日期不能为空", trigger: "blur" }
     ],
-    contractNo: [
+    contractCode: [
       { required: true, message: "编号不能为空", trigger: "blur" }
     ],
     customerName: [
@@ -1035,6 +1035,21 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
     ],
     principal: [
       { required: true, message: "负责人不能为空", trigger: "blur" }
+    ],
+    principalPhone: [
+      { required: true, message: "负责人电话不能为空", trigger: "blur" },
+    ],
+    customerCity: [
+      { required: true, message: "客户归属城市不能为空", trigger: "change" }
+    ],
+    contractAmount: [
+      { required: true, message: "合同金额不能为空", trigger: "blur" }
+    ],
+    actualReceipt: [
+      { required: true, message: "实收金额不能为空", trigger: "blur" }
+    ],
+    balance: [
+      { required: true, message: "尾款金额不能为空", trigger: "blur" }
     ],
     contractType: [
       { required: true, message: "签约类型不能为空", trigger: "change" }

@@ -87,7 +87,7 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改业绩任务对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="performanceTaskFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="法务支持" prop="legalSupportId">
            <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
@@ -106,10 +106,10 @@
               clearable
             ></el-date-picker>
         </el-form-item>
-        <el-form-item label="月度业绩目标" prop="performanceGoal">
+        <el-form-item label="月度业绩目标" prop="performanceGoal" label-width="100px">
           <el-input v-model="form.performanceGoal" placeholder="请输入月度业绩目标" />
         </el-form-item>
-        <el-form-item label="月度出访目标" prop="visitGoal">
+        <el-form-item label="月度出访目标" prop="visitGoal" label-width="100px">
           <el-input v-model="form.visitGoal" placeholder="请输入月度出访目标" />
         </el-form-item>
         <!-- <el-form-item label="已完成的月度业绩目标" prop="achievedPerformanceGoal">

@@ -64,15 +64,41 @@
         </el-row>
         
         <el-form-item label="风险判定" prop="riskDetermination">
-          <el-input v-model="form.riskDetermination" type="textarea" :rows="2" placeholder="请输入风险判定" />
+          <!-- <el-input v-model="form.riskDetermination" type="textarea" :rows="2" placeholder="请输入风险判定" /> -->
+          <el-select
+    v-model="riskDeterminationModel"
+    multiple
+    placeholder="请选择风险判定（可多选）"
+    style="width: 100%"
+  >
+    <el-option
+      v-for="dict in dc_risk_determination"
+      :key="dict.value"
+      :label="dict.label"
+      :value="dict.value"
+    />
+  </el-select>
         </el-form-item>
         
         <el-form-item label="合规问题" prop="complianceIssues">
-          <el-input v-model="form.complianceIssues" type="textarea" :rows="2" placeholder="请输入合规问题" />
+          <!-- <el-input v-model="form.complianceIssues" type="textarea" :rows="2" placeholder="请输入合规问题" /> -->
+          <el-select
+    v-model="complianceIssuesModel"
+    multiple
+    placeholder="请选择合规问题（可多选）"
+    style="width: 100%"
+  >
+    <el-option
+      v-for="dict in dc_compliance_issue"
+      :key="dict.value"
+      :label="dict.label"
+      :value="dict.value"
+    />
+  </el-select>
         </el-form-item>
         
-        <el-form-item label="原因" prop="remark">
-          <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入原因" />
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" :rows="3" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
     </el-card>
@@ -104,7 +130,12 @@ import ApprovalButton from '@/components/Process/approvalButton.vue';
 import { AxiosResponse } from 'axios';
 import { StartProcessBo } from '@/api/workflow/workflowCommon/types';
 import { getCustomerByUserId } from '@/api/common';
+
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dc_risk_determination } = toRefs<any>(proxy?.useDict('dc_risk_determination'));
+const { dc_compliance_issue } = toRefs<any>(proxy?.useDict('dc_compliance_issue'));
+
 
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -165,6 +196,30 @@ const data = reactive<PageData<DcHighRiskCustomerForm, DcHighRiskCustomerQuery>>
     riskDiscoveryDate: [{ required: true, message: '风险发现日期不能为空', trigger: 'blur' }]
   }
 });
+//创建一个计算属性来处理数组和字符串之间的转换
+const riskDeterminationModel = computed({
+  get: () => {
+    // 从表单数据中获取字符串，并转换为数组用于 el-select 显示
+    return form.value.riskDetermination ? form.value.riskDetermination.split(',') : [];
+  },
+  set: (value) => {
+    // 将 el-select 选择的数组值转换为逗号分隔的字符串保存到表单数据中
+    form.value.riskDetermination = Array.isArray(value) ? value.join(',') : value;
+  }
+});
+
+//创建一个计算属性来处理数组和字符串之间的转换
+const complianceIssuesModel = computed({
+  get: () => {
+    // 从表单数据中获取字符串，并转换为数组用于 el-select 显示
+    return form.value.complianceIssues ? form.value.complianceIssues.split(',') : [];
+  },
+  set: (value) => {
+    // 将 el-select 选择的数组值转换为逗号分隔的字符串保存到表单数据中
+    form.value.complianceIssues = Array.isArray(value) ? value.join(',') : value;
+  }
+});
+
 
 const handleClose = () => {
   dialogVisible.visible = false;
