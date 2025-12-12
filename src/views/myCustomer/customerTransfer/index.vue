@@ -2314,7 +2314,7 @@ onMounted(() => {
   border-radius: 8px;
   padding: 25px;
   background-color: var(--el-bg-color);
-  height: 260px;
+  height: 280px;
   margin-bottom: 1px;
 }
 

@@ -34,7 +34,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column v-if="false" label="主键" align="center" prop="id" />
         <!-- <el-table-column label="审批类型" align="center" prop="applyType" /> -->
-        <el-table-column label="客户id" align="center" prop="customerId" />
+        <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="客户姓名" align="center" prop="customerName" />
         <el-table-column label="原因" align="center" prop="remark" />
         <el-table-column align="center" label="流程状态" min-width="70">
@@ -44,29 +44,35 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="162">
           <template #default="scope">
-            <!-- <el-row :gutter="10" class="mb8">
+            <el-row :gutter="10" class="mb8">
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
-                <el-button v-hasPermi="['workflow:customerChurnApprove:edit']" size="small" type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                <el-button v-hasPermi="['workflow:customerChurnApprove:edit']" size="small" link type="warning" icon="Edit" @click="handleUpdate(scope.row)"
                   >修改</el-button
                 >
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
-                <el-button v-hasPermi="['workflow:customerChurnApprove:remove']" size="small" type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                <el-button v-hasPermi="['workflow:customerChurnApprove:remove']" size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                   >删除</el-button
                 >
               </el-col>
-            </el-row> -->
+            </el-row>
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
-                <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+                <el-button type="primary" size="small" link icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <!-- <el-col :span="1.5" v-if="scope.row.status === 'waiting'">
                 <el-button size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
               </el-col> -->
+              <el-col :span="1.5">
+                <el-button type="success" link size="small" icon="View" @click="handleTransportRecord(scope.row)">物流信息</el-button>
+              </el-col>
             </el-row>
           </template>
         </el-table-column>
       </el-table>
+
+       <!-- 屏幕右侧弹窗显示物流信息组件加载 -->
+       <ApprovalTransportRecord ref="approvalTransportRecordRef" />
 
       <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     </el-card>
@@ -102,6 +108,14 @@ const data = reactive<PageData<DcCustomerChurnApproveForm, DcCustomerChurnApprov
 });
 
 const { queryParams } = toRefs(data);
+
+ /** 查看屏幕右侧弹窗显示的审批物流信息 */
+ import ApprovalTransportRecord from '@/components/Process/approvalTransportRecord.vue';
+const approvalTransportRecordRef = ref<InstanceType<typeof ApprovalTransportRecord>>();
+
+const handleTransportRecord = (row?: DcCustomerChurnApproveVO) => {
+  approvalTransportRecordRef.value?.init(row.id);
+};
 
 /** Query customer churn approval list */
 const getList = async () => {
