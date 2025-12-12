@@ -46,7 +46,7 @@
               <span class="label">本月业绩任务：</span>
               <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.monthPerformanceGoal }}</span>
               <span class="label">已完成金额：</span>
-              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ performanceCount.monthAchievedBalance }}</span>
+              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ formatCurrency(performanceCount.monthAchievedBalance) }}</span>
               <span class="label">出访任务：</span>
               <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.monthVisitGoal }}</span>
               <span class="label">出访完成：</span>
@@ -54,7 +54,7 @@
             </div>
             <div class="performance-item">
               <span class="label">年度业绩累积金额：</span>
-              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ performanceCount.yearAchievedBalance }}</span>
+              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ formatCurrency(performanceCount.yearAchievedBalance) }}</span>
               <span class="label">年度排名：</span>
               <span class="value">{{ performanceCount.yearPerformanceRank }}</span>
             </div>
@@ -200,6 +200,17 @@ const getPackageTypePercentage = (type: string): number => {
 
   return targetItem ? Math.round((targetItem.count / total) * 100) : 0
 }
+
+//添加金额格式化处理函数
+const formatCurrency = (value) => {
+  if (!value) return '￥0.00';
+  return parseFloat(value).toLocaleString('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  });
+};
+
 </script>
 
 <style lang="scss" scoped>
@@ -246,10 +257,11 @@ const getPackageTypePercentage = (type: string): number => {
   }
 
   .value {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1890ff;
-    margin-right: 50px;
+    font-size: 18px;
+    font-weight: 700;
+    // color: #1890ff;
+    color:#ff6b35;
+    margin-right: 30px;
     cursor: pointer;
   }
 
