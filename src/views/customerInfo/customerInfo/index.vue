@@ -1428,21 +1428,16 @@ const handleTransferConfirm = async () => {
 
       //  case 2：选择「退费客户」→ 打开风险/退费弹窗并设置类型为2
       case '2':
-        resetRiskRefundForm(); // 重置表单
-        CRRform.value.customerType = 2; // 标记为退费客户
-        // 自动填充客户基础信息
-        CRRform.value.lawyerId = currentCustomer.lawyerId;
-        CRRform.value.customerId = currentCustomer.transferId;
-        CRRform.value.customerName = currentCustomer.customerName;
-        CRRform.value.principal = currentCustomer.principal;
-        CRRform.value.principalPhone = currentCustomer.principalPhone;
-        CRRform.value.signDate = currentCustomer.signDate;
-        CRRform.value.expireDate = currentCustomer.expireDate;
-        // 设置弹窗标题
-        riskRefundDialog.title = '转为退费客户';
-        // 关闭流转弹窗，打开风险/退费弹窗
         transferDialog.visible = false;
-        riskRefundDialog.visible = true;
+        
+        // 跳转到退费客户申请页面，携带客户数据
+        router.push({
+          path: '/workflow/refundCustomerEdit/index', // 更新的路由路径
+          query: {
+            customerId: currentCustomer.id,
+            type: 'add'
+          }
+        });
         break;
       case '3':
         // 意向客户处理逻辑
