@@ -228,6 +228,7 @@ const formatCurrency = (value) => {
   .statistic-header,
   .performance-header,
   .todo-header {
+    
     padding: 15px 20px;
     border-bottom: 1px solid #ebeef5;
     background-color: #f5f7fa;

@@ -60,22 +60,22 @@
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
-                <el-button v-hasPermi="['workflow:leave:edit']" size="small" type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                <el-button v-hasPermi="['workflow:leave:edit']" link size="small" type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                   >修改</el-button
                 >
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
-                <el-button v-hasPermi="['workflow:leave:remove']" size="small" type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                <el-button v-hasPermi="['workflow:leave:remove']" link size="small" type="primary" icon="Delete" @click="handleDelete(scope.row)"
                   >删除</el-button
                 >
               </el-col>
             </el-row>
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
-                <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+                <el-button link type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'waiting'">
-                <el-button size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
+                <el-button link size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
               </el-col>
             </el-row>
           </template>
