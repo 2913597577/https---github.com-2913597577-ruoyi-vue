@@ -3,7 +3,7 @@
     <div>
       <el-button v-if="submitButtonShow" :loading="props.buttonLoading" type="info" @click="submitForm('draft')">暂存</el-button>
       <el-button v-if="submitButtonShow" :loading="props.buttonLoading" type="primary" @click="submitForm('submit')">提 交</el-button>
-      <el-button v-if="approvalButtonShow" :loading="props.buttonLoading" type="primary" @click="approvalVerifyOpen">审批</el-button>
+      <el-button v-if="approvalButtonShow" :loading="props.buttonLoading" type="danger" @click="approvalVerifyOpen">审批</el-button>
       <el-button v-if="props.id && props.status !== 'draft'" type="primary" @click="handleApprovalRecord">流程进度</el-button>
       <slot />
     </div>

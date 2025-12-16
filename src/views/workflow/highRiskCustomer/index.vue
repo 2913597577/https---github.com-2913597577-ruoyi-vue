@@ -45,12 +45,12 @@
             <dict-tag :options="dc_false_true" :value="scope.row.isRefundMentioned"></dict-tag>
           </template>
           </el-table-column>
-        <el-table-column label="风险判定" align="center">
+        <el-table-column label="风险判定" align="center" width="180" show-overflow-tooltip>
         <template #default="scope">
             <dict-tag :options="dc_risk_determination" :value="scope.row.riskDetermination"></dict-tag>
           </template>
           </el-table-column>
-        <el-table-column label="合规问题" align="center" prop="complianceIssues">
+        <el-table-column label="合规问题" align="center" prop="complianceIssues" width="180" show-overflow-tooltip>
         <template #default="scope">
             <dict-tag :options="dc_compliance_issue" :value="scope.row.complianceIssues"></dict-tag>
           </template> 
@@ -60,7 +60,7 @@
             <dict-tag :options="wf_business_status" :value="scope.row.status"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center" width="180" fixed="right">
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">

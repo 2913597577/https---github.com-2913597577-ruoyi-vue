@@ -711,6 +711,5 @@ onMounted(async () => {
   await loadLawyerSupportList();
   await loadCustomerList();
   await getList();
-
 });
 </script>

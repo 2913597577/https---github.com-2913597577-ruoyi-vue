@@ -14,16 +14,7 @@
     <el-card shadow="never" style="height: 78vh; overflow-y: auto">
       <el-form ref="customerRiskRefundFormRef" v-loading="loading" :disabled="routeParams.type === 'view'" :model="form" :rules="rules" label-width="120px">
         <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="法务支持" prop="lawyerId">
-              <el-select v-model="form.lawyerId" placeholder="请选择法务支持人员" filterable clearable>
-                <el-option v-for="item in lawyerList" :key="item.userId" :label="item.nickName"
-                  :value="item.userId">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="客户名称" prop="customerId">
               <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable @change="handleCustomerChange" :disabled="isCustomerSelectDisabled">
                 <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -32,23 +23,25 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="客户对接人" prop="principal">
               <el-input v-model="form.principal" placeholder="请输入客户对接人" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="对接人电话" prop="principalPhone">
               <el-input v-model="form.principalPhone" placeholder="请输入对接人电话" />
             </el-form-item>
           </el-col>
         </el-row>
-        
+           
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
+            <el-form-item label="原合同号" prop="contractNo">
+              <el-input v-model="form.contractNo" placeholder="请输入原合同号，用于追溯" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="大成负责人" prop="inviterId">
               <el-select v-model="form.inviterId" placeholder="请选择大成负责人" filterable clearable>
                 <el-option v-for="item in inviterList" :key="item.userId" :label="item.nickName"
@@ -57,10 +50,19 @@
               </el-select>
             </el-form-item>
           </el-col>
+            <el-col :span="8">
+            <el-form-item label="法务支持" prop="lawyerId">
+              <el-select v-model="form.lawyerId" placeholder="请选择法务支持人员" filterable clearable>
+                <el-option v-for="item in lawyerList" :key="item.userId" :label="item.nickName"
+                  :value="item.userId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="签约日期" prop="signDate">
               <el-date-picker
                 v-model="form.signDate"
@@ -71,7 +73,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker
                 v-model="form.expireDate"
@@ -82,15 +84,7 @@
               />
             </el-form-item>
           </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="签单金额" prop="contractAmount">
-              <el-input-number v-model="form.contractAmount" placeholder="请输入签单金额" :precision="2" :step="1000" style="width: 100%" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="服务时长" prop="serviceHours">
               <el-input v-model="form.serviceHours" placeholder="请输入服务时长" />
             </el-form-item>
@@ -98,46 +92,112 @@
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item label="退费原因" prop="reasons">
-              <el-input v-model="form.reasons" type="textarea" :rows="3" placeholder="请输入退费原因" />
+          <el-col :span="8">
+            <el-form-item label="合同金额" prop="contractAmount">
+              <el-input-number v-model="form.contractAmount" placeholder="请输入合同金额" :precision="2" :step="1000" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="实收金额" prop="actualReceipt">
+              <el-input-number v-model="form.actualReceipt" placeholder="请输入实收金额" :precision="2" :step="1000" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="尾款金额" prop="balance">
+              <el-input-number v-model="form.balance" placeholder="请输入尾款金额" :precision="2" :step="1000" style="width: 100%" />
             </el-form-item>
           </el-col>
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="退款金额" prop="refundAmount">
               <el-input-number v-model="form.refundAmount" placeholder="请输入退款金额" :precision="2" :step="1000" style="width: 100%" />
             </el-form-item>
           </el-col>
+          <el-col :span="16">
+            <el-form-item label="退费原因" prop="reasons">
+              <el-input v-model="form.reasons" type="textarea" :rows="1" placeholder="请输入退费原因" />
+            </el-form-item>
+          </el-col> 
+         
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item label="备注1" prop="remark1">
-              <el-input v-model="form.remark1" type="textarea" :rows="2" placeholder="请输入备注1" />
+          <el-col :span="8">
+            <el-form-item label="退款方式" prop="refundMethod">
+              <el-select v-model="form.refundMethod" placeholder="请选择退款方式" filterable clearable>
+                <el-option v-for="item in inviterList" :key="item.userId" :label="item.nickName"
+                  :value="item.userId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="退款日期" prop="refundDate">
+              <el-date-picker
+                v-model="form.refundDate"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="请选择退款日期"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="退款凭证号" prop="refundVoucherNo">
+              <el-input v-model="form.refundVoucherNo" placeholder="请输入退款凭证号" />
             </el-form-item>
           </el-col>
         </el-row>
-        
+
         <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item label="备注2" prop="remark2">
+          <el-col :span="8">
+            <el-form-item label="退款方开户名" prop="refundAccountName">
+              <el-input v-model="form.refundAccountName" placeholder="请输入退款方开户名" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="退款方开户银行" prop="refundBank">
+              <el-input v-model="form.refundBank" placeholder="请输入退款方开户行" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="退款方银行账号" prop="bankNumber">
+              <el-input v-model="form.bankNumber" placeholder="请输入退款方开户行账号" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <el-form-item label="我方付款账户" prop="remark1">
+              <el-input v-model="form.remark1" placeholder="请输入我方付款账户" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="财务处理人" prop="financePayer">
+              <el-input v-model="form.financePayer" placeholder="请输入财务处理人" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="记账凭证号" prop="accountingVoucherNo">
+              <el-input v-model="form.accountingVoucherNo" placeholder="请输入财务记账凭证号" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="备注" prop="remark2">
               <el-input v-model="form.remark2" type="textarea" :rows="2" placeholder="请输入备注2" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="24">
-            <el-form-item label="备注3" prop="remark3">
-              <el-input v-model="form.remark3" type="textarea" :rows="2" placeholder="请输入备注3" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </el-card>
+
+
     <!-- Submit component -->
     <submitVerify ref="submitVerifyRef" :task-variables="taskVariables" @submit-callback="submitCallback" />
     <!-- Approval record -->
@@ -231,7 +291,8 @@ const data = reactive<PageData<DcCustomerRiskRefundForm, DcCustomerRiskRefundQue
   rules: {
     customerId: [{ required: true, message: '客户id不能为空', trigger: 'blur' }],
     customerName: [{ required: true, message: '客户姓名不能为空', trigger: 'blur' }],
-    reasons: [{ required: true, message: '退费原因不能为空', trigger: 'blur' }]
+    reasons: [{ required: true, message: '退费原因不能为空', trigger: 'blur' }],
+    refundAmount: [{ required: true, message: '退款金额不能为空', trigger: 'blur' }],
   }
 });
 
