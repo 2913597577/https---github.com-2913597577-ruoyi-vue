@@ -58,7 +58,11 @@
           </template>
         </el-table-column> -->
         <el-table-column label="退费原因" align="center" prop="reasons" />
-        <el-table-column label="退款方式" align="center" prop="refundMethod" />
+        <el-table-column label="退款方式" align="center" prop="refundMethod">
+        <template #default="scope">
+            <dict-tag :options="dc_refund_method" :value="scope.row.refundMethod"></dict-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="退款日期" align="center" prop="refundDate" />
         <el-table-column label="退款凭证号" align="center" prop="refundVoucherNo" />
         <el-table-column label="退款方开户名" align="center" prop="refundAccountName" />
@@ -116,6 +120,7 @@ import { DcCustomerRiskRefundForm, DcCustomerRiskRefundQuery, DcCustomerRiskRefu
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
+const { dc_refund_method } = toRefs<any>(proxy?.useDict('dc_refund_method'));
 const customerRiskRefundList = ref<DcCustomerRiskRefundVO[]>([]);
 const loading = ref(true);
 const showSearch = ref(true);

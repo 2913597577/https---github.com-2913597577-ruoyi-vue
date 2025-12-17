@@ -13,8 +13,33 @@
     </el-card>
     <el-card shadow="never" style="height: 78vh; overflow-y: auto">
       <el-form ref="expenseReimbursementFormRef" v-loading="loading" :disabled="routeParams.type === 'view'" :model="form" :rules="rules" label-width="120px">
+        
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="24">
+         <div class="form-section-title">基础信息</div>
+       </el-col>
+        </el-row>
+       
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <el-form-item label="报销人姓名" prop="applicantName">
+              <el-input v-model="form.applicantName" placeholder="请输入报销人姓名" readonly />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="所属部门" prop="departmentName">
+              <el-input v-model="form.departmentName" placeholder="请输入所属部门" readonly />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="岗位/职务" prop="position">
+              <el-input v-model="form.position" placeholder="请输入岗位/职务" readonly />
+            </el-form-item>
+          </el-col>
+        </el-row>
+    
+        <el-row :gutter="20">
+          <el-col :span="8">
             <el-form-item label="填报日期" prop="applyDate">
               <el-date-picker
                 v-model="form.applyDate"
@@ -26,35 +51,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="报销人姓名" prop="applicantName">
-              <el-input v-model="form.applicantName" placeholder="请输入报销人姓名" readonly />
+            <el-form-item label="报销事由" prop="expenseReason">
+              <el-input v-model="form.expenseReason" type="textarea" :rows="1" placeholder="请输入报销事由" />
             </el-form-item>
           </el-col>
         </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="所属部门" prop="departmentName">
-              <el-input v-model="form.departmentName" placeholder="请输入所属部门" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="岗位/职务" prop="position">
-              <el-input v-model="form.position" placeholder="请输入岗位/职务" readonly />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        
+
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item label="报销事由" prop="expenseReason">
-              <el-input v-model="form.expenseReason" type="textarea" :rows="3" placeholder="请输入报销事由" />
-            </el-form-item>
-          </el-col>
+         <div class="form-section-title">费用明细</div>
+       </el-col>
         </el-row>
-        
+
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="费用日期" prop="expenseDate">
               <el-date-picker
                 v-model="form.expenseDate"
@@ -65,7 +75,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="费用类型" prop="expenseType">
               <el-select v-model="form.expenseType" placeholder="请选择费用类型">
                 <el-option label="差旅费" value="travel" />
@@ -75,52 +85,65 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="24">
+          <el-col :span="8">
             <el-form-item label="费用明细描述" prop="expenseDescription">
-              <el-input v-model="form.expenseDescription" type="textarea" :rows="3" placeholder="请输入费用明细描述" />
+              <el-input v-model="form.expenseDescription" type="textarea" :rows="1" placeholder="请输入费用明细描述" />
             </el-form-item>
           </el-col>
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="票据张数" prop="invoiceCount">
               <el-input-number v-model="form.invoiceCount" placeholder="请输入票据张数" :min="0" style="width: 100%" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="单据金额" prop="invoiceAmount">
               <el-input-number v-model="form.invoiceAmount" placeholder="请输入单据金额" :precision="2" :step="100" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="报销金额" prop="reimbursementAmount">
+              <el-input-number v-model="form.reimbursementAmount" placeholder="请输入报销金额" :precision="2" :step="100" style="width: 100%" />
             </el-form-item>
           </el-col>
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="报销金额" prop="reimbursementAmount">
-              <el-input-number v-model="form.reimbursementAmount" placeholder="请输入报销金额" :precision="2" :step="100" style="width: 100%" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="已预支金额" prop="advancedAmount">
               <el-input-number v-model="form.advancedAmount" placeholder="请输入已预支金额" :precision="2" :step="100" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="应退/应补金额" prop="refundOrSupplement">
+              <el-input-number v-model="form.refundOrSupplement" placeholder="请输入应退/应补金额" :precision="2" :step="100" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="差额说明" prop="differenceReason">
+              <el-input v-model="form.differenceReason" type="textarea" :rows="1" placeholder="请输入差额说明" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+        <el-row :gutter="20">
+          <el-col :span="16">
+            <el-form-item label="发票信息附件" prop="attachmentPath">
+              <el-input v-model="form.attachmentPath" placeholder="请上传电子发票" readonly />
             </el-form-item>
           </el-col>
         </el-row>
         
         <el-row :gutter="20">
           <el-col :span="24">
-            <el-form-item label="金额差异原因说明" prop="differenceReason">
-              <el-input v-model="form.differenceReason" type="textarea" :rows="2" placeholder="请输入金额差异原因说明" />
-            </el-form-item>
-          </el-col>
+         <div class="form-section-title">财务处理</div>
+       </el-col>
         </el-row>
-        
+
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="支付方式" prop="paymentMethod">
               <el-select v-model="form.paymentMethod" placeholder="请选择支付方式">
                 <el-option label="现金" value="cash" />
@@ -130,30 +153,51 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="收款人" prop="receiverName">
-              <el-input v-model="form.receiverName" placeholder="请输入收款人" />
+          <el-col :span="8">
+            <el-form-item label="支付日期" prop="paymentDate">
+              <el-date-picker
+                v-model="form.paymentDate"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="请选择费用日期"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="支付人" prop="financePayerName">
+              <el-input v-model="form.financePayerName" placeholder="请输入支付人" />
             </el-form-item>
           </el-col>
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="8">
+            <el-form-item label="收款账户开户名" prop="receiverName">
+              <el-input v-model="form.receiverName" placeholder="请输入收款人" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="收款账户开户行" prop="receiverBankName">
               <el-input v-model="form.receiverBankName" placeholder="请输入收款账户开户行" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="账户银行账号" prop="receiverBankAccount">
+          <el-col :span="8">
+            <el-form-item label="银行账号" prop="receiverBankAccount">
               <el-input v-model="form.receiverBankAccount" placeholder="请输入收款账户银行账号" />
             </el-form-item>
           </el-col>
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="24">
+          <el-col :span="8">
+            <el-form-item label="财务记账凭证号" prop="financeVoucherNo">
+              <el-input v-model="form.financeVoucherNo" placeholder="请输入财务记账凭证号" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="16">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="form.remark" type="textarea" :rows="2" placeholder="请输入备注" />
+              <el-input v-model="form.remark" type="textarea" :rows="1" placeholder="请输入备注" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -404,3 +448,14 @@ onMounted(() => {
   });
 });
 </script>
+
+<style scoped>
+.form-section-title {
+  font-size: 12px;
+  font-weight: bold;
+  color:#409EFF;
+  margin-bottom: 20px;
+  border-left: 4px solid #409EFF;
+  padding-left: 10px;
+}
+</style>

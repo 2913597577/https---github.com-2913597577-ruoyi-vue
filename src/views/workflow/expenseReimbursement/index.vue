@@ -48,7 +48,7 @@
 
       <el-table v-loading="loading" border :data="expenseReimbursementList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键" align="center" prop="id" />
+        <!-- <el-table-column label="主键" align="center" prop="id" /> -->
         <el-table-column label="填报日期" align="center" prop="applyDate" width="120" />
         <el-table-column label="报销人姓名" align="center" prop="applicantName" />
         <el-table-column label="所属部门" align="center" prop="departmentName" />
@@ -80,10 +80,16 @@
               <el-col :span="1.5" v-if="scope.row.status === 'pending'">
                 <el-button size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
               </el-col>
+              <el-col :span="1.5">
+                <el-button type="success" link size="small" icon="View" @click="handleTransportRecord(scope.row)">物流信息</el-button>
+              </el-col>
             </el-row>
           </template>
         </el-table-column>
       </el-table>
+
+     <!-- 屏幕右侧弹窗显示物流信息组件加载 -->
+     <ApprovalTransportRecord ref="approvalTransportRecordRef" />
 
       <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     </el-card>
@@ -123,6 +129,14 @@ const data = reactive<PageData<DcExpenseReimbursementForm, DcExpenseReimbursemen
 });
 
 const { queryParams } = toRefs(data);
+
+/** 查看屏幕右侧弹窗显示的审批物流信息 */
+import ApprovalTransportRecord from '@/components/Process/approvalTransportRecord.vue';
+const approvalTransportRecordRef = ref<InstanceType<typeof ApprovalTransportRecord>>();
+
+const handleTransportRecord = (row?: DcExpenseReimbursementVO) => {
+  approvalTransportRecordRef.value?.init(row.id);
+};
 
 /** Query expense reimbursement list */
 const getList = async () => {

@@ -14,6 +14,11 @@
     <el-card shadow="never" style="height: 78vh; overflow-y: auto">
       <el-form ref="customerRiskRefundFormRef" v-loading="loading" :disabled="routeParams.type === 'view'" :model="form" :rules="rules" label-width="120px">
         <el-row :gutter="20">
+          <el-col :span="24">
+         <div class="form-section-title">申请信息</div>
+       </el-col>
+        </el-row>
+        <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="客户名称" prop="customerId">
               <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable @change="handleCustomerChange" :disabled="isCustomerSelectDisabled">
@@ -90,7 +95,11 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
+        <el-row :gutter="20">
+          <el-col :span="24">
+         <div class="form-section-title">退费明细</div>
+       </el-col>
+        </el-row>
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="合同金额" prop="contractAmount">
@@ -120,15 +129,19 @@
               <el-input v-model="form.reasons" type="textarea" :rows="1" placeholder="请输入退费原因" />
             </el-form-item>
           </el-col> 
-         
         </el-row>
         
+        <el-row :gutter="20">
+          <el-col :span="24">
+         <div class="form-section-title">退款方式</div>
+       </el-col>
+        </el-row>
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="退款方式" prop="refundMethod">
               <el-select v-model="form.refundMethod" placeholder="请选择退款方式" filterable clearable>
-                <el-option v-for="item in inviterList" :key="item.userId" :label="item.nickName"
-                  :value="item.userId">
+                <el-option v-for="dict in dc_refund_method" :key="dict.value" :label="dict.label"
+                  :value="dict.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -150,7 +163,11 @@
             </el-form-item>
           </el-col>
         </el-row>
-
+        <el-row :gutter="20">
+          <el-col :span="24">
+         <div class="form-section-title">财务处理</div>
+       </el-col>
+        </el-row>
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="退款方开户名" prop="refundAccountName">
@@ -190,7 +207,7 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="备注" prop="remark2">
-              <el-input v-model="form.remark2" type="textarea" :rows="2" placeholder="请输入备注2" />
+              <el-input v-model="form.remark2" type="textarea" :rows="1" placeholder="请输入备注2" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -228,6 +245,7 @@ import { StartProcessBo } from '@/api/workflow/workflowCommon/types';
 import { getCustomerByUserId } from '@/api/common';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dc_refund_method } = toRefs<any>(proxy?.useDict('dc_refund_method'));
 
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -452,3 +470,14 @@ onMounted(async () => {
   });
 });
 </script>
+
+<style scoped>
+  .form-section-title {
+    font-size: 12px;
+    font-weight: bold;
+    color:#409EFF;
+    margin-bottom: 20px;
+    border-left: 4px solid #409EFF;
+    padding-left: 10px;
+  }
+  </style>
