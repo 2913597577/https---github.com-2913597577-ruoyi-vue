@@ -132,7 +132,7 @@
         <el-table-column label="状态" align="center" prop="status" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="240" fixed="right">
           <template #default="scope">
-            <el-button link type="primary" icon="View" @click="handleViewDetail(scope.row)">查看</el-button>
+            <el-button link type="info" icon="View" @click="handleViewDetail(scope.row)">查看</el-button>
               <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
                 @click="handleProcess(scope.row)">处置</el-button>
             <el-tooltip content="修改" placement="top">
@@ -1206,8 +1206,10 @@ onMounted(() => {
     .card-title {
       font-size: 14px;
       font-weight: 600;
-      color: var(--el-text-color-primary);
+      color:#1890ff;
       margin: 0;
+      border-left: 4px solid #409EFF;
+      padding-left: 10px;
     }
 
     .info-row {

@@ -221,7 +221,7 @@
         fixed="right">
           <template #default="scope">
             <!-- <div class="table-action-buttons"> -->
-              <el-button link type="primary" icon="View" @click="handleView(scope.row)">查看</el-button>
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">查看</el-button>
               <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
                 @click="handleProcess(scope.row)">处置</el-button>
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
@@ -1074,7 +1074,7 @@
         <el-scrollbar max-height="600px">
           <el-descriptions :column="1" border size="small" label-width="32%" class="fixed-label-descriptions">
             <el-descriptions-item label="" :span="1">
-         <div style="text-align: center; width: 100%;">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>财务审核信息</strong>
          </div>
          </el-descriptions-item>
@@ -1097,7 +1097,7 @@
             </el-descriptions-item>
 
             <el-descriptions-item label="" :span="1">
-         <div style="text-align: center; width: 100%;">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>客户基本信息</strong>
          </div>
          </el-descriptions-item>
@@ -1186,7 +1186,7 @@
               {{ viewForm.customerDescription }}
             </el-descriptions-item>
             <el-descriptions-item label="" :span="1">
-         <div style="text-align: center; width: 100%;">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>签约情况</strong>
          </div>
          </el-descriptions-item>
@@ -1233,7 +1233,7 @@
               {{ viewForm.otherFee }}
             </el-descriptions-item>
             <el-descriptions-item label="" :span="1">
-         <div style="text-align: center; width: 100%;">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>客户情况概述</strong>
          </div>
          </el-descriptions-item>
@@ -1261,7 +1261,7 @@
               {{ viewForm.remark }}
             </el-descriptions-item>
             <el-descriptions-item label="" :span="1">
-         <div style="text-align: center; width: 100%;">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>案件登记</strong>
          </div>
          </el-descriptions-item>

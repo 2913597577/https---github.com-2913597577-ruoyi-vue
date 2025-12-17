@@ -818,7 +818,7 @@
     <el-dialog title="客户详情" v-model="viewDialog.visible" width="700px" append-to-body draggable>
       <el-descriptions :column="1" border size="small" label-width="30%">
         <el-descriptions-item label="" :span="1">
-         <div style="text-align: center; width: 100%;">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>客户基本信息</strong>
          </div>
          </el-descriptions-item>
@@ -842,7 +842,7 @@
           <dict-tag :options="dc_service_type" :value="viewForm.packageType" />
         </el-descriptions-item> -->
         <el-descriptions-item label="" :span="1">
-         <div style="text-align: center; width: 100%;">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>签约情况</strong>
          </div>
          </el-descriptions-item>
@@ -865,7 +865,7 @@
         <el-descriptions-item label="续费/尾款">{{ viewForm.actionType }}</el-descriptions-item>
         
         <el-descriptions-item label="" :span="1">
-         <div style="text-align: center; width: 100%;">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>客户状态</strong>
          </div>
          </el-descriptions-item>
@@ -892,7 +892,7 @@
         </el-descriptions-item>
 
         <el-descriptions-item label="" :span="1">
-        <div style="text-align: center; width: 100%;">
+        <div style="text-align: center; width: 100%; color: #1890ff;">
            <strong>案件登记</strong>
          </div>
          </el-descriptions-item>
