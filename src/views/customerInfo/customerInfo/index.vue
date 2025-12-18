@@ -1930,9 +1930,10 @@ onMounted(() => {
   .el-table__cell {
     background-color: #f5f7fa !important;
     font-size: 14px;
-    
+    color:#1890ff;
+  
     &:first-child {
-      color: #303133;
+      color:#303133;
       font-weight: bold;
     }
   }

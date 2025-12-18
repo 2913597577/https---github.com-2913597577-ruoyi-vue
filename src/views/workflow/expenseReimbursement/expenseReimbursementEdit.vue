@@ -77,11 +77,10 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="费用类型" prop="expenseType">
-              <el-select v-model="form.expenseType" placeholder="请选择费用类型">
-                <el-option label="差旅费" value="travel" />
-                <el-option label="招待费" value="entertainment" />
-                <el-option label="办公费" value="office" />
-                <el-option label="交通费" value="transportation" />
+              <el-select v-model="form.expenseType" placeholder="请选择费用类型" filterable clearable>
+                <el-option v-for="dict in dc_reimbursement_type" :key="dict.value" :label="dict.label"
+                  :value="dict.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -94,12 +93,12 @@
         
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="票据张数" prop="invoiceCount">
+            <el-form-item label="发票总张数" prop="invoiceCount">
               <el-input-number v-model="form.invoiceCount" placeholder="请输入票据张数" :min="0" style="width: 100%" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="单据金额" prop="invoiceAmount">
+            <el-form-item label="发票总金额" prop="invoiceAmount">
               <el-input-number v-model="form.invoiceAmount" placeholder="请输入单据金额" :precision="2" :step="100" style="width: 100%" />
             </el-form-item>
           </el-col>
@@ -130,7 +129,7 @@
         
         <el-row :gutter="20">
           <el-col :span="16">
-            <el-form-item label="发票信息附件" prop="attachmentPath">
+            <el-form-item label="发票附件" prop="attachmentPath">
               <el-input v-model="form.attachmentPath" placeholder="请上传电子发票" readonly />
             </el-form-item>
           </el-col>
@@ -146,10 +145,9 @@
           <el-col :span="8">
             <el-form-item label="支付方式" prop="paymentMethod">
               <el-select v-model="form.paymentMethod" placeholder="请选择支付方式">
-                <el-option label="现金" value="cash" />
-                <el-option label="银行转账" value="bank_transfer" />
-                <el-option label="支付宝" value="alipay" />
-                <el-option label="微信" value="wechat" />
+                <el-option v-for="dict in dc_reimbursement_payment" :key="dict.value" :label="dict.label"
+                  :value="dict.value">
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -173,17 +171,17 @@
         
         <el-row :gutter="20">
           <el-col :span="8">
-            <el-form-item label="收款账户开户名" prop="receiverName">
+            <el-form-item label="收款账户姓名" prop="receiverName">
               <el-input v-model="form.receiverName" placeholder="请输入收款人" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="收款账户开户行" prop="receiverBankName">
+            <el-form-item label="收款银行名称" prop="receiverBankName">
               <el-input v-model="form.receiverBankName" placeholder="请输入收款账户开户行" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="银行账号" prop="receiverBankAccount">
+            <el-form-item label="收款银行账号" prop="receiverBankAccount">
               <el-input v-model="form.receiverBankAccount" placeholder="请输入收款账户银行账号" />
             </el-form-item>
           </el-col>
@@ -233,6 +231,8 @@ import { StartProcessBo } from '@/api/workflow/workflowCommon/types';
 import { getInfo } from '@/api/login';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dc_reimbursement_type } = toRefs<any>(proxy?.useDict('dc_reimbursement_type'));
+const { dc_reimbursement_payment } = toRefs<any>(proxy?.useDict('dc_reimbursement_payment'));
 
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -436,6 +436,7 @@ const getUserInfo = async () => {
   });
 };
 
+
 onMounted(() => {
   nextTick(async () => {
     getUserInfo();
@@ -458,4 +459,5 @@ onMounted(() => {
   border-left: 4px solid #409EFF;
   padding-left: 10px;
 }
+
 </style>

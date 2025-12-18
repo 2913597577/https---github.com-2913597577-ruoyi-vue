@@ -258,7 +258,7 @@ const formatCurrency = (value) => {
   }
 
   .value {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     // color: #1890ff;
     color:#ff6b35;
@@ -312,7 +312,7 @@ const formatCurrency = (value) => {
   }
 
   .todo-header h3 {
-    color: #f56a00;
+    color:#1890ff;
   }
 
   .no-todo {
