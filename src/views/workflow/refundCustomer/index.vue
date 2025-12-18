@@ -44,13 +44,21 @@
         <el-table-column label="原合同号" align="center" prop="contractNo" />
         <el-table-column label="大成负责人" align="center" prop="inviterId" />
         <el-table-column label="法务支持" align="center" prop="lawyerId" />
-        <el-table-column label="签约日期" align="center" prop="signDate" />
-        <el-table-column label="到期时间" align="center" prop="expireDate" />
+        <el-table-column label="签约日期" align="center" prop="signDate">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="到期时间" align="center" prop="expireDate">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="服务时长" align="center" prop="serviceHours" />
+        <el-table-column label="退款金额" align="center" prop="refundAmount" width="140" />
         <el-table-column label="合同金额" align="center" prop="contractAmount" width="140" />
         <el-table-column label="实收金额" align="center" prop="actualReceipt" width="140" />
         <el-table-column label="尾款金额" align="center" prop="balance" width="140" />
-        <el-table-column label="退款金额" align="center" prop="refundAmount" width="140" />
        <!--  <el-table-column label="客户类型" align="center">
           <template #default="scope">
             <el-tag v-if="scope.row.customerType === 1">风险</el-tag>
@@ -63,7 +71,11 @@
             <dict-tag :options="dc_refund_method" :value="scope.row.refundMethod"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column label="退款日期" align="center" prop="refundDate" />
+        <el-table-column label="退款日期" align="center" prop="refundDate">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.refundDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="退款凭证号" align="center" prop="refundVoucherNo" />
         <el-table-column label="退款方开户名" align="center" prop="refundAccountName" />
         <el-table-column label="退款方开户银行" align="center" prop="refundBank" />
@@ -95,7 +107,7 @@
             </el-row>
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
-                <el-button type="primary" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+                <el-button type="info" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <el-col :span="1.5">
                 <el-button type="success" link size="small" icon="View" @click="handleTransportRecord(scope.row)">物流信息</el-button>

@@ -36,13 +36,18 @@
         <!-- <el-table-column label="审批类型" align="center" prop="applyType" /> -->
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="客户姓名" align="center" prop="customerName" />
+        <el-table-column label="提报日期" align="center" width="120" prop="createTime">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="原因" align="center" prop="remark" />
         <el-table-column align="center" label="流程状态" min-width="70">
           <template #default="scope">
             <dict-tag :options="wf_business_status" :value="scope.row.status"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="162">
+        <el-table-column label="操作" align="center" width="240" fixed="right">
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
@@ -58,7 +63,7 @@
             </el-row>
             <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
-                <el-button type="primary" size="small" link icon="View" @click="handleView(scope.row)">查看</el-button>
+                <el-button type="info" size="small" link icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <!-- <el-col :span="1.5" v-if="scope.row.status === 'waiting'">
                 <el-button size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>

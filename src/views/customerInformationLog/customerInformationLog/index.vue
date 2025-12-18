@@ -63,10 +63,10 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerInformationLogList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" border :data="customerInformationLogList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="主键ID" align="center" prop="id" v-if="true" />
-        <el-table-column label="签约日期" align="center" prop="signDate" width="180">
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
+        <el-table-column label="签约日期" align="center" prop="signDate" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
@@ -84,8 +84,9 @@
             <dict-tag :options="combo_type" :value="scope.row.packageType"/>
           </template>
         </el-table-column>
-        <el-table-column label="实收金额" align="center" prop="actualReceipt" />
-        <el-table-column label="尾款金额" align="center" prop="balance" />
+        <el-table-column label="合同金额" align="center" prop="contractAmount" width="140" />
+        <el-table-column label="实收金额" align="center" prop="actualReceipt" width="140" />
+        <el-table-column label="尾款金额" align="center" prop="balance" width="140" />
         <el-table-column label="到期时间" align="center" prop="expireDate" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
@@ -483,6 +484,42 @@ const handleExport = () => {
   }, `customerInformationLog_${new Date().getTime()}.xlsx`)
 }
 
+//列表最后一行添加合计
+const getSummaries = (param) => {
+  const { columns, data } = param;
+  const sums = [];
+  columns.forEach((column, index) => {
+    if (index === 1) {
+      sums[index] = '合计';
+      return;
+  }
+  // 处理需要合计的列，这里应该根据实际业务需求修改列名
+    const values = data.map(item => Number(item[column.property]));
+    if (column.label == "合同金额" || column.label == "实收金额" || column.label == "尾款金额") {
+    if (!values.every(value => isNaN(value))) {
+    sums[index] = values.reduce((prev, curr) => {
+          const value = Number(curr);
+   if (!isNaN(value)) {
+   return prev + curr;
+    } else {
+      return prev;
+   }
+  }, 0);
+    sums[index] = new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  }).format(sums[index]);
+ } else {
+        //  sums[index] = 'N/A';
+}
+  }
+});
+return sums;
+}
+
+
+
 watch(
   () => route.query.customerInfoId,
   (newCustomerInfoId) => {
@@ -506,3 +543,23 @@ onMounted(() => {
   getList();
 });
 </script>
+
+<style scoped>
+
+::v-deep .el-table__footer-wrapper {
+  font-weight: bold;
+  font-size: 14px;
+  
+  .el-table__cell {
+    background-color: #f5f7fa !important;
+    font-size: 14px;
+    color:#1890ff;
+  
+    &:first-child {
+      color:#303133;
+      font-weight: bold;
+    }
+  }
+}
+
+</style>

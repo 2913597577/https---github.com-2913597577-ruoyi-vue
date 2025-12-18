@@ -49,7 +49,11 @@
       <el-table v-loading="loading" border :data="expenseReimbursementList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键" align="center" prop="id" /> -->
-        <el-table-column label="填报日期" align="center" prop="applyDate" width="120" />
+        <el-table-column label="填报日期" align="center" prop="applyDate" width="120">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.applyDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="报销人姓名" align="center" prop="applicantName" />
         <el-table-column label="所属部门" align="center" prop="departmentName" />
         <el-table-column label="岗位/职务" align="center" prop="position" />
@@ -59,7 +63,11 @@
             <dict-tag :options="dc_reimbursement_type" :value="scope.row.expenseType"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column label="费用日期" align="center" prop="expenseDate" width="120" />
+        <el-table-column label="费用日期" align="center" prop="expenseDate" width="120">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.expenseDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="费用明细描述" align="center" prop="expenseDescription" />
         <el-table-column label="发票总张数" align="center" prop="invoiceCount" />
         <el-table-column label="发票总金额" align="center" prop="invoiceAmount" width="120" />
@@ -68,7 +76,11 @@
         <el-table-column label="应退/应补金额" align="center" prop="refundOrSupplement" width="120"/>
         <el-table-column label="差额说明" align="center" prop="deferredReason" />
         <el-table-column label="发票附件" align="center" prop="attachmentPath" />
-        <el-table-column label="支付日期" align="center" prop="paymentDate" />
+        <el-table-column label="支付日期" align="center" prop="paymentDate">
+        <template #default="scope">
+            <span>{{ parseTime(scope.row.paymentDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="支付方式" align="center" prop="paymentMethod"> 
           <template #default="scope">
             <dict-tag :options="dc_reimbursement_payment" :value="scope.row.expenseType"></dict-tag>
