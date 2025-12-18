@@ -6,7 +6,7 @@
       <el-col :span="16">
         <el-card class="statistic-card">
           <div class="statistic-header">
-            <h3>客户统计</h3>
+            <h3>客户信息统计</h3>
           </div>
           <div class="statistic-content">
             <div class="stat-item">
@@ -39,7 +39,7 @@
         <!-- 业绩展示框 -->
         <el-card class="performance-card" style="margin-top: 20px;">
           <div class="performance-header">
-            <h3>业绩展示</h3>
+            <h3>我的业绩展示</h3>
           </div>
           <div class="performance-content">
             <div class="performance-item">
@@ -232,6 +232,7 @@ const formatCurrency = (value) => {
     padding: 15px 20px;
     border-bottom: 1px solid #ebeef5;
     background-color: #f5f7fa;
+    color:#1890ff;
   }
 
   .statistic-content,
