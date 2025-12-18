@@ -492,6 +492,73 @@
       </template>
     </el-dialog>
 
+ <!-- 处置按钮弹窗内容 -->
+ <el-dialog v-model="positionDialogVisible" title="岗位变动审批" width="680px" class="position-change-dialog"  style="height: 340px;" append-to-body draggable>
+  <el-card class="position-card" shadow="always" border>
+  <el-form label-width="120px" inline-message size="small">
+        <el-row>
+          <el-col :span="8">
+        <el-form-item label="员工姓名" prop="name" class="position-form-item">
+            <el-input :value="currentRow?.name" readonly />
+        </el-form-item>
+          </el-col>
+          <el-col :span="8">
+        <el-form-item label="工号" prop="jobNumber" class="position-form-item">
+            <el-input :value="currentRow?.jobNumber" readonly />
+        </el-form-item>
+          </el-col>
+          <el-col :span="8">
+        <el-form-item label="部门ID" prop="deptId" class="position-form-item">
+            <el-input :value="currentRow?.deptId" readonly />
+        </el-form-item>
+          </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :span="8">
+        <el-form-item label="原职务" prop="positionName" class="audit-form-item">
+            <el-input :value="currentRow.positionName" readonly />
+        </el-form-item>
+         </el-col>
+      <el-col :span="8">
+         <el-form-item label="原职级" prop="positionRank" class="audit-form-item">
+            <el-input :value="currentRow.positionRank" readonly />
+        </el-form-item>
+         </el-col>
+        <el-col :span="8">
+         <el-form-item label="员工类型" prop="type" class="audit-form-item">
+            <el-input :value="currentRow.type" readonly />
+        </el-form-item>
+         </el-col>
+       </el-row>
+       <el-row>
+        <el-col :span="16">
+         <el-form-item label="岗位变动类型" prop="changeType" class="audit-form-item">
+          <el-select  
+                  v-model="positionChangeForm.changeType"
+                  placeholder="请选择岗位变动类型" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_position_change" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+         </el-form-item>
+         </el-col>
+        </el-row>
+ </el-form>
+  </el-card>
+      <template #footer>
+        <div class="dialog-footer" style="text-align: right">
+          <el-button type="primary" :loading="submitting" @click="submitPosition">确定</el-button>
+          <el-button @click="positionCancel" :disabled="submitting">取消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+  
 
 <!-- 员工档案详情 -->
     <el-dialog :title="detailDialog.title" v-model="detailDialog.visible" width="800px" append-to-body
@@ -824,6 +891,7 @@ import { listStaffInfo, getStaffInfo, delStaffInfo, addStaffInfo, updateStaffInf
 import { StaffInfoVO, StaffInfoQuery, StaffInfoForm } from '@/api/staffInfo/staffInfo/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dc_position_change } = toRefs<any>(proxy?.useDict('dc_position_change'));
 
 const staffInfoList = ref<StaffInfoVO[]>([]);
 const buttonLoading = ref(false);
@@ -919,6 +987,11 @@ const data = reactive<PageData<StaffInfoForm, StaffInfoQuery>>({
 
 const { queryParams, form, rules } = toRefs(data);
 
+// 在现有的 ref 和 reactive 声明后面添加
+const positionChangeForm = ref({
+  changeType: '' // 用于存储选中的岗位变动类型
+});
+
 /** 查询员工档案列表 */
 const getList = async () => {
   loading.value = true;
@@ -975,6 +1048,40 @@ const handleUpdate = async (row?: StaffInfoVO) => {
   dialog.visible = true;
   dialog.title = "修改员工档案";
 }
+
+/** 处置按钮操作 */
+// 控制处置弹窗显示
+const positionDialogVisible = ref(false)
+// 当前选中行数据
+const currentRow = ref<any>(null)
+// 提交状态（用于按钮loading）
+const submitting = ref(false)
+
+// 打开处置弹窗
+const handleProcess = (row?: any) => {
+  currentRow.value = row || null;
+  positionDialogVisible.value = true;
+}
+
+// 提交审核（处置）
+const submitPosition = async () => {
+  submitting.value = true;
+  try {
+    // 这里执行实际的提交逻辑，例如调用API
+    // await someApiCall(currentRow.value);
+    
+    proxy?.$modal.msgSuccess("处置成功");
+    positionDialogVisible.value = false; // 关闭弹窗
+  } finally {
+    submitting.value = false;
+  }
+};
+
+// 取消审核（处置）
+const positionCancel = () => {
+  positionDialogVisible.value = false;
+}
+
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -1365,4 +1472,6 @@ onMounted(() => {
     }
   }
 }
+
+
 </style>

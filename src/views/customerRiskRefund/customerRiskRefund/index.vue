@@ -517,8 +517,6 @@ onMounted(() => {
 </script>
 
 
-
-
 <style scoped>
 ::v-deep .el-table__footer-wrapper {
   font-weight: bold;
