@@ -493,7 +493,7 @@
     </el-dialog>
 
  <!-- 处置按钮弹窗内容 -->
- <el-dialog v-model="positionDialogVisible" title="岗位变动审批" width="680px" class="position-change-dialog"  style="height: 340px;" append-to-body draggable>
+ <el-dialog v-model="positionDialogVisible" title="岗位变动审批" width="700px" class="position-change-dialog"  style="height: 340px;" append-to-body draggable>
   <el-card class="position-card" shadow="always" border>
   <el-form label-width="120px" inline-message size="small">
         <el-row>
