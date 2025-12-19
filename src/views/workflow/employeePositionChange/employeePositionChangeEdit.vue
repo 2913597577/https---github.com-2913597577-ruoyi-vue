@@ -12,9 +12,16 @@
       />
     </el-card>
     <el-card shadow="never" style="height: 78vh; overflow-y: auto">
-      <el-form ref="employeePositionChangeFormRef" v-loading="loading" :disabled="routeParams.type === 'view'" :model="form" :rules="rules" label-width="150px">
+      <el-form ref="employeePositionChangeFormRef" v-loading="loading" :disabled="routeParams.type === 'view'" :model="form" :rules="rules" label-width="120px">
+        
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="24">
+         <div class="form-section-title">申请信息</div>
+       </el-col>
+        </el-row>
+        
+        <el-row :gutter="20">
+          <el-col :span="6">
             <el-form-item label="申请日期" prop="applyDate">
               <el-date-picker
                 v-model="form.applyDate"
@@ -25,20 +32,17 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="申请人" prop="applicant">
               <el-input v-model="form.applicant" placeholder="请输入申请人" />
             </el-form-item>
           </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="申请人所属部门" prop="applicantDept">
               <el-input v-model="form.applicantDept" placeholder="请输入申请人所属部门" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="岗位变动类型" prop="changeType">
               <el-select v-model="form.changeType" placeholder="请选择岗位变动类型" clearable style="width: 100%">
                 <el-option label="部门调动" value="部门调动" />
@@ -53,38 +57,23 @@
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="24">
+         <div class="form-section-title">员工变动前信息</div>
+       </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="6">
             <el-form-item label="员工姓名" prop="employeeName">
               <el-input v-model="form.employeeName" placeholder="请输入员工姓名" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="员工工号" prop="employeeId">
               <el-input v-model="form.employeeId" placeholder="请输入员工工号" />
             </el-form-item>
           </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="变动前所属部门" prop="originalDept">
-              <el-input v-model="form.originalDept" placeholder="请输入变动前所属部门" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="变动前职务" prop="originalPosition">
-              <el-input v-model="form.originalPosition" placeholder="请输入变动前职务" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="变动前职级" prop="originalRank">
-              <el-input v-model="form.originalRank" placeholder="请输入变动前职级" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
+            <el-col :span="6">
             <el-form-item label="入职公司日期" prop="companyEntryDate">
               <el-date-picker
                 v-model="form.companyEntryDate"
@@ -95,10 +84,25 @@
               />
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-form-item label="变动前所属部门" prop="originalDept">
+              <el-input v-model="form.originalDept" placeholder="请输入变动前所属部门" />
+            </el-form-item>
+          </el-col>
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="6">
+            <el-form-item label="变动前职务" prop="originalPosition">
+              <el-input v-model="form.originalPosition" placeholder="请输入变动前职务" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="变动前职级" prop="originalRank">
+              <el-input v-model="form.originalRank" placeholder="请输入变动前职级" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-form-item label="现岗位任职日期" prop="currentPositionEntryDate">
               <el-date-picker
                 v-model="form.currentPositionEntryDate"
@@ -109,65 +113,36 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="拟定月度基本工资" prop="targetMonthlySalary">
-              <el-input-number v-model="form.targetMonthlySalary" placeholder="请输入拟定月度基本工资" :min="0" controls-position="right" style="width: 100%" />
+          <el-col :span="6">
+            <el-form-item label="原劳动合同附件" prop="originalContractAttachment">
+              <el-input v-model="form.originalContractAttachment" placeholder="请上传原劳动合同附件" />
             </el-form-item>
           </el-col>
         </el-row>
         
         <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="拟定年度总薪酬" prop="targetAnnualSalary">
-              <el-input-number v-model="form.targetAnnualSalary" placeholder="请输入拟定年度总薪酬" :min="0" controls-position="right" style="width: 100%" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="岗位变动主要原因" prop="changeReasons">
-              <el-input v-model="form.changeReasons" placeholder="请输入岗位变动主要原因" />
-            </el-form-item>
-          </el-col>
+          <el-col :span="24">
+         <div class="form-section-title">员工拟变动后信息</div>
+       </el-col>
         </el-row>
-        
+
         <el-row :gutter="20">
-          <el-col :span="12">
-            <el-form-item label="新岗位是否设置试用期" prop="probationPeriod">
-              <el-radio-group v-model="form.probationPeriod">
-                <el-radio label="是">是</el-radio>
-                <el-radio label="否">否</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="员工本人确认" prop="employeeConfirmation">
-              <el-radio-group v-model="form.employeeConfirmation">
-                <el-radio label="未确认">未确认</el-radio>
-                <el-radio label="已确认">已确认</el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="拟调动至部门" prop="targetDept">
               <el-input v-model="form.targetDept" placeholder="请输入拟调动至部门" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="拟定职务" prop="targetPosition">
-              <el-input v-model="form.targetPosition" placeholder="请输入拟定职务" />
+          <el-col :span="6">
+            <el-form-item label="拟担任职务" prop="targetPosition">
+              <el-input v-model="form.targetPosition" placeholder="请输入拟担任职务" />
             </el-form-item>
           </el-col>
-        </el-row>
-        
-        <el-row :gutter="20">
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="拟定职级" prop="targetRank">
               <el-input v-model="form.targetRank" placeholder="请输入拟定职级" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
             <el-form-item label="预计到岗日期" prop="expectedReportDate">
               <el-date-picker
                 v-model="form.expectedReportDate"
@@ -179,16 +154,155 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row :gutter="20">
+            <el-col :span="6">
+            <el-form-item label="新劳动合同附件" prop="newContractAttachment">
+              <el-input v-model="form.newContractAttachment" placeholder="请上传新劳动合同附件" />
+            </el-form-item>
+          </el-col>
+        </el-row>
         
-        <el-form-item label="详细评估意见" prop="evaluationOpinion">
-          <el-input v-model="form.evaluationOpinion" type="textarea" :rows="3" placeholder="请输入详细评估意见" />
+        <el-row :gutter="20">
+          <el-col :span="24">
+         <div class="form-section-title">薪酬福利信息</div>
+       </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item label="当前月度基本工资" prop="changeReasons">
+              <el-input v-model="form.currentMonthlySalary" placeholder="请输入当前月度基本工资" :min="0" controls-position="right" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="当前年度总薪酬" prop="targetAnnualSalary">
+              <el-input-number v-model="form.currentAnnualSalary" placeholder="请输入当前年度总薪酬" :min="0" controls-position="right" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="拟定月度基本工资" prop="targetMonthlySalary">
+              <el-input-number v-model="form.targetMonthlySalary" placeholder="请输入拟定月度基本工资" :min="0" controls-position="right" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="拟定年度总薪酬" prop="targetAnnualSalary">
+              <el-input-number v-model="form.targetAnnualSalary" placeholder="请输入拟定年度总薪酬" :min="0" controls-position="right" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item label="薪酬调整幅度(%)" prop="salaryAdjustmentRate">
+              <el-input-number v-model="form.salaryAdjustmentRate" placeholder="请输入薪酬调整幅度(%)" :min="0" :max="100" controls-position="right" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="其他福利变更情况" prop="welfareChange">
+              <el-input v-model="form.welfareChange" placeholder="请输入福利变动情况" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="24">
+         <div class="form-section-title">岗位变动原因与评估</div>
+       </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item label="岗位变动主要原因" prop="changeReasons">
+              <el-input v-model="form.changeReasons" placeholder="请输入岗位变动主要原因" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+          <el-form-item label="详细评估意见" prop="evaluationOpinion">
+          <el-input v-model="form.evaluationOpinion" type="textarea" :rows="1" placeholder="请输入详细评估意见" />
         </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="新岗位是否有试用期" prop="probationPeriod">
+              <el-radio-group v-model="form.probationPeriod">
+                <el-radio label="是">是</el-radio>
+                <el-radio label="否">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
         
-        <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" type="textarea" :rows="3" placeholder="请输入备注" />
+        <el-row :gutter="20">
+          <el-col :span="24">
+         <div class="form-section-title">多部门审批意见</div>
+       </el-col>
+        </el-row>
+        
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item label="原部门意见" prop="originalDeptManagerOpinion">
+              <el-input v-model="form.originalDeptManagerOpinion" placeholder="请输入原部门负责人意见" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="拟调入部门意见" prop="targetDeptManagerOpinion">
+              <el-input v-model="form.targetDeptManagerOpinion" placeholder="请输入拟调入部门负责人意见" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="人事部门意见" prop="hrDeptOpinion">
+              <el-input v-model="form.hrDeptOpinion" placeholder="请输入人事部门意见" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="24">
+         <div class="form-section-title">员工确认与归档</div>
+       </el-col>
+        </el-row>
+        
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item label="员工本人确认" prop="employeeConfirmation">
+              <el-radio-group v-model="form.employeeConfirmation">
+                <el-radio label="未确认">未确认</el-radio>
+                <el-radio label="已确认">已确认</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="岗位生效日期" prop="effectiveDate">
+              <el-date-picker
+                v-model="form.effectiveDate"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="请选择岗位变动生效日期"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="人事处理人" prop="hrHandler">
+              <el-input v-model="form.hrHandler" placeholder="请输入人事处理人" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="6">
+            <el-form-item label="人事归档附件" prop="hrArchiveAttachment">
+              <el-input v-model="form.hrArchiveAttachment" placeholder="请输入上传人事归档附件" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="备注" prop="remarks">
+          <el-input v-model="form.remarks" type="textarea" :rows="1" placeholder="请输入备注" />
         </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
     </el-card>
+
+
     <!-- Submit component -->
     <submitVerify ref="submitVerifyRef" :task-variables="taskVariables" @submit-callback="submitCallback" />
     <!-- Approval record -->
@@ -424,3 +538,16 @@ onMounted(() => {
   }
 });
 </script>
+
+<style scoped>
+
+  .form-section-title {
+    font-size: 12px;
+    font-weight: bold;
+    color:#409EFF;
+    margin-bottom: 20px;
+    border-left: 4px solid #409EFF;
+    padding-left: 10px;
+  }
+  
+  </style>
