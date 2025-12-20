@@ -55,6 +55,11 @@ export interface CustomerInfoVO {
   packageType: number;
 
   /**
+   * 合同金额
+   */
+  contractAmount: number;
+
+  /**
    * 实收金额
    */
   actualReceipt: number;

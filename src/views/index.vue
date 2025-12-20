@@ -451,15 +451,15 @@ onMounted(() => {
         margin-left: 5px;
 
         .total-label {
-          font-size: 12px;
+          font-size: 14px;
           color: #666;
           margin-bottom: 2px;
         }
 
         .total-number {
-          font-size: 18px;
+          font-size: 24px;
           font-weight: bold;
-          color: #333;
+          color:#ff6b35;
         }
       }
     }

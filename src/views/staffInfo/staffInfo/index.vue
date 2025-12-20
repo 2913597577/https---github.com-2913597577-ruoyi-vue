@@ -60,9 +60,9 @@
 
       <el-table v-loading="loading" border :data="staffInfoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="员工档案详情" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="员工职级变更" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-button link type="primary" icon="View" @click="handleViewDetail(scope.row)">查看详情</el-button>
+            <el-button link type="primary" icon="View" @click="handlePositionRankDetail(scope.row)">查看详情</el-button>
           </template>
         </el-table-column>
         <el-table-column label="员工姓名" align="center" prop="name" />
@@ -130,15 +130,18 @@
           </template>
         </el-table-column>
         <el-table-column label="状态" align="center" prop="status" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="240" fixed="right">
           <template #default="scope">
+            <el-button link type="info" icon="View" @click="handleViewDetail(scope.row)">查看</el-button>
+              <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
+                @click="handleProcess(scope.row)">处置</el-button>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                v-hasPermi="['staffInfo:staffInfo:edit']"></el-button>
+                v-hasPermi="['staffInfo:staffInfo:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                v-hasPermi="['staffInfo:staffInfo:remove']"></el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                v-hasPermi="['staffInfo:staffInfo:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -150,10 +153,10 @@
     <!-- 添加或修改员工档案对话框 -->
     <!-- 替换原有的 el-dialog 部分 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="800px" append-to-body :close-on-click-modal="false"
-      :destroy-on-close="true">
+      :destroy-on-close="true" draggable>
       <!-- 外层卡片：添加边框与阴影，统一视觉容器 -->
       <el-card class="staff-form-card" shadow="always" border>
-        <el-form ref="staffInfoFormRef" :model="form" :rules="rules" label-width="120px" inline-message size="medium">
+        <el-form ref="staffInfoFormRef" :model="form" :rules="rules" label-width="120px" inline-message size="small">
           <!-- 1. 基础信息组：核心身份信息 -->
           <div class="form-group">
             <h3 class="group-title">基础信息</h3>
@@ -186,9 +189,9 @@
                 <el-form-item label="性别" prop="sex" class="form-item">
                   <!-- 优化：将输入框改为下拉选择，避免手动输入不一致 -->
                   <el-select v-model="form.sex" placeholder="请选择性别" style="width: 100%">
-                    <el-option label="男" value="男"></el-option>
-                    <el-option label="女" value="女"></el-option>
-                    <el-option label="其他" value="其他"></el-option>
+                    <el-option label="男" :value="0"></el-option>
+                    <el-option label="女" :value="1"></el-option>
+                    <el-option label="其他" :value="2"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -467,11 +470,11 @@
 
           <!-- 7. 个人简介组：长文本信息 -->
           <div class="form-group">
-            <h3 class="group-title">个人简介</h3>
+            <h3 class="group-title">工作荣誉</h3>
             <el-row :gutter="20" class="form-row">
               <el-col :span="24">
-                <el-form-item label="员工个人简介" prop="desc" class="form-item-full">
-                  <el-input v-model="form.desc" type="textarea" placeholder="请输入员工个人简介（如工作经历、技能特长等）" :rows="4"
+                <el-form-item label="员工所获荣誉" prop="desc" class="form-item-full">
+                  <el-input v-model="form.description" type="textarea" placeholder="请输入员工个人简介（如工作经历、技能特长等）" :rows="4"
                     style="width: 100%" />
                 </el-form-item>
               </el-col>
@@ -483,17 +486,84 @@
       <!-- 底部按钮区域：保持居中对齐 -->
       <template #footer>
         <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="submitForm" size="medium">确 定</el-button>
-          <el-button @click="cancel" size="medium">取 消</el-button>
+          <el-button :loading="buttonLoading" type="primary" @click="submitForm" size="small">确 定</el-button>
+          <el-button @click="cancel" size="small">取 消</el-button>
         </div>
       </template>
     </el-dialog>
 
+ <!-- 处置按钮弹窗内容 -->
+ <el-dialog v-model="positionDialogVisible" title="岗位变动审批" width="700px" class="position-change-dialog"  style="height: 340px;" append-to-body draggable>
+  <el-card class="position-card" shadow="always" border>
+  <el-form label-width="120px" inline-message size="small">
+        <el-row>
+          <el-col :span="8">
+        <el-form-item label="员工姓名" prop="name" class="position-form-item">
+            <el-input :value="currentRow?.name" readonly />
+        </el-form-item>
+          </el-col>
+          <el-col :span="8">
+        <el-form-item label="工号" prop="jobNumber" class="position-form-item">
+            <el-input :value="currentRow?.jobNumber" readonly />
+        </el-form-item>
+          </el-col>
+          <el-col :span="8">
+        <el-form-item label="部门ID" prop="deptId" class="position-form-item">
+            <el-input :value="currentRow?.deptId" readonly />
+        </el-form-item>
+          </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :span="8">
+        <el-form-item label="原职务" prop="positionName" class="audit-form-item">
+            <el-input :value="currentRow.positionName" readonly />
+        </el-form-item>
+         </el-col>
+      <el-col :span="8">
+         <el-form-item label="原职级" prop="positionRank" class="audit-form-item">
+            <el-input :value="currentRow.positionRank" readonly />
+        </el-form-item>
+         </el-col>
+        <el-col :span="8">
+         <el-form-item label="员工类型" prop="type" class="audit-form-item">
+            <el-input :value="currentRow.type" readonly />
+        </el-form-item>
+         </el-col>
+       </el-row>
+       <el-row>
+        <el-col :span="16">
+         <el-form-item label="岗位变动类型" prop="changeType" class="audit-form-item">
+          <el-select  
+                  v-model="positionChangeForm.changeType"
+                  placeholder="请选择岗位变动类型" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_position_change" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+         </el-form-item>
+         </el-col>
+        </el-row>
+ </el-form>
+  </el-card>
+      <template #footer>
+        <div class="dialog-footer" style="text-align: right">
+          <el-button type="primary" :loading="submitting" @click="submitPosition">确定</el-button>
+          <el-button @click="positionCancel" :disabled="submitting">取消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+  
 
 <!-- 员工档案详情 -->
-    <el-dialog :title="detailDialog.title" v-model="detailDialog.visible" width="80%" append-to-body
+    <el-dialog :title="detailDialog.title" v-model="detailDialog.visible" width="800px" append-to-body
       :close-on-click-modal="false" :destroy-on-close="true" class="employee-detail-dialog"
-      style="--el-dialog-padding: 0">
+      style="--el-dialog-padding: 0" draggable>
       <!-- 容器：控制内边距、宽度与居中 -->
       <div class="dialog-container">
         <!-- 1. 基本信息卡片（含头像区） -->
@@ -574,7 +644,7 @@
             <!-- 职级 -->
             <el-col :xs="24" :md="12" class="info-col">
               <label class="info-label">职级</label>
-              <div class="info-value">{{ detailForm.positionRank || '—' }}</div>
+              <div class="info-value" style="font-weight: bold;">{{ detailForm.positionRank || '—' }}</div>
             </el-col>
             <!-- 员工类型 -->
             <el-col :xs="24" :md="12" class="info-col">
@@ -793,7 +863,7 @@
         <!-- 7. 个人简介卡片 -->
         <el-card class="detail-card">
           <div class="card-header">
-            <h2 class="card-title">个人简介</h2>
+            <h2 class="card-title">工作荣誉</h2>
           </div>
           <el-row :gutter="24" class="info-row">
             <el-col :xs="24" class="info-col">
@@ -806,7 +876,7 @@
 
         <!-- 底部操作按钮 -->
         <div class="dialog-footer">
-          <el-button @click="detailDialog.visible = false" class="close-btn" size="medium">
+          <el-button @click="detailDialog.visible = false" class="close-btn" size="small">
             关闭
           </el-button>
         </div>
@@ -821,6 +891,7 @@ import { listStaffInfo, getStaffInfo, delStaffInfo, addStaffInfo, updateStaffInf
 import { StaffInfoVO, StaffInfoQuery, StaffInfoForm } from '@/api/staffInfo/staffInfo/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dc_position_change } = toRefs<any>(proxy?.useDict('dc_position_change'));
 
 const staffInfoList = ref<StaffInfoVO[]>([]);
 const buttonLoading = ref(false);
@@ -916,6 +987,11 @@ const data = reactive<PageData<StaffInfoForm, StaffInfoQuery>>({
 
 const { queryParams, form, rules } = toRefs(data);
 
+// 在现有的 ref 和 reactive 声明后面添加
+const positionChangeForm = ref({
+  changeType: '' // 用于存储选中的岗位变动类型
+});
+
 /** 查询员工档案列表 */
 const getList = async () => {
   loading.value = true;
@@ -972,6 +1048,40 @@ const handleUpdate = async (row?: StaffInfoVO) => {
   dialog.visible = true;
   dialog.title = "修改员工档案";
 }
+
+/** 处置按钮操作 */
+// 控制处置弹窗显示
+const positionDialogVisible = ref(false)
+// 当前选中行数据
+const currentRow = ref<any>(null)
+// 提交状态（用于按钮loading）
+const submitting = ref(false)
+
+// 打开处置弹窗
+const handleProcess = (row?: any) => {
+  currentRow.value = row || null;
+  positionDialogVisible.value = true;
+}
+
+// 提交审核（处置）
+const submitPosition = async () => {
+  submitting.value = true;
+  try {
+    // 这里执行实际的提交逻辑，例如调用API
+    // await someApiCall(currentRow.value);
+    
+    proxy?.$modal.msgSuccess("处置成功");
+    positionDialogVisible.value = false; // 关闭弹窗
+  } finally {
+    submitting.value = false;
+  }
+};
+
+// 取消审核（处置）
+const positionCancel = () => {
+  positionDialogVisible.value = false;
+}
+
 
 /** 提交按钮 */
 const submitForm = () => {
@@ -1140,24 +1250,24 @@ onMounted(() => {
 
 
 .detail-card {
-  padding: 16px;
+  padding: 6px;
 }
 
 .detail-group {
-  margin-bottom: 24px;
+  margin-bottom: 6px;
 }
 
 .detail-group-title {
   font-size: 16px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   padding-bottom: 6px;
   border-bottom: 1px solid #eee;
 }
 
 .detail-row {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .detail-item {
@@ -1174,15 +1284,15 @@ onMounted(() => {
 
 .employee-detail-dialog {
   .dialog-container {
-    padding: 24px;
-    max-width: 1200px;
+    padding: 6px;
+    max-width: 900px;
     margin: 0 auto;
   }
 
   // 卡片通用样式
   .detail-card {
-    margin-bottom: 20px;
-    padding: 20px;
+    margin-bottom: 6px;
+    padding: 6px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: box-shadow 0.3s ease;
@@ -1195,30 +1305,32 @@ onMounted(() => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
+      margin-bottom: 6px;
+      padding-bottom: 6px;
       border-bottom: 1px solid var(--el-border-color-lighter);
     }
 
     .card-title {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
-      color: var(--el-text-color-primary);
+      color:#1890ff;
       margin: 0;
+      border-left: 4px solid #409EFF;
+      padding-left: 10px;
     }
 
     .info-row {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .info-col {
-      margin-bottom: 16px;
+      margin-bottom: 2px;
     }
 
     .info-label {
       display: block;
       margin-bottom: 6px;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--el-text-color-placeholder);
     }
 
@@ -1226,11 +1338,12 @@ onMounted(() => {
       padding: 10px 12px;
       border-radius: 8px;
       background-color: var(--el-fill-color-light);
-      font-size: 14px;
+      font-size: 12px;
       color: var(--el-text-color-primary);
-      min-height: 42px;
+      min-height: 24px;
       display: flex;
       align-items: center;
+      margin-bottom: 0px;
       transition: background-color 0.2s ease;
 
       &:hover {
@@ -1248,15 +1361,15 @@ onMounted(() => {
     }
 
     .employee-avatar {
-      width: 80px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       border: 2px solid var(--el-color-primary-light-3);
     }
 
     .avatar-placeholder {
-      width: 80px;
-      height: 80px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       background-color: var(--el-fill-color);
       display: flex;
@@ -1359,4 +1472,6 @@ onMounted(() => {
     }
   }
 }
+
+
 </style>

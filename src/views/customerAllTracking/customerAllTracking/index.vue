@@ -108,19 +108,19 @@
         </template>
       </el-table-column>
       <el-table-column label="法务支持" align="center" prop="legalSupportName" width="120" />
-      <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="100">
+      <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="140">
         <template #default="scope">
           <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime, '{y}-{m}-{d}') : '' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="跟踪内容" align="center" prop="remark" width="240" show-overflow-tooltip />
-      <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="100">
+      <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="140">
         <template #default="scope">
           <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') : '' }}</span>
         </template>
       </el-table-column>
       
-      <el-table-column label="跟踪类型" align="center" prop="trackingType" width="100">
+      <el-table-column label="跟踪类型" align="center" prop="trackingType" width="200">
         <template #default="scope">
           <el-tag v-if="scope.row.trackingType === 1">回访</el-tag>
           <el-tag v-else-if="scope.row.trackingType === 2" type="success">出访</el-tag>

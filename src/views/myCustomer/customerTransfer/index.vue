@@ -153,7 +153,8 @@
             <span>{{ parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="实付金额" align="center" prop="actualPayment" width="140" show-overflow-tooltip />
+        <el-table-column label="合同金额" align="center" prop="contractAmount" width="140" show-overflow-tooltip />
+        <el-table-column label="实收金额" align="center" prop="actualPayment" width="140" show-overflow-tooltip />
         <el-table-column label="尾款金额" align="center" prop="balanceStatus" width="140" show-overflow-tooltip />
         <el-table-column label="尾款支付条件" align="center" prop="balancePayType" width="100" show-overflow-tooltip />
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" width="100" show-overflow-tooltip>
@@ -207,8 +208,8 @@
         <el-table-column label="合作公司名称" align="center" prop="preCompany" width="100" show-overflow-tooltip />
         <el-table-column label="不合作原因" align="center" prop="preReason" width="100" show-overflow-tooltip />
         <el-table-column label="公司纠纷及解决方式" align="center" prop="preDiscuss" width="150" show-overflow-tooltip />
-        <el-table-column label="待处理事项登记" align="center" prop="pendingMatters" width="150" show-overflow-tooltip />
-        <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="200" show-overflow-tooltip />
+        <el-table-column label="待处理事项登记" align="center" prop="pendingRemark" width="150" show-overflow-tooltip />
+        <!-- <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="200" show-overflow-tooltip /> -->
         <el-table-column label="欠款问题登记" align="center" prop="debtDetails" width="120" />
         <el-table-column label="欠款问题备注" align="center" prop="debtRemark" width="120" show-overflow-tooltip />
         <el-table-column label="录入日期" align="center" prop="auditTime" width="80">
@@ -220,7 +221,7 @@
         fixed="right">
           <template #default="scope">
             <!-- <div class="table-action-buttons"> -->
-              <el-button link type="primary" icon="View" @click="handleView(scope.row)">查看</el-button>
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">查看</el-button>
               <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
                 @click="handleProcess(scope.row)">处置</el-button>
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
@@ -236,7 +237,7 @@
 
  <!-- 新增和修改按钮弹窗内容 -->
 <template>
-  <el-dialog  :title="dialog.title" v-model="dialog.visible" width="75%" append-to-body draggable
+  <el-dialog  :title="dialog.title" v-model="dialog.visible" width="70%" append-to-body draggable
     class="customer-transfer-dialog"
   >
     <div class="dialog-content">
@@ -279,15 +280,15 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="合同编号" prop="contractCode" class="form-item">
                 <el-input 
                   v-model="form.contractCode" 
-                  placeholder="请输入合同编号" 
+                  placeholder="请输入合同编号(8位数字)" 
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="10">
+            <el-col :span="8">
           <el-form-item label="主体名称" prop="companyName" class="form-item">
             <el-input 
               v-model="form.companyName" 
@@ -460,7 +461,7 @@
                     v-for="dict in dc_employee_count" 
                     :key="dict.value" 
                     :label="dict.label"
-                    :value="dict.value"
+                    :value="parseInt(dict.value)"
                   />
                 </el-select>
 
@@ -493,30 +494,45 @@
           <div class="section-title">签约情况</div>
           
           <el-row :gutter="20" class="form-row">
-            <el-col :span="8">
+            <el-col :span="6">
+              <el-form-item label="合同金额" prop="contractAmount" class="form-item">
+                <el-input 
+                  v-model="form.contractAmount" 
+                  placeholder="合同金额" 
+                  type="number"
+                   @input="calculateBalanceAmount"
+                >
+                  <template #append>元</template>
+                </el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
               <el-form-item label="实收金额" prop="actualPayment" class="form-item">
                 <el-input 
                   v-model="form.actualPayment" 
                   placeholder="实收金额" 
                   type="number"
+                 @input="calculateBalanceAmount"
                 >
                   <template #append>元</template>
                 </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            
+            <el-col :span="6">
               <el-form-item label="尾款金额" prop="balanceStatus" class="form-item">
                 <el-input 
                   v-model="form.balanceStatus" 
-                  placeholder="尾款金额,没有填0" 
+                  placeholder="尾款金额" 
                   type="number"
+                  readonly
                 >
                   <template #append>元</template>
                 </el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
-              <el-form-item label="尾款支付条件" class="form-item">
+            <el-col :span="6">
+              <el-form-item label="尾款支付条件" class="form-item" prop="balancePayType" :rules="balancePayTypeRules">
                 <el-input 
                   v-model="form.balancePayType" 
                   placeholder="尾款支付条件" 
@@ -526,7 +542,7 @@
           </el-row>
           
           <el-row :gutter="20" class="form-row">
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="套餐类型" prop="serviceType" class="form-item">
                 <el-select 
                   v-model="form.serviceType" 
@@ -542,7 +558,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="16">
+            <el-col :span="12">
               <el-form-item label="服务周期" class="form-item" prop="serviceEnd">
                 <div class="date-range">
                   <el-date-picker
@@ -561,10 +577,26 @@
                 </div>
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+              <el-form-item label="客户来源" prop="customerSource" class="form-item">
+                <el-select 
+                  v-model="form.customerSource" 
+                  placeholder="请选择客户来源" 
+                  style="width: 90%"
+                >
+                  <el-option 
+                    v-for="dict in dc_customer_source" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="parseInt(dict.value)"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         
           <el-row :gutter="20" class="form-row">
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="开票要求" prop="invoiceRequirements" class="form-item">
                 <el-select 
                   v-model="form.invoiceRequirements" 
@@ -580,7 +612,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="开票状态" prop="invoiceStatus" class="form-item">
                 <el-select 
                   v-model="form.invoiceStatus" 
@@ -596,11 +628,19 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="开票内容" class="form-item">
                 <el-input 
                   v-model="form.invoiceContent" 
                   placeholder="请输入开票内容" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="推荐人" class="form-item">
+                <el-input 
+                  v-model="form.referrer" 
+                  placeholder="请输入推荐人" 
                 />
               </el-form-item>
             </el-col>
@@ -674,7 +714,7 @@
                   class="form-item"
                 >
                   <el-input 
-                    v-model="performance.balance" 
+                    v-model="performance.balance"
                     :placeholder="`请分配业绩金额`" 
                     type="number"
                   >
@@ -770,23 +810,37 @@
             />
           </el-form-item>
           
-          <el-form-item label="待处理事项登记：" class="form-item" style="margin-bottom: 20px;">
+         <!--  <el-form-item label="待处理事项登记：" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.pendingRemark"
               type="textarea"
               :rows="2"
               placeholder="劳资纠纷、合同纠纷、借贷纠纷、承揽纠纷、财税问题、执行案件等"
             />
-          </el-form-item>
-          
-          <el-form-item label="欠款问题请详细登记:" class="form-item" style="margin-bottom: 20px;">
+          </el-form-item> -->
+ <el-form-item label="待处理事项登记：" class="form-item" style="margin-bottom: 20px;">
+  <el-select
+    v-model="form.pendingRemark"
+    multiple
+    placeholder="请选择待处理事项（可多选）"
+    style="width: 100%"
+  >
+    <el-option
+      v-for="item in pendingMattersOptions"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value"
+    />
+  </el-select>
+</el-form-item>
+         <!--  <el-form-item label="欠款问题请详细登记:" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.debtRemark"
               type="textarea"
               :rows="2"
               placeholder="相关主体、已知债务人信息、标的额、证据情况、案件处理要求等"
             />
-          </el-form-item>
+          </el-form-item> -->
 
           <el-form-item label="其他备注信息:" class="form-item" style="margin-bottom: 20px;">
             <el-input
@@ -800,6 +854,45 @@
         </div>
       </el-form>
     </div>
+     <!-- 案件登记 -->
+     <div class="form-section-5">
+          <div class="section-title">案件登记</div>
+          <el-row :gutter="20" class="form-row">
+            <el-col :span="8">
+              <el-form-item label="债务人" prop="debtor" class="form-item">
+                <el-input 
+                  v-model="form.debtor" 
+                  placeholder="债务人姓名" 
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="欠款金额" prop="debtAmount" class="form-item">
+                <el-input 
+                  v-model="form.debtAmount" 
+                  placeholder="欠款金额" 
+                  type="number"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="联系电话" prop="debtorContact" class="form-item">
+                <el-input 
+                  v-model="form.debtorContact" 
+                  placeholder="联系电话" 
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item label="证据备注:" prop="evidenceRemark" class="form-item">
+            <el-input
+              v-model="form.evidenceRemark"
+              type="textarea"
+              :rows="2"
+              placeholder="请输入证据备注信息"
+            />
+          </el-form-item>
+          </div>
 
     <!-- 对话框底部按钮 -->
     <template #footer>
@@ -884,19 +977,79 @@
   </el-dialog>
 
     <!-- 处置按钮弹窗内容 -->
-    <el-dialog v-model="auditDialogVisible" title="审核" width="500px" append-to-body draggable>
-    
+    <el-dialog v-model="auditDialogVisible" title="审核" width="680px" append-to-body draggable>
       <el-form :model="auditForm" label-width="100px" class="audit-signature-form">
+        <el-form-item label="公司名称" prop="companyName" class="audit-form-item">
+            <el-input v-model="currentRow.companyName" readonly />
+        </el-form-item>
+
+      <el-row>
+        <el-col :span="8">
+        <el-form-item label="合同金额" prop="contractAmount" class="audit-form-item">
+            <el-input :value="formatCurrency(currentRow.contractAmount)" readonly />
+        </el-form-item>
+         </el-col>
+      <el-col :span="8">
+         <el-form-item label="实收金额" prop="actualPayment" class="audit-form-item">
+            <el-input :value="formatCurrency(currentRow.actualPayment)" readonly />
+        </el-form-item>
+         </el-col>
+        <el-col :span="8">
+         <el-form-item label="尾款金额" prop="balanceStatus" class="audit-form-item">
+            <el-input :value="formatCurrency(currentRow.balanceStatus)" readonly />
+        </el-form-item>
+         </el-col>
+       </el-row>
+       <el-row>
+            <el-col :span="8">
+              <el-form-item label="开票要求" prop="invoiceRequirements" class="audit-form-item">
+                <el-select 
+                  v-model="currentRow.invoiceRequirements" 
+                  placeholder="请选择开票要求" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_invoice_requirement" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="开票状态" prop="invoiceStatus" class="audit-form-item">
+                <el-select 
+                  v-model="currentRow.invoiceStatus" 
+                  placeholder="请选择开票状态" 
+                  style="width: 100%"
+                >
+                  <el-option 
+                    v-for="dict in dc_invoice_status" 
+                    :key="dict.value" 
+                    :label="dict.label"
+                    :value="parseInt(dict.value)"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="开票内容" prop="invoiceContent" class="audit-form-item">
+                <el-input 
+                  v-model="currentRow.invoiceContent"  />
+              </el-form-item>
+            </el-col>
+          </el-row>
         <!-- 审核状态 -->
-        <el-form-item label="审核">
+        <el-form-item label="财务审核" class="audit-form-item1">
           <el-radio-group v-model="auditForm.auditStatus">
             <el-radio label="1">通过</el-radio>
             <el-radio label="2">未通过</el-radio>
           </el-radio-group>
         </el-form-item>
-
+         <!-- 审核意见 -->
         <!-- 上传签名：仅在通过时显示 -->
-        <el-form-item v-if="auditForm.auditStatus === '1'" label="电子签名">
+        <el-form-item v-if="auditForm.auditStatus === '1'" label="电子签名" class="audit-form-item2">
           <fileUpload v-model="localFileList" :limit="1" :file-size="2" :file-type="['png', 'jpg', 'jpeg']"
             :is-show-tip="false" />
           <div v-if="localFileList.length > 0 && localFileList[0].url" style="margin-top: 8px;">
@@ -919,21 +1072,42 @@
     <el-dialog v-model="viewDialogVisible" title="客户流转单详情" width="700px" append-to-body draggable>
       <div class="customer-transfer-detail">
         <el-scrollbar max-height="600px">
-          <el-descriptions :column="1" border size="small">
+          <el-descriptions :column="1" border size="small" label-width="32%" class="fixed-label-descriptions">
+            <el-descriptions-item label="" :span="1">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
+           <strong>财务审核信息</strong>
+         </div>
+         </el-descriptions-item>
             <el-descriptions-item label="录入日期">
               {{ parseTime(viewForm.createTime, '{y}-{m}-{d}') }}
+            </el-descriptions-item>
+            <el-descriptions-item label="录入人">
+              {{ getUserNameById(viewForm.inviterId) }}
             </el-descriptions-item>
             <el-descriptions-item label="财务确认">
               <dict-tag :options="finance_confirmed"
                 :value="viewForm.financeConfirmed !== undefined && viewForm.financeConfirmed !== null ? viewForm.financeConfirmed : ''" />
               <!-- <dict-tag :options="finance_confirmed" :value="viewForm.financeConfirmed ?? ''" /> -->
             </el-descriptions-item>
+            <el-descriptions-item label="审核人">
+              {{ viewForm.auditUserName }}
+            </el-descriptions-item>
+            <el-descriptions-item label="审核时间">
+              {{ viewForm.auditTime }}
+            </el-descriptions-item>
+
+            <el-descriptions-item label="" :span="1">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
+           <strong>客户基本信息</strong>
+         </div>
+         </el-descriptions-item>
             <el-descriptions-item label="合同编号">
               {{ viewForm.contractCode }}
             </el-descriptions-item>
             <el-descriptions-item label="合同OssID">
               {{ viewForm.contractOssId }}
             </el-descriptions-item>
+           
             <el-descriptions-item label="客户归属城市">
               <dict-tag :options="dc_sercive_city"
                 :value="viewForm.customerCity !== undefined && viewForm.customerCity !== null ? viewForm.customerCity : ''" />
@@ -941,29 +1115,25 @@
             <el-descriptions-item label="公司名称" label-align="left" align="left" width="60">
               {{ viewForm.companyName }}
             </el-descriptions-item>
-            <el-descriptions-item label="所属行业">
-               <dict-tag :options="dc_company_industry"
-                :value="viewForm.companyIndustry !== undefined && viewForm.companyIndustry !== null ? viewForm.companyIndustry : ''" />
-            </el-descriptions-item>
-            <el-descriptions-item label="公司地址">
-              {{ viewForm.companyAddress }}
-            </el-descriptions-item>
-            <el-descriptions-item label="员工人数">
-              {{ viewForm.employeeCount }}
-            </el-descriptions-item>
-            <el-descriptions-item label="是否有代账公司">
-              <!-- <span v-if="viewForm.accountingCompany === 0">是</span>
-              <span v-else-if="viewForm.accountingCompany === 1">否</span>
-              <span v-else-if="viewForm.accountingCompany === 2">不确定</span> -->
-              <dict-tag :options="dc_accounting_company"
-                :value="viewForm.accountingCompany !== undefined && viewForm.accountingCompany !== null ? viewForm.accountingCompany : ''" />
-            </el-descriptions-item>
+           
             <!-- <el-descriptions-item label="邀约人">
               {{ getUserNameById(viewForm.inviterId) }}
             </el-descriptions-item>
             <el-descriptions-item label="客户经理">
               {{ getUserNameById(viewForm.accountManagerId) }}
             </el-descriptions-item> -->
+            <el-descriptions-item label="决策人姓名">
+              {{ viewForm.decisionMaker }}
+            </el-descriptions-item>
+            <el-descriptions-item label="决策人联系方式">
+              {{ viewForm.decisionMakerContact }}
+            </el-descriptions-item>
+            <el-descriptions-item label="决策人职务">
+              {{ viewForm.decisionMakerPosition }}
+            </el-descriptions-item>
+            <el-descriptions-item label="决策人年龄">
+              {{ viewForm.decisionMakerAge }}
+            </el-descriptions-item>
 
             <el-descriptions-item label="对接人姓名">
               {{ viewForm.contactPerson }}
@@ -990,14 +1160,48 @@
             <el-descriptions-item label="自然人年龄">
               {{ viewForm.additionalAge }}
             </el-descriptions-item>
+
+            <el-descriptions-item label="所属行业">
+              <!-- {{ viewForm.companyIndustry }} -->
+              <dict-tag :options="dc_company_industry"
+                :value="viewForm.companyIndustry !== undefined && viewForm.companyIndustry !== null ? viewForm.companyIndustry : ''" />
+            </el-descriptions-item>
+
+            <el-descriptions-item label="公司地址">
+              {{ (viewForm.province || '') + (viewForm.city || '') + (viewForm.district || '') + (viewForm.companyAddress || '') }}
+            </el-descriptions-item>
+            <el-descriptions-item label="员工人数">
+              <!-- {{ viewForm.employeeCount }} -->
+              <dict-tag :options="dc_employee_count"
+              :value="viewForm.employeeCount !== undefined && viewForm.employeeCount !== null ? viewForm.employeeCount : ''" />
+            </el-descriptions-item>
+            <el-descriptions-item label="是否有代账公司">
+              <!-- <span v-if="viewForm.accountingCompany === 0">是</span>
+              <span v-else-if="viewForm.accountingCompany === 1">否</span>
+              <span v-else-if="viewForm.accountingCompany === 2">不确定</span> -->
+              <dict-tag :options="dc_accounting_company"
+                :value="viewForm.accountingCompany !== undefined && viewForm.accountingCompany !== null ? viewForm.accountingCompany : ''" />
+            </el-descriptions-item>
             <el-descriptions-item label="客户性格及工作习惯描述">
               {{ viewForm.customerDescription }}
             </el-descriptions-item>
-            <el-descriptions-item label="实付金额">
-              {{ viewForm.actualPayment }}
+            <el-descriptions-item label="" :span="1">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
+           <strong>签约情况</strong>
+         </div>
+         </el-descriptions-item>
+
+         <el-descriptions-item label="合同金额">
+              {{ formatCurrency(viewForm.contractAmount) }}
             </el-descriptions-item>
-            <el-descriptions-item label="尾款情况">
-              {{ viewForm.balanceStatus }}
+            <el-descriptions-item label="实收金额">
+              {{ formatCurrency(viewForm.actualPayment) }}
+            </el-descriptions-item>
+            <el-descriptions-item label="尾款金额">
+              {{formatCurrency(viewForm.balanceStatus) }}
+            </el-descriptions-item>
+            <el-descriptions-item label="尾款支付条件">
+              {{ viewForm.balancePayType }}
             </el-descriptions-item>
             <!--  <el-descriptions-item label="签约类型">
               <dict-tag :options="contract_type" :value="viewForm.contractType || ''" />
@@ -1007,14 +1211,20 @@
                 :value="viewForm.serviceType !== undefined && viewForm.serviceType !== null ? viewForm.serviceType : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="服务周期">
-              {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }} 至 {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')}}
+              {{ parseTime(viewForm.serviceStart, '{y}-{m}-{d}') }}  至  {{ parseTime(viewForm.serviceEnd, '{y}-{m}-{d}')}}
             </el-descriptions-item>
 
             <!-- <el-descriptions-item label="财务签字">
               {{ viewForm.financeSignature }}
             </el-descriptions-item> -->
+            <el-descriptions-item label="开票要求">
+              <dict-tag :options="dc_invoice_requirement" :value="viewForm.invoiceRequirements !== undefined && viewForm.invoiceRequirements !== null ? viewForm.invoiceRequirements : ''" />
+            </el-descriptions-item>
             <el-descriptions-item label="开票状态">
               <dict-tag :options="dc_invoice_status" :value="viewForm.invoiceStatus !== undefined && viewForm.invoiceStatus !== null ? viewForm.invoiceStatus : ''" />
+            </el-descriptions-item>
+            <el-descriptions-item label="开票内容">
+              {{ viewForm.invoiceContent }}
             </el-descriptions-item>
             <el-descriptions-item label="律师咨询情况">
               {{ viewForm.lawyerConsultation }}
@@ -1022,7 +1232,11 @@
             <el-descriptions-item label="其他费用沟通">
               {{ viewForm.otherFee }}
             </el-descriptions-item>
-
+            <el-descriptions-item label="" :span="1">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
+           <strong>客户情况概述</strong>
+         </div>
+         </el-descriptions-item>
             <el-descriptions-item label="以前是否有过公司法务">
               <!-- {{ viewForm.preLegal === 1 ? '是' : '否' }} -->
               <dict-tag :options="dc_legal_affairs"
@@ -1040,11 +1254,28 @@
             <el-descriptions-item label="待处理事项登记">
               {{ viewForm.pendingRemark }}
             </el-descriptions-item>
-            <el-descriptions-item label="欠款问题请详细登记">
+            <!-- <el-descriptions-item label="欠款问题请详细登记">
               {{ viewForm.debtRemark }}
-            </el-descriptions-item>
+            </el-descriptions-item> -->
             <el-descriptions-item label="其他备注信息">
               {{ viewForm.remark }}
+            </el-descriptions-item>
+            <el-descriptions-item label="" :span="1">
+         <div style="text-align: center; width: 100%; color: #1890ff;">
+           <strong>案件登记</strong>
+         </div>
+         </el-descriptions-item>
+         <el-descriptions-item label="债务人">
+              {{ viewForm.debtor }}
+            </el-descriptions-item>
+            <el-descriptions-item label="欠款金额">
+              {{ formatCurrency(viewForm.debtAmount) }}
+            </el-descriptions-item>
+            <el-descriptions-item label="联系电话">
+              {{ viewForm.debtorContact }}
+            </el-descriptions-item>
+            <el-descriptions-item label="证据备注">
+              {{ viewForm.evidenceRemark }}
             </el-descriptions-item>
           </el-descriptions>
         </el-scrollbar>
@@ -1102,6 +1333,7 @@ const { dc_invoice_requirement } = toRefs<any>(proxy?.useDict('dc_invoice_requir
 const { dc_invoice_status } = toRefs<any>(proxy?.useDict('dc_invoice_status'));
 const { dc_company_industry } = toRefs<any>(proxy?.useDict('dc_company_industry'));
 const { dc_employee_count } = toRefs<any>(proxy?.useDict('dc_employee_count'));
+const { dc_customer_source } = toRefs<any>(proxy?.useDict('dc_customer_source'));
 const { finance_confirmed, combo_type } = toRefs<any>(proxy?.useDict('finance_confirmed', 'combo_type'));
 const customerTransferList = ref<CustomerTransferVO[]>([]);
 const buttonLoading = ref(false);
@@ -1151,13 +1383,14 @@ const initFormData: CustomerTransferForm = {
   preCompany: undefined,
   preReason: undefined,
   preDiscuss: undefined,
-  pendingMatters: [],
+  //pendingMatters: [],
   pendingRemark: undefined,
   debtDetails: [],
   debtRemark: undefined,
   accountManagerId: undefined,
   inviterId: undefined,
   remark: undefined,
+  contractAmount: undefined,
   balancePayType: undefined,
 
   contractCode: undefined,
@@ -1209,7 +1442,7 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     otherFee: undefined,
     financeConfirmed: undefined,
     balancePayType: undefined,
-
+    contractAmount:undefined,
     contractCode: undefined,
 
     contractOssId: undefined,
@@ -1252,7 +1485,9 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
    /*  addressModel: [
       { required: true, message: "公司地址不能为空", trigger: "change" }
     ], */
-
+    contractAmount: [
+      { required: true, message: "合同金额不能为空", trigger: "blur" }
+    ],
     actualPayment: [
       { required: true, message: "实收金额不能为空", trigger: "blur" }
     ],
@@ -1267,6 +1502,9 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     ],
     serviceEnd: [
       { required: true, message: "服务周期日期不能为空", trigger: "change" }
+    ],
+    customerSource: [
+      { required: true, message: "客户来源不能为空", trigger: "change" }
     ],
     invoiceRequirements: [
       { required: true, message: "开票要求不能为空", trigger: "change" }
@@ -1324,7 +1562,7 @@ const transferFormData = ref({
   preCompany: undefined,
   preReason: undefined,
   preDiscuss: undefined,
-  pendingMatters: [],
+  //pendingMatters: [],
   pendingRemark: undefined,
   debtDetails: [],
   debtRemark: undefined,
@@ -1361,6 +1599,26 @@ const invoiceStatusList = [
   { value: 1, label: '已开票' }
 ];
 
+//添加金额格式化处理函数
+const formatCurrency = (value) => {
+  if (!value) return '￥0.00';
+  return parseFloat(value).toLocaleString('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  });
+};
+
+//待处理事项登记
+const pendingMattersOptions = [
+  { value: '经济纠纷', label: '经济纠纷' },
+  { value: '劳资纠纷', label: '劳资纠纷' },
+  { value: '合同定审', label: '合同定审' },
+  { value: '公司经营问题', label: '公司经营问题' },
+  { value: '财税问题', label: '财税问题' },
+  { value: '其他问题', label: '其他问题' }
+];
+
 //列表最后一行添加合计
 const getSummaries = (param) => {
   const { columns, data } = param;
@@ -1372,7 +1630,7 @@ const getSummaries = (param) => {
   }
   //这里应该根据实际业务需求修改列名
     const values = data.map(item => Number(item[column.property]));
-    if (column.label == "实付金额" || column.label == "尾款金额") {
+    if ( column.label == "合同金额" || column.label == "实收金额" || column.label == "尾款金额") {
     if (!values.every(value => isNaN(value))) {
     sums[index] = values.reduce((prev, curr) => {
           const value = Number(curr);
@@ -1568,7 +1826,7 @@ const handleUpdate = async (row?: CustomerTransferVO) => {
   }
 
   // 添加空值检查
-  form.value.pendingMatters = form.value.pendingMatters ? form.value.pendingMatters.split(",") : [];
+  form.value.pendingRemark = form.value.pendingRemark ? form.value.pendingRemark.split(",") : [];
   form.value.debtDetails = form.value.debtDetails ? form.value.debtDetails.split(",") : [];
   dialog.visible = true;
   dialog.title = "修改客户信息录入";
@@ -1608,7 +1866,22 @@ const removePerformance = (index) => {
     form.value.performanceInfo.splice(index, 1)
   }
 }
-
+// 尾款金额自动计算方法
+const calculateBalanceAmount = () => {
+  const contractAmount = parseFloat(form.value.contractAmount) || 0;
+  const actualPayment = parseFloat(form.value.actualPayment) || 0;
+  form.value.balanceStatus = contractAmount - actualPayment;
+}
+// 尾款支付条件的动态验证规则
+const balancePayTypeRules = computed(() => {
+  const balanceStatus = parseFloat(form.value.balanceStatus) || 0;
+  if (balanceStatus !== 0) {
+    return [
+      { required: true, message: "尾款金额不为0时,需填写尾款支付条件", trigger: "blur" }
+    ];
+  }
+  return [];
+});
 // 提交审核
 async function submitAudit() {
   console.log('提交审核')
@@ -1725,8 +1998,8 @@ if (hasPerformanceSumError.value) {
         form.value.city = getNameByCode(addressModel.value.city)
         form.value.district = getNameByCode(addressModel.value.district)
         // 处理数组字段
-        if (Array.isArray(form.value.pendingMatters)) {
-          form.value.pendingMatters = form.value.pendingMatters.join(",");
+        if (Array.isArray(form.value.pendingRemark)) {
+          form.value.pendingRemark = form.value.pendingRemark.join(",");
         }
         if (Array.isArray(form.value.debtDetails)) {
           form.value.debtDetails = form.value.debtDetails.join(",");
@@ -1794,8 +2067,6 @@ const getUserNameById = (userId: string) => {
   const user = userList.value.find((item: any) => item.userId === userId)
   return user ? `${user.nickName}` : ''
 }
-
-
 
 
 onMounted(() => {
@@ -1895,9 +2166,16 @@ onMounted(() => {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
   background-color: var(--el-bg-color);
-  height: 400px;
+  height: 350px;
 }
-
+.form-section-5 {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--el-border-color);
+  border-radius: 8px;
+  background-color: var(--el-bg-color);
+  height: 200px;
+}
 
 .section-title {
   font-size: 16px;
@@ -2032,12 +2310,24 @@ onMounted(() => {
 .audit-signature-form {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
-  padding: 60px;
+  padding: 25px;
   background-color: var(--el-bg-color);
-  height: 200px;
+  height: 280px;
   margin-bottom: 1px;
 }
 
+.audit-form-item {
+  margin-bottom: 20px;
+}
+.audit-form-item1 {
+ 
+  margin-bottom: 30px;
+  
+}
+.audit-form-item2 {
+
+  margin-bottom: 20px;
+}
 
 
 ::v-deep .el-table__footer-wrapper {
@@ -2047,7 +2337,8 @@ onMounted(() => {
   .el-table__cell {
     background-color: #f5f7fa !important;
     font-size: 14px;
-    
+    color:#1890ff;
+
     &:first-child {
       color: #303133;
       font-weight: bold;

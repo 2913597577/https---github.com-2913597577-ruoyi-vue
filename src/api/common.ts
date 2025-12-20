@@ -81,3 +81,11 @@ export const getLegalSupportPerformance = () => {
     method: 'get'
   })
   }
+
+  // 获取团队业绩统计
+export const getPerformance = () => {
+  return request({
+    url: '/common/getPerformance',
+    method: 'get'
+  })
+  }

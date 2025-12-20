@@ -159,6 +159,10 @@ export interface CustomerTransferVO {
   customerDescription: string;
 
   /**
+   * 合同金额
+   */
+  contractAmount: number;
+  /**
    * 实付金额
    */
   actualPayment: number;
@@ -245,7 +249,7 @@ export interface CustomerTransferVO {
 
   remark: string;
 
-  balancePayType: string
+  balancePayType: string;
 
   contractCode: string;
 
@@ -266,6 +270,8 @@ export interface CustomerTransferVO {
   invoiceContent: string;
 
   invoiceStatus: number;
+
+  inviterId: string | number;
   
   customerId: string| number;
 }

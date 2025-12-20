@@ -62,7 +62,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="performanceTaskList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" border :data="performanceTaskList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
@@ -87,7 +87,7 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
     <!-- 添加或修改业绩任务对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="performanceTaskFormRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="法务支持" prop="legalSupportId">
            <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
@@ -106,10 +106,10 @@
               clearable
             ></el-date-picker>
         </el-form-item>
-        <el-form-item label="月度业绩目标" prop="performanceGoal">
+        <el-form-item label="月度业绩目标" prop="performanceGoal" label-width="100px">
           <el-input v-model="form.performanceGoal" placeholder="请输入月度业绩目标" />
         </el-form-item>
-        <el-form-item label="月度出访目标" prop="visitGoal">
+        <el-form-item label="月度出访目标" prop="visitGoal" label-width="100px">
           <el-input v-model="form.visitGoal" placeholder="请输入月度出访目标" />
         </el-form-item>
         <!-- <el-form-item label="已完成的月度业绩目标" prop="achievedPerformanceGoal">
@@ -313,8 +313,65 @@ const handleExport = () => {
   }, `performanceTask_${new Date().getTime()}.xlsx`)
 }
 
+//列表最后一行添加合计
+const getSummaries = (param) => {
+  const { columns, data } = param;
+  const sums = [];
+  columns.forEach((column, index) => {
+    if (index === 1) {
+      sums[index] = '合计';
+      return;
+  }
+
+  // 处理需要合计的列，这里应该根据实际业务需求修改列名
+    const values = data.map(item => Number(item[column.property]));
+    if (column.label == "业绩目标") {
+    if (!values.every(value => isNaN(value))) {
+    sums[index] = values.reduce((prev, curr) => {
+          const value = Number(curr);
+   if (!isNaN(value)) {
+   return prev + curr;
+    } else {
+      return prev;
+   }
+  }, 0);
+       
+    sums[index] = new Intl.NumberFormat('zh-CN', {
+    style: 'currency',
+    currency: 'CNY',
+    minimumFractionDigits: 2
+  }).format(sums[index]);
+ } else {
+        //  sums[index] = 'N/A';
+}
+  }
+});
+return sums;
+}
+
+
 onMounted(() => {
   loadLawyerSupportList()
   getList();
 });
 </script>
+
+<style scoped>
+
+::v-deep .el-table__footer-wrapper {
+  font-weight: bold;
+  font-size: 14px;
+  
+  .el-table__cell {
+    background-color: #f5f7fa !important;
+    font-size: 14px;
+    color:#1890ff;
+
+    &:first-child {
+      color: #303133;
+      font-weight: bold;
+    }
+  }
+}
+
+</style>
