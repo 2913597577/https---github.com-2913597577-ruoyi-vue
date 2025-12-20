@@ -942,7 +942,8 @@
               {{ viewForm.companyName }}
             </el-descriptions-item>
             <el-descriptions-item label="所属行业">
-              {{ viewForm.companyIndustry }}
+               <dict-tag :options="dc_company_industry"
+                :value="viewForm.companyIndustry !== undefined && viewForm.companyIndustry !== null ? viewForm.companyIndustry : ''" />
             </el-descriptions-item>
             <el-descriptions-item label="公司地址">
               {{ viewForm.companyAddress }}
