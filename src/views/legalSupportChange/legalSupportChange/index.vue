@@ -21,6 +21,7 @@
               <el-date-picker clearable
                 v-model="queryParams.createTime"
                 type="date"
+                value-format="YYYY-MM-DD"
                 placeholder="请选择创建时间"
               />
             </el-form-item>
