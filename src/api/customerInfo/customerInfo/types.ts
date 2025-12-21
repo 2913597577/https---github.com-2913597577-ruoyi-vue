@@ -206,6 +206,12 @@ export interface CustomerInfoForm extends BaseEntity {
   customerCity?: string;
     isAssigned?: number;
 
+  isIntention?: number;
+  isTransfer ?: number;
+  isRisk?: number;
+  isRefund?: number;
+  isHighRisk?: number;
+
 }
 
 export interface CustomerInfoQuery extends PageQuery {
@@ -302,6 +308,13 @@ export interface CustomerInfoQuery extends PageQuery {
   customerCity?: string;
 
   isAssigned?: number;
+  isIntention?: number;
+  isTransfer ?: number;
+  isRisk?: number;
+  isRefund?: number;
+  isHighRisk?: number;
+  isExpire?: number;
+
 
   
 

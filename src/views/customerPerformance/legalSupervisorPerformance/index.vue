@@ -11,7 +11,7 @@
             <div class="stat-item">
               <span class="label">客户数量：</span>
               <span class="value">{{ customerStats.customerTotal }}</span>
-              <span class="label">近30天未跟进客户：</span>
+              <span class="label">近20天未跟进客户：</span>
               <span class="value">{{ customerStats.outStandingTotal }}</span>
             </div>
             <div class="stat-item">

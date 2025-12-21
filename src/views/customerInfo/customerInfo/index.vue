@@ -688,12 +688,28 @@
                 <el-option label="是" :value="1"></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="退费状态" prop="isRefund" >
+              <el-select v-model="queryParams.isRefund" placeholder="是否退费" clearable style="width: 120px">
+                <el-option label="否" :value="0"></el-option>
+                <el-option label="是" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="到期状态" prop="isExpire" >
+              <el-select v-model="queryParams.isExpire" placeholder="是否到期" clearable style="width: 120px">
+                <el-option label="否" :value="0"></el-option>
+                <el-option label="是" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
             <!-- <el-form-item label="签约类型" prop="contractType">
               <el-select v-model="queryParams.contractType" placeholder="请选择签约类型" clearable>
                 <el-option v-for="item in contract_type" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item> -->
+            <el-form-item label="签约时间" prop="signDate">
+              <el-date-picker clearable v-model="queryParams.signDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择签约时间" style="width: 120px" />
+            </el-form-item>
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" style="width: 120px" />
@@ -1017,6 +1033,11 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
     caseFillingPwd: undefined,
     customerCity: undefined,
     isAssigned: undefined,
+    isRefund: undefined,
+    isTransfer: undefined,
+    isRisk: undefined,
+    isHighRisk: undefined,
+    isIntention: undefined,
     params: {
     }
   },
