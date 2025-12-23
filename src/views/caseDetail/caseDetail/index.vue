@@ -211,10 +211,12 @@
             </el-form-item>
             <el-form-item label="立案日期" prop="filingDate">
               <el-date-picker clearable v-model="queryParams.filingDate" type="date" 
+               value-format="YYYY-MM-DD"
                 placeholder="请选择立案日期" />
             </el-form-item>
             <el-form-item label="下次联系时间" prop="nextContactTime">
               <el-date-picker clearable v-model="queryParams.nextContactTime" type="date" 
+               value-format="YYYY-MM-DD"
                 placeholder="请选择下次联系时间" />
             </el-form-item>
             <el-form-item>

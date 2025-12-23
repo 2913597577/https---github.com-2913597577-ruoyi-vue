@@ -957,11 +957,11 @@
               </el-select>
             </el-form-item>
             <el-form-item label="开始时间" prop="serviceStart" label-width="68px">
-              <el-date-picker clearable v-model="queryParams.serviceStart" type="date" 
+              <el-date-picker clearable v-model="queryParams.serviceStart" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择服务开始时间" style="width: 160px" />
             </el-form-item>
             <el-form-item label="结束时间" prop="serviceEnd" label-width="68px">
-              <el-date-picker clearable v-model="queryParams.serviceEnd" type="date" 
+              <el-date-picker clearable v-model="queryParams.serviceEnd" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择服务结束时间" style="width: 160px" />
             </el-form-item>
             <el-form-item>
@@ -1715,6 +1715,7 @@ const reset = () => {
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
+  console.log('queryParams', queryParams.value);
   getList();
 }
 

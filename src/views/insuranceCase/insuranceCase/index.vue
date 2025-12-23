@@ -158,6 +158,7 @@
             </el-form-item>
             <el-form-item label="下单日期" prop="orderDate">
               <el-date-picker clearable v-model="queryParams.orderDate" type="date" 
+              value-format="YYYY-MM-DD"
                 placeholder="请选择下单日期" />
             </el-form-item>
             <el-form-item label="工单号" prop="insuranceNumber">

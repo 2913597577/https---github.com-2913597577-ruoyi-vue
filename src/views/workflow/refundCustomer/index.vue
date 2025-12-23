@@ -10,12 +10,12 @@
           <el-form-item label="客户姓名" prop="customerName">
             <el-input v-model="queryParams.customerName" placeholder="请输入客户姓名" clearable />
           </el-form-item>
-          <el-form-item label="客户类型" prop="customerType">
+          <!-- <el-form-item label="客户类型" prop="customerType">
             <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable>
               <el-option label="风险" value="1" />
               <el-option label="退费" value="2" />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
             <el-button icon="Refresh" @click="resetQuery">重置</el-button>
