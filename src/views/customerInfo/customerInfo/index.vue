@@ -205,7 +205,8 @@
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="320px"
           fixed="right">
           <template #default="scope">
-            <el-button size="small" link type="info" icon="View" @click="handleView(scope.row)">
+            <el-button size="small" link type="info" icon="View" @click="handleView(scope.row)" 
+              v-hasPermi="['customerInfo:customerInfo:view']">
               查看
             </el-button>
             <!-- 处置按钮 -->

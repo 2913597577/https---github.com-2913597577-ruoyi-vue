@@ -113,7 +113,7 @@
             <div class="contract-cell">
               <image-preview v-if="scope.row.contractUrl" :src="scope.row.contractUrl" :width="20" :height="20" />
               <el-button v-if="!scope.row.contractUrl" link type="primary" icon="Upload"
-                @click="handleUpload(scope.row)">
+                @click="handleUpload(scope.row)" v-hasPermi="['myCustomer:customerTransfer:upload']">
                 上传合同
               </el-button>
             </div>
@@ -221,11 +221,11 @@
         fixed="right">
           <template #default="scope">
             <!-- <div class="table-action-buttons"> -->
-              <el-button link type="info" icon="View" @click="handleView(scope.row)">查看</el-button>
-              <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
-                @click="handleProcess(scope.row)">处置</el-button>
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button link type="info" icon="View" @click="handleView(scope.row)"  v-hasPermi="['myCustomer:customerTransfer:view']">查看</el-button>
+              <el-button link type="success"  icon="Operation"
+                @click="handleProcess(scope.row)" v-hasPermi="['myCustomer:customerTransfer:process']">处置</el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"  v-hasPermi="['myCustomer:customerTransfer:edit']">修改</el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"  v-hasPermi="['myCustomer:customerTransfer:remove']">删除</el-button>
               <!-- </div> -->
             </template>
           </el-table-column>
@@ -1288,7 +1288,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
+    <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerintentionFormRef" :model="transferFormData" :rules="rules" label-width="80px">
         <el-form-item label="合同照片" prop="contractOssId">
           <image-upload v-model="contract" />
