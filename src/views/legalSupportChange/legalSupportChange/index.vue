@@ -43,7 +43,7 @@
     <el-card shadow="never">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <!-- <el-col :span="1.5">
+          <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['legalSupportChange:legalSupportChange:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -51,7 +51,7 @@
           </el-col>
           <el-col :span="1.5">
             <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['legalSupportChange:legalSupportChange:remove']">删除</el-button>
-          </el-col> -->
+          </el-col>
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['legalSupportChange:legalSupportChange:export']">导出</el-button>
           </el-col>

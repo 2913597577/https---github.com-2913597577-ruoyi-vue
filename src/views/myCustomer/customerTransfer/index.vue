@@ -95,7 +95,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerTransferList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries"> 
+      <el-table v-loading="loading" border :data="customerTransferList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
           <template #default="scope">
@@ -113,7 +113,7 @@
             <div class="contract-cell">
               <image-preview v-if="scope.row.contractUrl" :src="scope.row.contractUrl" :width="20" :height="20" />
               <el-button v-if="!scope.row.contractUrl" link type="primary" icon="Upload"
-                @click="handleUpload(scope.row)">
+                @click="handleUpload(scope.row)" v-hasPermi="['myCustomer:customerTransfer:upload']">
                 上传合同
               </el-button>
             </div>
@@ -221,11 +221,11 @@
         fixed="right">
           <template #default="scope">
             <!-- <div class="table-action-buttons"> -->
-              <el-button link type="info" icon="View" @click="handleView(scope.row)">查看</el-button>
-              <el-button link type="success" v-has-roles="['FinanceCenter']" icon="Operation"
-                @click="handleProcess(scope.row)">处置</el-button>
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button link type="info" icon="View" @click="handleView(scope.row)"  v-hasPermi="['myCustomer:customerTransfer:view']">查看</el-button>
+              <el-button link type="success"  icon="Operation"
+                @click="handleProcess(scope.row)" v-hasPermi="['myCustomer:customerTransfer:process']">处置</el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"  v-hasPermi="['myCustomer:customerTransfer:edit']">修改</el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"  v-hasPermi="['myCustomer:customerTransfer:remove']">删除</el-button>
               <!-- </div> -->
             </template>
           </el-table-column>
@@ -242,7 +242,7 @@
   >
     <div class="dialog-content">
       <el-form  ref="customerTransferFormRef" :model="form" :rules="rules" label-width="120px hide-required-asterisk">
-        
+
         <!-- 头部区域 -->
         <div class="header-section">
           <div class="logo-area">
@@ -257,23 +257,23 @@
           </div> -->
         </div>
 
-       
+
 
         <!-- 客户基本信息 -->
         <div class="form-section-1">
           <div class="section-title">客户基本信息</div>
-          
+
           <el-row :gutter="20" class="form-row">
             <el-col :span="8">
               <el-form-item label="客户归属城市" prop="customerCity" class="form-item">
-                <el-select 
-                  v-model="form.customerCity" 
-                  placeholder="请选择服务城市" 
+                <el-select
+                  v-model="form.customerCity"
+                  placeholder="请选择服务城市"
                   style="width: 100%"
                 >
-                  <el-option 
-                    v-for="dict in dc_sercive_city" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="dict.value"
                   />
@@ -282,52 +282,52 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="合同编号" prop="contractCode" class="form-item">
-                <el-input 
-                  v-model="form.contractCode" 
-                  placeholder="请输入合同编号(8位数字)" 
+                <el-input
+                  v-model="form.contractCode"
+                  placeholder="请输入合同编号(8位数字)"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
           <el-form-item label="主体名称" prop="companyName" class="form-item">
-            <el-input 
-              v-model="form.companyName" 
-              placeholder="请输入公司名称" 
+            <el-input
+              v-model="form.companyName"
+              placeholder="请输入公司名称"
             />
           </el-form-item>
           </el-col>
           </el-row>
-      
+
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="决策人姓名" prop="decisionMaker" class="form-item">
-                <el-input 
-                  v-model="form.decisionMaker" 
-                  placeholder="决策人姓名" 
+                <el-input
+                  v-model="form.decisionMaker"
+                  placeholder="决策人姓名"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="联系方式" prop="decisionMakerContact" class="form-item">
-                <el-input 
-                  v-model="form.decisionMakerContact" 
-                  placeholder="联系方式" 
+                <el-input
+                  v-model="form.decisionMakerContact"
+                  placeholder="联系方式"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="职务" class="form-item">
-                <el-input 
-                  v-model="form.decisionMakerPosition" 
-                  placeholder="职务" 
+                <el-input
+                  v-model="form.decisionMakerPosition"
+                  placeholder="职务"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="年龄" class="form-item">
-                <el-input 
-                  v-model="form.decisionMakerAge" 
-                  placeholder="年龄" 
+                <el-input
+                  v-model="form.decisionMakerAge"
+                  placeholder="年龄"
                   type="number"
                 />
               </el-form-item>
@@ -337,33 +337,33 @@
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="对接人姓名" prop="contactPerson" class="form-item">
-                <el-input 
-                  v-model="form.contactPerson" 
-                  placeholder="对接人姓名" 
+                <el-input
+                  v-model="form.contactPerson"
+                  placeholder="对接人姓名"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="联系方式" prop="contactInfo" class="form-item">
-                <el-input 
-                  v-model="form.contactInfo" 
-                  placeholder="联系方式" 
+                <el-input
+                  v-model="form.contactInfo"
+                  placeholder="联系方式"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="职务" class="form-item">
-                <el-input 
-                  v-model="form.contactPosition" 
-                  placeholder="职务" 
+                <el-input
+                  v-model="form.contactPosition"
+                  placeholder="职务"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="年龄" class="form-item">
-                <el-input 
-                  v-model="form.contactAge" 
-                  placeholder="年龄" 
+                <el-input
+                  v-model="form.contactAge"
+                  placeholder="年龄"
                   type="number"
                 />
               </el-form-item>
@@ -373,33 +373,33 @@
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="附赠主体" class="form-item">
-                <el-input 
-                  v-model="form.additionalPerson" 
-                  placeholder="附赠主体姓名" 
+                <el-input
+                  v-model="form.additionalPerson"
+                  placeholder="附赠主体姓名"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="联系方式" class="form-item">
-                <el-input 
-                  v-model="form.additionalContact" 
-                  placeholder="联系方式" 
+                <el-input
+                  v-model="form.additionalContact"
+                  placeholder="联系方式"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="职务" class="form-item">
-                <el-input 
-                  v-model="form.additionalPosition" 
-                  placeholder="职务" 
+                <el-input
+                  v-model="form.additionalPosition"
+                  placeholder="职务"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="年龄" class="form-item">
-                <el-input 
-                  v-model="form.additionalAge" 
-                  placeholder="年龄" 
+                <el-input
+                  v-model="form.additionalAge"
+                  placeholder="年龄"
                   type="number"
                 />
               </el-form-item>
@@ -409,18 +409,18 @@
           <el-row :gutter="10" class="form-row">
             <el-col :span="6">
               <el-form-item label="公司行业" prop="companyIndustry" class="form-item">
-                <!-- <el-input 
-                  v-model="form.companyIndustry" 
-                  placeholder="请输入所属行业" 
+                <!-- <el-input
+                  v-model="form.companyIndustry"
+                  placeholder="请输入所属行业"
                 /> -->
-                <el-select 
-                  v-model="form.companyIndustry" 
-                  placeholder="请选择公司行业" 
+                <el-select
+                  v-model="form.companyIndustry"
+                  placeholder="请选择公司行业"
                   style="width: 100%"
                 >
-                  <el-option 
-                    v-for="dict in dc_company_industry" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in dc_company_industry"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="dict.value"
                   />
@@ -434,32 +434,32 @@
                   <address-selector v-model="addressModel" />
                 </el-col>
                 <el-col :span="10">
-                  <el-input 
-                    v-model="form.companyAddress" 
-                    placeholder="请输入详细地址" 
+                  <el-input
+                    v-model="form.companyAddress"
+                    placeholder="请输入详细地址"
                   />
                 </el-col>
               </el-row>
             </el-form-item>
-            
+
           </el-col>
           </el-row>
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="员工人数" class="form-item">
-                <!-- <el-input 
-                  v-model="form.employeeCount" 
-                  placeholder="员工人数" 
+                <!-- <el-input
+                  v-model="form.employeeCount"
+                  placeholder="员工人数"
                   type="number"
                 /> -->
-                <el-select 
-                  v-model="form.employeeCount" 
-                  placeholder="请选择员工人数" 
+                <el-select
+                  v-model="form.employeeCount"
+                  placeholder="请选择员工人数"
                   style="width: 100%"
                 >
-                  <el-option 
-                    v-for="dict in dc_employee_count" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in dc_employee_count"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="parseInt(dict.value)"
                   />
@@ -476,7 +476,7 @@
                </el-radio-group>
              </el-form-item>
            </el-col>
-           
+
          </el-row>
          <el-form-item label="客户性格及工作习惯描述:" class="form-item">
             <el-input
@@ -492,13 +492,13 @@
         <!-- 签约情况 -->
         <div class="form-section-2">
           <div class="section-title">签约情况</div>
-          
+
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="合同金额" prop="contractAmount" class="form-item">
-                <el-input 
-                  v-model="form.contractAmount" 
-                  placeholder="合同金额" 
+                <el-input
+                  v-model="form.contractAmount"
+                  placeholder="合同金额"
                   type="number"
                    @input="calculateBalanceAmount"
                 >
@@ -508,9 +508,9 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="实收金额" prop="actualPayment" class="form-item">
-                <el-input 
-                  v-model="form.actualPayment" 
-                  placeholder="实收金额" 
+                <el-input
+                  v-model="form.actualPayment"
+                  placeholder="实收金额"
                   type="number"
                  @input="calculateBalanceAmount"
                 >
@@ -518,12 +518,12 @@
                 </el-input>
               </el-form-item>
             </el-col>
-            
+
             <el-col :span="6">
               <el-form-item label="尾款金额" prop="balanceStatus" class="form-item">
-                <el-input 
-                  v-model="form.balanceStatus" 
-                  placeholder="尾款金额" 
+                <el-input
+                  v-model="form.balanceStatus"
+                  placeholder="尾款金额"
                   type="number"
                   readonly
                 >
@@ -533,25 +533,25 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="尾款支付条件" class="form-item" prop="balancePayType" :rules="balancePayTypeRules">
-                <el-input 
-                  v-model="form.balancePayType" 
-                  placeholder="尾款支付条件" 
+                <el-input
+                  v-model="form.balancePayType"
+                  placeholder="尾款支付条件"
                 />
               </el-form-item>
             </el-col>
           </el-row>
-          
+
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="套餐类型" prop="serviceType" class="form-item">
-                <el-select 
-                  v-model="form.serviceType" 
-                  placeholder="请选择套餐类型" 
+                <el-select
+                  v-model="form.serviceType"
+                  placeholder="请选择套餐类型"
                   style="width: 90%"
                 >
-                  <el-option 
-                    v-for="dict in combo_type" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in combo_type"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="parseInt(dict.value)"
                   />
@@ -579,14 +579,14 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="客户来源" prop="customerSource" class="form-item">
-                <el-select 
-                  v-model="form.customerSource" 
-                  placeholder="请选择客户来源" 
+                <el-select
+                  v-model="form.customerSource"
+                  placeholder="请选择客户来源"
                   style="width: 90%"
                 >
-                  <el-option 
-                    v-for="dict in dc_customer_source" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in dc_customer_source"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="parseInt(dict.value)"
                   />
@@ -594,18 +594,18 @@
               </el-form-item>
             </el-col>
           </el-row>
-        
+
           <el-row :gutter="20" class="form-row">
             <el-col :span="6">
               <el-form-item label="开票要求" prop="invoiceRequirements" class="form-item">
-                <el-select 
-                  v-model="form.invoiceRequirements" 
-                  placeholder="请选择开票要求" 
+                <el-select
+                  v-model="form.invoiceRequirements"
+                  placeholder="请选择开票要求"
                   style="width: 100%"
                 >
-                  <el-option 
-                    v-for="dict in dc_invoice_requirement" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in dc_invoice_requirement"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="dict.value"
                   />
@@ -614,14 +614,14 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="开票状态" prop="invoiceStatus" class="form-item">
-                <el-select 
-                  v-model="form.invoiceStatus" 
-                  placeholder="请选择开票状态" 
+                <el-select
+                  v-model="form.invoiceStatus"
+                  placeholder="请选择开票状态"
                   style="width: 100%"
                 >
-                  <el-option 
-                    v-for="dict in dc_invoice_status" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in dc_invoice_status"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="parseInt(dict.value)"
                   />
@@ -630,22 +630,22 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="开票内容" class="form-item">
-                <el-input 
-                  v-model="form.invoiceContent" 
-                  placeholder="请输入开票内容" 
+                <el-input
+                  v-model="form.invoiceContent"
+                  placeholder="请输入开票内容"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="推荐人" class="form-item">
-                <el-input 
-                  v-model="form.referrer" 
-                  placeholder="请输入推荐人" 
+                <el-input
+                  v-model="form.referrer"
+                  placeholder="请输入推荐人"
                 />
               </el-form-item>
             </el-col>
           </el-row>
-         
+
           <el-form-item label="律师咨询情况:" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.lawyerConsultation"
@@ -654,7 +654,7 @@
               placeholder="请描述是否咨询律师、是否给客户约定所交费用包含律师费等"
             />
           </el-form-item>
-       
+
           <el-form-item label="其他费用沟通:" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.otherFee"
@@ -663,7 +663,7 @@
               placeholder="请描述是否给客户讲清调档费、保险费、诉讼费等其他费用"
             />
           </el-form-item>
-        
+
         </div>
 
         <!-- 业绩归属登记 -->
@@ -677,45 +677,45 @@
        </span>
       <span v-else class="success-text">✓ 金额匹配</span>
       </div>
-          <div 
-            v-for="(performance, index) in form.performanceInfo" 
+          <div
+            v-for="(performance, index) in form.performanceInfo"
             :key="index"
             class="performance-row"
           >
             <el-row :gutter="20" class="form-row">
               <el-col :span="8">
-                <el-form-item 
-                  :label="`业绩所属人${index + 1}`" 
+                <el-form-item
+                  :label="`业绩所属人${index + 1}`"
                   :prop="`performanceInfo[${index}].userId`"
                   :rules="index === 0 ? rules.performanceUserId : []"
                   class="form-item"
                 >
-                  <el-select 
-                    v-model="performance.userId" 
-                    :placeholder="`请选择业绩所属人${index + 1}`" 
+                  <el-select
+                    v-model="performance.userId"
+                    :placeholder="`请选择业绩所属人${index + 1}`"
                     filterable
                     @change="changeUser(index)"
                     style="width: 100%"
                   >
-                    <el-option 
-                      v-for="user in userList" 
+                    <el-option
+                      v-for="user in userList"
                       :key="user.userId"
-                      :label="user.nickName + '(' + user.userName + ')'" 
+                      :label="user.nickName + '(' + user.userName + ')'"
                       :value="user.userId"
                     />
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item 
-                  :label="`业绩所属金额`" 
+                <el-form-item
+                  :label="`业绩所属金额`"
                   :prop="`performanceInfo[${index}].balance`"
                   :rules="index === 0 ? rules.performanceBalance : []"
                   class="form-item"
                 >
-                  <el-input 
+                  <el-input
                     v-model="performance.balance"
-                    :placeholder="`请分配业绩金额`" 
+                    :placeholder="`请分配业绩金额`"
                     type="number"
                   >
                     <template #append>元</template>
@@ -723,20 +723,20 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item 
-                  :label="`业绩所属城市`" 
+                <el-form-item
+                  :label="`业绩所属城市`"
                   :prop="`performanceInfo[${index}].city`"
                   :rules="index === 0 ? rules.performanceCity : []"
                   class="form-item"
                 >
-                  <el-select 
-                    v-model="performance.city" 
-                    :placeholder="`请选择业绩所属城市`" 
+                  <el-select
+                    v-model="performance.city"
+                    :placeholder="`请选择业绩所属城市`"
                     style="width: 100%"
                   >
-                    <el-option 
-                      v-for="dict in dc_sercive_city" 
-                      :key="dict.value" 
+                    <el-option
+                      v-for="dict in dc_sercive_city"
+                      :key="dict.value"
                       :label="dict.label"
                       :value="dict.value"
                     />
@@ -745,9 +745,9 @@
               </el-col>
               <el-col :span="2" v-if="index > 0">
                 <div class="remove-btn-container">
-                  <el-button 
-                    type="danger" 
-                    plain 
+                  <el-button
+                    type="danger"
+                    plain
                     size="small"
                     @click="removePerformance(index)"
                     class="remove-btn"
@@ -758,11 +758,11 @@
               </el-col>
             </el-row>
           </div>
-          
+
           <div class="add-btn-container" v-if="form.performanceInfo.length < 4">
-            <el-button 
-              type="primary" 
-              plain 
+            <el-button
+              type="primary"
+              plain
               @click="addPerformance"
               class="add-btn"
             >
@@ -774,7 +774,7 @@
         <!-- 客户情况概述 -->
         <div class="form-section-4">
           <div class="section-title">客户情况概述</div>
-          
+
           <el-form-item label="以前是否有过公司法务" class="form-item" style="margin-bottom: 20px;">
             <el-radio-group v-model="form.preLegal">
               <el-radio label="1">是</el-radio>
@@ -785,22 +785,22 @@
           <el-row :gutter="20" class="form-row" v-if="form.preLegal === '1'">
             <el-col :span="8">
               <el-form-item label="合作公司名称" class="form-item">
-                <el-input 
-                  v-model="form.preCompany" 
-                  placeholder="合作公司名称" 
+                <el-input
+                  v-model="form.preCompany"
+                  placeholder="合作公司名称"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="不合作原因" class="form-item">
-                <el-input 
-                  v-model="form.preReason" 
-                  placeholder="不合作原因" 
+                <el-input
+                  v-model="form.preReason"
+                  placeholder="不合作原因"
                 />
               </el-form-item>
             </el-col>
           </el-row>
-          
+
           <el-form-item label="公司以前出现过的纠纷及解决方式:" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.preDiscuss"
@@ -809,7 +809,7 @@
               placeholder="请详细描述纠纷及解决方式"
             />
           </el-form-item>
-          
+
          <!--  <el-form-item label="待处理事项登记：" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.pendingRemark"
@@ -860,26 +860,26 @@
           <el-row :gutter="20" class="form-row">
             <el-col :span="8">
               <el-form-item label="债务人" prop="debtor" class="form-item">
-                <el-input 
-                  v-model="form.debtor" 
-                  placeholder="债务人姓名" 
+                <el-input
+                  v-model="form.debtor"
+                  placeholder="债务人姓名"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="欠款金额" prop="debtAmount" class="form-item">
-                <el-input 
-                  v-model="form.debtAmount" 
-                  placeholder="欠款金额" 
+                <el-input
+                  v-model="form.debtAmount"
+                  placeholder="欠款金额"
                   type="number"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="联系电话" prop="debtorContact" class="form-item">
-                <el-input 
-                  v-model="form.debtorContact" 
-                  placeholder="联系电话" 
+                <el-input
+                  v-model="form.debtorContact"
+                  placeholder="联系电话"
                 />
               </el-form-item>
             </el-col>
@@ -897,9 +897,9 @@
     <!-- 对话框底部按钮 -->
     <template #footer>
       <div class="dialog-footer">
-        <el-button 
-          type="primary" 
-          :loading="buttonLoading" 
+        <el-button
+          type="primary"
+          :loading="buttonLoading"
           @click="submitForm"
           size="default"
         >
@@ -919,7 +919,7 @@
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
-        <el-card shadow="hover">  
+        <el-card shadow="hover">
        <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="财务确认" prop="financeConfirmed" label-width="68px">
               <el-select v-model="queryParams.financeConfirmed" placeholder="请选择财务确认状态" clearable
@@ -1003,14 +1003,14 @@
        <el-row>
             <el-col :span="8">
               <el-form-item label="开票要求" prop="invoiceRequirements" class="audit-form-item">
-                <el-select 
-                  v-model="currentRow.invoiceRequirements" 
-                  placeholder="请选择开票要求" 
+                <el-select
+                  v-model="currentRow.invoiceRequirements"
+                  placeholder="请选择开票要求"
                   style="width: 100%"
                 >
-                  <el-option 
-                    v-for="dict in dc_invoice_requirement" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in dc_invoice_requirement"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="dict.value"
                   />
@@ -1019,14 +1019,14 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="开票状态" prop="invoiceStatus" class="audit-form-item">
-                <el-select 
-                  v-model="currentRow.invoiceStatus" 
-                  placeholder="请选择开票状态" 
+                <el-select
+                  v-model="currentRow.invoiceStatus"
+                  placeholder="请选择开票状态"
                   style="width: 100%"
                 >
-                  <el-option 
-                    v-for="dict in dc_invoice_status" 
-                    :key="dict.value" 
+                  <el-option
+                    v-for="dict in dc_invoice_status"
+                    :key="dict.value"
                     :label="dict.label"
                     :value="parseInt(dict.value)"
                   />
@@ -1035,7 +1035,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="开票内容" prop="invoiceContent" class="audit-form-item">
-                <el-input 
+                <el-input
                   v-model="currentRow.invoiceContent"  />
               </el-form-item>
             </el-col>
@@ -1065,7 +1065,7 @@
         </div>
       </template>
     </el-dialog>
-  
+
 
     <!-- 替换原有的查看对话框 -->
     <!-- 替换原有的查看对话框 -->
@@ -1107,7 +1107,7 @@
             <el-descriptions-item label="合同OssID">
               {{ viewForm.contractOssId }}
             </el-descriptions-item>
-           
+
             <el-descriptions-item label="客户归属城市">
               <dict-tag :options="dc_sercive_city"
                 :value="viewForm.customerCity !== undefined && viewForm.customerCity !== null ? viewForm.customerCity : ''" />
@@ -1115,7 +1115,7 @@
             <el-descriptions-item label="公司名称" label-align="left" align="left" width="60">
               {{ viewForm.companyName }}
             </el-descriptions-item>
-           
+
             <!-- <el-descriptions-item label="邀约人">
               {{ getUserNameById(viewForm.inviterId) }}
             </el-descriptions-item>
@@ -1288,7 +1288,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body>
+    <el-dialog :title="transferInfoDialog.title" v-model="transferInfoDialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerintentionFormRef" :model="transferFormData" :rules="rules" label-width="80px">
         <el-form-item label="合同照片" prop="contractOssId">
           <image-upload v-model="contract" />
@@ -1310,7 +1310,7 @@
 import provinceCityAreaData from '@/assets/address.json'
 import addressSelector from '@/components/address/address.vue';
 import { getNameByCode, getCodeByName } from '@/components/address/addressMethod';
-import { listSeller, listUser } from '@/api/customerInfo/customerInfo';
+import { selectAllUser } from '@/api/customerInfo/customerInfo';
 import {
   addCustomerTransfer,
   audit,
@@ -1321,7 +1321,6 @@ import {
 } from '@/api/myCustomer/customerTransfer';
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
-import { de } from 'element-plus/es/locale/index.mjs';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -1452,7 +1451,7 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     invoiceRequirements: undefined,
 
     invoiceContent: undefined,
-    
+
     invoiceStatus: undefined,
 
     params: {}
@@ -1524,7 +1523,7 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
    performanceUserId: [{ required: true, message: '请选择业绩所属人', trigger: 'change' }],
    performanceBalance: [{ required: true, message: '请输入分配业绩金额', trigger: 'blur' }],
    performanceCity: [{ required: true, message: '请选择业绩所属城市', trigger: 'change' }],
- 
+
   }
 });
 
@@ -1668,8 +1667,8 @@ const getList = async () => {
 const loadUserList = async () => {
   try {
     // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
-    const response = await listUser();
-    userList.value = response.rows;
+    const response = await selectAllUser();
+    userList.value = response;
   } catch (error) {
     proxy?.$modal.msgError('加载人员失败，请稍后重试');
     console.error('人员列表加载异常：', error);
@@ -1702,13 +1701,13 @@ const cancel = () => {
 /** 表单重置 */
 const reset = () => {
   form.value = { ...initFormData };
-  
+
     addressModel.value = {
       province: getCodeByName(form.value.province || ''),
       city: getCodeByName(form.value.city || ''),
       district: getCodeByName(form.value.district || '')
     };
-  
+
   customerTransferFormRef.value?.resetFields();
 }
 
@@ -1963,7 +1962,7 @@ function validatePerformanceSum() {
   if (customerTransferFormRef.value) {
     // 触发实收金额字段的验证
     customerTransferFormRef.value.validateField('actualPayment')
-    
+
     // 触发所有业绩金额字段的验证
     form.value.performanceInfo.forEach((item, index) => {
       customerTransferFormRef.value.validateField(`performanceInfo[${index}].balance`)
@@ -2126,7 +2125,7 @@ onMounted(() => {
 
 .blue-title {
   color:cornflowerblue;
- 
+
 }
 
 .title-section h1 {
@@ -2186,7 +2185,7 @@ onMounted(() => {
   border-bottom: 1px solid var(--el-border-color-light);
   color:dodgerblue;
   text-align: center;
-  background-color: var(--el-color-primary-light-9); 
+  background-color: var(--el-color-primary-light-9);
   padding-top: 12px;
   border-radius: 4px 4px 0 0;
 }
@@ -2256,12 +2255,12 @@ onMounted(() => {
   .form-row {
     margin-bottom: 12px;
   }
-  
+
   .form-section {
     padding: 16px;
     margin-bottom: 16px;
   }
-  
+
   .performance-row {
     padding: 12px;
   }
@@ -2321,9 +2320,9 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 .audit-form-item1 {
- 
+
   margin-bottom: 30px;
-  
+
 }
 .audit-form-item2 {
 
@@ -2334,7 +2333,7 @@ onMounted(() => {
 ::v-deep .el-table__footer-wrapper {
   font-weight: bold;
   font-size: 14px;
-  
+
   .el-table__cell {
     background-color: #f5f7fa !important;
     font-size: 14px;

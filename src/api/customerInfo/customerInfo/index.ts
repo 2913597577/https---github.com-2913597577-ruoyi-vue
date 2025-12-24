@@ -74,6 +74,15 @@ export const listLawyerSupport = () => {
   });
 };
 
+
+export const selectAllUser = () => {
+  return request({
+    url: '/system/user/selectAll',
+    method: 'get',
+  });
+};
+
+
 export const listUser = () => {
   return request({
     url: '/system/user/listByDept',
