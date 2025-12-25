@@ -89,3 +89,10 @@ export const getPerformance = () => {
     method: 'get'
   })
   }
+
+  export const getLeaderPerformance = () => {
+  return request({
+    url: '/common/getLeaderPerformance',
+    method: 'get'
+  })
+  }
