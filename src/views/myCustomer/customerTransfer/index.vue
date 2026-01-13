@@ -2005,7 +2005,6 @@ if (hasPerformanceSumError.value) {
           form.value.debtDetails = form.value.debtDetails.join(",");
         }
 
-        console.log('Form data after processing:', form.value);
 
         if (form.value.id) {
           await updateCustomerTransfer(form.value);
