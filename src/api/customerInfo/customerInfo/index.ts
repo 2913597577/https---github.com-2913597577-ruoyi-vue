@@ -64,12 +64,10 @@ export const delCustomerInfo = (id: string | number | Array<string | number>) =>
 
 export const listLawyerSupport = () => {
   return request({
-    url: '/system/user/listByDept',
+    url: '/system/user/listDeptCode',
     method: 'get',
     params: {
-      pageNum: 1,
-      pageSize: 1000,
-      deptId: '1969581806504747009',
+      deptCode: 'Legalsupport',
     }
   });
 };
