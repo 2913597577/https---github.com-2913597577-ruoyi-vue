@@ -284,7 +284,8 @@
               <el-form-item label="合同编号" prop="contractCode" class="form-item">
                 <el-input
                   v-model="form.contractCode"
-                  placeholder="请输入合同编号(8位数字)"
+                  placeholder="请输入合同编号（8位数字）"
+                  type="number"
                 />
               </el-form-item>
             </el-col>
@@ -292,7 +293,7 @@
           <el-form-item label="主体名称" prop="companyName" class="form-item">
             <el-input
               v-model="form.companyName"
-              placeholder="请输入公司名称"
+              placeholder="请输入公司名称（或主体人姓名）"
             />
           </el-form-item>
           </el-col>
@@ -646,7 +647,7 @@
             </el-col>
           </el-row>
 
-          <el-form-item label="律师咨询情况:" class="form-item" style="margin-bottom: 20px;">
+          <el-form-item label="律师咨询情况:" prop="lawyerConsultation" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.lawyerConsultation"
               type="textarea"
@@ -655,7 +656,7 @@
             />
           </el-form-item>
 
-          <el-form-item label="其他费用沟通:" class="form-item" style="margin-bottom: 20px;">
+          <el-form-item label="其他费用沟通:" prop="otherFee" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.otherFee"
               type="textarea"
@@ -1510,6 +1511,12 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     ],
     invoiceStatus: [
       { required: true, message: "开票状态不能为空", trigger: "change" }
+    ],
+    lawyerConsultation: [
+      { required: true, message: "律师咨询情况不能为空", trigger: "blur" }
+    ], 
+    otherFee: [
+      { required: true, message: "其他费用沟通不能为空", trigger: "blur" }
     ],
    /*  'performanceInfo.0.userId': [
       { required: true, message: "业绩所属人1不能为空", trigger: "blur" }
