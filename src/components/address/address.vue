@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import provinceCityAreaData from '@/assets/address.json'
 
 // 定义组件属性
@@ -90,6 +90,32 @@ const selectedDistrict = ref('')
 // 初始化省份数据
 const initProvinces = () => {
   provinces.value = provinceCityAreaData
+  
+ /*  let shandongCode = ''
+  
+  // 精确匹配"山东省"
+  const shandong = provinces.value.find(p => p.name === '山东省')
+  if (shandong) {
+    shandongCode = shandong.code
+  }
+
+   // 设置默认省份为山东省
+  // 注意: 只有在外部没有传入省份值的情况下才设置默认值
+  if (shandongCode && !props.modelValue.province) {
+    // 使用nextTick确保DOM已渲染
+    nextTick(() => {
+      selectedProvince.value = shandongCode
+      cities.value = getCitiesByProvince(shandongCode)
+      
+      // 发出更新事件
+      emit('update:modelValue', {
+        province: shandongCode,
+        city: '',
+        district: ''
+      })
+    })
+  } */
+
 }
 
 // 根据省份代码获取城市列表
