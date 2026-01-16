@@ -129,7 +129,15 @@
           </template>
         </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
-        <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip />
+        <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip>
+          <template #default="scope">
+           {{ 
+             (scope.row.city || '') + 
+             (scope.row.district || '') + 
+            (scope.row.companyAddress || '') 
+           }}
+          </template>
+        </el-table-column>
         <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip>
         <template #default="scope">
             <dict-tag :options="dc_employee_count" :value="scope.row.employeeCount ?? ''" />
@@ -284,7 +292,8 @@
               <el-form-item label="合同编号" prop="contractCode" class="form-item">
                 <el-input
                   v-model="form.contractCode"
-                  placeholder="请输入合同编号(8位数字)"
+                  placeholder="请输入合同编号（8位数字）"
+                  type="number"
                 />
               </el-form-item>
             </el-col>
@@ -292,7 +301,7 @@
           <el-form-item label="主体名称" prop="companyName" class="form-item">
             <el-input
               v-model="form.companyName"
-              placeholder="请输入公司名称"
+              placeholder="请输入公司名称（或主体人姓名）"
             />
           </el-form-item>
           </el-col>
@@ -427,21 +436,23 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="18">
-           <el-form-item label="公司地址" prop="addressModel" class="form-item">
+            <el-col :span="12">
+           <el-form-item  label="公司地址" prop="addressModel" class="form-item">
               <el-row :gutter="10">
-                <el-col :span="14">
-                  <address-selector v-model="addressModel" />
-                </el-col>
-                <el-col :span="10">
-                  <el-input
-                    v-model="form.companyAddress"
-                    placeholder="请输入详细地址"
-                  />
+                <el-col :span="24">
+                  <address-selector v-model="addressModel"/>
                 </el-col>
               </el-row>
             </el-form-item>
 
+          </el-col>
+          <el-col :span="6">
+            <el-form-item  label="" prop="companyAddress" class="form-item">
+              <el-input
+                    v-model="form.companyAddress"
+                    placeholder="请输入详细地址"
+                  />
+            </el-form-item>
           </el-col>
           </el-row>
           <el-row :gutter="20" class="form-row">
@@ -646,7 +657,7 @@
             </el-col>
           </el-row>
 
-          <el-form-item label="律师咨询情况:" class="form-item" style="margin-bottom: 20px;">
+          <el-form-item label="律师咨询情况:" prop="lawyerConsultation" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.lawyerConsultation"
               type="textarea"
@@ -655,7 +666,7 @@
             />
           </el-form-item>
 
-          <el-form-item label="其他费用沟通:" class="form-item" style="margin-bottom: 20px;">
+          <el-form-item label="其他费用沟通:" prop="otherFee" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.otherFee"
               type="textarea"
@@ -1321,6 +1332,7 @@ import {
 } from '@/api/myCustomer/customerTransfer';
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
+import { nextTick } from 'vue';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -1404,6 +1416,8 @@ const initFormData: CustomerTransferForm = {
 
   invoiceStatus: undefined,
 
+
+
 performanceInfo: [
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
@@ -1412,6 +1426,17 @@ performanceInfo: [
 ]
 
 }
+
+// addressModel地址验证函数
+const validateAddressModel = (rule: any, value: any, callback: Function) => {
+  // 检查省市区是否都已选择
+  if (!addressModel.value.province || !addressModel.value.city || !addressModel.value.district) {
+    callback(new Error('省市区均为必选项，请完善地址信息'));
+  } else {
+    callback();
+  }
+};
+
 const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   form: { ...initFormData },
   queryParams: {
@@ -1481,9 +1506,12 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     companyIndustry: [
       { required: true, message: "所属行业不能为空", trigger: "change" }
     ],
-   /*  addressModel: [
-      { required: true, message: "公司地址不能为空", trigger: "change" }
-    ], */
+    addressModel: [
+      { validator: validateAddressModel, message: "请选择完整的省市区", trigger: 'change' }
+    ],  
+    companyAddress: [
+      { required: true, message: "请输入详细地址", trigger: "blur" }
+    ],
     contractAmount: [
       { required: true, message: "合同金额不能为空", trigger: "blur" }
     ],
@@ -1511,6 +1539,12 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     invoiceStatus: [
       { required: true, message: "开票状态不能为空", trigger: "change" }
     ],
+    lawyerConsultation: [
+      { required: true, message: "律师咨询情况不能为空", trigger: "blur" }
+    ], 
+    otherFee: [
+      { required: true, message: "其他费用沟通不能为空", trigger: "blur" }
+    ],
    /*  'performanceInfo.0.userId': [
       { required: true, message: "业绩所属人1不能为空", trigger: "blur" }
     ],
@@ -1520,9 +1554,9 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     'performanceInfo.0.city': [
       { required: true, message: "业绩所属城市不能为空", trigger: "blur" }
     ],   */
-   performanceUserId: [{ required: true, message: '请选择业绩所属人', trigger: 'change' }],
+   performanceUserId: [{ required: true, message: '请选业绩所属人', trigger: 'change' }],
    performanceBalance: [{ required: true, message: '请输入分配业绩金额', trigger: 'blur' }],
-   performanceCity: [{ required: true, message: '请选择业绩所属城市', trigger: 'change' }],
+   performanceCity: [{ required: true, message: '请选业绩所属城市', trigger: 'change' }],
 
   }
 });
@@ -1597,6 +1631,7 @@ const invoiceStatusList = [
   { value: 0, label: '未开票' },
   { value: 1, label: '已开票' }
 ];
+
 
 //添加金额格式化处理函数
 const formatCurrency = (value) => {
@@ -1701,11 +1736,11 @@ const cancel = () => {
 /** 表单重置 */
 const reset = () => {
   form.value = { ...initFormData };
-
+    // 重置 addressModel 以使address-selector组件重新加载
     addressModel.value = {
-      province: getCodeByName(form.value.province || ''),
-      city: getCodeByName(form.value.city || ''),
-      district: getCodeByName(form.value.district || '')
+      province:'370000',
+      city:'',
+      district: ''
     };
 
   customerTransferFormRef.value?.resetFields();
@@ -1802,6 +1837,13 @@ const handleUpdate = async (row?: CustomerTransferVO) => {
   const _id = row?.id || ids.value[0]
   const res = await getCustomerTransfer(_id);
   Object.assign(form.value, res.data);
+
+  // 更新 addressModel 的值，以便 address-selector 组件能正确显示
+  addressModel.value = {
+    province: getCodeByName(form.value.province || ''),
+    city: getCodeByName(form.value.city || ''),
+    district: getCodeByName(form.value.district || '')
+  };
 
   // 确保 performanceInfo 格式正确
   if (!form.value.performanceInfo || !Array.isArray(form.value.performanceInfo)) {
@@ -2005,7 +2047,6 @@ if (hasPerformanceSumError.value) {
           form.value.debtDetails = form.value.debtDetails.join(",");
         }
 
-        console.log('Form data after processing:', form.value);
 
         if (form.value.id) {
           await updateCustomerTransfer(form.value);
