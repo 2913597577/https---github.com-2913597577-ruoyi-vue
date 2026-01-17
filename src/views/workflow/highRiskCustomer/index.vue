@@ -37,7 +37,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column v-if="false" label="主键" align="center" prop="id" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" />
+        <el-table-column label="客户名称" align="center" prop="customerName" show-overflow-tooltip />
         <el-table-column label="证据情况" align="center" prop="evidenceText" />
         <el-table-column label="风险发现日期" align="center" width="120" prop="riskDiscoveryDate" />
         <el-table-column label="是否提及退费" align="center">
@@ -82,7 +82,7 @@
                 <el-button size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
               </el-col> -->
               <el-col :span="1.5">
-                <el-button type="success" link size="small" icon="View" @click="handleTransportRecord(scope.row)">物流信息</el-button>
+                <el-button type="success" link size="small" icon="Operation" @click="handleTransportRecord(scope.row)">物流信息</el-button>
               </el-col>
             </el-row>
           </template>
@@ -122,7 +122,7 @@ const data = reactive<PageData<DcHighRiskCustomerForm, DcHighRiskCustomerQuery>>
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     customerId: undefined,
     customerName: undefined,
     riskDetermination: undefined

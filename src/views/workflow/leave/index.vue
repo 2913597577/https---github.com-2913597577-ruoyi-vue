@@ -126,7 +126,7 @@ const data = reactive<PageData<LeaveForm, LeaveQuery>>({
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     startLeaveDays: undefined,
     endLeaveDays: undefined
   },

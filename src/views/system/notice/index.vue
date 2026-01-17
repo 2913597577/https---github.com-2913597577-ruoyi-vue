@@ -154,7 +154,7 @@ const data = reactive<PageData<NoticeForm, NoticeQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     noticeTitle: '',
     createByName: '',
     status: '',

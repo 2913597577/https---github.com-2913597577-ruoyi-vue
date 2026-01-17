@@ -329,24 +329,24 @@
     </el-dialog>
 
     <!-- 在现有 el-dialog 后面添加新的新增工单对话框 -->
-    <el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body draggable>
-      <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="addRules" label-width="90px">
-        <el-form-item label="客户" prop="customerId">
-          <el-select v-model="addForm.customerId" placeholder="请选择客户" filterable>
+    <el-dialog title="新增工单管理" v-model="addDialog.visible" width="600px" append-to-body draggable>
+      <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="rules" label-width="90px">
+        <el-form-item label="客户名称" prop="customerId">
+          <el-select v-model="addForm.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
               :value="item.customer_id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
-          <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+          <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
             @change="handleAddLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="原合同" prop="preContractAddress">
-          <file-upload :limit="1" :fileSize="10" v-model="addPreFile" />
+          <file-upload :limit="5" :fileSize="20" v-model="addPreFile" />
         </el-form-item>
         <!-- <el-form-item label="原合同文件名" prop="preContractName">
     <el-dialog title="新增工单管理" v-model="addDialog.visible" width="500px" append-to-body>
@@ -371,7 +371,7 @@
       <el-input v-model="addForm.newContractName" placeholder="请输入新合同文件名" />
     </el-form-item> -->
         <el-form-item label="客户要求" prop="customerRequirements">
-          <el-input v-model="addForm.customerRequirements" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="addForm.customerRequirements" type="textarea" placeholder="请输入客户具体要求" />
         </el-form-item>
         <el-form-item label="客户所属方" prop="remark1">
           <el-input v-model="addForm.remark1" placeholder="请输入客户所属方" />
@@ -486,8 +486,20 @@ const data = reactive<PageData<CustomerJobOrderForm, CustomerJobOrderQuery>>({
     id: [
       { required: true, message: "主键ID不能为空", trigger: "blur" }
     ],
+    customerId: [
+      { required: true, message: "请选择客户名称", trigger: "blur" }
+    ],
+    legalSupportId: [
+      { required: true, message: "请选择法务支持人员", trigger: "blur" }
+    ],
     deliveryTime: [
-      { required: true, message: "交付时间不能为空", trigger: "blur" }
+      { required: true, message: "请选择交付时间", trigger: "blur" }
+    ],
+   /*  preContractAddress: [
+      { required: true, message: "请上传原合同文件", trigger: "blur" }
+    ], */
+    customerRequirements: [
+      { required: true, message: "请输入客户要求", trigger: "blur" }
     ],
   }
 });
@@ -722,11 +734,6 @@ const addNewFile = ref();
 
 const addForm = ref<CustomerJobOrderForm>({ ...initFormData });
 
-const addRules = {
-  deliveryTime: [
-    { required: true, message: "交付时间不能为空", trigger: "blur" }
-  ],
-};
 
 /** 取消新增按钮 */
 const cancelAdd = () => {

@@ -172,7 +172,7 @@ const data = reactive<PageData<OperLogForm, OperLogQuery>>({
   },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     operIp: '',
     title: '',
     operName: '',

@@ -208,19 +208,19 @@
 
 
     <!-- 添加或修改保险记录表对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
-      <el-form ref="insuranceCaseFormRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body draggable>
+      <el-form ref="insuranceCaseFormRef" :model="form" :rules="rules" label-width="80px" style="width: 500px;">
         <!-- <el-form-item label="客户id(客户编号)" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id(客户编号)" />
         </el-form-item> -->
-        <el-form-item label="客户" prop="customerId">
-          <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+        <el-form-item label="客户名称" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
               :value="item.customer_id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
+        <el-form-item label="法务支持" prop="legalSupportId" label-width="80px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
@@ -248,16 +248,16 @@
           <el-input v-model="form.defendant" placeholder="请输入被告方" />
         </el-form-item>
         <el-form-item label="标的额" prop="subjectAmount">
-          <el-input v-model="form.subjectAmount" placeholder="请输入标的额" />
+          <el-input v-model="form.subjectAmount" type="number" placeholder="请输入标的额" />
         </el-form-item>
         <el-form-item label="案由" prop="caseReason">
-          <el-input v-model="form.caseReason" placeholder="请输入案由" />
+          <el-input v-model="form.caseReason" type="textarea" placeholder="请输入案由" />
         </el-form-item>
         <el-form-item label="管辖权法院" prop="jurisdictionCourt">
           <el-input v-model="form.jurisdictionCourt" placeholder="请输入管辖权法院" />
         </el-form-item>
         <el-form-item label="保费" prop="premium">
-          <el-input v-model="form.premium" placeholder="请输入保费" />
+          <el-input v-model="form.premium" placeholder="请输入保费" type="number" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
@@ -340,8 +340,22 @@ const data = reactive<PageData<InsuranceCaseForm, InsuranceCaseQuery>>({
       { required: true, message: "自增主键不能为空", trigger: "blur" }
     ],
     customerId: [
-      { required: true, message: "客户id(客户编号)不能为空", trigger: "blur" }
+      { required: true, message: "请选择客户名称", trigger: "blur" }
     ],
+    legalSupportId: [
+      { required: true, message: "请选择法务支持", trigger: "blur" }
+    ], 
+    orderDate: [
+      { required: true, message: "请选择下单日期", trigger: "blur" }
+    ],
+    insuranceNumber: [
+      { required: true, message: "请输入工单号", trigger: "blur" }
+    ],
+    premium: [
+      { required: true, message: "请输入保费", trigger: "blur" }
+    ],
+
+
   }
 });
 

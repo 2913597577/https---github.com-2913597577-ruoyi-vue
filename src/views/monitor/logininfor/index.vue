@@ -129,7 +129,7 @@ const loginInfoTableRef = ref<ElTableInstance>();
 // 查询参数
 const queryParams = ref<LoginInfoQuery>({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   ipaddr: '',
   userName: '',
   status: '',

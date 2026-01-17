@@ -202,7 +202,7 @@ const route = useRoute();
 // 查询参数
 const queryParams = reactive<TrackingQueryParams>({
   pageNum: 0,
-  pageSize: 10
+  pageSize: 20
 });
 
 // 表单数据

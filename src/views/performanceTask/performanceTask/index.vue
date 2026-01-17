@@ -167,7 +167,7 @@ const data = reactive<PageData<PerformanceTaskForm, PerformanceTaskQuery>>({
   form: {...initFormData},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     legalSupportId: undefined,
     legalSupportName: undefined,
     taskMonth: undefined,

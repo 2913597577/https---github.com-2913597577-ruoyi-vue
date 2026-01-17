@@ -67,7 +67,7 @@
                 <el-button type="info" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <el-col :span="1.5">
-                <el-button type="success" link size="small" icon="View" @click="handleTransportRecord(scope.row)">物流信息</el-button>
+                <el-button type="success" link size="small" icon="Operation" @click="handleTransportRecord(scope.row)">物流信息</el-button>
               </el-col>
             </el-row>
           </template>

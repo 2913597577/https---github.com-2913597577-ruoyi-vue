@@ -137,7 +137,7 @@ const tab = ref('running');
 // 查询参数
 const queryParams = ref<FlowInstanceQuery>({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   flowCode: undefined,
   category: undefined
 });

@@ -159,14 +159,14 @@
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="流转单编号" align="center" prop="transferId" /> -->
         <!-- <el-table-column label="业绩所属用户id" align="center" prop="userId" /> -->
-        <el-table-column label="客户" align="center" prop="companyName" />
-        <el-table-column label="服务类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
+        <el-table-column label="客户名称" align="center" prop="companyName" width="140px" show-overflow-tooltip />
+        <el-table-column label="服务类型" align="center" prop="serviceType" width="100px" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
           </template>
         </el-table-column>
-        <el-table-column label="业绩所属人" align="center" prop="user_name" />
-        <el-table-column label="业绩所属金额" align="center" prop="balance" width="200"/>
+        <el-table-column label="业绩所属人" align="center" prop="user_name" width="100px" show-overflow-tooltip />
+        <el-table-column label="业绩所属金额" align="center" prop="balance" width="140px"/>
         <el-table-column label="业绩所属城市" align="center" prop="city">
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
@@ -187,7 +187,7 @@
           <span>{{ scope.row.serviceEnd ? parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') : '' }}</span>
         </template>
         </el-table-column>
-        <el-table-column label="分配人" align="center" prop="creater_name" />
+        <el-table-column label="分配人" align="center" prop="creater_name" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -281,7 +281,7 @@ const data = reactive<PageData<CustomerPerformanceForm, CustomerPerformanceQuery
   form: {...initFormData},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     userId: undefined,
     transferId: undefined,
     city: undefined,

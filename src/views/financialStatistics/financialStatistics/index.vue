@@ -205,7 +205,7 @@ const data = reactive<PageData<FinancialStatisticsForm, FinancialStatisticsQuery
   form: {...initFormData},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     balance: undefined,
     financialType: undefined,
     sourceType: undefined,

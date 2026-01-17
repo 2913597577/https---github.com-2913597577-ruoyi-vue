@@ -115,7 +115,7 @@ const userSelectCount = ref(0);
 // 查询参数
 const queryParams = ref<TaskQuery>({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   nodeName: undefined,
   flowName: undefined,
   flowCode: undefined,

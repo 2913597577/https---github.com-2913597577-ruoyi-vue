@@ -38,7 +38,7 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键" align="center" prop="id" /> -->
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户姓名" align="center" prop="customerName" />
+        <el-table-column label="客户名称" align="center" prop="customerName" show-overflow-tooltip />
         <el-table-column label="客户对接人" align="center" prop="principal" />
         <el-table-column label="对接人电话" align="center" prop="principalPhone" />
         <el-table-column label="原合同号" align="center" prop="contractNo" />
@@ -110,7 +110,7 @@
                 <el-button type="info" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <el-col :span="1.5">
-                <el-button type="success" link size="small" icon="View" @click="handleTransportRecord(scope.row)">物流信息</el-button>
+                <el-button type="success" link size="small" icon="Operation" @click="handleTransportRecord(scope.row)">物流信息</el-button>
               </el-col>
             </el-row>
           </template>
@@ -147,7 +147,7 @@ const data = reactive<PageData<DcCustomerRiskRefundForm, DcCustomerRiskRefundQue
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     customerId: undefined,
     customerName: undefined,
     customerType: undefined

@@ -126,7 +126,7 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="案件" prop="caseId">
+            <el-form-item label="案件名称" prop="caseId">
               <el-select v-model="queryParams.caseId" placeholder="请选择案件" filterable clearable>
                 <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
                   :value="item.case_id">
@@ -139,9 +139,9 @@
                   :value="dict.value" />
               </el-select>
             </el-form-item>
-            <el-form-item label="客户id" prop="customerId">
+            <!-- <el-form-item label="客户id" prop="customerId">
               <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="客户名称" prop="customerId">
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
                 :props="selectProps" filterable clearable :loading="loading">
@@ -163,9 +163,9 @@
 </el-dialog>
 
     <!-- 添加或修改案件进展表对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
-      <el-form ref="caseProgressFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="案件" prop="caseId">
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body draggable>
+      <el-form ref="caseProgressFormRef" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="案件名称" prop="caseId">
           <el-select v-model="form.caseId" placeholder="请选择案件" filterable clearable>
             <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
               :value="item.case_id">
@@ -173,7 +173,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="案件类型" prop="caseType">
-          <el-select v-model="form.caseType" placeholder="请选择案件类型">
+          <el-select v-model="form.caseType" placeholder="请选择案件类型" filterable clearable>
             <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label"
               :value="dict.value"></el-option>
           </el-select>
@@ -185,16 +185,16 @@
           <el-input v-model="form.customerName" placeholder="请输入客户姓名" />
         </el-form-item> -->
         <el-form-item label="案件进展" prop="caseProgress">
-          <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入案件进展内容" />
         </el-form-item>
-        <el-form-item label="跟进日期" prop="visitTime">
+        <el-form-item label="跟进日期" prop="trackingTime">
           <el-date-picker clearable v-model="form.trackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择出访时间">
+            placeholder="请选择根据日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="下次跟进日期" prop="nextVisitTime">
+        <el-form-item label="下次跟进日期" prop="nextTrackingTime">
           <el-date-picker clearable v-model="form.nextTrackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择下次出访时间">
+            placeholder="请选择下次跟进日期">
           </el-date-picker>
         </el-form-item>
       </el-form>
@@ -283,6 +283,12 @@ const data = reactive<PageData<CaseProgressForm, CaseProgressQuery>>({
     ],
     customerName: [
       { required: true, message: "客户姓名不能为空", trigger: "blur" }
+    ],
+    trackingTime: [
+      { required: true, message: "请选择跟进日期", trigger: "change" }
+    ],
+    nextTrackingTime: [
+      { required: true, message: "请选择下次跟进日期", trigger: "change" }
     ],
   }
 });
