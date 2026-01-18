@@ -54,8 +54,8 @@
             <span>{{ parseTime(scope.row.applyDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="报销人姓名" align="center" prop="applicantName" />
-        <el-table-column label="所属部门" align="center" prop="departmentName" />
+        <el-table-column label="报销人姓名" align="center" prop="applicantName" width="90px" />
+        <el-table-column label="所属部门" align="center" prop="departmentName" width="90px" show-overflow-tooltip />
         <el-table-column label="岗位/职务" align="center" prop="position" />
         <el-table-column label="报销事由" align="center" prop="expenseReason" />
         <el-table-column label="费用类型" align="center" prop="expenseType">
@@ -63,20 +63,20 @@
             <dict-tag :options="dc_reimbursement_type" :value="scope.row.expenseType"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column label="费用日期" align="center" prop="expenseDate" width="120">
+        <el-table-column label="费用日期" align="center" prop="expenseDate" width="100px">
         <template #default="scope">
             <span>{{ parseTime(scope.row.expenseDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="费用明细描述" align="center" prop="expenseDescription" />
-        <el-table-column label="发票总张数" align="center" prop="invoiceCount" />
-        <el-table-column label="发票总金额" align="center" prop="invoiceAmount" width="120" />
-        <el-table-column label="报销金额" align="center" prop="reimbursementAmount" width="120"/>
-        <el-table-column label="已预支金额" align="center" prop="advancedAmount" width="120"/>
-        <el-table-column label="应退/应补金额" align="center" prop="refundOrSupplement" width="120"/>
-        <el-table-column label="差额说明" align="center" prop="deferredReason" />
-        <el-table-column label="发票附件" align="center" prop="attachmentPath" />
-        <el-table-column label="支付日期" align="center" prop="paymentDate">
+        <el-table-column label="费用明细描述" align="center" prop="expenseDescription" width="110px" show-overflow-tooltip />
+        <el-table-column label="发票总张数" align="center" prop="invoiceCount" width="90px" />
+        <el-table-column label="发票总金额" align="center" prop="invoiceAmount" width="120px" />
+        <el-table-column label="报销金额" align="center" prop="reimbursementAmount" width="120px"/>
+        <el-table-column label="已预支金额" align="center" prop="advancedAmount" width="120px"/>
+        <el-table-column label="应退/应补金额" align="center" prop="refundOrSupplement" width="120px"/>
+        <el-table-column label="差额说明" align="center" prop="deferredReason" show-overflow-tooltip />
+        <el-table-column label="发票附件" align="center" prop="attachmentPath" show-overflow-tooltip />
+        <el-table-column label="支付日期" align="center" prop="paymentDate" width="100px">
         <template #default="scope">
             <span>{{ parseTime(scope.row.paymentDate, '{y}-{m}-{d}') }}</span>
           </template>
@@ -87,19 +87,19 @@
           </template>
         </el-table-column>
         <el-table-column label="支付人" align="center" prop="financePayerName" />
-        <el-table-column label="收款账户姓名" align="center" prop="receiverName" />
-        <el-table-column label="收款银行名称" align="center" prop="receiverBankName" />
-        <el-table-column label="收款银行账号" align="center" prop="receiverBankAccount" />
-        <el-table-column label="财务记账凭证号" align="center" prop="financeVoucherNo" />
-        <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="状态" align="center" prop="status">
+        <el-table-column label="收款账户姓名" align="center" prop="receiverName" width="110px" />
+        <el-table-column label="收款银行名称" align="center" prop="receiverBankName" width="110px" show-overflow-tooltip />
+        <el-table-column label="收款银行账号" align="center" prop="receiverBankAccount" width="110px" show-overflow-tooltip />
+        <el-table-column label="财务记账凭证号" align="center" prop="financeVoucherNo" width="110px" show-overflow-tooltip />
+        <el-table-column label="备注" align="center" prop="remark" show-overflow-tooltip />
+        <el-table-column label="状态" align="center" prop="status" with="80px">
           <template #default="scope">
             <dict-tag :options="wf_business_status" :value="scope.row.status"></dict-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="180" fixed="right">
           <template #default="scope">
-            <el-row :gutter="10" class="mb8">
+            <el-row :gutter="10">
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'reject'">
                 <el-button size="small" link type="warning" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
               </el-col>
@@ -107,7 +107,7 @@
                 <el-button size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
               </el-col>
             </el-row>
-            <el-row :gutter="10" class="mb8">
+            <el-row :gutter="10">
               <el-col :span="1.5">
                 <el-button type="primary" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>

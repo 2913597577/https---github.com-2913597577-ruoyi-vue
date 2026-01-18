@@ -107,10 +107,10 @@
             ></el-date-picker>
         </el-form-item>
         <el-form-item label="月度业绩目标" prop="performanceGoal" label-width="100px">
-          <el-input v-model="form.performanceGoal" placeholder="请输入月度业绩目标" />
+          <el-input v-model="form.performanceGoal" type="number" placeholder="请输入月度业绩目标" />
         </el-form-item>
         <el-form-item label="月度出访目标" prop="visitGoal" label-width="100px">
-          <el-input v-model="form.visitGoal" placeholder="请输入月度出访目标" />
+          <el-input v-model="form.visitGoal" type="number" placeholder="请输入月度出访目标" />
         </el-form-item>
         <!-- <el-form-item label="已完成的月度业绩目标" prop="achievedPerformanceGoal">
           <el-input v-model="form.achievedPerformanceGoal" placeholder="请输入已完成的月度业绩目标" />

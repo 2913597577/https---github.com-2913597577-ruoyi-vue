@@ -60,7 +60,7 @@
 
       <el-table v-loading="loading" border :data="staffInfoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="员工职级变更" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="员工职级变更" align="center" width="110px" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-button link type="primary" icon="View" @click="handlePositionRankDetail(scope.row)">查看详情</el-button>
           </template>
@@ -71,22 +71,22 @@
         <el-table-column label="性别" align="center" prop="sex" />
         <el-table-column label="别名" align="center" prop="nickname" />
         <el-table-column label="员工照片" align="center" prop="thumb" />
-        <el-table-column label="部门id" align="center" prop="deptId" />
-        <el-table-column label="上级主管id" align="center" prop="pid" />
-        <el-table-column label="职位id" align="center" prop="positionId" />
+        <el-table-column label="部门" align="center" prop="deptId" />
+        <el-table-column label="上级主管" align="center" prop="pid" />
+        <el-table-column label="职位" align="center" prop="positionId" />
         <el-table-column label="职务" align="center" prop="positionName" />
         <el-table-column label="职级" align="center" prop="positionRank" />
         <el-table-column label="员工类型" align="center" prop="type" />
         <el-table-column label="身份类型" align="center" prop="isStaff" />
         <el-table-column label="工号" align="center" prop="jobNumber" />
-        <el-table-column label="生日" align="center" prop="birthday" width="180">
+        <el-table-column label="生日" align="center" prop="birthday" width="100px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.birthday, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
 
         <el-table-column label="年龄" align="center" prop="age" />
-        <el-table-column label="开始工作时间" align="center" prop="workDate" width="180">
+        <el-table-column label="开始工作时间" align="center" prop="workDate" width="100px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.workDate, '{y}-{m}-{d}') }}</span>
           </template>
@@ -95,41 +95,41 @@
         <el-table-column label="工作团队" align="center" prop="team" />
         <el-table-column label="籍贯" align="center" prop="nativePlace" />
         <el-table-column label="民族" align="center" prop="nation" />
-        <el-table-column label="家庭地址" align="center" prop="homeAddress" />
-        <el-table-column label="现居地址" align="center" prop="currentAddress" />
-        <el-table-column label="紧急联系人" align="center" prop="contact" />
-        <el-table-column label="紧急联系人电话" align="center" prop="contactMobile" />
+        <el-table-column label="家庭地址" align="center" prop="homeAddress" show-overflow-tooltip />
+        <el-table-column label="现居地址" align="center" prop="currentAddress" show-overflow-tooltip />
+        <el-table-column label="紧急联系人" align="center" prop="contact" width="90px"/>
+        <el-table-column label="紧急联系人电话" align="center" prop="contactMobile" width="110px"/>
         <el-table-column label="户口性质" align="center" prop="residentType" />
-        <el-table-column label="户口所在地" align="center" prop="residentPlace" />
-        <el-table-column label="毕业学校" align="center" prop="graduateSchool" />
-        <el-table-column label="毕业日期" align="center" prop="graduateDay" width="180">
+        <el-table-column label="户口所在地" align="center" prop="residentPlace" width="90px" show-overflow-tooltip />
+        <el-table-column label="毕业学校" align="center" prop="graduateSchool" show-overflow-tooltip />
+        <el-table-column label="毕业日期" align="center" prop="graduateDay" width="100px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.graduateDay, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="政治面貌" align="center" prop="political" />
         <el-table-column label="婚姻状况" align="center" prop="maritalStatus" />
-        <el-table-column label="身份证" align="center" prop="idcard" />
+        <el-table-column label="身份证" align="center" prop="idcard" show-overflow-tooltip />
         <el-table-column label="学位" align="center" prop="education" />
-        <el-table-column label="专业" align="center" prop="speciality" />
-        <el-table-column label="社保账号" align="center" prop="socialAccount" />
-        <el-table-column label="医保账号" align="center" prop="medicalAccount" />
-        <el-table-column label="公积金账号" align="center" prop="providentAccount" />
-        <el-table-column label="银行卡号" align="center" prop="bankAccount" />
-        <el-table-column label="开户行" align="center" prop="bankInfo" />
-        <el-table-column label="档案附件" align="center" prop="fileIds" />
-        <el-table-column label="员工个人简介" align="center" prop="description" />
-        <el-table-column label="员工入职日期" align="center" prop="entryTime" width="180">
+        <el-table-column label="专业" align="center" prop="speciality" show-overflow-tooltip />
+        <el-table-column label="社保账号" align="center" prop="socialAccount" show-overflow-tooltip />
+        <el-table-column label="医保账号" align="center" prop="medicalAccount" show-overflow-tooltip />
+        <el-table-column label="公积金账号" align="center" prop="providentAccount" width="90px" show-overflow-tooltip />
+        <el-table-column label="银行卡号" align="center" prop="bankAccount" show-overflow-tooltip />
+        <el-table-column label="开户行" align="center" prop="bankInfo" show-overflow-tooltip />
+        <el-table-column label="档案附件" align="center" prop="fileIds" show-overflow-tooltip />
+        <el-table-column label="个人简介" align="center" prop="description" width="100px" show-overflow-tooltip />
+        <el-table-column label="入职日期" align="center" prop="entryTime" width="100px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.entryTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="员工离职日期" align="center" prop="levelTime" width="180">
+        <el-table-column label="离职日期" align="center" prop="levelTime" width="100px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.levelTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="状态" align="center" prop="status" />
+        <el-table-column label="状态" align="center" prop="status" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="240" fixed="right">
           <template #default="scope">
             <el-button link type="info" icon="View" @click="handleViewDetail(scope.row)">查看</el-button>

@@ -47,9 +47,9 @@
             <dict-tag :options="wf_business_status" :value="scope.row.status"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="240" fixed="right">
+        <el-table-column label="操作" align="center" width="180" fixed="right">
           <template #default="scope">
-            <el-row :gutter="10" class="mb8">
+            <el-row :gutter="10">
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
                 <el-button v-hasPermi="['workflow:customerChurnApprove:edit']" size="small" link type="warning" icon="Edit" @click="handleUpdate(scope.row)"
                   >修改</el-button
@@ -61,7 +61,7 @@
                 >
               </el-col>
             </el-row>
-            <el-row :gutter="10" class="mb8">
+            <el-row :gutter="10">
               <el-col :span="1.5">
                 <el-button type="info" size="small" link icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>

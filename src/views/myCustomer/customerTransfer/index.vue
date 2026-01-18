@@ -321,6 +321,7 @@
                 <el-input
                   v-model="form.decisionMakerContact"
                   placeholder="联系方式"
+                  type="number"
                 />
               </el-form-item>
             </el-col>
@@ -357,6 +358,7 @@
                 <el-input
                   v-model="form.contactInfo"
                   placeholder="联系方式"
+                  type="number"
                 />
               </el-form-item>
             </el-col>
@@ -393,6 +395,7 @@
                 <el-input
                   v-model="form.additionalContact"
                   placeholder="联系方式"
+                  type="number"
                 />
               </el-form-item>
             </el-col>

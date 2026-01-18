@@ -61,7 +61,7 @@
         <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
         <el-table-column label="操作" align="center" width="200">
           <template #default="scope">
-            <el-button type="primary" size="small" icon="Edit" @click="handleOpen(scope.row)">办理</el-button>
+            <el-button type="primary" link size="small" icon="Edit" @click="handleOpen(scope.row)">办理</el-button>
           </template>
         </el-table-column>
       </el-table>
