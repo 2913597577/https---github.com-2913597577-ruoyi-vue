@@ -8,10 +8,10 @@
             <el-form-item label="姓名" prop="name">
               <el-input v-model="queryParams.name" placeholder="请输入员工姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="部门id" prop="deptId">
+            <el-form-item label="部门" prop="deptId">
               <el-input v-model="queryParams.deptId" placeholder="请输入部门id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="职位id" prop="positionId">
+            <el-form-item label="职位" prop="positionId">
               <el-input v-model="queryParams.positionId" placeholder="请输入职位id" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="职务" prop="positionName">
