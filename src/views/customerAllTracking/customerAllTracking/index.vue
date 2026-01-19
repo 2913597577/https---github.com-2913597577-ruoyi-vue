@@ -534,10 +534,10 @@ watch(
   loadLawyerSupportList();
   loadCustomerList();
 }); */
-onMounted(async () => {
-  await loadCustomerList(); // 等待客户列表加载完成
-  loadLawyerSupportList();
-  await getList(); // 客户列表加载完后，再获取工单列表并渲染
+onMounted(() => {
+   loadCustomerList(); // 等待客户列表加载完成
+   loadLawyerSupportList();
+   getList(); // 客户列表加载完后，再获取工单列表并渲染
 });
 </script>
 

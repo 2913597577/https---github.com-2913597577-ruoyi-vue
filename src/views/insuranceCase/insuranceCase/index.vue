@@ -567,10 +567,10 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  await loadLawyerSupportList();
-  await loadCustomerList();
-  await getList();
+onMounted(() => {
+   loadLawyerSupportList();
+   loadCustomerList();
+   getList();
 });
 </script>
 

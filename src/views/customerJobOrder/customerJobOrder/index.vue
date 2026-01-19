@@ -850,9 +850,9 @@ watch(
 
 
 
-onMounted(async () => {
-  await loadCustomerList(); // 等待客户列表加载完成
+onMounted(() => {
+  loadCustomerList(); // 等待客户列表加载完成
   loadLawyerSupportList();
-  await getList(); // 客户列表加载完后，再获取工单列表并渲染
+  getList(); // 客户列表加载完后，再获取工单列表并渲染
 });
 </script>

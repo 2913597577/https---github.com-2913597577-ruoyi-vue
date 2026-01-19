@@ -721,10 +721,10 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+onMounted( () => {
   // 1. 优先加载客户下拉框（无论是否有CustomerId，表单都需要）
-  await loadLawyerSupportList();
-  await loadCustomerList();
-  await getList();
+   loadCustomerList();
+   loadLawyerSupportList();
+   getList();
 });
 </script>

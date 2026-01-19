@@ -643,9 +643,13 @@ return sums;
 
 
 onMounted(() => {
-  loadLawyerSupportList();
-  loadCustomerList();
-  getList();
+
+loadCustomerList();
+
+loadLawyerSupportList();
+  
+getList();
+
 });
 </script>
 
