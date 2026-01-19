@@ -38,15 +38,15 @@
         <el-table v-loading="loading" border :data="taskList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center" />
           <el-table-column align="center" type="index" label="序号" width="60"></el-table-column>
-          <el-table-column :show-overflow-tooltip="true" prop="flowName" align="center" label="流程定义名称"></el-table-column>
-          <el-table-column align="center" prop="flowCode" label="流程定义编码"></el-table-column>
-          <el-table-column align="center" prop="categoryName" label="流程分类"></el-table-column>
-          <el-table-column align="center" prop="version" label="版本号" width="90">
+          <el-table-column :show-overflow-tooltip="true" prop="flowName" align="center" label="流程定义名称" width="100px"></el-table-column>
+          <el-table-column align="center" prop="flowCode" label="流程定义编码" width="100px" show-overflow-tooltip></el-table-column>
+          <el-table-column align="center" prop="categoryName" label="流程分类" width="120px"></el-table-column>
+          <el-table-column align="center" prop="version" label="版本号" width="90px">
             <template #default="scope"> v{{ scope.row.version }}.0</template>
           </el-table-column>
-          <el-table-column align="center" prop="nodeName" label="任务名称"></el-table-column>
+          <el-table-column align="center" prop="nodeName" label="任务名称" width="100px"></el-table-column>
           <el-table-column align="center" prop="createByName" label="申请人"></el-table-column>
-          <el-table-column align="center" label="办理人">
+          <el-table-column align="center" label="办理人" width="100px">
             <template #default="scope">
               <template v-if="tab === 'waiting'">
                 <template v-if="scope.row.assigneeNames">
@@ -63,25 +63,25 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="流程状态" prop="flowStatus" min-width="70">
+          <el-table-column align="center" label="流程状态" prop="flowStatus" min-width="90px">
             <template #default="scope">
               <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
             </template>
           </el-table-column>
-          <el-table-column v-if="tab === 'finish'" align="center" label="任务状态" prop="flowTaskStatus" min-width="70">
+          <el-table-column v-if="tab === 'finish'" align="center" label="任务状态" prop="flowTaskStatus" min-width="90px">
             <template #default="scope">
               <dict-tag :options="wf_task_status" :value="scope.row.flowTaskStatus"></dict-tag>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-          <el-table-column label="操作" align="center" :width="tab === 'finish' ? '88' : '188'">
+          <el-table-column label="操作" align="center" :width="tab === 'finish' ? '88' : '188'" fixed="right">
             <template #default="scope">
-              <el-row :gutter="10" class="mb8">
+              <el-row :gutter="10">
                 <el-col :span="1.5" v-if="tab === 'waiting' || tab === 'finish'">
-                  <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+                  <el-button link type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
                 </el-col>
                 <el-col :span="1.5" v-if="tab === 'waiting'">
-                  <el-button type="primary" size="small" icon="Setting" @click="handleMeddle(scope.row)">流程干预 </el-button>
+                  <el-button link type="danger" size="small" icon="Setting" @click="handleMeddle(scope.row)">流程干预 </el-button>
                 </el-col>
               </el-row>
             </template>

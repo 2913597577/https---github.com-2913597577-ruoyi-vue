@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -34,10 +34,11 @@
         </el-card>
       </div>
     </transition>
-
+ -->
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['staffInfo:staffInfo:add']">新增</el-button>
@@ -54,7 +55,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['staffInfo:staffInfo:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+          </div>
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['staffInfo:staffInfo:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['staffInfo:staffInfo:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -150,6 +164,45 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+    <!-- 筛选按钮弹窗 -->
+    <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+      <div class="p-2">
+        <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="姓名" prop="name">
+              <el-input v-model="queryParams.name" placeholder="请输入员工姓名" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="部门" prop="deptId">
+              <el-input v-model="queryParams.deptId" placeholder="请输入部门id" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="职位" prop="positionId">
+              <el-input v-model="queryParams.positionId" placeholder="请输入职位id" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="职务" prop="positionName">
+              <el-input v-model="queryParams.positionName" placeholder="请输入职务" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="职级" prop="positionRank">
+              <el-input v-model="queryParams.positionRank" placeholder="请输入职级" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="工作地点" prop="workLocation">
+              <el-input v-model="queryParams.workLocation" placeholder="请输入工作地点" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="工作团队" prop="team">
+              <el-input v-model="queryParams.team" placeholder="请输入工作团队" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+      </div>
+    </el-dialog>
     <!-- 添加或修改员工档案对话框 -->
     <!-- 替换原有的 el-dialog 部分 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="800px" append-to-body :close-on-click-modal="false"
@@ -999,6 +1052,14 @@ const getList = async () => {
   staffInfoList.value = res.rows;
   total.value = res.total;
   loading.value = false;
+}
+
+//查找相关
+const searchDialogVisible = ref(false)
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 /** 取消按钮 */

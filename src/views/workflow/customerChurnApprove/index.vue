@@ -1,11 +1,11 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="search">
         <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-          <!-- <el-form-item label="审批类型" prop="applyType">
+          <el-form-item label="审批类型" prop="applyType">
             <el-input v-model="queryParams.applyType" placeholder="请输入审批类型" clearable />
-          </el-form-item> -->
+          </el-form-item>
           <el-form-item label="客户姓名" prop="customerName">
             <el-input v-model="queryParams.customerName" placeholder="请输入客户姓名" clearable />
           </el-form-item>
@@ -16,17 +16,32 @@
         </el-form>
       </div>
     </transition>
-
+ -->
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+        <div class="flex items-center">
           <!-- <el-col :span="1.5">
             <el-button v-hasPermi="['workflow:customerChurnApprove:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col> -->
           <el-col :span="1.5">
             <el-button v-hasPermi="['workflow:customerChurnApprove:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
           </el-col>
-          <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar>
+          </div>
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['workflow:customerChurnApprove:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['workflow:customerChurnApprove:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -81,6 +96,29 @@
 
       <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     </el-card>
+  <!-- 筛选按钮弹窗 -->
+  <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+    <div class="p-2">
+      <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="search">
+        <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <!-- <el-form-item label="审批类型" prop="applyType">
+            <el-input v-model="queryParams.applyType" placeholder="请输入审批类型" clearable />
+          </el-form-item> -->
+          <el-form-item label="客户姓名" prop="customerName">
+            <el-input v-model="queryParams.customerName" placeholder="请输入客户姓名" clearable />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </transition>
+    </div>
+  </el-dialog>
+
+
   </div>
 </template>
 
@@ -113,6 +151,14 @@ const data = reactive<PageData<DcCustomerChurnApproveForm, DcCustomerChurnApprov
 });
 
 const { queryParams } = toRefs(data);
+
+//查找相关
+const searchDialogVisible = ref(false)
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
 
  /** 查看屏幕右侧弹窗显示的审批物流信息 */
  import ApprovalTransportRecord from '@/components/Process/approvalTransportRecord.vue';

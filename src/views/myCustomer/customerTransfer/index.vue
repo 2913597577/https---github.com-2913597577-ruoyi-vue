@@ -1504,7 +1504,7 @@ const initFormData: CustomerTransferForm = {
 
 performanceInfo: [
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
-  { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
+  // { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   /* { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined },
   { id: undefined, transferId: undefined, userId: undefined, userName: undefined, balance: undefined, city: undefined } */
 ]

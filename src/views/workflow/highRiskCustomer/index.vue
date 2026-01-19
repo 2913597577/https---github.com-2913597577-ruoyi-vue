@@ -1,11 +1,11 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="search">
         <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-          <!-- <el-form-item label="客户id" prop="customerId">
+          <el-form-item label="客户id" prop="customerId">
             <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable />
-          </el-form-item> -->
+          </el-form-item>
           <el-form-item label="客户姓名" prop="customerName">
             <el-input v-model="queryParams.customerName" placeholder="请输入客户姓名" clearable />
           </el-form-item>
@@ -19,17 +19,32 @@
         </el-form>
       </div>
     </transition>
-
+ -->
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+        <div class="flex items-center">
           <!-- <el-col :span="1.5">
             <el-button v-hasPermi="['workflow:high:risk:customer:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col> -->
           <el-col :span="1.5">
-            <el-button v-hasPermi="['workflow:high:risk:customer:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
+            <el-button v-hasPermi="['workflow:highRiskCustomer:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
           </el-col>
-          <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['workflow:highRiskCustomer:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['workflow:highRiskCustomer:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -64,12 +79,12 @@
           <template #default="scope">
             <el-row :gutter="10" >
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
-                <el-button v-hasPermi="['workflow:high:risk:customer:edit']" size="small" link type="warning" icon="Edit" @click="handleUpdate(scope.row)"
+                <el-button v-hasPermi="['workflow:highRiskCustomer:edit']" size="small" link type="warning" icon="Edit" @click="handleUpdate(scope.row)"
                   >修改</el-button
                 >
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
-                <el-button v-hasPermi="['workflow:high:risk:customer:remove']" size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                <el-button v-hasPermi="['workflow:highRiskCustomer:remove']" size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                   >删除</el-button
                 >
               </el-col>
@@ -94,6 +109,31 @@
 
       <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     </el-card>
+   <!-- 筛选按钮弹窗 -->
+   <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+    <div class="p-2">
+      <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="search">
+        <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <!-- <el-form-item label="客户id" prop="customerId">
+            <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable />
+          </el-form-item> -->
+          <el-form-item label="客户姓名" prop="customerName">
+            <el-input v-model="queryParams.customerName" placeholder="请输入客户姓名" clearable />
+          </el-form-item>
+          <el-form-item label="风险判定" prop="riskDetermination">
+            <el-input v-model="queryParams.riskDetermination" placeholder="请输入风险判定" clearable />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </transition>
+    </div>
+  </el-dialog>
+
   </div>
 </template>
 
@@ -132,6 +172,13 @@ const data = reactive<PageData<DcHighRiskCustomerForm, DcHighRiskCustomerQuery>>
 
 const { queryParams } = toRefs(data);
 
+//查找相关
+const searchDialogVisible = ref(false)
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
 
  /** 查看屏幕右侧弹窗显示的审批物流信息 */
 import ApprovalTransportRecord from '@/components/Process/approvalTransportRecord.vue';

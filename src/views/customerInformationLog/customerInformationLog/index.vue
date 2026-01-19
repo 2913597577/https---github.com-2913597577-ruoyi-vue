@@ -88,7 +88,7 @@
         <el-table-column label="编号" align="center" prop="contractNo" />
         <el-table-column label="客户名称" align="center" prop="customerName" />
         <el-table-column label="负责人" align="center" prop="principal" />
-        <el-table-column label="负责人电话" align="center" prop="principalPhone" width="100px" show-overflow-tooltip "/>
+        <el-table-column label="负责人电话" align="center" prop="principalPhone" width="100px" show-overflow-tooltip />
         <el-table-column label="法务支持" align="center" prop="lawyerId" />
         <el-table-column label="甩单人" align="center" prop="transferPerson" />
         <el-table-column label="杀单手" align="center" prop="closer" />
