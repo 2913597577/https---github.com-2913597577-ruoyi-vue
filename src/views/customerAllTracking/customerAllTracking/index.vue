@@ -1,11 +1,11 @@
 <!-- views/tracking/index.vue -->
 <template>
   <div class="tracking-container">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+<!--     <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
       <el-card shadow="hover">
-    <!-- 查询条件 -->
+ 
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="90px">
       <el-form-item label="客户名称" prop="customerId">
         <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList" :props="selectProps"
@@ -52,7 +52,7 @@
     </el-form>
   </el-card>
       </div>
-    </transition>
+    </transition> -->
     <!-- 操作按钮 -->
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -68,7 +68,8 @@
     <el-card shadow="never">
 
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+        <div class="flex items-center">
          <!--  <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerAllTracking:customerAllTracking:add']">新增</el-button>
@@ -85,7 +86,20 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['customerAllTracking:customerAllTracking:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerAllTracking:customerAllTracking:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerAllTracking:customerAllTracking:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -140,6 +154,63 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+     <!-- 筛选按钮弹窗 -->
+     <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+      <div class="p-2">
+        <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+      <el-card shadow="hover">
+    <!-- 查询条件 -->
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="90px">
+      <el-form-item label="客户名称" prop="customerId">
+        <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList" :props="selectProps"
+          filterable clearable :loading="loading">
+          <template #empty>
+            <div class="empty-state">未找到匹配的客户</div>
+          </template>
+        </el-select-v2>
+      </el-form-item>
+
+      <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+        <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+          style="width: 100%;" @change="handleLegalSupportChange">
+          <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+            :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="跟踪类型" prop="trackingType">
+        <el-select v-model="queryParams.trackingType" placeholder="请选择跟踪类型" clearable style="width: 200px">
+          <el-option label="全部" :value="null" />
+          <el-option label="回访" :value="1" />
+          <el-option label="出访" :value="2" />
+          <el-option label="保险" :value="3" />
+          <el-option label="工单" :value="4" />
+          <el-option label="案件" :value="5" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="跟踪时间" prop="trackingTime">
+        <el-date-picker v-model="queryParams.trackingTime" type="date" placeholder="请选择跟踪时间" value-format="YYYY-MM-DD"
+          style="width: 200px" />
+      </el-form-item>
+
+      <el-form-item label="下次跟踪时间" prop="nextTrackingTime">
+        <el-date-picker v-model="queryParams.nextTrackingTime" type="date" placeholder="请选择下次跟踪时间"
+          value-format="YYYY-MM-DD" style="width: 200px" />
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
+      </div>
+    </transition>
+      </div>
+     </el-dialog>
 
     <!-- 添加或修改对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -202,7 +273,7 @@ const route = useRoute();
 // 查询参数
 const queryParams = reactive<TrackingQueryParams>({
   pageNum: 0,
-  pageSize: 10
+  pageSize: 20
 });
 
 // 表单数据
@@ -233,6 +304,10 @@ const trackingRef = ref<InstanceType<typeof ElForm>>();
 /* onMounted(() => {
   getList();
 }); */
+
+//查找相关
+const searchDialogVisible = ref(false)
+
 
 // 获取数据列表
 function getList() {
@@ -289,6 +364,11 @@ function submitForm() {
 function cancel() {
   open.value = false;
   reset();
+}
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 // 表单重置
@@ -454,10 +534,10 @@ watch(
   loadLawyerSupportList();
   loadCustomerList();
 }); */
-onMounted(async () => {
-  await loadCustomerList(); // 等待客户列表加载完成
-  loadLawyerSupportList();
-  await getList(); // 客户列表加载完后，再获取工单列表并渲染
+onMounted(() => {
+   loadCustomerList(); // 等待客户列表加载完成
+   loadLawyerSupportList();
+   getList(); // 客户列表加载完后，再获取工单列表并渲染
 });
 </script>
 

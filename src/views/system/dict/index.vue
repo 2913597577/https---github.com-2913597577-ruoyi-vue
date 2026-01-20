@@ -141,7 +141,7 @@ const data = reactive<PageData<DictTypeForm, DictTypeQuery>>({
   form: { ...initFormData },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     dictName: '',
     dictType: ''
   },

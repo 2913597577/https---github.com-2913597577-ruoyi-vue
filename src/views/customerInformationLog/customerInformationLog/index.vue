@@ -1,13 +1,13 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <!-- <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px">
             <el-form-item label="负责人" prop="principal">
               <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="法务法务支持" prop="lawyerId">
+            <el-form-item label="法务支持" prop="lawyerId">
               <el-input v-model="queryParams.lawyerId" placeholder="请输入法务法务支持" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="套餐类型" prop="packageType">
@@ -24,7 +24,7 @@
             <el-form-item label="是否转为退费客户" prop="isRefund">
               <el-input v-model="queryParams.isRefund" placeholder="请输入是否转为退费客户" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="客户类型  A-0 B-1 C-2 D-3" prop="customerType">
+            <el-form-item label="客户类型" prop="customerType">
               <el-select v-model="queryParams.customerType" placeholder="请选择客户类型  A-0 B-1 C-2 D-3" clearable >
                 <el-option v-for="dict in dc_customer_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
               </el-select>
@@ -32,7 +32,7 @@
             <el-form-item label="客户服务城市" prop="customerCity">
               <el-input v-model="queryParams.customerCity" placeholder="请输入客户服务城市" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="是否分配法务支持 0-未分配 1-已分配" prop="isAssigned">
+            <el-form-item label="是否分配法务支持" prop="isAssigned">
               <el-input v-model="queryParams.isAssigned" placeholder="请输入是否分配法务支持 0-未分配 1-已分配" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
@@ -43,10 +43,11 @@
         </el-card>
       </div>
     </transition>
-
+ -->
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerInformationLog:customerInformationLog:add']">新增</el-button>
           </el-col>
@@ -59,7 +60,20 @@
           <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['customerInformationLog:customerInformationLog:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+          </div>
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerInformationLog:customerInformationLog:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerInformationLog:customerInformationLog:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -74,8 +88,8 @@
         <el-table-column label="编号" align="center" prop="contractNo" />
         <el-table-column label="客户名称" align="center" prop="customerName" />
         <el-table-column label="负责人" align="center" prop="principal" />
-        <el-table-column label="负责人电话" align="center" prop="principalPhone" />
-        <el-table-column label="法务法务支持" align="center" prop="lawyerId" />
+        <el-table-column label="负责人电话" align="center" prop="principalPhone" width="100px" show-overflow-tooltip />
+        <el-table-column label="法务支持" align="center" prop="lawyerId" />
         <el-table-column label="甩单人" align="center" prop="transferPerson" />
         <el-table-column label="杀单手" align="center" prop="closer" />
         <el-table-column label="签约类型" align="center" prop="contractType" />
@@ -112,12 +126,12 @@
         <el-table-column label="续费/尾款动作(1-续费 2-付尾款 3-其他)" align="center" prop="actionType" />
         <el-table-column label="客户id" align="center" prop="transferId" />
         <el-table-column label="客户总表id" align="center" prop="customerInfoId" />
-        <el-table-column label="客户总表创建时间" align="center" prop="infoCreateTime" width="180">
+        <el-table-column label="客户总表创建时间" align="center" prop="infoCreateTime" width="120px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.infoCreateTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="客户总表更新时间" align="center" prop="infoUpdateTime" width="180">
+        <el-table-column label="客户总表更新时间" align="center" prop="infoUpdateTime" width="120px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.infoUpdateTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -126,7 +140,7 @@
         <el-table-column label="邀约人id" align="center" prop="inviterId" />
         <el-table-column label="服务时长" align="center" prop="serviceDuration" />
         <el-table-column label="合同金额" align="center" prop="contractAmount" />
-        <el-table-column label="客户类型  A-0 B-1 C-2 D-3" align="center" prop="customerType">
+        <el-table-column label="客户类型" align="center" prop="customerType">
           <template #default="scope">
             <dict-tag :options="dc_customer_type" :value="scope.row.customerType"/>
           </template>
@@ -134,7 +148,7 @@
         <el-table-column label="立案账号" align="center" prop="caseFillingAccount" />
         <el-table-column label="立案密码" align="center" prop="caseFillingPwd" />
         <el-table-column label="客户服务城市" align="center" prop="customerCity" />
-        <el-table-column label="是否分配法务支持 0-未分配 1-已分配" align="center" prop="isAssigned">
+        <el-table-column label="是否分配法务支持" align="center" prop="isAssigned">
           <template #default="scope">
             <dict-tag :options="dc_true_or_false" :value="scope.row.isAssigned"/>
           </template>
@@ -153,6 +167,54 @@
 
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+    <!-- 筛选按钮弹窗 -->
+    <el-dialog v-model="searchDialogVisible" title="筛选" width="920px" append-to-body draggable>
+      <div class="p-2">
+      <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px">
+            <el-form-item label="负责人" prop="principal">
+              <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="法务支持" prop="lawyerId">
+              <el-input v-model="queryParams.lawyerId" placeholder="请输入法务法务支持" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="套餐类型" prop="packageType">
+              <el-select v-model="queryParams.packageType" placeholder="请选择套餐类型" clearable >
+                <el-option v-for="dict in combo_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="是否转为意向客户" prop="isIntention">
+              <el-input v-model="queryParams.isIntention" placeholder="请输入是否转为意向客户" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="是否转为风险客户" prop="isRisk">
+              <el-input v-model="queryParams.isRisk" placeholder="请输入是否转为风险客户" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="是否转为退费客户" prop="isRefund">
+              <el-input v-model="queryParams.isRefund" placeholder="请输入是否转为退费客户" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="客户类型" prop="customerType">
+              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型  A-0 B-1 C-2 D-3" clearable >
+                <el-option v-for="dict in dc_customer_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="客户服务城市" prop="customerCity">
+              <el-input v-model="queryParams.customerCity" placeholder="请输入客户服务城市" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="是否分配法务支持" prop="isAssigned">
+              <el-input v-model="queryParams.isAssigned" placeholder="请输入是否分配法务支持 0-未分配 1-已分配" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+    </div>
+    </el-dialog>
     <!-- 添加或修改客户信息记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerInformationLogFormRef" :model="form" :rules="rules" label-width="80px">
@@ -394,6 +456,10 @@ const data = reactive<PageData<CustomerInformationLogForm, CustomerInformationLo
 
 const { queryParams, form, rules } = toRefs(data);
 
+//查找相关
+const searchDialogVisible = ref(false)
+
+
 /** 查询客户信息记录列表 */
 const getList = async () => {
   loading.value = true;
@@ -407,6 +473,11 @@ const getList = async () => {
 const cancel = () => {
   reset();
   dialog.visible = false;
+}
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 /** 表单重置 */

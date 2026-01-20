@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="search">
         <el-form ref="queryFormRef" :model="queryParams" :inline="true">
           <el-form-item label="请假天数" prop="startLeaveDays">
@@ -16,18 +16,34 @@
           </el-form-item>
         </el-form>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+        <div class="flex items-center">
           <el-col :span="1.5">
             <el-button v-hasPermi="['workflow:leave:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button v-hasPermi="['workflow:leave:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
           </el-col>
-          <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['workflow:leave:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['workflow:leave:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar> -->
+        
         </el-row>
       </template>
 
@@ -56,34 +72,60 @@
             <dict-tag :options="wf_business_status" :value="scope.row.status"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" width="162">
+        <el-table-column label="操作" align="center" width="300px" fixed="right">
           <template #default="scope">
-            <el-row :gutter="10" class="mb8">
+            <el-row :gutter="10">
               <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
                 <el-button v-hasPermi="['workflow:leave:edit']" link size="small" type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                   >修改</el-button
                 >
               </el-col>
-              <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back'">
-                <el-button v-hasPermi="['workflow:leave:remove']" link size="small" type="primary" icon="Delete" @click="handleDelete(scope.row)"
+              <el-col :span="1.5" v-if="scope.row.status === 'draft' || scope.row.status === 'cancel' || scope.row.status === 'back' || scope.row.status === 'finish'">
+                <el-button v-hasPermi="['workflow:leave:remove']" link size="small" type="danger" icon="Delete" @click="handleDelete(scope.row)"
                   >删除</el-button
                 >
               </el-col>
-            </el-row>
-            <el-row :gutter="10" class="mb8">
               <el-col :span="1.5">
                 <el-button link type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'waiting'">
                 <el-button link size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
               </el-col>
+              <el-col :span="1.5">
+                <el-button type="success" link size="small" icon="Operation" @click="handleTransportRecord(scope.row)">物流信息</el-button>
+              </el-col>
             </el-row>
           </template>
         </el-table-column>
       </el-table>
 
+      <!-- 屏幕右侧弹窗显示物流信息组件加载 -->
+      <ApprovalTransportRecord ref="approvalTransportRecordRef" />
+
       <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
     </el-card>
+    <!-- 筛选按钮弹窗 -->
+    <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+      <div class="p-2">
+    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="search">
+        <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-form-item label="请假天数" prop="startLeaveDays">
+            <el-input v-model="queryParams.startLeaveDays" placeholder="请输入请假天数" clearable @keyup.enter="handleQuery" />
+          </el-form-item>
+          <el-form-item prop="endLeaveDays"> 至 </el-form-item>
+          <el-form-item prop="endLeaveDays">
+            <el-input v-model="queryParams.endLeaveDays" placeholder="请输入请假天数" clearable @keyup.enter="handleQuery" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </transition>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -126,7 +168,7 @@ const data = reactive<PageData<LeaveForm, LeaveQuery>>({
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     startLeaveDays: undefined,
     endLeaveDays: undefined
   },
@@ -142,6 +184,22 @@ const getList = async () => {
   leaveList.value = res.rows;
   total.value = res.total;
   loading.value = false;
+};
+
+//查找相关
+const searchDialogVisible = ref(false)
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
+
+/** 查看屏幕右侧弹窗显示的审批物流信息 */
+import ApprovalTransportRecord from '@/components/Process/approvalTransportRecord.vue';
+const approvalTransportRecordRef = ref<InstanceType<typeof ApprovalTransportRecord>>();
+
+const handleTransportRecord = (row?: LeaveVO) => {
+  approvalTransportRecordRef.value?.init(row.id);
 };
 
 /** 搜索按钮操作 */

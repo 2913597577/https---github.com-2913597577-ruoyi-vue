@@ -1,6 +1,6 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
@@ -19,11 +19,12 @@
           </el-form>
         </el-card>
       </div>
-    </transition>
+    </transition> -->
 
     <el-card shadow="never">
       <template #header>
-        <el-row :gutter="10" class="mb8">
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd"
               v-hasPermi="['customerIntentionTracking:customerIntentionTracking:add']">新增</el-button>
@@ -39,7 +40,21 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['customerIntentionTracking:customerIntentionTracking:export']">导出</el-button>
           </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+          </div>
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerIntentionTracking:customerIntentionTracking:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerIntentionTracking:customerIntentionTracking:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
         </el-row>
       </template>
 
@@ -72,6 +87,32 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+    <!-- 筛选按钮弹窗 -->
+    <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+      <div class="p-2">
+        <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
+      :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="意向客户" prop="intentionId" label-width="68px">
+              <el-select v-model="queryParams.intentionId" placeholder="请输入意向客户" filterable clearable>
+                <el-option v-for="item in customerList" :key="item.intention_id" :label="item.intended_customer"
+                  :value="item.intention_id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition>
+      </div>
+    </el-dialog>
+
     <!-- 添加或修改意向客户跟踪记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerIntentionTrackingFormRef" :model="form" :rules="rules" label-width="120px">
@@ -168,6 +209,11 @@ const data = reactive<PageData<CustomerIntentionTrackingForm, CustomerIntentionT
 
 const { queryParams, form, rules } = toRefs(data);
 
+//查找相关
+const searchDialogVisible = ref(false)
+
+
+
 /** 查询意向客户跟踪记录列表 */
 const getList = async () => {
   loading.value = true;
@@ -181,6 +227,11 @@ const getList = async () => {
 const cancel = () => {
   reset();
   dialog.visible = false;
+}
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 /** 表单重置 */

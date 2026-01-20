@@ -251,7 +251,7 @@ const data = reactive<PageData<RoleForm, RoleQuery>>({
   form: { ...initForm },
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     roleName: '',
     roleKey: '',
     status: ''

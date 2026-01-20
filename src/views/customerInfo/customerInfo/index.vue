@@ -293,7 +293,7 @@
                 v-model="form.customerName" 
                 placeholder="请输入客户名称" 
                 style="width: 100%"
-                readonly
+        
               />
             </el-form-item>
           </el-col>

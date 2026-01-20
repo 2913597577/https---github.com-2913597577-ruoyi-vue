@@ -126,7 +126,7 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="案件" prop="caseId">
+            <el-form-item label="案件名称" prop="caseId">
               <el-select v-model="queryParams.caseId" placeholder="请选择案件" filterable clearable>
                 <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
                   :value="item.case_id">
@@ -139,9 +139,9 @@
                   :value="dict.value" />
               </el-select>
             </el-form-item>
-            <el-form-item label="客户id" prop="customerId">
+            <!-- <el-form-item label="客户id" prop="customerId">
               <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="客户名称" prop="customerId">
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
                 :props="selectProps" filterable clearable :loading="loading">
@@ -163,38 +163,49 @@
 </el-dialog>
 
     <!-- 添加或修改案件进展表对话框 -->
-    <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
-      <el-form ref="caseProgressFormRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="案件" prop="caseId">
+    <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body draggable>
+      <el-form ref="caseProgressFormRef" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="案件名称" prop="caseId">
           <el-select v-model="form.caseId" placeholder="请选择案件" filterable clearable>
             <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
               :value="item.case_id">
             </el-option>
           </el-select>
         </el-form-item>
+       <!--  <el-form-item label="客户id" prop="customerId">
+          <el-input v-model="form.customerId" placeholder="请输入客户id" />
+        </el-form-item> -->
+        <el-form-item label="客户名称" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择客户名称" filterable clearable>
+            <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+              :value="item.customer_id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="法务支持" prop="legalSupportId" label-width="100px">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="案件类型" prop="caseType">
-          <el-select v-model="form.caseType" placeholder="请选择案件类型">
+          <el-select v-model="form.caseType" placeholder="请选择案件类型" filterable clearable>
             <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label"
               :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="客户id" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户id" />
-        </el-form-item>
-        <el-form-item label="客户姓名" prop="customerName">
-          <el-input v-model="form.customerName" placeholder="请输入客户姓名" />
-        </el-form-item> -->
         <el-form-item label="案件进展" prop="caseProgress">
-          <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入案件进展内容" />
         </el-form-item>
-        <el-form-item label="跟进日期" prop="visitTime">
+        <el-form-item label="跟进日期" prop="trackingTime">
           <el-date-picker clearable v-model="form.trackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择出访时间">
+            placeholder="请选择根据日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="下次跟进日期" prop="nextVisitTime">
+        <el-form-item label="下次跟进日期" prop="nextTrackingTime">
           <el-date-picker clearable v-model="form.nextTrackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
-            placeholder="请选择下次出访时间">
+            placeholder="请选择下次跟进日期">
           </el-date-picker>
         </el-form-item>
       </el-form>
@@ -214,6 +225,8 @@ import { CaseProgressVO, CaseProgressQuery, CaseProgressForm } from '@/api/caseP
 import { getCaseDetail } from '@/api/common';
 import { useRoute } from 'vue-router';
 import { getCustomerByUserId } from '@/api/common';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
+
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { customer_case_type } = toRefs<any>(proxy?.useDict('customer_case_type'));
@@ -229,7 +242,7 @@ const total = ref(0);
 
 const caseDetailList = ref<any[]>([]);
 
-const loadcaseDetailList = async () => {
+const loadCaseDetailList = async () => {
   try {
     const res = await getCaseDetail();
     caseDetailList.value = res.data;
@@ -278,11 +291,20 @@ const data = reactive<PageData<CaseProgressForm, CaseProgressQuery>>({
     caseType: [
       { required: true, message: "案件类型不能为空", trigger: "change" }
     ],
-    customerId: [
+   /*  customerId: [
       { required: true, message: "客户id不能为空", trigger: "blur" }
+    ], */
+    customerId: [
+      { required: true, message: "请选择客户姓名", trigger: "blur" }
     ],
-    customerName: [
-      { required: true, message: "客户姓名不能为空", trigger: "blur" }
+    legalSupportId: [
+      { required: true, message: "请选择法务支持", trigger: "blur" }
+    ],
+    trackingTime: [
+      { required: true, message: "请选择跟进日期", trigger: "change" }
+    ],
+    nextTrackingTime: [
+      { required: true, message: "请选择下次跟进日期", trigger: "change" }
     ],
   }
 });
@@ -388,9 +410,39 @@ const handleExport = () => {
 }
 
 
+const lawyerList = ref([]);
+/**
+ * 法务支持选择变化处理
+ */
+const handleLegalSupportChange = (userId: string) => {
+  if (userId) {
+    // 查找选中的律师信息
+    const selectedLawyer = lawyerList.value.find(lawyer => lawyer.userId === userId);
+    if (selectedLawyer) {
+      // 设置法务支持名称到 legalSupport 字段
+      form.value.legalSupportName = selectedLawyer.nickName;
+    }
+  } else {
+    // 清空选择时重置相关字段
+    form.value.legalSupportId = undefined;
+    form.value.legalSupportName = undefined;
+  }
+}
+
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+
 
 const customerList = ref([]);
-
 
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
@@ -429,7 +481,11 @@ watch(
 );
 onMounted(() => {
   loadCustomerList();
-  loadcaseDetailList();
+
+  loadCaseDetailList();
+
+  loadLawyerSupportList();
+
   getList();
 });
 </script>

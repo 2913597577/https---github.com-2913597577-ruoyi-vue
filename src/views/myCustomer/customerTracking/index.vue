@@ -161,10 +161,10 @@
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="90px">
             <el-form-item label="客户名称" prop="customerId">
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
-                :props="selectProps" filterable clearable :loading="loading">
+                :props="selectProps" filterable clearable :loading="loading" style="width: 200px">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
@@ -185,10 +185,10 @@
                 <el-option v-for="dict in submit_status" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item> -->
-            <el-form-item label="下次回访时间" prop="nextTime">
+            <el-form-item label="下次回访时间" label-width="90px" prop="nextTime">
               <el-date-picker clearable v-model="queryParams.nextTime" type="date" 
                value-format="YYYY-MM-DD"
-                placeholder="请选择下次回访时间" />
+                placeholder="请选择下次回访时间" style="width: 200px" />
             </el-form-item>
             <!-- <el-form-item label="日志类型" prop="isReturn">
               <el-select v-model="queryParams.isReturn" placeholder="请选择日志类型" clearable>
@@ -211,28 +211,28 @@
     <!-- 添加或修改客户跟踪对话框 --> 
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="客户" prop="customerId">
-          <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+        <el-form-item label="客户名称" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
               :value="item.customer_id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="法务支持" prop="legalSupport" label-width="90px">
-          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+        <el-form-item label="法务支持" prop="legalSupportId" label-width="100px">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="回访分类" prop="trackingType">
-          <el-select v-model="form.trackingType" placeholder="请选择回访类型">
+          <el-select v-model="form.trackingType" placeholder="请选择回访类型" clearable>
             <el-option v-for="dict in dc_follow_classification" :key="dict.value" :label="dict.label"
               :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="回访记录" prop="customerRemark">
-          <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入回访内容" />
         </el-form-item>
        
         <!-- <el-form-item label="跟踪状态" prop="cumtomerStatus">
@@ -435,8 +435,21 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
       { required: true, message: "主键ID不能为空", trigger: "blur" }
     ],
     customerId: [
-      { required: true, message: "客户id不能为空", trigger: "blur" }
+      { required: true, message: "请选择客户名称", trigger: "blur" }
     ],
+    legalSupportId: [
+      { required: true, message: "请选择法务支持", trigger: "blur" }
+    ], 
+    trackingType: [
+      { required: true, message: "请选择回访分类", trigger: "blur" }
+    ],
+    trackingTime: [
+      { required: true, message: "请选择回访时间", trigger: "blur" }
+    ],
+    nextTime: [
+      { required: true, message: "请选择下次回访时间", trigger: "blur" }
+    ],
+
   }
 });
 
@@ -708,10 +721,10 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
+onMounted( () => {
   // 1. 优先加载客户下拉框（无论是否有CustomerId，表单都需要）
-  await loadLawyerSupportList();
-  await loadCustomerList();
-  await getList();
+   loadCustomerList();
+   loadLawyerSupportList();
+   getList();
 });
 </script>

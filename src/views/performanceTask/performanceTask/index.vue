@@ -1,6 +1,110 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <!-- <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="法务支持" prop="legalSupportId">
+              <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+              @keyup.enter="handleQuery">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+            </el-form-item>
+            <el-form-item label="任务月份" prop="taskMonth">
+              <el-date-picker
+              v-model="queryParams.taskMonth"
+              type="month"
+               format="YYYY-MM" 
+              value-format="YYYYMM"  
+              placeholder="选择任务月份"
+              clearable
+              @keyup.enter="handleQuery"
+            ></el-date-picker>
+            </el-form-item>
+            <el-form-item label="月度业绩目标" prop="performanceGoal">
+              <el-input v-model="queryParams.performanceGoal" placeholder="请输入月度业绩目标" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="月度出访目标" prop="visitGoal">
+              <el-input v-model="queryParams.visitGoal" placeholder="请输入月度出访目标" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="已完成的月度业绩目标" prop="achievedPerformanceGoal">
+              <el-input v-model="queryParams.achievedPerformanceGoal" placeholder="请输入已完成的月度业绩目标" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="已完成的月度出访目标" prop="achievedVisitGoal">
+              <el-input v-model="queryParams.achievedVisitGoal" placeholder="请输入已完成的月度出访目标" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition> -->
+
+    <el-card shadow="never">
+      <template #header>
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['performanceTask:performanceTask:add']">新增</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['performanceTask:performanceTask:edit']">修改</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['performanceTask:performanceTask:remove']">删除</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['performanceTask:performanceTask:export']">导出</el-button>
+          </el-col>
+          </div>
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['performanceTask:performanceTask:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['performanceTask:performanceTask:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
+        </el-row>
+      </template>
+
+      <el-table v-loading="loading" border :data="performanceTaskList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+        <el-table-column type="selection" width="55" align="center" />
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
+        <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" />
+        <el-table-column label="任务月份" align="center" prop="taskMonth" />
+        <el-table-column label="业绩目标" align="center" prop="performanceGoal" />
+        <el-table-column label="出访目标" align="center" prop="visitGoal" />
+        <!-- <el-table-column label="已完成的月度业绩目标" align="center" prop="achievedPerformanceGoal" />
+        <el-table-column label="已完成的月度出访目标" align="center" prop="achievedVisitGoal" /> -->
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template #default="scope">
+            <el-tooltip content="修改" placement="top">
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['performanceTask:performanceTask:edit']"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['performanceTask:performanceTask:remove']"></el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+    </el-card>
+    <!-- 筛选按钮弹窗 -->
+    <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+      <div class="p-2">
+        <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
@@ -42,50 +146,10 @@
         </el-card>
       </div>
     </transition>
+      </div>
+    </el-dialog>
 
-    <el-card shadow="never">
-      <template #header>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['performanceTask:performanceTask:add']">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['performanceTask:performanceTask:edit']">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['performanceTask:performanceTask:remove']">删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['performanceTask:performanceTask:export']">导出</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-        </el-row>
-      </template>
 
-      <el-table v-loading="loading" border :data="performanceTaskList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
-        <el-table-column type="selection" width="55" align="center" />
-        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
-        <el-table-column label="法务支持" align="center" prop="legalSupportName" />
-        <el-table-column label="任务月份" align="center" prop="taskMonth" />
-        <el-table-column label="业绩目标" align="center" prop="performanceGoal" />
-        <el-table-column label="出访目标" align="center" prop="visitGoal" />
-        <!-- <el-table-column label="已完成的月度业绩目标" align="center" prop="achievedPerformanceGoal" />
-        <el-table-column label="已完成的月度出访目标" align="center" prop="achievedVisitGoal" /> -->
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['performanceTask:performanceTask:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['performanceTask:performanceTask:remove']"></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
-    </el-card>
     <!-- 添加或修改业绩任务对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="performanceTaskFormRef" :model="form" :rules="rules" label-width="80px">
@@ -107,10 +171,10 @@
             ></el-date-picker>
         </el-form-item>
         <el-form-item label="月度业绩目标" prop="performanceGoal" label-width="100px">
-          <el-input v-model="form.performanceGoal" placeholder="请输入月度业绩目标" />
+          <el-input v-model="form.performanceGoal" type="number" placeholder="请输入月度业绩目标" />
         </el-form-item>
         <el-form-item label="月度出访目标" prop="visitGoal" label-width="100px">
-          <el-input v-model="form.visitGoal" placeholder="请输入月度出访目标" />
+          <el-input v-model="form.visitGoal" type="number" placeholder="请输入月度出访目标" />
         </el-form-item>
         <!-- <el-form-item label="已完成的月度业绩目标" prop="achievedPerformanceGoal">
           <el-input v-model="form.achievedPerformanceGoal" placeholder="请输入已完成的月度业绩目标" />
@@ -167,7 +231,7 @@ const data = reactive<PageData<PerformanceTaskForm, PerformanceTaskQuery>>({
   form: {...initFormData},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     legalSupportId: undefined,
     legalSupportName: undefined,
     taskMonth: undefined,
@@ -193,6 +257,9 @@ const data = reactive<PageData<PerformanceTaskForm, PerformanceTaskQuery>>({
 
 const { queryParams, form, rules } = toRefs(data);
 const lawyerList = ref([]);
+
+//查找相关
+const searchDialogVisible = ref(false)
 
 const loadLawyerSupportList = async () => {
   try {
@@ -238,6 +305,10 @@ const cancel = () => {
   dialog.visible = false;
 }
 
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
 /** 表单重置 */
 const reset = () => {
   form.value = {...initFormData};

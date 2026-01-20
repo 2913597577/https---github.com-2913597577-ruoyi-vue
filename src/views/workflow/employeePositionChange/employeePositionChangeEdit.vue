@@ -417,7 +417,11 @@ const data = reactive<PageData<DcEmployeePositionChangeForm, DcEmployeePositionC
     applyDate: [{ required: true, message: '申请日期不能为空', trigger: 'blur' }],
     applicant: [{ required: true, message: '申请人不能为空', trigger: 'blur' }],
     changeType: [{ required: true, message: '岗位变动类型不能为空', trigger: 'blur' }],
-    employeeName: [{ required: true, message: '员工姓名不能为空', trigger: 'blur' }]
+    employeeName: [{ required: true, message: '员工姓名不能为空', trigger: 'blur' }],
+    employeeId: [{ required: true, message: '员工工号不能为空', trigger: 'blur' }],
+    originalRank: [{ required: true, message: '变动前职级不能为空', trigger: 'blur' }],
+    targetRank: [{ required: true, message: '拟定职级不能为空', trigger: 'blur' }],
+
   }
 });
 

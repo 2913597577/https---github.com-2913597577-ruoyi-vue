@@ -160,7 +160,7 @@
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px"> 
             <el-form-item label="对接客户" prop="customerId">
               <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -210,9 +210,9 @@
 
     <!-- 添加或修改客户出访记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body draggable>
-      <el-form ref="customerOutVisitFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="客户" prop="customerId">
-          <el-select v-model="form.customerId" placeholder="请选择客户" filterable>
+      <el-form ref="customerOutVisitFormRef" :model="form" :rules="rules" label-width="130px">
+        <el-form-item label="客户名称" prop="customerId">
+          <el-select v-model="form.customerId" placeholder="请选择出访客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
               :value="item.customer_id">
             </el-option>
@@ -224,8 +224,8 @@
         <el-form-item label="法务支持姓名" prop="legalSupportName">
           <el-input v-model="form.legalSupportName" placeholder="请输入法务支持姓名" />
         </el-form-item> -->
-        <el-form-item label="法务支持" prop="legalSupport" >
-          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+        <el-form-item label="法务支持" prop="legalSupportId" >
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
@@ -342,11 +342,30 @@ const data = reactive<PageData<CustomerOutVisitForm, CustomerOutVisitQuery>>({
   },
   rules: {
     customerId: [
-      { required: true, message: "客户id不能为空", trigger: "blur" }
+      { required: true, message: "请选择出访客户", trigger: "blur" }
     ],
     legalSupportId: [
-      { required: true, message: "法务支持id不能为空", trigger: "blur" }
+      { required: true, message: "请选择法务支持", trigger: "blur" }
     ],
+    visitTime: [
+      { required: true, message: "请选择出访时间", trigger: "blur" }
+    ],
+    nextVisitTime: [
+      { required: true, message: "请选择下次出访时间", trigger: "blur" }
+    ],
+    isFirstVisit: [
+      { required: true, message: "请选择是否本月第一次出访", trigger: "blur" }
+    ],
+    isOutCount: [
+      { required: true, message: "请选择是否计入外勤项数", trigger: "blur" }
+    ],
+    placePic1: [
+      { required: true, message: "请上传客户地点照片", trigger: "blur" }
+    ],
+    outRecord: [
+      { required: true, message: "请上传面访记录附件", trigger: "blur" }
+    ],
+
   }
 });
 
@@ -695,9 +714,9 @@ watch(
   { immediate: true }
 );
 
-onMounted(async () => {
-  await loadLawyerSupportList();
-  await loadCustomerList();
-  await getList();
+onMounted(() => {
+   loadLawyerSupportList();
+   loadCustomerList();
+   getList();
 });
 </script>

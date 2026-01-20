@@ -1,9 +1,221 @@
 <template>
     <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+   <!--  <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" >
+            <el-form-item label="对接客户" prop="transferId">
+              <el-select 
+                v-model="queryParams.transferId" 
+                placeholder="请选择对接客户" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery">
+                <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
+                  :value="item.customer_id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            
+            <el-form-item label="业绩所属员工" prop="userId" label-width="120px">
+              <el-select 
+                v-model="queryParams.userId" 
+                placeholder="请选择业绩所属员工" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery">
+                 <el-option v-for="user in userList" :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+
+            <el-form-item label="签单人" prop="inviterId">
+              <el-select 
+                v-model="queryParams.inviterId" 
+                placeholder="请选择签单人" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery">
+                <el-option v-for="user in userList" :key="user.userId"
+                      :label="user.nickName + '(' + user.userName + ')'" :value="user.userId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            
+            <el-form-item label="服务类型" prop="serviceType">
+              <el-select 
+                v-model="queryParams.serviceType" 
+                placeholder="请选择服务类型" 
+                clearable 
+                multiple 
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery">
+                <el-option v-for="dict in combo_type" :key="dict.value" :value="dict.value" :label="dict.label">
+                </el-option>
+              </el-select>
+            </el-form-item>
+    
+            <el-form-item label="业绩所属城市" prop="city" label-width="120px">
+              <el-select 
+                v-model="queryParams.city" 
+                placeholder="请选择业绩所属城市" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                @change="handleQuery"
+                style="width: 200px;"
+                >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            
+            <el-form-item label="服务城市" prop="serviceCity">
+              <el-select 
+                v-model="queryParams.serviceCity" 
+                placeholder="请选择服务城市" 
+                clearable 
+                multiple 
+                filterable
+                collapse-tags
+                collapse-tags-tooltip
+                style="width: 200px;"
+                @change="handleQuery">
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            
+            <el-form-item label="签单时间" prop="serviceStart">
+              <el-date-picker
+                v-model="queryParams.serviceStart"
+                type="date"
+                placeholder="请选择签单时间"
+                value-format="YYYY-MM-DD">
+              </el-date-picker>
+            </el-form-item>
+
+            <el-form-item label="服务到期时间" prop="serviceEnd" label-width="120px">
+              <el-date-picker
+                v-model="queryParams.serviceEnd"
+                type="date"
+                placeholder="请选择服务结束时间"
+                value-format="YYYY-MM-DD">
+              </el-date-picker>
+            </el-form-item>
+            
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition> -->
+
+    <el-card shadow="never">
+      <template #header>
+        <el-row :gutter="10" class="mb8" justify="space-between">
+          <div class="flex items-center">
+          <!-- <el-col :span="1.5">
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerPerformance:customerPerformance:add']">新增</el-button>
+          </el-col> -->
+          <el-col :span="1.5">
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerPerformance:customerPerformance:edit']">修改</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['customerPerformance:customerPerformance:remove']">删除</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['customerPerformance:customerPerformance:export']">导出</el-button>
+          </el-col>
+          </div>
+          <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['customerPerformance:customerPerformance:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['customerPerformance:customerPerformance:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
+        </el-row>
+      </template>
+
+      <el-table v-loading="loading" border :data="customerPerformanceList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+        <el-table-column type="selection" width="55" align="center" />
+        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
+        <!-- <el-table-column label="流转单编号" align="center" prop="transferId" /> -->
+        <!-- <el-table-column label="业绩所属用户id" align="center" prop="userId" /> -->
+        <el-table-column label="客户名称" align="center" prop="companyName" width="140px" show-overflow-tooltip />
+        <el-table-column label="服务类型" align="center" prop="serviceType" width="100px" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="业绩所属人" align="center" prop="user_name" width="100px" show-overflow-tooltip />
+        <el-table-column label="业绩所属金额" align="center" prop="balance" width="140px"/>
+        <el-table-column label="业绩所属城市" align="center" prop="city">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
+          </template>
+      </el-table-column>
+        <el-table-column label="客户服务城市" align="center" prop="serviceCity">
+            <template #default="scope">
+              <dict-tag :options="dc_sercive_city" :value="scope.row.serviceCity" />
+            </template>
+        </el-table-column>
+        <el-table-column label="签单时间" align="center" prop="serviceStart" width="120">
+        <template #default="scope">
+          <span>{{ scope.row.serviceStart ? parseTime(scope.row.serviceStart, '{y}-{m}-{d}') : '' }}</span>
+        </template>
+        </el-table-column>
+        <el-table-column label="服务到期时间" align="center" prop="serviceEnd" width="120">
+          <template #default="scope">
+          <span>{{ scope.row.serviceEnd ? parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') : '' }}</span>
+        </template>
+        </el-table-column>
+        <el-table-column label="分配人" align="center" prop="creater_name" show-overflow-tooltip />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template #default="scope">
+            <el-tooltip content="修改" placement="top">
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:edit']"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:remove']"></el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+    </el-card>
+
+    <!-- 筛选按钮弹窗 -->
+    <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+      <div class="p-2">
+        <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="100px">
             <!-- 流转单id改为多选下拉 -->
             <el-form-item label="对接客户" prop="transferId">
               <el-select 
@@ -22,7 +234,7 @@
             </el-form-item>
             
             <!-- 业绩所属用户id改为多选下拉 -->
-            <el-form-item label="业绩所属员工" prop="userId" label-width="120px">
+            <el-form-item label="业绩所属员工" prop="userId" label-width="100px">
               <el-select 
                 v-model="queryParams.userId" 
                 placeholder="请选择业绩所属员工" 
@@ -71,7 +283,7 @@
             </el-form-item>
     
             <!-- 业绩所属城市改为多选下拉 -->
-            <el-form-item label="业绩所属城市" prop="city" label-width="120px">
+            <el-form-item label="业绩所属城市" prop="city" label-width="100px">
               <el-select 
                 v-model="queryParams.city" 
                 placeholder="请选择业绩所属城市" 
@@ -117,7 +329,7 @@
             </el-form-item>
 
             <!-- 服务结束时间 -->
-            <el-form-item label="服务到期时间" prop="serviceEnd" label-width="120px">
+            <el-form-item label="服务到期时间" prop="serviceEnd" label-width="100px">
               <el-date-picker
                 v-model="queryParams.serviceEnd"
                 type="date"
@@ -134,74 +346,10 @@
         </el-card>
       </div>
     </transition>
+      </div>
+    </el-dialog>
 
-    <el-card shadow="never">
-      <template #header>
-        <el-row :gutter="10" class="mb8">
-          <!-- <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerPerformance:customerPerformance:add']">新增</el-button>
-          </el-col> -->
-          <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerPerformance:customerPerformance:edit']">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['customerPerformance:customerPerformance:remove']">删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['customerPerformance:customerPerformance:export']">导出</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-        </el-row>
-      </template>
 
-      <el-table v-loading="loading" border :data="customerPerformanceList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
-        <el-table-column type="selection" width="55" align="center" />
-        <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <!-- <el-table-column label="流转单编号" align="center" prop="transferId" /> -->
-        <!-- <el-table-column label="业绩所属用户id" align="center" prop="userId" /> -->
-        <el-table-column label="客户" align="center" prop="companyName" />
-        <el-table-column label="服务类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
-          <template #default="scope">
-            <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
-          </template>
-        </el-table-column>
-        <el-table-column label="业绩所属人" align="center" prop="user_name" />
-        <el-table-column label="业绩所属金额" align="center" prop="balance" width="200"/>
-        <el-table-column label="业绩所属城市" align="center" prop="city">
-          <template #default="scope">
-            <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
-          </template>
-      </el-table-column>
-        <el-table-column label="客户服务城市" align="center" prop="serviceCity">
-            <template #default="scope">
-              <dict-tag :options="dc_sercive_city" :value="scope.row.serviceCity" />
-            </template>
-        </el-table-column>
-        <el-table-column label="签单时间" align="center" prop="serviceStart" width="120">
-        <template #default="scope">
-          <span>{{ scope.row.serviceStart ? parseTime(scope.row.serviceStart, '{y}-{m}-{d}') : '' }}</span>
-        </template>
-        </el-table-column>
-        <el-table-column label="服务到期时间" align="center" prop="serviceEnd" width="120">
-          <template #default="scope">
-          <span>{{ scope.row.serviceEnd ? parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') : '' }}</span>
-        </template>
-        </el-table-column>
-        <el-table-column label="分配人" align="center" prop="creater_name" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:remove']"></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
-    </el-card>
     <!-- 添加或修改业绩归属登记对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerPerformanceFormRef" :model="form" :rules="rules" label-width="120px">
@@ -281,7 +429,7 @@ const data = reactive<PageData<CustomerPerformanceForm, CustomerPerformanceQuery
   form: {...initFormData},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     userId: undefined,
     transferId: undefined,
     city: undefined,
@@ -317,6 +465,9 @@ const { queryParams, form, rules } = toRefs(data);
 
 const customerList = ref<any[]>([]);
 const userList = ref([]); // 用户列表
+
+//查找相关
+const searchDialogVisible = ref(false)
 
 const loadCustomerList = async () => {
   try {
@@ -361,6 +512,11 @@ const getList = async () => {
 const cancel = () => {
   reset();
   dialog.visible = false;
+}
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
 }
 
 /** 表单重置 */

@@ -36,35 +36,35 @@
       <el-table v-loading="loading" border :data="taskList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column align="center" type="index" label="序号" width="60"></el-table-column>
-        <el-table-column align="center" prop="flowName" label="流程定义名称"></el-table-column>
-        <el-table-column align="center" prop="flowCode" label="流程定义编码"></el-table-column>
-        <el-table-column align="center" prop="categoryName" label="流程分类"></el-table-column>
-        <el-table-column align="center" prop="version" label="版本号" width="90">
+        <el-table-column align="center" prop="flowName" label="流程定义名称" width="120px" show-overflow-tooltip></el-table-column>
+        <el-table-column align="center" prop="flowCode" label="流程定义编码" width="120px" show-overflow-tooltip></el-table-column>
+        <el-table-column align="center" prop="categoryName" label="流程分类" width="120px" show-overflow-tooltip></el-table-column>
+        <el-table-column align="center" prop="version" label="版本号" width="90px">
           <template #default="scope"> v{{ scope.row.version }}.0</template>
         </el-table-column>
-        <el-table-column align="center" prop="nodeName" label="任务名称"></el-table-column>
-        <el-table-column align="center" prop="createByName" label="申请人"></el-table-column>
-        <el-table-column align="center" prop="approverName" label="办理人">
+        <el-table-column align="center" prop="nodeName" label="任务名称" width="120px" show-overflow-tooltip></el-table-column>
+        <el-table-column align="center" prop="createByName" label="申请人" width="120px"></el-table-column>
+        <el-table-column align="center" prop="approverName" label="办理人" width="120px">
           <template #default="scope">
             <el-tag type="success">
               {{ scope.row.approveName || '无' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="流程状态" prop="flowStatus" min-width="70">
+        <el-table-column align="center" label="流程状态" prop="flowStatus" min-width="80px">
           <template #default="scope">
             <dict-tag :options="wf_business_status" :value="scope.row.flowStatus"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="任务状态" prop="flowTaskStatus" min-width="70">
+        <el-table-column align="center" label="任务状态" prop="flowTaskStatus" min-width="80px">
           <template #default="scope">
             <dict-tag :options="wf_task_status" :value="scope.row.flowTaskStatus"></dict-tag>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="createTime" label="创建时间" width="160"></el-table-column>
-        <el-table-column label="操作" align="center" width="200">
+        <el-table-column align="center" prop="createTime" label="创建时间" width="140px"></el-table-column>
+        <el-table-column label="操作" align="center" width="160px" fixed="right">
           <template #default="scope">
-            <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+            <el-button type="primary" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -113,7 +113,7 @@ const taskList = ref([]);
 // 查询参数
 const queryParams = ref<TaskQuery>({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   nodeName: undefined,
   flowName: undefined,
   flowCode: undefined,

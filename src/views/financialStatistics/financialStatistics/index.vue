@@ -1,6 +1,126 @@
 <template>
   <div class="p-2">
-    <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+    <!-- <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
+      <div v-show="showSearch" class="mb-[10px]">
+        <el-card shadow="hover">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="财务类型" prop="financialType">
+              <el-select v-model="queryParams.financialType" placeholder="请选择财务类型" clearable >
+                <el-option v-for="dict in dc_financial_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="来源类型" prop="sourceType">
+              <el-select v-model="queryParams.sourceType" placeholder="请选择来源类型" clearable >
+                <el-option v-for="dict in dc_financial_source_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="归属城市" prop="city">
+              <el-select v-model="queryParams.city" placeholder="请选择业绩归属城市" clearable >
+                <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="录入人" prop="createrName">
+              <el-input v-model="queryParams.createrName" placeholder="请输入录入人姓名" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="流水时间" prop="flowTime">
+              <el-date-picker clearable
+                v-model="queryParams.flowTime"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="请选择流水时间"
+              />
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </div>
+    </transition> -->
+
+    <el-card shadow="never">
+      <template #header>
+        <el-row :gutter="10" class="mb8" justify="space-between">
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['financialStatistics:financialStatistics:add']">新增</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['financialStatistics:financialStatistics:edit']">修改</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['financialStatistics:financialStatistics:remove']">删除</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['financialStatistics:financialStatistics:export']">导出</el-button>
+          </el-col>
+        </div>
+        <div class="flex items-center">
+          <el-col :span="1.5">
+            <el-button type="primary"  icon="Search" @click="handleSearch"
+              v-hasPermi="['financialStatistics:financialStatistics:search']">筛选
+            </el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button   icon="Refresh" @click="getList"
+              v-hasPermi="['financialStatistics:financialStatistics:refresh']">刷新
+            </el-button>
+          </el-col>
+        </div>
+
+          <!-- <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar> -->
+        </el-row>
+      </template>
+
+      <el-table v-loading="loading" border :data="financialStatisticsList" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="金额" align="center" prop="balance" />
+        <el-table-column label="财务类型" align="center" prop="financialType">
+          <template #default="scope">
+            <dict-tag :options="dc_financial_type" :value="scope.row.financialType"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="来源类型" align="center" prop="sourceType">
+          <template #default="scope">
+            <dict-tag :options="dc_financial_source_type" :value="scope.row.sourceType"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="发票凭证" align="center" prop="contractNoUrl" width="100">
+          <template #default="scope">
+            <image-preview :src="scope.row.contractNoUrl" :width="50" :height="50"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="备注" align="center" prop="remark" />
+        <el-table-column label="归属城市" align="center" prop="city">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.city"/>
+          </template>
+        </el-table-column>
+        <el-table-column label="录入人" align="center" prop="createrName" />
+        <el-table-column label="流水时间" align="center" prop="flowTime" width="180">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.flowTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template #default="scope">
+            <el-tooltip content="修改" placement="top">
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['financialStatistics:financialStatistics:edit']">修改</el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['financialStatistics:financialStatistics:remove']">删除</el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+    </el-card>
+  <!-- 筛选按钮弹窗 -->
+  <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+    <div class="p-2">
+      <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
@@ -38,70 +158,10 @@
         </el-card>
       </div>
     </transition>
+    </div>
+  </el-dialog> 
 
-    <el-card shadow="never">
-      <template #header>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['financialStatistics:financialStatistics:add']">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['financialStatistics:financialStatistics:edit']">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['financialStatistics:financialStatistics:remove']">删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['financialStatistics:financialStatistics:export']">导出</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-        </el-row>
-      </template>
 
-      <el-table v-loading="loading" border :data="financialStatisticsList" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="金额" align="center" prop="balance" />
-        <el-table-column label="财务类型" align="center" prop="financialType">
-          <template #default="scope">
-            <dict-tag :options="dc_financial_type" :value="scope.row.financialType"/>
-          </template>
-        </el-table-column>
-        <el-table-column label="来源类型" align="center" prop="sourceType">
-          <template #default="scope">
-            <dict-tag :options="dc_financial_source_type" :value="scope.row.sourceType"/>
-          </template>
-        </el-table-column>
-        <el-table-column label="发票凭证" align="center" prop="contractNoUrl" width="100">
-          <template #default="scope">
-            <image-preview :src="scope.row.contractNoUrl" :width="50" :height="50"/>
-          </template>
-        </el-table-column>
-        <el-table-column label="备注" align="center" prop="remark" />
-        <el-table-column label="归属城市" align="center" prop="city">
-          <template #default="scope">
-            <dict-tag :options="dc_sercive_city" :value="scope.row.city"/>
-          </template>
-        </el-table-column>
-        <el-table-column label="录入人" align="center" prop="createrName" />
-        <el-table-column label="流水时间" align="center" prop="flowTime" width="180">
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.flowTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['financialStatistics:financialStatistics:edit']"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['financialStatistics:financialStatistics:remove']"></el-button>
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
-    </el-card>
     <!-- 添加或修改财务统计对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="financialStatisticsFormRef" :model="form" :rules="rules" label-width="80px">
@@ -205,7 +265,7 @@ const data = reactive<PageData<FinancialStatisticsForm, FinancialStatisticsQuery
   form: {...initFormData},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     balance: undefined,
     financialType: undefined,
     sourceType: undefined,
@@ -239,6 +299,15 @@ const data = reactive<PageData<FinancialStatisticsForm, FinancialStatisticsQuery
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+//查找相关
+const searchDialogVisible = ref(false)
+
+/** 查找按钮操作 */
+const handleSearch = () => {
+  searchDialogVisible.value = true
+}
+
 
 /** 查询财务统计列表 */
 const getList = async () => {

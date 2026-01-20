@@ -45,7 +45,7 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="200">
           <template #default="scope">
-            <el-button type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+            <el-button type="primary" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -86,7 +86,7 @@ const taskList = ref([]);
 // 查询参数
 const queryParams = ref<TaskQuery>({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   nodeName: undefined,
   flowName: undefined,
   flowCode: undefined

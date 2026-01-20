@@ -78,7 +78,7 @@ const queryFormRef = ref<ElFormInstance>();
 
 const queryParams = ref<OnlineQuery>({
   pageNum: 1,
-  pageSize: 10,
+  pageSize: 20,
   ipaddr: '',
   userName: ''
 });
