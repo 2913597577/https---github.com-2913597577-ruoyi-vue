@@ -148,15 +148,15 @@
             <dict-tag :options="dc_company_industry" :value="scope.row.companyIndustry ?? ''" />
           </template>
         </el-table-column>
-        <el-table-column label="对接人" align="center" prop="contactPerson" width="100" show-overflow-tooltip />
-        <el-table-column label="对接人电话" align="center" prop="contactInfo" width="120" show-overflow-tooltip />
-        <el-table-column label="对接人职务" align="center" prop="contactPosition" width="100" show-overflow-tooltip />
-        <el-table-column label="开始时间" align="center" prop="serviceStart" width="100">
+        <el-table-column label="决策人" align="center" prop="decisionMaker" width="100" show-overflow-tooltip />
+        <el-table-column label="决策人电话" align="center" prop="decisionMakerContact" width="120" show-overflow-tooltip />
+        <el-table-column label="决策人职务" align="center" prop="decisionMakerPosition" width="100" show-overflow-tooltip />
+        <el-table-column label="服务开始时间" align="center" prop="serviceStart" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.serviceStart, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="结束时间" align="center" prop="serviceEnd" width="100">
+        <el-table-column label="服务结束时间" align="center" prop="serviceEnd" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') }}</span>
           </template>
@@ -934,49 +934,77 @@
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-       <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="财务确认" prop="financeConfirmed" label-width="68px">
+       <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="80px">
+            <el-form-item label="财务确认" prop="financeConfirmed" >
               <el-select v-model="queryParams.financeConfirmed" placeholder="请选择财务确认状态" clearable
-                @keyup.enter="handleQuery" style="width: 160px">
+                @keyup.enter="handleQuery" style="width: 140px">
                 <el-option v-for="item in financeStatusList" :key="item.value" :label="item.label"
                   :value="item.value" align="center" ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="公司名称" prop="companyName" label-width="68px">
-              <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" style="width: 160px" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="公司名称" prop="companyName" >
+              <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" style="width: 140px" clearable 
+              @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="对接人" prop="contactPerson" label-width="68px">
-              <el-input v-model="queryParams.contactPerson" placeholder="请输入公司对接人" style="width: 160px" clearable
+            <el-form-item label="公司地址" prop="district" >
+              <el-input v-model="queryParams.district" placeholder="请输入公司地址" style="width: 140px" clearable 
+              @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="决策人" prop="decisionMaker" >
+              <el-input v-model="queryParams.decisionMaker" placeholder="请输入公司决策人" style="width: 140px" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="尾款金额" prop="balanceStatus" label-width="68px">
-              <el-input v-model="queryParams.balanceStatus" placeholder="尾款金额" style="width: 160px" clearable
+            <el-form-item label="决策人电话" prop="decisionMakerContact" >
+              <el-input v-model="queryParams.decisionMakerContact" placeholder="请输入决策人电话" type="number" style="width: 140px" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="合同编号" prop="contractCode" >
+              <el-input v-model="queryParams.contractCode" placeholder="请输入合同编号" type="number" style="width: 140px" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="归属城市" prop="customerCity" >
+              <el-select v-model="queryParams.customerCity" placeholder="请选择客户归属城市" clearable
+              @change="handleQuery" style="width: 140px">
+                <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
+                  :value="dict.value" align="center" ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="合同金额 >= " prop="contractAmount" >
+              <el-input v-model="queryParams.contractAmount" placeholder="合同金额 >= " type="number" style="width: 140px" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="实收金额 >= " prop="actualPayment" >
+              <el-input v-model="queryParams.actualPayment" placeholder="实收金额 >= " type="number" style="width: 140px" clearable
+                @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="尾款金额 >= " prop="balanceStatus" >
+              <el-input v-model="queryParams.balanceStatus" placeholder="尾款金额 >= " type="number" style="width: 140px" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
             <!-- <el-form-item label="签约类型" prop="signType" label-width="68px">
               <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
-            <el-form-item label="归属城市" prop="customerCity" label-width="88px">
-              <el-select v-model="queryParams.customerCity" placeholder="请选择客户归属城市" clearable
-              @change="handleQuery" style="width: 160px">
-                <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label"
-                  :value="dict.value" align="center" ></el-option>
+        <el-form-item label="套餐类型" prop="serviceType" >
+              <el-select v-model="queryParams.serviceType" placeholder="请选择套餐类型" clearable
+                @keyup.enter="handleQuery" style="width: 140px">
+                <el-option v-for="item in combo_type" :key="item.value" :label="item.label"
+                  :value="item.value" align="center" ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="开票状态" prop="invoiceStatus" label-width="68px">
+            <el-form-item label="开票状态" prop="invoiceStatus" >
               <el-select v-model="queryParams.invoiceStatus" placeholder="请选择开票状态" clearable
-                @keyup.enter="handleQuery" style="width: 160px">
+                @keyup.enter="handleQuery" style="width: 140px">
                 <el-option v-for="item in invoiceStatusList" :key="item.value" :label="item.label"
                   :value="item.value" align="center" ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="开始时间" prop="serviceStart" label-width="68px">
+            <el-form-item label="服务开始时间" prop="serviceStart" label-width="90px">
               <el-date-picker clearable v-model="queryParams.serviceStart" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择服务开始时间" style="width: 160px" />
+                placeholder="请选择开始时间" style="width: 140px" />
             </el-form-item>
-            <el-form-item label="结束时间" prop="serviceEnd" label-width="68px">
+            <el-form-item label="服务结束时间" prop="serviceEnd" label-width="90px" >
               <el-date-picker clearable v-model="queryParams.serviceEnd" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择服务结束时间" style="width: 160px" />
+                placeholder="请选择结束时间" style="width: 140px" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -1166,6 +1194,9 @@
             </el-descriptions-item>
             <el-descriptions-item label="审核时间">
               {{ viewForm.auditTime }}
+            </el-descriptions-item>
+            <el-descriptions-item label="法务支持">
+              {{ viewForm.legalSupport }}
             </el-descriptions-item>
 
             <el-descriptions-item label="" >
