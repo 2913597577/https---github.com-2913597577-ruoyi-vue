@@ -202,7 +202,8 @@
             <dict-tag :options="dc_false_true" :value="scope.row.isIntention ?? ''" />
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center" prop="remarks" width="100" show-overflow-tooltip />
+        <el-table-column label="尾款备注" align="center" prop="remarks" width="100" show-overflow-tooltip />
+        <el-table-column label="续费跟进登记" align="center" prop="closer" width="100" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="320px"
           fixed="right">
           <template #default="scope">

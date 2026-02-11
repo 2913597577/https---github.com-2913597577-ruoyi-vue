@@ -112,7 +112,7 @@
           <template #default="scope">
             <div class="contract-cell">
               <image-preview v-if="scope.row.contractUrl" :src="scope.row.contractUrl" :width="20" :height="20" />
-              <el-button v-if="!scope.row.contractUrl" link type="primary" icon="Upload"
+              <el-button v-if="!scope.row.contractUrl" link type="danger" icon="Upload"
                 @click="handleUpload(scope.row)" v-hasPermi="['myCustomer:customerTransfer:upload']">
                 上传合同
               </el-button>
@@ -128,6 +128,12 @@
             <span>{{ getUserNameById(scope.row.inviterId) }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="录入日期" align="center" prop="auditTime" width="80">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="法务支持" align="center" prop="legalSupport" width="80" show-overflow-tooltip />
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip>
           <template #default="scope">
@@ -138,19 +144,19 @@
            }}
           </template>
         </el-table-column>
-        <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip>
-        <template #default="scope">
-            <dict-tag :options="dc_employee_count" :value="scope.row.employeeCount ?? ''" />
-          </template>
-        </el-table-column>
+        <el-table-column label="决策人" align="center" prop="decisionMaker" width="100" show-overflow-tooltip />
+        <el-table-column label="决策人电话" align="center" prop="decisionMakerContact" width="120" show-overflow-tooltip />
+        <el-table-column label="决策人职务" align="center" prop="decisionMakerPosition" width="100" show-overflow-tooltip />
         <el-table-column label="所属行业" align="center" prop="companyIndustry" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_company_industry" :value="scope.row.companyIndustry ?? ''" />
           </template>
         </el-table-column>
-        <el-table-column label="决策人" align="center" prop="decisionMaker" width="100" show-overflow-tooltip />
-        <el-table-column label="决策人电话" align="center" prop="decisionMakerContact" width="120" show-overflow-tooltip />
-        <el-table-column label="决策人职务" align="center" prop="decisionMakerPosition" width="100" show-overflow-tooltip />
+        <el-table-column label="员工人数" align="center" prop="employeeCount" width="80" show-overflow-tooltip>
+        <template #default="scope">
+            <dict-tag :options="dc_employee_count" :value="scope.row.employeeCount ?? ''" />
+          </template>
+        </el-table-column>
         <el-table-column label="服务开始时间" align="center" prop="serviceStart" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.serviceStart, '{y}-{m}-{d}') }}</span>
@@ -192,13 +198,13 @@
           </template>
         </el-table-column>
         <el-table-column label="开票内容" align="center" prop="invoiceContent" width="100" show-overflow-tooltip />
-        <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
+       
         <el-table-column label="律师咨询情况" align="center" prop="lawyerConsultation" width="100" show-overflow-tooltip />
-        <el-table-column label="其他费用" align="center" prop="otherFee" width="80" show-overflow-tooltip />
-
+        <el-table-column label="其他费用沟通" align="center" prop="otherFee" width="100" show-overflow-tooltip />
+       <!--  <el-table-column label="附赠自然人" align="center" prop="additionalPerson" width="100" show-overflow-tooltip />
         <el-table-column label="自然人电话" align="center" prop="additionalContact" width="100" show-overflow-tooltip />
         <el-table-column label="自然人职务" align="center" prop="additionalPosition" width="100" show-overflow-tooltip />
-        <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip />
+        <el-table-column label="自然人年龄" align="center" prop="additionalAge" width="90" show-overflow-tooltip /> -->
         <el-table-column label="代账公司" align="center" prop="accountingCompany" width="80" show-overflow-tooltip>
         <template #default="scope">
             <dict-tag :options="dc_accounting_company" :value="scope.row.accountingCompany ?? ''" />
@@ -218,13 +224,9 @@
         <el-table-column label="公司纠纷及解决方式" align="center" prop="preDiscuss" width="150" show-overflow-tooltip />
         <el-table-column label="待处理事项登记" align="center" prop="pendingRemark" width="150" show-overflow-tooltip />
         <!-- <el-table-column label="待处理事项备注" align="center" prop="pendingRemark" width="200" show-overflow-tooltip /> -->
-        <el-table-column label="欠款问题登记" align="center" prop="debtDetails" width="120" />
-        <el-table-column label="欠款问题备注" align="center" prop="debtRemark" width="120" show-overflow-tooltip />
-        <el-table-column label="录入日期" align="center" prop="auditTime" width="80">
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
+        <!-- <el-table-column label="欠款问题登记" align="center" prop="debtDetails" width="120" /> -->
+        <el-table-column label="其他备注信息" align="center" prop="remark" width="120" show-overflow-tooltip />
+        <el-table-column label="案件详细登记" align="center" prop="evidenceRemark" width="120" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="280"
         fixed="right">
           <template #default="scope">
@@ -856,7 +858,7 @@
             />
           </el-form-item> -->
 
-          <el-form-item label="其他备注信息:" class="form-item" style="margin-bottom: 20px;">
+          <el-form-item label="其他备注信息:" prop="remark" class="form-item" style="margin-bottom: 20px;">
             <el-input
               v-model="form.remark"
               type="textarea"
@@ -866,12 +868,10 @@
           </el-form-item>
 
         </div>
-      </el-form>
-    </div>
-     <!-- 案件登记 -->
+        <!-- 案件登记 -->
      <div class="form-section-5">
           <div class="section-title">案件登记</div>
-          <el-row :gutter="20" class="form-row">
+         <!--  <el-row :gutter="20" class="form-row">
             <el-col :span="8">
               <el-form-item label="债务人" prop="debtor" class="form-item">
                 <el-input
@@ -897,17 +897,20 @@
                 />
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-form-item label="证据备注:" prop="evidenceRemark" class="form-item">
+          </el-row> -->
+          <el-form-item label="案件详细登记:" prop="evidenceRemark" class="form-item">
             <el-input
               v-model="form.evidenceRemark"
               type="textarea"
-              :rows="3"
-              placeholder="请输入证据备注信息"
+              :rows="8"
+              placeholder="请输入案件详细信息 例如 债务人姓名：欠款金额：联系电话："
             />
           </el-form-item>
-          </div>
+        </div>
 
+      </el-form>
+    </div>
+     
     <!-- 对话框底部按钮 -->
     <template #footer>
       <div class="dialog-footer">
@@ -946,8 +949,8 @@
               <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" style="width: 140px" clearable 
               @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="公司地址" prop="district" >
-              <el-input v-model="queryParams.district" placeholder="请输入公司地址" style="width: 140px" clearable 
+            <el-form-item label="地址(仅区或县)" prop="district" label-width="100px">
+              <el-input v-model="queryParams.district" placeholder="请输入公司所在区或县" style="width: 140px" clearable 
               @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="决策人" prop="decisionMaker" >
@@ -1393,7 +1396,7 @@
            <strong>案件登记</strong>
          </div>
          </el-descriptions-item>
-         <el-descriptions-item label="债务人">
+         <!-- <el-descriptions-item label="债务人">
               {{ viewForm.debtor }}
             </el-descriptions-item>
             <el-descriptions-item label="欠款金额">
@@ -1401,8 +1404,8 @@
             </el-descriptions-item>
             <el-descriptions-item label="联系电话">
               {{ viewForm.debtorContact }}
-            </el-descriptions-item>
-            <el-descriptions-item label="证据备注">
+            </el-descriptions-item> -->
+            <el-descriptions-item label="案件详细登记">
               {{ viewForm.evidenceRemark }}
             </el-descriptions-item>
           </el-descriptions>
@@ -1663,6 +1666,12 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
     pendingRemark: [
       { required: true, message: "请选择待处理事项类型", trigger: "blur" }
     ],
+    remark: [
+      { required: true, message: "其他备注信息不能为空", trigger: "blur"}
+    ],
+    evidenceRemark: [
+      { required: true, message: "请输入案件详细登记", trigger: "blur" }
+    ],
    /*  'performanceInfo.0.userId': [
       { required: true, message: "业绩所属人1不能为空", trigger: "blur" }
     ],
@@ -1867,7 +1876,7 @@ const reset = () => {
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
-  console.log('queryParams', queryParams.value);
+  // console.log('queryParams', queryParams.value);
   getList();
 }
 
@@ -2336,7 +2345,7 @@ onMounted(() => {
   border: 1px solid var(--el-border-color);
   border-radius: 8px;
   background-color: var(--el-bg-color);
-  height: 220px;
+  height: 280px;
 }
 
 .section-title {

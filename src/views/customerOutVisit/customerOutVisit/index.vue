@@ -263,7 +263,7 @@
           <file-upload :limit="1" v-model="uploadFile" />
         </el-form-item>
         <el-form-item label="面访地点" prop="visitAddress">
-          <el-input v-model="form.visitAddress" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.visitAddress" type="textarea" readonly placeholder="请输入内容" />
         </el-form-item>
       </el-form>
       <template #footer>
