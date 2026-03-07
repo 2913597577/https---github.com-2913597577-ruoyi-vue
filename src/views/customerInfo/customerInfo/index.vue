@@ -98,7 +98,7 @@
           <template #default="scope">
             <!-- 详情按钮：点击携带当前行id跳转 -->
             <el-button link type="primary" icon="View" size="small"
-              @click="handleTrackingDetail(scope.row.transferId)" style="padding: 0 6px;">
+              @click="handleTrackingDetail(scope.row.id)" style="padding: 0 6px;">
               详情
             </el-button>
           </template>

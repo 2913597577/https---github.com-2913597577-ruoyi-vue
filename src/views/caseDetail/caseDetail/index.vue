@@ -172,11 +172,18 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="90px">
             <el-form-item label="对接客户" prop="customerId">
-              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+              <!-- <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
                   :value="item.customer_id">
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <!-- 虚拟加载客户名称 -->
+              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading" style="width: 200px">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
             </el-form-item>
             <el-form-item label="欠款人" prop="debtorName">
               <el-input v-model="queryParams.debtorName" placeholder="请输入欠款人" clearable @keyup.enter="handleQuery" />
@@ -237,11 +244,18 @@
           <el-input v-model="form.customerId" placeholder="请输入客户id(客户编号)" />
         </el-form-item> -->
         <el-form-item label="客户名称" prop="customerId">
-          <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
+          <!-- <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
               :value="item.customer_id">
             </el-option>
-          </el-select>
+          </el-select> -->
+          <!-- 虚拟加载客户名称 -->
+          <el-select-v2 v-model="form.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading" style="width: 100%">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+          </el-select-v2>
         </el-form-item>
         <el-form-item label="法务支持" prop="legalSupportId" label-width="100px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
@@ -417,6 +431,12 @@ const data = reactive<PageData<CaseDetailForm, CaseDetailQuery>>({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'customer_id'
+}
 
 
 const customerList = ref<any[]>([]);

@@ -127,11 +127,18 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="案件名称" prop="caseId">
-              <el-select v-model="queryParams.caseId" placeholder="请选择案件" filterable clearable>
+             <!--  <el-select v-model="queryParams.caseId" placeholder="请选择案件" filterable clearable>
                 <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
                   :value="item.case_id">
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <!-- 虚拟加载案件名称 -->
+              <el-select-v2 v-model="queryParams.caseId" placeholder="请选择案件" :options="caseDetailList"
+                :props="selectCaseProps" filterable clearable :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的案件</div>
+                </template>
+              </el-select-v2>
             </el-form-item>
             <el-form-item label="案件类型" prop="caseType">
               <el-select v-model="queryParams.caseType" placeholder="请选择案件类型" clearable>
@@ -166,21 +173,35 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body draggable>
       <el-form ref="caseProgressFormRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="案件名称" prop="caseId">
-          <el-select v-model="form.caseId" placeholder="请选择案件" filterable clearable>
+          <!-- <el-select v-model="form.caseId" placeholder="请选择案件" filterable clearable>
             <el-option v-for="item in caseDetailList" :key="item.case_id" :label="item.case_detail"
               :value="item.case_id">
             </el-option>
-          </el-select>
+          </el-select> -->
+          <!-- 虚拟加载客户名称 -->
+        <el-select-v2 v-model="form.caseId" placeholder="请选择案件" :options="caseDetailList"
+                :props="selectCaseProps" filterable clearable :loading="loading" style="width: 100%">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的案件</div>
+                </template>
+          </el-select-v2>
         </el-form-item>
        <!--  <el-form-item label="客户id" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id" />
         </el-form-item> -->
         <el-form-item label="客户名称" prop="customerId">
-          <el-select v-model="form.customerId" placeholder="请选择客户名称" filterable clearable>
+          <!-- <el-select v-model="form.customerId" placeholder="请选择客户名称" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
               :value="item.customer_id">
             </el-option>
-          </el-select>
+          </el-select> -->
+          <!-- 虚拟加载客户名称 -->
+          <el-select-v2 v-model="form.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading" style="width: 100%">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+          </el-select-v2>
         </el-form-item>
         <el-form-item label="法务支持" prop="legalSupportId" label-width="100px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
@@ -310,6 +331,19 @@ const data = reactive<PageData<CaseProgressForm, CaseProgressQuery>>({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'customer_id'
+}
+
+// select 的 props 定义为常量，避免递归更新
+const selectCaseProps = {
+  label: 'case_detail',
+  value: 'case_id'
+}
 
 /** 查询案件进展表列表 */
 const getList = async () => {
@@ -444,11 +478,7 @@ const loadLawyerSupportList = async () => {
 
 const customerList = ref([]);
 
-// select 的 props 定义为常量，避免递归更新
-const selectProps = {
-  label: 'customer_name',
-  value: 'transfer_id'
-}
+
 const loadCustomerList = async () => {
   try {
     const res = await getCustomerByUserId();

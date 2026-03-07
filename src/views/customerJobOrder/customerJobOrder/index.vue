@@ -332,11 +332,18 @@
     <el-dialog title="新增工单管理" v-model="addDialog.visible" width="600px" append-to-body draggable>
       <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="rules" label-width="90px">
         <el-form-item label="客户名称" prop="customerId">
-          <el-select v-model="addForm.customerId" placeholder="请选择客户" filterable clearable>
+         <!--  <el-select v-model="addForm.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
               :value="item.customer_id">
             </el-option>
-          </el-select>
+          </el-select> -->
+           <!-- 虚拟加载客户名称 -->
+           <el-select-v2 v-model="addForm.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading" style="width: 100%">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+          </el-select-v2>
         </el-form-item>
         <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
           <el-select filterable v-model="addForm.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
@@ -361,9 +368,9 @@
         <el-form-item label="原合同" prop="preContractAddress">
           <file-upload :limit="1" :fileSize="10" v-model="addPreFile" />
         </el-form-item>
-        <!-- <el-form-item label="原合同文件名" prop="preContractName">
+      <el-form-item label="原合同文件名" prop="preContractName">
       <el-input v-model="addForm.preContractName" placeholder="请输入源合同文件名" />
-    </el-form-item> -->
+    </el-form-item>
         <!-- <el-form-item label="新合同地址" prop="newContractAddress">
       <file-upload :limit="1" :fileSize="10" v-model="addNewFile" />
     </el-form-item>

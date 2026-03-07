@@ -110,11 +110,17 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
            <el-form-item label="客户名称" prop="customerId">
-              <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
+             <!--  <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
                   :value="item.customer_id">
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
             </el-form-item>
             <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
               <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable>
@@ -243,6 +249,12 @@ const data = reactive<PageData<LegalSupportChangeForm, LegalSupportChangeQuery>>
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'customer_id'
+}
 
 const customerList = ref<any[]>([]);
 

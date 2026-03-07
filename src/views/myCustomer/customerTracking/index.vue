@@ -94,7 +94,7 @@
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
         <!-- <el-table-column label="跟踪状态" align="center" prop="cumtomerStatus">
           <template #default="scope">
             <dict-tag :options="cumtomer_status" :value="scope.row.cumtomerStatus" />
@@ -105,7 +105,7 @@
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="回访内容" align="center" prop="customerRemark" show-overflow-tooltip />
+        <el-table-column label="回访内容" align="center" prop="customerRemark" width="240" show-overflow-tooltip />
         <!-- <el-table-column label="提交状态" align="center" prop="submitStatus">
           <template #default="scope">
             <dict-tag :options="submit_status" :value="scope.row.submitStatus" />
@@ -123,6 +123,11 @@
         <el-table-column label="回访分类" align="center" prop="trackingType" width="120">
           <template #default="scope">
             <dict-tag :options="dc_follow_classification" :value="scope.row.trackingType ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="归属城市" align="center" prop="remark2" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark2" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
@@ -212,11 +217,18 @@
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="客户名称" prop="customerId">
-          <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
+         <!--  <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
               :value="item.customer_id">
             </el-option>
-          </el-select>
+          </el-select> -->
+          <!-- 虚拟加载客户名称 -->
+          <el-select-v2 v-model="form.customerId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable :loading="loading" style="width: 100%">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+          </el-select-v2>
         </el-form-item>
         <el-form-item label="法务支持" prop="legalSupportId" label-width="100px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
@@ -363,6 +375,7 @@ const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { customer_tracking_type, cumtomer_status, submit_status } = toRefs<any>(proxy?.useDict('customer_tracking_type', 'cumtomer_status', 'submit_status'));
 const {dc_follow_classification} = toRefs<any>(proxy?.useDict('dc_follow_classification'));
+const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const customerTrackingList = ref<CustomerTrackingVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
