@@ -535,9 +535,18 @@ watch(
   loadCustomerList();
 }); */
 onMounted(async () => {
-  await loadCustomerList(); // 等待客户列表加载完成
-  await loadLawyerSupportList();
-  await getList(); // 客户列表加载完后，再获取工单列表并渲染
+  loading.value = true; // 全局加载状态
+  try {
+    // 使用Promise.all并行加载客户列表和法务支持人员列表
+    await loadCustomerList();
+    await loadLawyerSupportList();
+    await getList();
+
+  } catch (error){
+    console.error('初始化数据失败:', error);
+  } finally {
+    loading.value = false; // 结束加载状态
+  }
 });
 </script>
 

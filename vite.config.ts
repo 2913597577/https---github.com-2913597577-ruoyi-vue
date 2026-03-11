@@ -25,7 +25,7 @@ export default defineConfig(({ mode, command }) => {
       proxy: {
         [env.VITE_APP_BASE_API]: {
           target: 'http://localhost:8080',
-          // target: "http://192.168.251.186:8080",
+          //target: "http://8.152.211.123:8080",
           //target: 'http://e6ee2ee8.natappfree.cc',
           changeOrigin: true,
           ws: true,

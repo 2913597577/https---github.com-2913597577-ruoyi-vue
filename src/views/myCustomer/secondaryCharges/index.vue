@@ -293,11 +293,18 @@
               v-model="form.companyName"
               placeholder="请输入公司名称（或主体人姓名）"
             /> -->
-                  <el-select v-model="form.companyName" placeholder="请选择公司名称" filterable clearable style="width: 100%"
+                  <!-- <el-select v-model="form.companyName" placeholder="请选择公司名称" filterable clearable style="width: 100%"
                     @change="handleCompanyChange">
                     <el-option v-for="info in customerTransferListInfo" :key="info.id" :label="info.companyName"
                       :value="info.id" />
-                  </el-select>
+                  </el-select> -->
+                 <!-- 虚拟加载客户名称 -->
+             <el-select-v2 v-model="form.companyName" placeholder="请选择公司名称" :options="customerTransferListInfo" 
+                :props="selectProps" filterable clearable :loading="loading" style="width: 100%" @change="handleCompanyChange">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+             </el-select-v2>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -1428,6 +1435,13 @@ const transferFormData = ref({
 
 
 const { queryParams, form, rules } = toRefs(data);
+
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'companyName',
+  value: 'id'
+}
+
 
 const financeStatusList = [
   { value: 0, label: '待审核' },
