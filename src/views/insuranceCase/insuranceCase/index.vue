@@ -121,6 +121,11 @@
         <el-table-column label="被告方" align="center" prop="defendant" width="120" show-overflow-tooltip />
         <el-table-column label="管辖权法院" align="center" prop="jurisdictionCourt" width="100" show-overflow-tooltip />
         <el-table-column label="备注" align="center" prop="remark" width="100" show-overflow-tooltip />
+        <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px" 
           fixed="right">
           <template #default="scope">
@@ -149,6 +154,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+            <el-form-item label="归属城市" prop="remark1">
+              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 240px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="对接客户" prop="customerId">
              <!--  <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -216,10 +227,25 @@
 
     <!-- 添加或修改保险记录表对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body draggable>
-      <el-form ref="insuranceCaseFormRef" :model="form" :rules="rules" label-width="80px" style="width: 500px;">
+      <el-form ref="insuranceCaseFormRef" :model="form" :rules="rules" label-width="100px" style="width: 500px;">
         <!-- <el-form-item label="客户id(客户编号)" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id(客户编号)" />
         </el-form-item> -->
+        <el-form-item label="客户归属城市" prop="remark1">
+                <el-select
+                  v-model="form.remark1"
+                  placeholder="请选择归属城市"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+        </el-form-item>
         <el-form-item label="客户名称" prop="customerId">
           <!-- <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -234,8 +260,8 @@
                 </template>
           </el-select-v2>
         </el-form-item>
-        <el-form-item label="法务支持" prop="legalSupportId" label-width="80px">
-          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+        <el-form-item label="法务支持" prop="legalSupportId">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable 
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
@@ -294,7 +320,7 @@ import { listInsuranceCase, getInsuranceCase, delInsuranceCase, addInsuranceCase
 import { InsuranceCaseVO, InsuranceCaseQuery, InsuranceCaseForm } from '@/api/insuranceCase/insuranceCase/types';
 import { useRoute } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-
+const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
 
 const route = useRoute();
@@ -368,7 +394,9 @@ const data = reactive<PageData<InsuranceCaseForm, InsuranceCaseQuery>>({
     premium: [
       { required: true, message: "请输入保费", trigger: "blur" }
     ],
-
+    remark1: [
+      { required: true, message: "请选择客户归属城市", trigger: "blur" }
+    ],
 
   }
 });

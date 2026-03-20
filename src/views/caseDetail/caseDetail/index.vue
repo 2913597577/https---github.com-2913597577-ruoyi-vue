@@ -116,7 +116,7 @@
           </template>
         </el-table-column>
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
-        <el-table-column label="债务人" align="center" prop="debtorName" width="100" />
+        <el-table-column label="债务人" align="center" prop="debtorName" width="100" show-overflow-tooltip />
         <el-table-column label="欠款金额" align="center" prop="debtAmount" width="200" />
         <el-table-column label="剩余欠款" align="center" prop="remainingAmount" width="200" />
         <el-table-column label="联系电话" align="center" prop="contactPhone" width="100" />
@@ -143,6 +143,11 @@
         <el-table-column label="法官" align="center" prop="judgeName" width="80" show-overflow-tooltip />
         <el-table-column label="法官电话" align="center" prop="judgePhone" width="100" show-overflow-tooltip />
         <el-table-column label="案件状态" align="center" prop="caseStatus" />
+        <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
         width="200" fixed="right">
           <template #default="scope">
@@ -171,6 +176,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="90px">
+            <el-form-item label="归属城市" prop="remark1">
+              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 240px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="对接客户" prop="customerId">
               <!-- <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -243,6 +254,21 @@
         <!-- <el-form-item label="客户id(客户编号)" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id(客户编号)" />
         </el-form-item> -->
+        <el-form-item label="客户归属城市" prop="remark1">
+                <el-select
+                  v-model="form.remark1"
+                  placeholder="请选择归属城市"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+        </el-form-item>
         <el-form-item label="客户名称" prop="customerId">
           <!-- <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -331,7 +357,7 @@ import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-
+const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
 const route = useRoute();
 const caseDetailList = ref<CaseDetailVO[]>([]);
@@ -426,6 +452,9 @@ const data = reactive<PageData<CaseDetailForm, CaseDetailQuery>>({
     contactPhone: [
       { required: true, message: "联系电话不能为空", trigger: "blur" }
     ],
+    remark1: [
+      { required: true, message: "请选择客户归属城市", trigger: "blur" }
+    ]
 
   }
 });

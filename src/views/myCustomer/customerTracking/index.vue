@@ -167,6 +167,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="90px">
+            <el-form-item label="归属城市" prop="remark2">
+              <el-select v-model="queryParams.remark2" placeholder="请选择归属城市" clearable style="width: 200px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="客户名称" prop="customerId">
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
                 :props="selectProps" filterable clearable :loading="loading" style="width: 200px">
@@ -216,6 +222,21 @@
     <!-- 添加或修改客户跟踪对话框 --> 
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerTrackingFormRef" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="客户归属城市" prop="remark2">
+                <el-select
+                  v-model="form.remark2"
+                  placeholder="请选择归属城市"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+        </el-form-item>
         <el-form-item label="客户名称" prop="customerId">
          <!--  <el-select v-model="form.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -461,6 +482,9 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
     ],
     nextTime: [
       { required: true, message: "请选择下次回访时间", trigger: "blur" }
+    ],
+    remark2: [
+      { required: true, message: "请选择客户归属城市", trigger: "blur" }
     ],
 
   }

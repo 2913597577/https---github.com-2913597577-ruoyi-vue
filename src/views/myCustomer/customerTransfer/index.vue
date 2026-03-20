@@ -1158,7 +1158,7 @@
           <fileUpload v-model="localFileList" :limit="1" :file-size="2" :file-type="['png', 'jpg', 'jpeg']"
             :is-show-tip="false" />
           <div v-if="localFileList.length > 0 && localFileList[0].url" style="margin-top: 8px;">
-            <img :src="localFileList[0].url" class="signature-preview" />
+            <img :src="localFileList[0].url" class="signature-preview" width="120" height="120" style="object-fit: contain;"/>
           </div>
         </el-form-item>
       </el-form>

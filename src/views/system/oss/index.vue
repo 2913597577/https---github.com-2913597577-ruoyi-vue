@@ -7,6 +7,9 @@
             <!-- <el-form-item label="文件名" prop="fileName">
               <el-input v-model="queryParams.fileName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
+            <el-form-item label="合同OssID" prop="ossId" label-width="80px">
+              <el-input v-model="queryParams.ossId" placeholder="请输入合同OssID" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
             <el-form-item label="文件名" prop="originalName">
               <el-input v-model="queryParams.originalName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
             </el-form-item>
@@ -81,7 +84,8 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column v-if="false" label="对象存储主键" align="center" prop="ossId" />
         <!-- <el-table-column label="文件名" align="center" prop="fileName" /> -->
-        <el-table-column label="文件名" align="center" prop="originalName" />
+        <el-table-column label="合同OssID" align="center" prop="ossId" show-overflow-tooltip />
+        <el-table-column label="文件名" align="center" prop="originalName" show-overflow-tooltip />
         <!-- <el-table-column label="文件后缀" align="center" prop="fileSuffix" /> -->
         <el-table-column label="文件展示" align="center" prop="url">
           <template #default="scope">
@@ -95,7 +99,7 @@
             <span v-if="!checkFileSuffix(scope.row.fileSuffix) || !previewListResource" v-text="scope.row.url" />
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" sortable="custom">
+        <el-table-column label="创建时间(点击排序)" align="center" prop="createTime" width="180" sortable="custom">
           <template #default="scope">
             <span>{{ proxy.parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -105,10 +109,10 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="下载" placement="top">
-              <el-button v-hasPermi="['system:oss:download']" link type="primary" icon="Download" @click="handleDownload(scope.row)"></el-button>
+              <el-button v-hasPermi="['system:oss:download']" link type="primary" icon="Download" @click="handleDownload(scope.row)">下载</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button v-hasPermi="['system:oss:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
+              <el-button v-hasPermi="['system:oss:remove']" link type="danger" icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>

@@ -115,7 +115,7 @@
             <dict-tag :options="dc_true_or_false" :value="scope.row.isOutCount" />
           </template>
         </el-table-column>
-        <el-table-column label="出访定位" align="center" prop="visitAddress" show-overflow-tooltip />
+        <el-table-column label="出访定位" align="center" prop="visitAddress" width="120" show-overflow-tooltip />
         <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100" show-overflow-tooltip>
           <template #default="scope">
             <image-preview :src="scope.row.placePic1Url" :width="20" :height="20" />
@@ -126,9 +126,14 @@
             <div class="contract-cell">
               <el-button v-if="scope.row.outRecord" link type="primary" icon="download"
                 @click="handleViewContract(scope.row)">
-                下载附件
+                下载记录表
               </el-button>
             </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px"
@@ -161,6 +166,12 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px"> 
+            <el-form-item label="归属城市" prop="remark1">
+              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 240px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="对接客户" prop="customerId">
               <!-- <el-select v-model="queryParams.customerId" placeholder="请选择客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -218,6 +229,21 @@
     <!-- 添加或修改客户出访记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="600px" append-to-body draggable>
       <el-form ref="customerOutVisitFormRef" :model="form" :rules="rules" label-width="130px">
+        <el-form-item label="客户归属城市" prop="remark1">
+                <el-select
+                  v-model="form.remark1"
+                  placeholder="请选择归属城市"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+        </el-form-item>
         <el-form-item label="客户名称" prop="customerId">
           <!-- <el-select v-model="form.customerId" placeholder="请选择出访客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -274,7 +300,10 @@
           <image-upload v-model="form.placePic1" />
         </el-form-item>
         <el-form-item label="面访记录附件" prop="outRecord">
-          <file-upload :limit="1" v-model="uploadFile" />
+          <file-upload v-model="uploadFile" />
+          <div v-if="uploadFile && uploadFile.length > 0 && uploadFile[0].url" style="margin-top: 2px;">
+            <img :src="uploadFile[0].url" class="outrecord-preview" width="120" height="120" style="object-fit: contain;"/>
+          </div>
         </el-form-item>
         <el-form-item label="面访地点" prop="visitAddress">
           <el-input v-model="form.visitAddress" type="textarea" readonly placeholder="请输入内容" />
@@ -300,6 +329,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { dc_true_or_false } = toRefs<any>(proxy?.useDict('dc_true_or_false'));
+const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
 const customerOutVisitList = ref<CustomerOutVisitVO[]>([]);
 const buttonLoading = ref(false);
@@ -310,7 +340,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const customerList = ref<any[]>([]);
-const uploadFile = ref();
+const uploadFile = ref<any[]>([]);
 
 const queryFormRef = ref<ElFormInstance>();
 const customerOutVisitFormRef = ref<ElFormInstance>();
@@ -376,10 +406,12 @@ const data = reactive<PageData<CustomerOutVisitForm, CustomerOutVisitQuery>>({
     placePic1: [
       { required: true, message: "请上传客户地点照片", trigger: "blur" }
     ],
-    outRecord: [
+   /*  outRecord: [
       { required: true, message: "请上传面访记录附件", trigger: "blur" }
+    ], */
+    remark1: [
+      { required: true, message: "请选择客户归属城市", trigger: "blur" }
     ],
-
   }
 });
 

@@ -315,9 +315,9 @@ const data = reactive<PageData<CaseProgressForm, CaseProgressQuery>>({
    /*  customerId: [
       { required: true, message: "客户id不能为空", trigger: "blur" }
     ], */
-    customerId: [
+    /* customerId: [
       { required: true, message: "请选择客户姓名", trigger: "blur" }
-    ],
+    ], */
     legalSupportId: [
       { required: true, message: "请选择法务支持", trigger: "blur" }
     ],

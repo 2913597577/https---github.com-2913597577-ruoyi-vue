@@ -127,11 +127,15 @@
           </template>
         </el-table-column>
         <el-table-column label="客户所属方" align="center" prop="remark1" width="100" show-overflow-tooltip />
-
+        <el-table-column label="归属城市" align="center" prop="remark2" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark2" />
+          </template>
+        </el-table-column>
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
         <el-table-column label="备注3" align="center" prop="remark3" /> -->
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="300"
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="320"
           fixed="right">
           <template #default="scope">
             <el-tooltip content="接工单" placement="top">
@@ -139,9 +143,9 @@
                 @click="handleAccept(scope.row)" v-hasPermi="['customerJobOrder:customerJobOrder:edit']"
                 v-has-roles="['LegalCenter']">接工单</el-button>
             </el-tooltip>
-            <el-tooltip content="修改" placement="top">
+            <el-tooltip content="新合同上传" placement="top">
               <el-button link type="primary" icon="Upload" @click="handleUpdate(scope.row)"
-                v-hasPermi="['customerJobOrder:customerJobOrder:edit']" v-has-roles="['LegalCenter']">合同上传</el-button>
+                v-hasPermi="['customerJobOrder:customerJobOrder:edit']" v-has-roles="['LegalCenter']">新合同上传</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
               <el-button size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
@@ -187,9 +191,15 @@
               <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item> -->
+            <el-form-item label="归属城市" prop="remark2">
+              <el-select v-model="queryParams.remark2" placeholder="请选择归属城市" clearable style="width: 240px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
               <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
-                style="width: 100%;" @change="handleLegalSupportChange">
+                style="width: 240px;" @change="handleLegalSupportChange">
                 <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
                   :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
               </el-select>
@@ -330,7 +340,22 @@
 
     <!-- 在现有 el-dialog 后面添加新的新增工单对话框 -->
     <el-dialog title="新增工单管理" v-model="addDialog.visible" width="600px" append-to-body draggable>
-      <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="rules" label-width="90px">
+      <el-form ref="addCustomerJobOrderFormRef" :model="addForm" :rules="rules" label-width="100px">
+        <el-form-item label="客户归属城市" prop="remark2">
+                <el-select
+                  v-model="addForm.remark2"
+                  placeholder="请选择归属城市"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+        </el-form-item>
         <el-form-item label="客户名称" prop="customerId">
          <!--  <el-select v-model="addForm.customerId" placeholder="请选择客户" filterable clearable>
             <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
@@ -422,7 +447,7 @@ import { useRoute } from 'vue-router';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { processing_status } = toRefs<any>(proxy?.useDict('processing_status'));
-
+const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
 const route = useRoute();
 const customerJobOrderList = ref<CustomerJobOrderVO[]>([]);
@@ -508,6 +533,10 @@ const data = reactive<PageData<CustomerJobOrderForm, CustomerJobOrderQuery>>({
     customerRequirements: [
       { required: true, message: "请输入客户要求", trigger: "blur" }
     ],
+    remark2: [
+      { required: true, message: "请选择客户归属城市", trigger: "change" }
+    ],
+
   }
 });
 
