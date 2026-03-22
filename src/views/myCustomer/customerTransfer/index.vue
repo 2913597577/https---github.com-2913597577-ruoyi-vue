@@ -2079,6 +2079,7 @@ if (!currentRow.value?.contractOssId) {
     const res = await audit(
       currentRow.value?.id || '',
       auditForm.value.auditStatus,
+      // "0"代表第一次审核，结果插入客户总表;"1"代表二次收费审核，结果插入到客户续费记录表
       "0",
       pictureFile
     )
@@ -2142,8 +2143,8 @@ function validatePerformanceSum() {
 /** 提交按钮 */
 const submitForm = () => {
 
-  console.log('Form ref:', customerTransferFormRef.value);
-  console.log('Form data:', form.value);
+  /* console.log('Form ref:', customerTransferFormRef.value);
+  console.log('Form data:', form.value); */
 
   if (!customerTransferFormRef.value) {
     console.error('Form ref is null');
