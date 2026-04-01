@@ -1670,7 +1670,7 @@ const assignDialog = reactive({
 // 3. 分配表单数据
 const assignForm = reactive({
   lawyerId: undefined,
-  customerId: undefined,
+  //customerId: undefined,
   id: undefined
 });
 // 4. 分配表单验证规则
@@ -1678,9 +1678,9 @@ const assignRules = reactive({
   lawyerId: [
     { required: true, message: "请选择法务支持人员", trigger: "change" }
   ],
-  customerId: [
+ /*  customerId: [
     { required: true, message: "客户ID不能为空", trigger: "blur" }
-  ]
+  ] */
 });
 // 5. 表单引用和加载状态
 const assignFormRef = ref<ElFormInstance>();
@@ -1692,7 +1692,7 @@ const handleAssign = async (row: CustomerInfoVO) => {
   // 记录当前客户行数据
   assignDialog.currentRow = row;
   // 初始化表单：填充当前客户ID
-  assignForm.customerId = row.transferId; // 客户ID（与表格row.transferId匹配）
+  //assignForm.customerId = row.transferId; // 客户ID（与表格row.transferId匹配）
   assignForm.lawyerId = row.lawyerId; // 清空上次选择的法务人员
   assignForm.id = row.id; // 当前客户记录的主键ID（用于分配接口）
   // 加载法务支持人员列表（调用接口）
@@ -1717,8 +1717,22 @@ const loadLawyerSupportList = async () => {
 /** 3. 提交分配表单（调用分配接口） */
 const submitAssignForm = async () => {
   // 表单验证
-  const valid = await assignFormRef.value?.validate();
-  if (!valid) return;
+  const valid = await assignFormRef.value?.validate().catch(() => false);
+  if (!valid) {
+  proxy?.$modal.msgWarning('请填写完整的分配法务信息');  // 添加提示
+  return;
+  }
+
+   // 检查必要数据
+   if (!assignForm.id) {
+    proxy?.$modal.msgError('客户ID不能为空');
+    return;
+  }
+  if (!assignForm.lawyerId) {
+    proxy?.$modal.msgError('请选择法务支持人员');
+    return;
+  }
+
 
   try {
     assignLoading.value = true;
@@ -1732,6 +1746,7 @@ const submitAssignForm = async () => {
     // 关闭弹窗并重置表单
     assignDialog.visible = false;
     assignForm.lawyerId = undefined;
+    assignForm.id = undefined;
     // 可选：刷新客户列表（更新已分配的法务信息）
     await getList();
   } catch (error) {
