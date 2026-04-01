@@ -509,9 +509,11 @@ const submitForm = () => {
   customerOutVisitFormRef.value?.validate(async (valid: boolean) => {
     if (valid) {
       buttonLoading.value = true;
-      if (uploadFile.value) {
+      // 只有重新上传文件时才更新 outRecord
+      if (uploadFile.value && uploadFile.value.length > 0 && uploadFile.value[0].ossId) {
         form.value.outRecord = uploadFile.value[0].ossId;
       }
+      // 否则保留原有的 outRecord 值（修改时不强制要求重新上传文件）
       form.value.customerName = getCustomerNameById(form.value.customerId);
       if (form.value.id) {
         await updateCustomerOutVisit(form.value).finally(() => buttonLoading.value = false);
