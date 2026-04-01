@@ -635,7 +635,7 @@
             placeholder="请选择到期时间" />
         </el-form-item>
         <el-form-item label="签单金额" prop="contractAmount">
-          <el-input v-model="CRRform.contractAmount" placeholder="请输入签单金额" />
+          <el-input v-model="CRRform.contractAmount" type="number" placeholder="请输入签单金额" />
         </el-form-item>
         <el-form-item label="服务时长" prop="serviceHours">
           <el-input v-model="CRRform.serviceHours" placeholder="请输入服务时长（如：12个月）" />
@@ -1227,6 +1227,9 @@ const CustomerRiskRefundFormdata = reactive<PageData<CustomerRiskRefundForm, Cus
     ],
     signDate: [
       { required: true, message: "签约日期不能为空", trigger: "blur" }
+    ],
+    expireDate: [
+      { required: true, message: "到期日期不能为空", trigger: "blur" }
     ],
     reasons: [
       { required: true, message: "原因不能为空", trigger: "blur" }

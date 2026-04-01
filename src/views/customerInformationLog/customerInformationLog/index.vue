@@ -85,8 +85,8 @@
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="编号" align="center" prop="contractNo" />
-        <el-table-column label="客户名称" align="center" prop="customerName" />
+        <el-table-column label="编号" align="center" prop="contractNo" show-overflow-tooltip />
+        <el-table-column label="客户名称" align="center" prop="customerName" show-overflow-tooltip />
         <el-table-column label="负责人" align="center" prop="principal" />
         <el-table-column label="负责人电话" align="center" prop="principalPhone" width="100px" show-overflow-tooltip />
         <el-table-column label="法务支持" align="center" prop="lawyerId" />
@@ -124,8 +124,8 @@
         <el-table-column label="合同编号" align="center" prop="contractCode" />
         <el-table-column label="备注" align="center" prop="remarks" />
         <el-table-column label="续费/尾款动作(1-续费 2-付尾款 3-其他)" align="center" prop="actionType" />
-        <el-table-column label="客户id" align="center" prop="transferId" />
-        <el-table-column label="客户总表id" align="center" prop="customerInfoId" />
+        <el-table-column label="客户id" align="center" prop="transferId" show-overflow-tooltip />
+        <el-table-column label="客户总表id" align="center" prop="customerInfoId" show-overflow-tooltip />
         <el-table-column label="客户总表创建时间" align="center" prop="infoCreateTime" width="120px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.infoCreateTime, '{y}-{m}-{d}') }}</span>

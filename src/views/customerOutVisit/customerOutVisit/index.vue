@@ -87,14 +87,14 @@
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="客户名称" align="center" prop="customerName" width="160" show-overflow-tooltip />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
-        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
-        <el-table-column label="出访时间" align="center" prop="visitTime" width="100">
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
+        <el-table-column label="出访时间" align="center" prop="visitTime" width="100" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.visitTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="出访内容" align="center" prop="visitPurpose" width="160" show-overflow-tooltip />
-        <el-table-column label="下次出访时间" align="center" prop="nextVisitTime" width="100">
+        <el-table-column label="下次出访时间" align="center" prop="nextVisitTime" width="100" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.nextVisitTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -394,9 +394,9 @@ const data = reactive<PageData<CustomerOutVisitForm, CustomerOutVisitQuery>>({
     visitTime: [
       { required: true, message: "请选择出访时间", trigger: "blur" }
     ],
-    nextVisitTime: [
+    /* nextVisitTime: [
       { required: true, message: "请选择下次出访时间", trigger: "blur" }
-    ],
+    ], */
     isFirstVisit: [
       { required: true, message: "请选择是否本月第一次出访", trigger: "blur" }
     ],
