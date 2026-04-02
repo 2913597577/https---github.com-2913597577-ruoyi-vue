@@ -430,9 +430,9 @@ const data = reactive<PageData<CustomerOutVisitForm, CustomerOutVisitQuery>>({
     placePic1: [
       { required: true, message: "请上传客户地点照片", trigger: "blur" }
     ],
-     outRecord: [
+    /*  outRecord: [
       { required: true, message: "请上传出访记录表附件", trigger: "blur" }
-    ], 
+    ],  */
     visitAddress: [
       { required: true, message: "请自动获取出访地点", trigger: "blur" }
     ],
