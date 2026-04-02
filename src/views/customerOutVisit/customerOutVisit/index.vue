@@ -304,7 +304,7 @@
             placeholder="请选择下次出访时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="面访目的" prop="visitPurpose">
+        <el-form-item label="出访目的" prop="visitPurpose">
           <el-input v-model="form.visitPurpose" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="是否本月第一次出访" prop="isFirstVisit">
@@ -322,13 +322,13 @@
         <el-form-item label="客户地点照片" prop="placePic1">
           <image-upload v-model="form.placePic1" />
         </el-form-item>
-        <el-form-item label="面访记录附件" prop="outRecord">
+        <el-form-item label="出访记录表附件" prop="outRecord">
           <file-upload v-model="uploadFile" />
           <div v-if="uploadFile && uploadFile.length > 0 && uploadFile[0].url" style="margin-top: 2px;">
             <img :src="uploadFile[0].url" class="outrecord-preview" width="120" height="120" style="object-fit: contain;"/>
           </div>
         </el-form-item>
-        <el-form-item label="面访地点" prop="visitAddress">
+        <el-form-item label="出访地点" prop="visitAddress">
           <el-input v-model="form.visitAddress" type="textarea" readonly placeholder="请输入内容" />
         </el-form-item>
       </el-form>
@@ -430,9 +430,12 @@ const data = reactive<PageData<CustomerOutVisitForm, CustomerOutVisitQuery>>({
     placePic1: [
       { required: true, message: "请上传客户地点照片", trigger: "blur" }
     ],
-   /*  outRecord: [
-      { required: true, message: "请上传面访记录附件", trigger: "blur" }
-    ], */
+     outRecord: [
+      { required: true, message: "请上传出访记录表附件", trigger: "blur" }
+    ], 
+    visitAddress: [
+      { required: true, message: "请自动获取出访地点", trigger: "blur" }
+    ],
     remark1: [
       { required: true, message: "请选择客户归属城市", trigger: "blur" }
     ],
