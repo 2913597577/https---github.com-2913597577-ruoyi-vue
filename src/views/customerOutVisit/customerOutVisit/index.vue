@@ -500,11 +500,14 @@ const handleAdd = async () => {
   dialog.visible = true;
   dialog.title = "添加客户出访记录";
 
-  try {
+  // ✅ 1. 确保客户列表已加载（按需加载）
+  await ensureCustomerListLoaded();
 
+  try {
+    // ✅ 2. 获取定位
     const pos = await getCurrentPosition();
     console.log(pos);
-
+    // ✅ 3. 逆地理编码获取地址
     const address = await reverseGeocode(pos.lat, pos.lng);
     if(!address||address==''||address==null||address.length==0){
       proxy?.$modal.msgWarning('无法获取当前位置');
@@ -882,7 +885,7 @@ const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
 //     throw err;
 //   }
 // };
-watch(
+/* watch(
   () => route.query.customerId,
   async (newCustomerId) => {
     // 等待客户列表加载完毕再操作
@@ -906,6 +909,58 @@ onMounted(() => {
    loadCustomerList();
    getList();
 });
+ */
+
+// 1. 添加状态变量
+const isInitialized = ref(false);
+const isCustomerListLoaded = ref(false);
+
+// 2. 确保客户列表加载（按需）
+const ensureCustomerListLoaded = async () => {
+  if (!isCustomerListLoaded.value) {
+    await loadCustomerList();
+    isCustomerListLoaded.value = true;
+  }
+};
+
+// 3. 改造 watch
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // 跳过初始化时的调用
+    if (!isInitialized.value) return;
+    
+    if (newCustomerId) {
+      queryParams.value.customerId = newCustomerId;
+    } else {
+      queryParams.value.customerId = undefined;
+    }
+    await getList();
+  }
+);
+
+// 4. 优化 onMounted
+onMounted(async () => {
+  try {
+    loading.value = true;
+    
+    // 并行加载必要数据（客户列表延迟到弹窗打开时）
+    await Promise.all([
+      loadLawyerSupportList(),
+      getList()
+    ]);
+    
+    // 标记初始化完成
+    isInitialized.value = true;
+  } catch (error) {
+    console.error('页面初始化失败:', error);
+    proxy?.$modal.msgError('页面加载失败，请刷新重试');
+  } finally {
+    loading.value = false;
+  }
+});
+
+
 </script>
 
 <style scoped>

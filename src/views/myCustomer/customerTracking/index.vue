@@ -598,8 +598,10 @@ const handleSelectionChange = (selection: CustomerTrackingVO[]) => {
 }
 
 /** 新增按钮操作 */
-const handleAdd = () => {
+// ========== 5. 修改 handleAdd，确保客户列表已加载 ==========
+const handleAdd = async () => {
   reset();
+  
   if (CustomerId) {
     form.value.customerId = CustomerId;
   }
@@ -613,6 +615,8 @@ const handleUpdate = async (row?: CustomerTrackingVO) => {
   const _id = row?.id || ids.value[0]
   const res = await getCustomerTracking(_id);
   Object.assign(form.value, res.data);
+
+
   dialog.visible = true;
   dialog.title = "修改客户跟踪";
 }
@@ -636,6 +640,7 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: CustomerTrackingVO) => {
+ 
   const customerName = row ? getCustomerNameById(row.customerId) : '';
   const _ids = row?.id || ids.value;
   await proxy?.$modal.confirm('是否确认删除客户回访 编号为:"' + _ids + '",客户名称为:"'+ customerName +'"的数据项？').finally(() => loading.value = false);
@@ -713,6 +718,7 @@ const viewCustomerTrackings = ref<CustomerTrackingVO[]>([]);
 // 查看按钮处理函数
 const handleView = async (row: CustomerTrackingVO) => {
   const customerId = row.customerId;
+  
   const customerName = getCustomerNameById(customerId);
 
   // 查询该客户的所有跟踪记录
@@ -726,7 +732,7 @@ const handleView = async (row: CustomerTrackingVO) => {
   }
 };
 
-// 监听 intentionCustomerId 的变化
+/* // 监听 intentionCustomerId 的变化
 watch(
   () => route.query.customerId,
   async (newCustomerId) => {
@@ -763,5 +769,59 @@ onMounted( () => {
    loadCustomerList();
    loadLawyerSupportList();
    getList();
+}); */
+
+// ========== 1. 添加状态变量 ==========
+const isInitialized = ref(false);
+const isCustomerListLoaded = ref(false);
+
+// ========== 2. 确保客户列表加载（按需）==========
+const ensureCustomerListLoaded = async () => {
+  if (!isCustomerListLoaded.value) {
+    await loadCustomerList();
+    isCustomerListLoaded.value = true;
+  }
+};
+
+// ========== 3. 改造 watch，避免重复加载 ==========
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // 跳过初始化时的调用
+    if (!isInitialized.value) return;
+    
+    if (newCustomerId) {
+      queryParams.value.customerId = newCustomerId;
+      // 确保客户列表已加载
+      await ensureCustomerListLoaded();
+    } else {
+      queryParams.value.customerId = undefined;
+    }
+    await getList();
+  }
+);
+
+// ========== 4. 优化 onMounted，并行加载 ==========
+onMounted(async () => {
+  try {
+    loading.value = true;
+    
+    // 并行加载必要数据（客户列表延迟到弹窗打开时）
+    await Promise.all([
+      loadCustomerList(),  // ✅ 表格显示客户名称需要
+      loadLawyerSupportList(), // ✅ 表格显示法务支持需要
+      getList() // ✅ 表格数据
+    ]);
+    
+    // 标记初始化完成
+    isInitialized.value = true;
+    isCustomerListLoaded.value = true; // ✅ 标记客户列表已加载
+  } catch (error) {
+    console.error('页面初始化失败:', error);
+    proxy?.$modal.msgError('页面加载失败，请刷新重试');
+  } finally {
+    loading.value = false;
+  }
 });
+
 </script>

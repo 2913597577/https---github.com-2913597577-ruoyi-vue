@@ -634,26 +634,6 @@ const loadLawyerSupportList = async () => {
 };
 
 
-
-watch(
-  () => route.query.customerId,
-  async (newCustomerId) => {
-    // 等待客户列表加载完毕再操作
-    if (customerList.value.length === 0) {
-      await loadCustomerList();
-    }
-
-    if (newCustomerId) {
-      queryParams.value.customerId = newCustomerId;
-    } else {
-      queryParams.value.customerId = undefined;
-    }
-
-    await getList(); // 确保客户列表已加载
-  },
-  { immediate: true }
-);
-
 //列表最后一行添加合计
 const getSummaries = (param) => {
   const { columns, data } = param;
@@ -690,6 +670,24 @@ const getSummaries = (param) => {
 return sums;
 }
 
+/* watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // 等待客户列表加载完毕再操作
+    if (customerList.value.length === 0) {
+      await loadCustomerList();
+    }
+
+    if (newCustomerId) {
+      queryParams.value.customerId = newCustomerId;
+    } else {
+      queryParams.value.customerId = undefined;
+    }
+
+    await getList(); // 确保客户列表已加载
+  },
+  { immediate: true }
+);
 
 onMounted(() => {
 
@@ -699,11 +697,50 @@ loadLawyerSupportList();
   
 getList();
 
+}); */
+
+// ========== 1. 添加初始化状态标记 ==========
+const isInitialized = ref(false);
+
+// ========== 2. 改造 watch，避免初始化时重复调用 ==========
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // ✅ 跳过初始化时的调用（onMounted 已处理）
+    if (!isInitialized.value) return;
+    
+    if (newCustomerId) {
+      queryParams.value.customerId = newCustomerId;
+    } else {
+      queryParams.value.customerId = undefined;
+    }
+    await getList();
+  }
+);
+
+// ========== 3. 优化 onMounted，并行加载所有数据 ==========
+onMounted(async () => {
+  loading.value = true;
+  try {
+    // ✅ 使用 Promise.all 并行加载，提升首屏速度
+    await Promise.all([
+      loadCustomerList(),      // ✅ 表格显示客户名称需要
+      loadLawyerSupportList(), // ✅ 筛选弹窗和表单需要
+      getList()                // ✅ 表格数据
+    ]);
+    
+    // ✅ 标记初始化完成，允许 watch 响应后续路由变化
+    isInitialized.value = true;
+  } catch (error) {
+    console.error('初始化数据失败:', error);
+    proxy?.$modal.msgError('页面加载失败，请刷新重试');
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 
 <style scoped>
-
 ::v-deep .el-table__footer-wrapper {
   font-weight: bold;
   font-size: 14px;

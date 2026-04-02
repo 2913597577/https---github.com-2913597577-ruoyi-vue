@@ -2264,10 +2264,19 @@ const getUserNameById = (userId: string) => {
 
 
 onMounted(() => {
-
-  loadUserList();
-  getList();
+  (async () => {
+    try {
+      // 并行加载，互不阻塞
+      await Promise.all([
+        loadUserList(),
+        getList()
+      ]);
+    } catch (error) {
+      console.error('初始化失败:', error);
+    }
+  })();
 });
+
 </script>
 
 

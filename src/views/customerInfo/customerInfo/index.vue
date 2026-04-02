@@ -1443,6 +1443,12 @@ const getLocalDateTime = () => {
 // ---------------------- 修改流转确认逻辑 ----------------------
 // 在原有handleTransferConfirm函数的switch语句中添加case '3'的处理
 const handleTransferConfirm = async () => {
+  // 检查数据是否加载完成
+  if (!isDataLoaded.value) {
+    proxy?.$modal.msgWarning('数据加载中，请稍后再试');
+    return;
+  }
+  
   const valid = await transferFormRef.value?.validate();
   if (!valid) return;
 
@@ -1692,6 +1698,12 @@ const assignLoading = ref(false);
 // ---------------------- 分配相关方法 ----------------------
 /** 1. 打开分配弹窗（点击表格“分配”按钮触发） */
 const handleAssign = async (row: CustomerInfoVO) => {
+    // 检查数据是否加载完成
+   if (!isDataLoaded.value) {
+    proxy?.$modal.msgWarning('数据加载中，请稍后再试');
+    return;
+    }
+
   // 记录当前客户行数据
   assignDialog.currentRow = row;
   // 初始化表单：填充当前客户ID
@@ -1699,7 +1711,7 @@ const handleAssign = async (row: CustomerInfoVO) => {
   assignForm.lawyerId = row.lawyerId; // 清空上次选择的法务人员
   assignForm.id = row.id; // 当前客户记录的主键ID（用于分配接口）
   // 加载法务支持人员列表（调用接口）
-  await loadLawyerSupportList();
+  //await loadLawyerSupportList();
   // 显示弹窗
   assignDialog.visible = true;
 };
@@ -1863,10 +1875,36 @@ const formatCurrency = (value) => {
   });
 };
 
-onMounted(() => {
+/* onMounted(() => {
   loadLawyerSupportList();
   loadSellerList();
   getList();
+}); */
+
+// ========== 1. 添加初始化状态标记 ==========
+const isInitialized = ref(false);
+const isDataLoaded = ref(false);
+
+// ========== 2. 优化 onMounted，并行加载所有数据 ==========
+onMounted(async () => {
+  loading.value = true;
+  try {
+    // 并行加载所有必要数据
+    await Promise.all([
+      loadLawyerSupportList(),  // 表格显示法务名称
+      loadSellerList(),         // 其他功能需要
+      getList()                 // 表格数据
+    ]);
+    
+    // 标记初始化完成
+    isInitialized.value = true;
+    isDataLoaded.value = true;
+  } catch (error) {
+    console.error('初始化数据失败:', error);
+    proxy?.$modal.msgError('页面加载失败，请刷新重试');
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
 

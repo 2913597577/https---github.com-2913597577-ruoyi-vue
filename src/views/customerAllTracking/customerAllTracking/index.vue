@@ -1,6 +1,9 @@
-<!-- views/tracking/index.vue -->
 <template>
-  <div class="tracking-container">
+  <div class="tracking-container" 
+   v-loading.fullscreen.lock="loading"
+   element-loading-text="跟踪记录较多，正在加载数据，请耐心等待..."
+   element-loading-spinner="el-icon-loading"
+   element-loading-background="rgba(0, 0, 0, 0.7)">
 <!--     <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
@@ -260,6 +263,7 @@ import { ElForm, ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { getCustomerByUserId } from '@/api/common';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
+import { Loading } from '@element-plus/icons-vue';
 
 // 定义变量
 const loading = ref(true);
@@ -498,7 +502,7 @@ const handleTrackingDetail = (data) => {
 };
 
 
-watch(
+/* watch(
   () => route.query.customerId,
   async (newCustomerId) => {
     if (newCustomerId) {
@@ -530,10 +534,6 @@ watch(
 );
 
 
-/* onMounted(() => {
-  loadLawyerSupportList();
-  loadCustomerList();
-}); */
 onMounted(async () => {
   loading.value = true; // 全局加载状态
   try {
@@ -548,11 +548,49 @@ onMounted(async () => {
     loading.value = false; // 结束加载状态
   }
 });
-</script>
+ */
 
-<!-- <style scoped>
-.tracking-container {
-  padding: 20px;
-}
-</style>
- -->
+// 1. 添加初始化状态标记，加载状态标记
+const isInitialized = ref(false);
+
+// 2. 改造 watch，避免初始化时重复调用
+watch(
+  () => route.query.customerId,
+  async (newCustomerId) => {
+    // ✅ 跳过初始化时的调用（onMounted 已处理）
+    if (!isInitialized.value) return;
+    
+    if (newCustomerId) {
+      queryParams.customerId = newCustomerId;
+    } else {
+      queryParams.customerId = undefined;
+    }
+    await handleQuery();
+  }
+);
+
+// 3. 优化 onMounted，并行加载所有数据，并添加加载进度提示
+onMounted(async () => {
+  loading.value = true;
+  
+    try {
+    // ✅ 使用 Promise.all 并行加载，提升首屏速度
+    await Promise.all([
+      
+      getList(), // 跟踪记录列表
+      loadCustomerList(),      // 客户列表（表格显示需要）
+      loadLawyerSupportList()  // 法务列表（筛选弹窗需要）
+                   
+    ]);
+    // ✅ 标记初始化完成，允许 watch 响应后续路由变化
+    isInitialized.value = true;
+ 
+  } catch (error) {
+    console.error('初始化数据失败:', error);
+    proxy?.$modal.msgError('页面加载失败，请刷新重试');
+  } finally {
+    loading.value = false;
+  }
+});
+
+</script>

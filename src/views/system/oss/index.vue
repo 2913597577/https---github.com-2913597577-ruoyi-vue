@@ -8,7 +8,7 @@
               <el-input v-model="queryParams.fileName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="合同OssID" prop="ossId" label-width="80px">
-              <el-input v-model="queryParams.ossId" placeholder="请输入合同OssID" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.ossId" placeholder="请输入合同OssID" type="number" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="文件名" prop="originalName">
               <el-input v-model="queryParams.originalName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery" />
