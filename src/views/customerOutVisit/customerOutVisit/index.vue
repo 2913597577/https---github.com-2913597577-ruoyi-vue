@@ -117,8 +117,31 @@
         </el-table-column>
         <el-table-column label="出访定位" align="center" prop="visitAddress" width="120" show-overflow-tooltip />
         <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100" show-overflow-tooltip>
-          <template #default="scope">
+          <!--  <template #default="scope">
             <image-preview :src="scope.row.placePic1Url" :width="20" :height="20" />
+          </template> -->
+        <template #default="scope">
+         <el-image 
+         v-if="scope.row.placePic1Url"
+         :src="scope.row.placePic1Url" 
+         :preview-src-list="[scope.row.placePic1Url]"
+         fit="cover"
+         style="width: 20px; height: 20px; cursor: pointer;"
+         lazy 
+         preview-teleported
+         hide-on-click-modal
+         >
+         <template #placeholder>
+        <div class="image-placeholder">
+          <el-icon :size="20"><Picture /></el-icon>
+        </div>
+      </template>
+      <template #error>
+        <div class="image-error">
+          <el-icon :size="20"><PictureFilled /></el-icon>
+        </div>
+      </template>
+    </el-image>
           </template>
         </el-table-column>
         <el-table-column label="出访记录表" align="center" prop="outRecord" width="100" show-overflow-tooltip>
@@ -325,6 +348,7 @@ import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listCustomerOutVisit, getCustomerOutVisit, delCustomerOutVisit, addCustomerOutVisit, updateCustomerOutVisit } from '@/api/customerOutVisit/customerOutVisit';
 import { CustomerOutVisitVO, CustomerOutVisitQuery, CustomerOutVisitForm } from '@/api/customerOutVisit/customerOutVisit/types';
 import { useRoute } from 'vue-router';
+import { Picture, PictureFilled } from '@element-plus/icons-vue';
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -417,6 +441,8 @@ const data = reactive<PageData<CustomerOutVisitForm, CustomerOutVisitQuery>>({
 
 const { queryParams, form, rules } = toRefs(data);
 
+// 1. 图像占位图（base64 或本地路径）
+//const imagePlaceholder;
 
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
@@ -609,7 +635,7 @@ const handleExport = () => {
 }
 
 /** 获取当前位置经纬度 */
-const getCurrentPosition = (): Promise<{ lat: number; lng: number }> => {
+/* const getCurrentPosition = (): Promise<{ lat: number; lng: number }> => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('当前浏览器不支持地理定位'));
@@ -638,10 +664,12 @@ const getCurrentPosition = (): Promise<{ lat: number; lng: number }> => {
       }
     );
   });
-};
+}; */
+
+
 
 /** 根据经纬度调用高德API获取详细地址 */
-const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
+/* const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
   const key = 'a86984fb0449d5fdffd6e78d4544ca2d'; // 替换为你自己的Key
   const url = `https://restapi.amap.com/v3/geocode/regeo?location=${lng},${lat}&key=${key}&radius=1000&extensions=all`;
 
@@ -657,7 +685,101 @@ const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
     console.error('逆地理编码失败:', err);
     throw err;
   }
+}; */
+// 1. 坐标转换函数（放在文件顶部）
+// 添加坐标转换函数
+const transformWGS84ToGCJ02 = (lat: number, lng: number): { lat: number, lng: number } => {
+  const PI = 3.1415926535897932384626;
+  const a = 6378245.0;
+  const ee = 0.00669342162296594323;
+  
+  if (lng < 72.004 || lng > 137.8347 || lat < 0.8293 || lat > 55.8271) {
+    return { lat, lng }; // 不在国内范围
+  }
+  
+  let dLat = transformLat(lng - 105.0, lat - 35.0);
+  let dLng = transformLng(lng - 105.0, lat - 35.0);
+  const radLat = lat / 180.0 * PI;
+  let magic = Math.sin(radLat);
+  magic = 1 - ee * magic * magic;
+  const sqrtMagic = Math.sqrt(magic);
+  
+  dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * PI);
+  dLng = (dLng * 180.0) / (a / sqrtMagic * Math.cos(radLat) * PI);
+  
+  return { lat: lat + dLat, lng: lng + dLng };
 };
+
+const transformLat = (x: number, y: number): number => {
+  let ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * Math.sqrt(Math.abs(x));
+  ret += (20.0 * Math.sin(6.0 * x * PI) + 20.0 * Math.sin(2.0 * x * PI)) * 2.0 / 3.0;
+  ret += (20.0 * Math.sin(y * PI) + 40.0 * Math.sin(y / 3.0 * PI)) * 2.0 / 3.0;
+  ret += (160.0 * Math.sin(y / 12.0 * PI) + 320 * Math.sin(y * PI / 30.0)) * 2.0 / 3.0;
+  return ret;
+};
+
+const transformLng = (x: number, y: number): number => {
+  let ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * Math.sqrt(Math.abs(x));
+  ret += (20.0 * Math.sin(6.0 * x * PI) + 20.0 * Math.sin(2.0 * x * PI)) * 2.0 / 3.0;
+  ret += (20.0 * Math.sin(x * PI) + 40.0 * Math.sin(x / 3.0 * PI)) * 2.0 / 3.0;
+  ret += (150.0 * Math.sin(x / 12.0 * PI) + 300.0 * Math.sin(x / 30.0 * PI)) * 2.0 / 3.0;
+  return ret;
+};
+
+// 2. 高精度定位
+const getCurrentPosition = (): Promise<{ lat: number; lng: number }> => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('当前浏览器不支持地理定位'));
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // ✅ 检查精度，如果精度太低则警告
+        if (position.coords.accuracy > 1000) {
+          console.warn('定位精度较低:', position.coords.accuracy, '米');
+        }
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
+      },
+      (error) => {
+        // ... 错误处理
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  });
+};
+
+// 3. 优化后的逆地理编码(高德地图api)
+const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
+  const key = 'a86984fb0449d5fdffd6e78d4544ca2d';
+  
+  // ✅ 坐标转换
+  const gcj02 = transformWGS84ToGCJ02(lat, lng);
+  
+  // ✅ 优化参数
+  const url = `https://restapi.amap.com/v3/geocode/regeo?location=${gcj02.lng},${gcj02.lat}&key=${key}&radius=50&extensions=all&roadlevel=1`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === '1' && data.regeocode) {
+      return data.regeocode.formatted_address;
+    } else {
+      throw new Error('逆地理编码失败');
+    }
+  } catch (err) {
+    console.error('逆地理编码失败:', err);
+    throw err;
+  }
+};
+
+
 // /** 判断是否在微信环境 */
 // const isWeixin = () => /micromessenger/i.test(navigator.userAgent);
 
@@ -775,3 +897,22 @@ onMounted(() => {
    getList();
 });
 </script>
+
+<style scoped>
+.image-placeholder,
+.image-error {
+  width: 20px;
+  height: 20px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #909399;
+}
+
+.image-error {
+  background-color: #f5f7fa;
+  color: #909399;
+}
+</style>

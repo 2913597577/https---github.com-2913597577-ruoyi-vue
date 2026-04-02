@@ -111,8 +111,29 @@
         <el-table-column label="合同操作" align="center" prop="contractUrl" width="100" show-overflow-tooltip>
           <template #default="scope">
             <div class="contract-cell">
-              <image-preview v-if="scope.row.contractUrl" :src="scope.row.contractUrl" :width="20" :height="20" />
-              <el-button v-if="!scope.row.contractUrl" link type="danger" icon="Upload"
+              <!-- <image-preview v-if="scope.row.contractUrl" :src="scope.row.contractUrl" :width="20" :height="20" /> -->
+              <el-image 
+         v-if="scope.row.contractUrl"
+         :src="scope.row.contractUrl" 
+         :preview-src-list="[scope.row.contractUrl]"
+         fit="cover"
+         style="width: 20px; height: 20px; cursor: pointer;"
+         lazy 
+         preview-teleported
+         hide-on-click-modal
+         >
+         <template #placeholder>
+        <div class="image-placeholder">
+          <el-icon :size="20"><Picture /></el-icon>
+        </div>
+      </template>
+      <template #error>
+        <div class="image-error">
+          <el-icon :size="20"><PictureFilled /></el-icon>
+        </div>
+      </template>
+      </el-image>
+               <el-button v-if="!scope.row.contractUrl" link type="danger" icon="Upload"
                 @click="handleUpload(scope.row)" v-hasPermi="['myCustomer:customerTransfer:upload']">
                 上传合同
               </el-button>
@@ -1451,6 +1472,7 @@ import {
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
 import { nextTick } from 'vue';
+import { Picture, PictureFilled } from '@element-plus/icons-vue';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -2516,6 +2538,23 @@ onMounted(() => {
       font-weight: bold;
     }
   }
+}
+
+.image-placeholder,
+.image-error {
+  width: 20px;
+  height: 20px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #909399;
+}
+
+.image-error {
+  background-color: #f5f7fa;
+  color: #909399;
 }
 
 </style>
