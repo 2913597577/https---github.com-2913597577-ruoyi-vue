@@ -687,11 +687,12 @@ const handleExport = () => {
   }
 }; */
 // 1. 坐标转换函数（放在文件顶部）
-// 添加坐标转换函数
-const transformWGS84ToGCJ02 = (lat: number, lng: number): { lat: number, lng: number } => {
-  const PI = 3.1415926535897932384626;
+ const PI = 3.1415926535897932384626;
   const a = 6378245.0;
   const ee = 0.00669342162296594323;
+  
+// 添加坐标转换函数
+const transformWGS84ToGCJ02 = (lat: number, lng: number): { lat: number, lng: number } => {
   
   if (lng < 72.004 || lng > 137.8347 || lat < 0.8293 || lat > 55.8271) {
     return { lat, lng }; // 不在国内范围
@@ -745,6 +746,15 @@ const getCurrentPosition = (): Promise<{ lat: number; lng: number }> => {
       },
       (error) => {
         // ... 错误处理
+        console.error('定位失败详情:', {
+    code: error.code,
+    message: error.message,
+    PERMISSION_DENIED: error.code === 1,
+    POSITION_UNAVAILABLE: error.code === 2,
+    TIMEOUT: error.code === 3
+  });
+  reject(error);
+
       },
       {
         enableHighAccuracy: true,
