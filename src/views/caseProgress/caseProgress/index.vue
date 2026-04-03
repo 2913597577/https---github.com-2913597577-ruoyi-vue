@@ -78,14 +78,18 @@
       <el-table v-loading="loading" border :data="caseProgressList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <!-- <el-table-column label="案件" align="center" prop="caseId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerName" width="180" show-overflow-tooltip />
+        <el-table-column label="案件名称" align="center" prop="caseId" width="240" show-overflow-tooltip>
+        <template #default="scope">
+            <span>{{ getCaseDetailNameById(scope.row.caseId) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="客户名称" align="center" prop="customerName" width="120" show-overflow-tooltip />
         <el-table-column label="跟进日期" align="center" prop="trackingTime" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="案件进展内容" align="center" prop="caseProgress" show-overflow-tooltip />
+        <el-table-column label="案件进展内容" align="center" prop="caseProgress" width="240" show-overflow-tooltip />
         <el-table-column label="下次跟进日期" align="center" prop="nextTrackingTime" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') }}</span>
@@ -98,6 +102,11 @@
         </el-table-column>
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" /> 
+        <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
         width="200" fixed="right">
           <template #default="scope">
@@ -189,27 +198,21 @@
        <!--  <el-form-item label="客户id" prop="customerId">
           <el-input v-model="form.customerId" placeholder="请输入客户id" />
         </el-form-item> -->
-        <el-form-item label="客户名称" prop="customerId">
-          <!-- <el-select v-model="form.customerId" placeholder="请选择客户名称" filterable clearable>
-            <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
-              :value="item.customer_id">
-            </el-option>
-          </el-select> -->
-          <!-- 虚拟加载客户名称 -->
+       <!--  <el-form-item label="客户名称" prop="customerId">
           <el-select-v2 v-model="form.customerId" placeholder="请选择客户" :options="customerList"
                 :props="selectProps" filterable clearable :loading="loading" style="width: 100%">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
           </el-select-v2>
-        </el-form-item>
-        <el-form-item label="法务支持" prop="legalSupportId" label-width="100px">
+        </el-form-item> -->
+        <!-- <el-form-item label="法务支持" prop="legalSupportId" label-width="100px">
           <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
             <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="案件类型" prop="caseType">
           <el-select v-model="form.caseType" placeholder="请选择案件类型" filterable clearable>
             <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label"
@@ -251,6 +254,7 @@ import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { customer_case_type } = toRefs<any>(proxy?.useDict('customer_case_type'));
+const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
 const caseProgressList = ref<CaseProgressVO[]>([]);
 const buttonLoading = ref(false);
@@ -489,6 +493,18 @@ const loadCustomerList = async () => {
   }
 }
 const route = useRoute();
+
+// 根据案件ID获取案件名称
+const getCaseDetailNameById = (caseId: string | number) => {
+  if (!caseId) return '';
+  // 在 caseDetailList 中查找匹配的案件
+  let caseItem = caseDetailList.value.find(item => item.case_id === caseId);
+  if (!caseItem) {
+    caseItem = caseDetailList.value.find(item => item.case_id === caseId);
+  }
+  return caseItem ? caseItem.case_detail : '';
+};
+
 
 /* // 监听 intentionCustomerId 的变化
 watch(
