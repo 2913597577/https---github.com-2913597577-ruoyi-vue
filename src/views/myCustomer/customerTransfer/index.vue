@@ -154,7 +154,13 @@
             <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupport" width="80" show-overflow-tooltip />
+        <el-table-column label="法务支持" align="center" prop="accountManagerId" width="80" show-overflow-tooltip>
+        <template #default="scope">
+            <span v-if="scope.row.accountManagerId">
+              {{ getLawyerNameById(scope.row.accountManagerId) }}
+            </span>
+          </template>
+         </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip>
           <template #default="scope">
@@ -1220,7 +1226,7 @@
               {{ viewForm.auditTime }}
             </el-descriptions-item>
             <el-descriptions-item label="法务支持">
-              {{ viewForm.legalSupport }}
+              {{ getLawyerNameById(viewForm.accountManagerId) }}
             </el-descriptions-item>
 
             <el-descriptions-item label="" >
@@ -1470,6 +1476,7 @@ import {
   updateCustomerTransfer
 } from '@/api/myCustomer/customerTransfer';
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { ElMessage } from 'element-plus';
 import { nextTick } from 'vue';
 import { Picture, PictureFilled } from '@element-plus/icons-vue';
@@ -1495,6 +1502,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const userList = ref([]); // 用户列表
+const lawyerList = ref([]); //法务支持列表
 
 const queryFormRef = ref<ElFormInstance>();
 const customerTransferFormRef = ref<ElFormInstance>();
@@ -2075,9 +2083,9 @@ const balancePayTypeRules = computed(() => {
 });
 // 提交审核
 async function submitAudit() {
-  console.log('提交审核')
+  //console.log('提交审核')
   if (submitting.value) return
-  console.log(localFileList.value[0])
+ // console.log(localFileList.value[0])
   // 如果审核通过，必须上传签名图片
   if (auditForm.value.auditStatus === '1') {
     if (localFileList.value.length === 0 || !(localFileList.value[0].raw instanceof File)) {
@@ -2262,6 +2270,30 @@ const getUserNameById = (userId: string) => {
   return user ? `${user.nickName}` : ''
 }
 
+/** 加载法务支持人员列表（调用用户提供的接口） */
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+
+// 添加获取法务人员姓名的方法
+const getLawyerNameById = (lawyerId: string | number) => {
+  //console.log('lawyerId:', lawyerId);
+  if (!lawyerId) return '';
+   // 临时调试：打印第一个法务人员的ID类型和当前查找ID的类型
+  const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
+  //console.log('lawyer:', lawyer);
+  return lawyer ? `${lawyer.nickName}` : '';
+};
+
+
 
 onMounted(() => {
   (async () => {
@@ -2269,6 +2301,7 @@ onMounted(() => {
       // 并行加载，互不阻塞
       await Promise.all([
         loadUserList(),
+        loadLawyerSupportList(),
         getList()
       ]);
     } catch (error) {

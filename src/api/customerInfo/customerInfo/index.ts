@@ -67,7 +67,7 @@ export const listLawyerSupport = () => {
     url: '/system/user/listDeptCode',
     method: 'get',
     params: {
-      deptCode: 'Legalsupport',
+      deptCode: 'LegalSupport',
     }
   });
 };
