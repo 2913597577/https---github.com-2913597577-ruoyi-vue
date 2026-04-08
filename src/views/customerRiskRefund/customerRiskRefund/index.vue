@@ -87,8 +87,10 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="签单金额" align="center" prop="contractAmount" width="140" show-overflow-tooltip />
-        <el-table-column label="退款金额" align="center" prop="refundAmount" width="140" show-overflow-tooltip
+        <el-table-column :label="customerTypeLabel + '原因'" align="center" prop="reasons" width="240"
+        show-overflow-tooltip />
+        <el-table-column label="签单金额" align="center" prop="contractAmount" width="120" show-overflow-tooltip />
+        <el-table-column label="退款金额" align="center" prop="refundAmount" width="120" show-overflow-tooltip
         v-if="customerTypeLabel == '退费'" />
         <!-- <el-table-column label="大成负责人" align="center" prop="inviterId" width="90" show-overflow-tooltip /> -->
         <el-table-column label="签约日期" align="center" prop="signDate" width="100" show-overflow-tooltip>
@@ -104,10 +106,12 @@
        
         <el-table-column label="服务时长" align="center" prop="serviceHours" width="80" show-overflow-tooltip />
         <!-- <el-table-column :label="customerTypeLabel" align="center" prop="customerType" width="80" show-overflow-tooltip /> -->
-        <el-table-column :label="customerTypeLabel + '原因'" align="center" prop="reasons" width="120"
-          show-overflow-tooltip />
-       
-        <el-table-column label="备注" align="center" prop="remark1" width="100" show-overflow-tooltip />
+          <el-table-column label="归属城市" align="center" prop="remark2" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark2" />
+          </template>
+        </el-table-column>
+        <el-table-column label="备注" align="center" prop="remark1" width="120" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
           width="200" fixed="right">
           <template #default="scope">
@@ -238,8 +242,9 @@ import { CustomerRiskRefundVO, CustomerRiskRefundQuery, CustomerRiskRefundForm }
 import { useRoute } from 'vue-router'
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
-const customerRiskRefundList = ref<CustomerRiskRefundVO[]>([]);
+  const customerRiskRefundList = ref<CustomerRiskRefundVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);

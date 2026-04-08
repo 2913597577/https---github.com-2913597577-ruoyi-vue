@@ -276,6 +276,16 @@ const loadCaseDetailList = async () => {
     proxy?.$modal.msgError('获取案件列表失败');
   }
 }
+// 根据案件ID获取案件名称
+const getCaseDetailNameById = (caseId: string | number) => {
+  if (!caseId) return '';
+  // 在 caseDetailList 中查找匹配的案件
+  
+  const  caseItem = caseDetailList.value.find(item => item.case_id === caseId);
+  
+  return caseItem ? caseItem.case_detail : '';
+};
+
 
 const queryFormRef = ref<ElFormInstance>();
 const caseProgressFormRef = ref<ElFormInstance>();
@@ -357,6 +367,8 @@ const getList = async () => {
   total.value = res.total;
   loading.value = false;
 }
+
+
 
 //查找相关
 const searchDialogVisible = ref(false)
@@ -494,16 +506,6 @@ const loadCustomerList = async () => {
 }
 const route = useRoute();
 
-// 根据案件ID获取案件名称
-const getCaseDetailNameById = (caseId: string | number) => {
-  if (!caseId) return '';
-  // 在 caseDetailList 中查找匹配的案件
-  let caseItem = caseDetailList.value.find(item => item.case_id === caseId);
-  if (!caseItem) {
-    caseItem = caseDetailList.value.find(item => item.case_id === caseId);
-  }
-  return caseItem ? caseItem.case_detail : '';
-};
 
 
 /* // 监听 intentionCustomerId 的变化

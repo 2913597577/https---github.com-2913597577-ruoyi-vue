@@ -799,7 +799,7 @@
         </el-form-item> -->
         <el-form-item label="意向类型" prop="type">
           <el-select v-model="intentionForm.type" placeholder="请选择意向类型" required>
-            <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label" :value="dict.value" />
+            <el-option v-for="dict in dc_intention_type" :key="dict.value" :label="dict.label" :value="dict.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="客户来源" prop="source">
@@ -978,7 +978,7 @@ import { useRouter } from 'vue-router';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { contract_type } = toRefs<any>(proxy?.useDict('contract_type'));
-const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
+const { dc_intention_type } = toRefs<any>(proxy?.useDict('dc_intention_type'));
 const { dc_customer_type } = toRefs<any>(proxy?.useDict('dc_customer_type'));
 const { dc_service_type } = toRefs<any>(proxy?.useDict('dc_service_type'));
 const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
@@ -1467,7 +1467,7 @@ const handleTransferConfirm = async () => {
         CRRform.value.customerType = 1; // 标记为风险客户
         // 自动填充客户基础信息（从原客户数据获取，减少手动输入）
         CRRform.value.lawyerId = currentCustomer.lawyerId;
-        CRRform.value.customerId = currentCustomer.transferId;
+        CRRform.value.customerId = currentCustomer.id;
         CRRform.value.customerName = currentCustomer.customerName;
         CRRform.value.principal = currentCustomer.principal;
         CRRform.value.principalPhone = currentCustomer.principalPhone;
@@ -1498,9 +1498,8 @@ const handleTransferConfirm = async () => {
         resetIntentionForm();
         // 从原客户数据自动填充表单
         intentionForm.value.introducer = currentCustomer.customerName;
-        intentionForm.value.introducerId = currentCustomer.transferId;
+        intentionForm.value.introducerId = currentCustomer.id;
         intentionForm.value.followUpResult = 0;
-
         // intentionForm.value.legalSupport = String(currentCustomer.lawyerId);
         intentionForm.value.legalSupportId = currentCustomer.lawyerId;
         // 设置当前日期为默认提报日期

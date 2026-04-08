@@ -483,10 +483,9 @@ const loadCustomerList = async () => {
 // 根据客户ID获取客户名称
 const getCustomerNameById = (customerId: string | number) => {
   if (!customerId) return '';
-  let customer = customerList.value.find(item => item.transfer_id === customerId);
-  if (!customer){
-    customer=customerList.value.find(item => item.customer_id === customerId);
-  }
+  
+  const  customer=customerList.value.find(item => item.customer_id === customerId);
+  
   return customer ? customer.customer_realName : '';
 };
 

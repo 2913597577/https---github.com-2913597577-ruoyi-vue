@@ -93,16 +93,27 @@
             <span>{{ parseTime(scope.row.submissionDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupport" width="100" show-overflow-tooltip />
-        <el-table-column label="意向客户" align="center" prop="intendedCustomer" width="120" show-overflow-tooltip />
-        <el-table-column label="类型" align="center" prop="type" width="100" show-overflow-tooltip>
-          <template #default="scope">
-            <dict-tag :options="intention_type" :value="scope.row.type ?? ''" />
+        <el-table-column label="法务支持" align="center" prop="legalSupportId" width="100" show-overflow-tooltip>
+        <template #default="scope">
+            <span v-if="scope.row.legalSupportId">
+              {{ getLawyerNameById(scope.row.legalSupportId) }}
+            </span>
           </template>
         </el-table-column>
+        <el-table-column label="意向客户" align="center" prop="intendedCustomer" width="180" show-overflow-tooltip />
+        <el-table-column label="类型" align="center" prop="type" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_intention_type" :value="scope.row.type ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="介绍人" align="center" prop="introducer" width="180" show-overflow-tooltip />
         <el-table-column label="来源" align="center" prop="source" width="100" show-overflow-tooltip />
-        <el-table-column label="预计金额" align="center" prop="expectedAmount" width="140" show-overflow-tooltip />
-        <el-table-column label="介绍人" align="center" prop="introducer" width="120" show-overflow-tooltip />
+        <el-table-column label="预计金额" align="center" prop="expectedAmount" width="120" show-overflow-tooltip />
+        <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
         <el-table-column label="跟进结果" align="center" prop="followUpResult" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="cumtomer_status" :value="scope.row.followUpResult ?? ''" />
@@ -191,7 +202,7 @@
         </el-form-item>
         <el-form-item label="签约类型" prop="type" label-width="90px">
           <el-select v-model="form.type" placeholder="请选择类型">
-            <el-option v-for="dict in intention_type" :key="dict.value" :label="dict.label"
+            <el-option v-for="dict in dc_intention_type" :key="dict.value" :label="dict.label"
               :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
@@ -226,8 +237,9 @@ import { CustomerIntentionVO, CustomerIntentionQuery, CustomerIntentionForm } fr
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { useRouter } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { intention_type } = toRefs<any>(proxy?.useDict('intention_type'));
+const { dc_intention_type } = toRefs<any>(proxy?.useDict('dc_intention_type'));
 const { cumtomer_status } = toRefs<any>(proxy?.useDict('cumtomer_status'));
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
 const customerIntentionList = ref<CustomerIntentionVO[]>([]);
 const buttonLoading = ref(false);
@@ -238,6 +250,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const lawyerList = ref([]);
+
 const loadLawyerSupportList = async () => {
   try {
     // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
@@ -453,6 +466,15 @@ const handleTrackingDetail = (id: number | string) => {
     query: { intentionCustomerId: id }  // 传递id参数（键名可自定义，如customerId）
   });
 };
+// 添加获取法务人员姓名的方法
+const getLawyerNameById = (lawyerId: string | number) => {
+  //console.log('lawyerId:', lawyerId);
+  if (!lawyerId) return '';
+  const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
+  //console.log('lawyer:', lawyer);
+  return lawyer ? `${lawyer.nickName}` : '';
+};
+
 
 onMounted(() => {
   loadLawyerSupportList();

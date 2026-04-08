@@ -467,6 +467,15 @@ const loadCustomerList = async () => {
   }
 }
 
+// 根据客户ID获取客户名称
+const getCustomerNameById = (customerId: string | number) => {
+  if (!customerId) return '';
+  
+  const  customer = customerList.value.find(item => item.customer_id === customerId);
+  
+  return customer ? customer.customer_realName : '';
+};
+
 /** 取消按钮 */
 const cancel = () => {
   reset();
@@ -538,15 +547,6 @@ const submitForm = () => {
 }
 
 
-// 根据客户ID获取客户名称
-const getCustomerNameById = (customerId: string | number) => {
-  if (!customerId) return '';
-  let customer = customerList.value.find(item => item.transfer_id === customerId);
-  if (!customer) {
-    customer = customerList.value.find(item => item.customer_id === customerId);
-  }
-  return customer ? customer.customer_realName : '';
-};
 
 /** 删除按钮操作 */
 const handleDelete = async (row?: InsuranceCaseVO) => {

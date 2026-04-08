@@ -829,17 +829,6 @@ const submitAddForm = () => {
   });
 }
 
-const getCustomerNameById = (customerId: string | number) => {
-  if (!customerId) return '';
-  // console.log(customerId, '客户id')
-  // console.log(customerList.value, '客户列表')
-  let customer = customerList.value.find(item => item.transfer_id === customerId);
-  if (!customer) {
-    customer = customerList.value.find(item => item.customer_id === customerId);
-  }
-  // console.log(customer)
-  return customer ? customer.customer_realName : '';
-};
 
 /** 修改新增按钮操作 */
 const handleAdd = () => {
@@ -865,6 +854,18 @@ const loadCustomerList = async () => {
     proxy?.$modal.msgError('获取客户列表失败');
   }
 }
+
+const getCustomerNameById = (customerId: string | number) => {
+  if (!customerId) return '';
+  // console.log(customerId, '客户id')
+  // console.log(customerList.value, '客户列表')
+  
+   const customer = customerList.value.find(item => item.customer_id === customerId);
+   
+  // console.log(customer)
+  return customer ? customer.customer_realName : '';
+};
+
 
 /* watch(
   () => route.query.customerId,
