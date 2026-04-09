@@ -85,7 +85,11 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerName" width="160" show-overflow-tooltip />
+        <el-table-column label="客户名称" align="center" prop="customerId" width="160" show-overflow-tooltip>
+        <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column>
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
         <el-table-column label="出访时间" align="center" prop="visitTime" width="100" show-overflow-tooltip>
@@ -478,6 +482,7 @@ const reset = () => {
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
+  // ✅ 1. 确保客户列表已加载（按需加载）
   queryParams.value.pageNum = 1;
   getList();
 }
@@ -948,6 +953,7 @@ onMounted(async () => {
     
     // 并行加载必要数据（客户列表延迟到弹窗打开时）
     await Promise.all([
+      loadCustomerList(), // 预加载客户列表（可选）
       loadLawyerSupportList(),
       getList()
     ]);
