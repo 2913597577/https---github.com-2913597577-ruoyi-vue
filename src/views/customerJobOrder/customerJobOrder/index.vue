@@ -101,6 +101,11 @@
             <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
           </template>
         </el-table-column>
+        <el-table-column label="中心接单人" align="center" prop="contractHandlerName" width="100">
+          <!-- <template #header>
+            <span style="font-size: 11px; font-weight: bold;">中心接单人</span>
+          </template> -->
+        </el-table-column>
         <el-table-column label="客户名称" align="center" prop="customerId" width="160" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
@@ -121,11 +126,7 @@
         </el-table-column>
         <!-- <el-table-column label="跟踪记录id" align="center" prop="trackingId" />
         <el-table-column label="处理人id" align="center" prop="contractHandler" /> -->
-        <el-table-column label="法务中心接单人" align="center" prop="contractHandlerName" width="100">
-          <template #header>
-            <span style="font-size: 11px; font-weight: bold;">法务中心接单人</span>
-          </template>
-        </el-table-column>
+       
         <el-table-column label="客户所属方" align="center" prop="remark1" width="100" show-overflow-tooltip />
         <el-table-column label="归属城市" align="center" prop="remark2" width="100" show-overflow-tooltip>
           <template #default="scope">
@@ -140,12 +141,11 @@
           <template #default="scope">
             <el-tooltip content="接工单" placement="top">
               <el-button v-if="scope.row.processingStatus == 0" link type="success" icon="Menu"
-                @click="handleAccept(scope.row)" v-hasPermi="['customerJobOrder:customerJobOrder:edit']"
-                v-has-roles="['LegalCenter']">接工单</el-button>
+                @click="handleAccept(scope.row)" v-hasPermi="['customerJobOrder:customerJobOrder:receive']">接工单</el-button>
             </el-tooltip>
             <el-tooltip content="新合同上传" placement="top">
               <el-button link type="primary" icon="Upload" @click="handleUpdate(scope.row)"
-                v-hasPermi="['customerJobOrder:customerJobOrder:edit']" v-has-roles="['LegalCenter']">新合同上传</el-button>
+                v-hasPermi="['customerJobOrder:customerJobOrder:edit']">新合同上传</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
               <el-button size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
@@ -191,6 +191,12 @@
               <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item> -->
+            <el-form-item label="处理状态" prop="processingStatus">
+              <el-select v-model="queryParams.processingStatus" placeholder="请选择工单处理状态" clearable>
+                <el-option v-for="dict in processing_status" :key="dict.value" :label="dict.label"
+                  :value="dict.value" />
+              </el-select>
+            </el-form-item>
             <el-form-item label="归属城市" prop="remark2">
               <el-select v-model="queryParams.remark2" placeholder="请选择归属城市" clearable style="width: 240px" >
                 <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
@@ -227,12 +233,7 @@
               <el-input v-model="queryParams.contractHandlerName" placeholder="请输入处理人" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="处理状态" prop="processingStatus">
-              <el-select v-model="queryParams.processingStatus" placeholder="请选择工单处理状态" clearable>
-                <el-option v-for="dict in processing_status" :key="dict.value" :label="dict.label"
-                  :value="dict.value" />
-              </el-select>
-            </el-form-item>
+           
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -850,7 +851,7 @@ const loadCustomerList = async () => {
     customerList.value = res.data;
 
   } catch (error) {
-    // console.error('获取客户列表失败:', error);
+    console.error('获取客户列表失败:', error);
     proxy?.$modal.msgError('获取客户列表失败');
   }
 }
