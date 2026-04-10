@@ -424,7 +424,7 @@ const getCustomerNameById = (customerId: string | number) => {
      customer = customerList.value.find(item => item.customer_id === customerId);
   }
   // console.log(customer)
-  return customer ? customer.customer_realName : '';
+  return customer ? customer.customer_name : '';
 };
 const loadCustomerList = async () => {
   try {

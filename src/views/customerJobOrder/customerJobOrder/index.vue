@@ -397,7 +397,7 @@
       <el-form-item label="原合同文件名" prop="preContractName">
       <el-input v-model="addForm.preContractName" placeholder="请输入源合同文件名" />
     </el-form-item>
-        <!-- <el-form-item label="新合同地址" prop="newContractAddress">
+      <el-form-item label="新合同地址" prop="newContractAddress">
       <file-upload :limit="1" :fileSize="10" v-model="addNewFile" />
     </el-form-item>
     <el-form-item label="新合同文件名" prop="newContractName">
@@ -721,7 +721,7 @@ const acceptDialog = reactive({
  */
 const handleAccept = (row: CustomerJobOrderVO) => {
   // 检查工单是否已被接收
-  console.log(row)
+  //console.log(row)
   if (row.processingStatus !== 0) {
     proxy?.$modal.msgWarning("该工单已被接收，不能重复接收");
     return;
@@ -864,7 +864,7 @@ const getCustomerNameById = (customerId: string | number) => {
    const customer = customerList.value.find(item => item.customer_id === customerId);
    
   // console.log(customer)
-  return customer ? customer.customer_realName : '';
+  return customer ? customer.customer_name : '';
 };
 
 

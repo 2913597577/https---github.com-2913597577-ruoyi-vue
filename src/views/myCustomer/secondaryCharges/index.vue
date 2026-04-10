@@ -128,9 +128,9 @@
             <span>{{ getUserNameById(scope.row.inviterId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="录入日期" align="center" prop="auditTime" width="80">
+        <el-table-column label="签单日期" align="center" prop="signDate" width="80">
           <template #default="scope">
-            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+            <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="法务支持" align="center" prop="legalSupport" width="80" show-overflow-tooltip />
@@ -274,11 +274,11 @@
           <div class="section-title">客户基本信息</div>
 
           <el-row :gutter="20" class="form-row">
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item label="客户归属城市" prop="customerCity" class="form-item">
                 <el-select
                   v-model="form.customerCity"
-                  placeholder="请选择服务城市"
+                  placeholder="服务城市"
                   style="width: 100%"
                 >
                   <el-option
@@ -290,11 +290,18 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="5"> 
+              <el-form-item label="签单日期" prop="signDate" class="form-item">
+          <el-date-picker clearable v-model="form.signDate" type="date"
+            placeholder="签单日期">
+          </el-date-picker>
+        </el-form-item>
+            </el-col>
+            <el-col :span="5">
               <el-form-item label="合同编号" prop="contractCode" class="form-item">
                 <el-input
                   v-model="form.contractCode"
-                  placeholder="请输入合同编号（8位数字）"
+                  placeholder="（8位数字）"
                   type="number"
                 />
               </el-form-item>
@@ -1194,8 +1201,8 @@
            <strong>财务审核信息</strong>
          </div>
          </el-descriptions-item>
-            <el-descriptions-item label="录入日期">
-              {{ parseTime(viewForm.createTime, '{y}-{m}-{d}') }}
+            <el-descriptions-item label="签单日期">
+              {{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}
             </el-descriptions-item>
             <el-descriptions-item label="录入人">
               {{ getUserNameById(viewForm.inviterId) }}
@@ -1617,7 +1624,10 @@ const data = reactive<PageData<CustomerTransferForm, CustomerTransferQuery>>({
   },
   rules: {
     customerCity: [
-      { required: true, message: "客户归属城市不能为空", trigger: "blur" }
+      { required: true, message: "归属城市不能为空", trigger: "blur" }
+    ],
+    signDate: [
+      { required: true, message: "签单日期不能为空", trigger: "change" }
     ],
     contractCode: [
       { required: true, message: "合同编号不能为空", trigger: "blur" }

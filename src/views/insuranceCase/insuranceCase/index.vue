@@ -100,22 +100,22 @@
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="客户id(客户编号)" align="center" prop="customerId" /> -->
-        <el-table-column label="客户名称" align="center" prop="customerId" width="120" show-overflow-tooltip >
+        <el-table-column label="客户名称" align="center" prop="customerId" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
         <el-table-column label="下单日期" align="center" prop="orderDate" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="保费" align="center" prop="premium" width="140" />
-        <el-table-column label="工单号" align="center" prop="insuranceNumber" width="100" />
+        <el-table-column label="工单号" align="center" prop="insuranceNumber" width="100" show-overflow-tooltip />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <el-table-column label="案由" align="center" prop="caseReason" width="140" show-overflow-tooltip />
-        <el-table-column label="标的额" align="center" prop="subjectAmount" width="80" />
+        <el-table-column label="标的额" align="center" prop="subjectAmount" width="80" show-overflow-tooltip />
        
         <el-table-column label="原告方" align="center" prop="plaintiff" width="120" show-overflow-tooltip />
         <el-table-column label="被告方" align="center" prop="defendant" width="120" show-overflow-tooltip />
@@ -473,7 +473,7 @@ const getCustomerNameById = (customerId: string | number) => {
   
   const  customer = customerList.value.find(item => item.customer_id === customerId);
   
-  return customer ? customer.customer_realName : '';
+  return customer ? customer.customer_name : '';
 };
 
 /** 取消按钮 */

@@ -486,7 +486,7 @@ const getCustomerNameById = (customerId: string | number) => {
   
   const  customer=customerList.value.find(item => item.customer_id === customerId);
   
-  return customer ? customer.customer_realName : '';
+  return customer ? customer.customer_name : '';
 };
 
 /** 查询欠款案件表列表 */

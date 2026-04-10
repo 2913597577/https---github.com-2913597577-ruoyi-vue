@@ -111,20 +111,26 @@
           </template>
         </el-table-column>
         <el-table-column label="录入人" align="center" prop="transferPerson" width="80" show-overflow-tooltip />
-        <el-table-column label="签约日期" align="center" prop="signDate" width="120">
+        <el-table-column label="录入日期" align="center" prop="signDate" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="到期时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
-          <template #default="scope">
-            <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
+        
         <el-table-column label="客户名称" align="center" width="180" prop="customerName" show-overflow-tooltip />
         <el-table-column label="负责人" align="center" width="80" prop="principal" show-overflow-tooltip />
         <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
         <!-- <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip /> -->
+        <el-table-column label="服务开始时间" align="center" prop="startDate" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="服务结束时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="客户类型" align="center" width="80" prop="customerType">
           <template #default="scope">
             <dict-tag :options="dc_customer_type" :value="scope.row.customerType" />
@@ -718,9 +724,13 @@
                 </el-option>
               </el-select>
             </el-form-item> -->
-            <el-form-item label="签约时间" prop="signDate">
+            <el-form-item label="录入时间" prop="signDate">
               <el-date-picker clearable v-model="queryParams.signDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择签约时间" style="width: 140px" />
+            </el-form-item>
+            <el-form-item label="开始时间" prop="startDate">
+              <el-date-picker clearable v-model="queryParams.startDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择开始时间" style="width: 140px" />
             </el-form-item>
             <el-form-item label="到期时间" prop="expireDate">
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
