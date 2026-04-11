@@ -111,7 +111,7 @@
           </template>
         </el-table-column>
         <el-table-column label="录入人" align="center" prop="transferPerson" width="80" show-overflow-tooltip />
-        <el-table-column label="录入日期" align="center" prop="signDate" width="120">
+        <el-table-column label="签单日期" align="center" prop="signDate" width="120">
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
@@ -872,7 +872,7 @@
            <strong>客户基本信息</strong>
          </div>
          </el-descriptions-item>
-        <el-descriptions-item label="签约日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+        <el-descriptions-item label="签单日期">{{ parseTime(viewForm.signDate, '{y}-{m}-{d}') }}</el-descriptions-item>
         <el-descriptions-item label="法务支持">{{ getLawyerNameById(viewForm.lawyerId) }}</el-descriptions-item>
         <el-descriptions-item label="客户名称">
           {{ viewForm.customerName }}
@@ -911,7 +911,8 @@
         <el-descriptions-item label="合同OssID" label-align="left" align="left" width="60">
           {{ viewForm.contractNo }}
         </el-descriptions-item>
-        <el-descriptions-item label="到期时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+        <el-descriptions-item label="服务开始时间">{{ parseTime(viewForm.startDate, '{y}-{m}-{d}') }}</el-descriptions-item>
+        <el-descriptions-item label="服务结束时间">{{ parseTime(viewForm.expireDate, '{y}-{m}-{d}') }}</el-descriptions-item>
         <el-descriptions-item label="续费/尾款">{{ viewForm.actionType }}</el-descriptions-item>
         
         <el-descriptions-item label="" :span="1">

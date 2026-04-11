@@ -101,7 +101,7 @@
             <dict-tag :options="processing_status" :value="scope.row.processingStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="中心接单人" align="center" prop="contractHandlerName" width="100">
+        <el-table-column label="中心接单人" align="center" prop="contractHandlerName" width="100" show-overflow-tooltip>
           <!-- <template #header>
             <span style="font-size: 11px; font-weight: bold;">中心接单人</span>
           </template> -->
@@ -112,14 +112,14 @@
           </template>
         </el-table-column>
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="法务支持" align="center" prop="legalSupport" width="100" />
+        <el-table-column label="法务支持" align="center" prop="legalSupport" width="100" show-overflow-tooltip />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <!-- <el-table-column label="源合同地址" align="center" prop="preContractAddress" /> -->
         <el-table-column label="原合同" align="center" prop="preContractName" width="160" show-overflow-tooltip />
         <!-- <el-table-column label="新合同地址" align="center" prop="newContractAddress" /> -->
         <el-table-column label="新合同" align="center" prop="newContractName" width="160" show-overflow-tooltip />
         <el-table-column label="客户要求" align="center" prop="customerRequirements" width="160" show-overflow-tooltip />
-        <el-table-column label="交付时间" align="center" prop="deliveryTime" width="100">
+        <el-table-column label="交付时间" align="center" prop="deliveryTime" width="100" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.deliveryTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -263,19 +263,22 @@
           <el-input v-model="form.preContractName" placeholder="请输入源合同文件名" />
         </el-form-item> -->
         <el-form-item label="新合同" prop="newContractAddress">
-          <file-upload :limit="1" :fileSize="10" v-model="newFile" />
+          <file-upload :limit="1" :fileSize="20" v-model="newFile" />
         </el-form-item>
         <!-- <el-form-item label="新合同文件名" prop="newContractName">
           <el-input v-model="form.newContractName" placeholder="请输入新合同文件名" />
         </el-form-item> -->
-        <el-form-item label="客户要求" prop="customerRequirements">
+        <el-form-item label="客户名称">
+          {{ getCustomerNameById(form.customerId) }}
+        </el-form-item>
+        <el-form-item label="客户要求">
           {{ form.customerRequirements }}
-          <!-- <el-input v-model="form.customerRequirements" type="textarea" placeholder="请输入内容" /> -->
         </el-form-item>
         <el-form-item label="客户所属方" prop="remark1">
-          <el-input v-model="form.remark1" />
+          {{ form.remark1 }}
+          <!-- <el-input v-model="form.remark1" /> -->
         </el-form-item>
-        <el-form-item label="交付时间" prop="deliveryTime">
+        <el-form-item label="交付时间">
           {{ form.deliveryTime ? parseTime(form.deliveryTime, '{y}-{m}-{d} {h}:{i}:{s}') : '' }}
           <!-- <el-date-picker clearable v-model="form.deliveryTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择交付时间">
