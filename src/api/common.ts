@@ -82,6 +82,14 @@ export const getLegalSupportPerformance = () => {
   })
   }
 
+  // 获取流转单、二次收费流转单、客户总表 客户基本信息
+  export const getCustomerWithTransferInfo = () => {
+    return request({
+      url: '/common/getCustomerWithTransferInfo',
+      method: 'get'
+    })
+    }
+
   // 获取团队业绩统计
 export const getPerformance = () => {
   return request({

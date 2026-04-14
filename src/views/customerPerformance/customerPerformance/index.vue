@@ -218,7 +218,7 @@
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="100px">
             <!-- 流转单id改为多选下拉 -->
             <el-form-item label="对接客户" prop="transferId">
-              <el-select 
+             <!--  <el-select 
                 v-model="queryParams.transferId" 
                 placeholder="请选择对接客户" 
                 clearable 
@@ -230,7 +230,13 @@
                 <el-option v-for="item in customerList" :key="item.customer_id" :label="item.customer_name"
                   :value="item.customer_id">
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <el-select-v2 v-model="queryParams.transferId" placeholder="请选择客户" :options="customerList" :props="selectProps"
+          filterable clearable :loading="loading">
+          <template #empty>
+            <div class="empty-state">未找到匹配的客户</div>
+          </template>
+        </el-select-v2>
             </el-form-item>
             
             <!-- 业绩所属用户id改为多选下拉 -->
@@ -468,6 +474,13 @@ const userList = ref([]); // 用户列表
 
 //查找相关
 const searchDialogVisible = ref(false)
+
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'customer_id'
+}
+
 
 const loadCustomerList = async () => {
   try {

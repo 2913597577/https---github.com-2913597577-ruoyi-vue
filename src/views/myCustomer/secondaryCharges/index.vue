@@ -176,9 +176,9 @@
             <dict-tag :options="contract_type" :value="scope.row.contractType ?? ''" />
           </template>
         </el-table-column> -->
-        <el-table-column label="套餐类型" align="center" prop="serviceType" width="100" show-overflow-tooltip>
+        <el-table-column label="二次收费类型" align="center" prop="secondDevelopmentType" width="100" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
+            <dict-tag :options="dc_secondary_combo" :value="scope.row.secondDevelopmentType ?? ''" />
           </template>
         </el-table-column>
         <el-table-column label="客户服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip >
@@ -1459,6 +1459,7 @@
 import provinceCityAreaData from '@/assets/address.json'
 import addressSelector from '@/components/address/address.vue';
 import { getTransferList } from '@/api/common';
+import { getCustomerWithTransferInfo } from '@/api/common';
 import { getNameByCode, getCodeByName } from '@/components/address/addressMethod';
 import { selectAllUser } from '@/api/customerInfo/customerInfo';
 import {
@@ -1779,9 +1780,21 @@ const { queryParams, form, rules } = toRefs(data);
 
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
-  label: 'companyName',
+  label: 'displayName', // 预处理字段，统一companyName和customerName的显示
   value: 'id'
 }
+
+/* const selectProps = {
+  label: (item: any) => {
+    // 按优先级查找名称字段
+    return item.companyName 
+        || item.customerName      
+  },
+  value: (item: any) => {
+    // 同样，value 也可以动态判断，优先取 id，没有则取 customerId
+    return item.id || item.customerId;
+  }
+} */
 
 const financeStatusList = [
   { value: 0, label: '待审核' },
@@ -2121,7 +2134,7 @@ if (!currentRow.value?.contractOssId) {
     )
 
     if (res && res.code === 200) {
-      ElMessage.success('审核操作成功，此客户信息已录入客户续费记录表！')
+      ElMessage.success('审核操作成功，此客户信息已录入客户二次收费表！')
       auditDialogVisible.value = false
       getList()
       // 刷新列表
@@ -2288,16 +2301,36 @@ const getTransferListInfo = async () => {
   customerTransferListInfo.value = res.data || [];
 }
 
+// 获取初次收费流转单、二次收费流转单、客户总表的客户列表
+const getCustomerListInfo = async () => {
+  const res = await getCustomerWithTransferInfo();
+  //console.log('Customer list info:', res);
+  if(res.data) {
+    // 预处理数据，统一 companyName 显示逻辑
+    res.data.forEach((item: any) => {
+      item.displayName = item.companyName || item.customerName || '';
+    });
+  }
+  customerTransferListInfo.value = res.data || [];
+}
+
 const handleCompanyChange = (companyId: string) => {
   // 在 customerTransferListInfo 中查找匹配的公司信息
+  // 修改查找逻辑：支持 item.id 或 item.customerId 等于 companyId
   const selectedCompany = customerTransferListInfo.value.find(
-    item => item.id === companyId
+    item => item.id === companyId || item.customerId === companyId
   );
 
   if (selectedCompany) {
+
+    //console.log('选中的公司完整数据:', selectedCompany);
+    // 检查特定字段是否存在
+    //console.log('companyName:', selectedCompany.companyName);
+    //console.log('customerName:', selectedCompany.customerName); 
     // 设置公司名称
-    form.value.companyName = selectedCompany.companyName;
+    form.value.companyName = selectedCompany.companyName || selectedCompany.customerName || '';
     // 自动填充客户基本信息
+    //form.value.signDate = selectedCompany.signDate || '';
     form.value.customerCity = selectedCompany.customerCity || '';
     form.value.contractCode = selectedCompany.contractCode || '';
     form.value.companyAddress = selectedCompany.companyAddress || '';
@@ -2307,8 +2340,8 @@ const handleCompanyChange = (companyId: string) => {
     form.value.contactInfo = selectedCompany.contactInfo || '';
     form.value.contactAge = selectedCompany.contactAge || '';
     form.value.contactPosition = selectedCompany.contactPosition || '';
-    form.value.decisionMaker = selectedCompany.decisionMaker || '';
-    form.value.decisionMakerContact = selectedCompany.decisionMakerContact || '';
+    form.value.decisionMaker = selectedCompany.decisionMaker || selectedCompany.principal || '';
+    form.value.decisionMakerContact = selectedCompany.decisionMakerContact || selectedCompany.principalPhone ||'';
     form.value.decisionMakerAge = selectedCompany.decisionMakerAge || '';
     form.value.decisionMakerPosition = selectedCompany.decisionMakerPosition || '';
     form.value.additionalPerson = selectedCompany.additionalPerson || '';
@@ -2317,7 +2350,7 @@ const handleCompanyChange = (companyId: string) => {
     form.value.additionalAge = selectedCompany.additionalAge || '';
     form.value.contactPosition = selectedCompany.contactPosition || '';
     form.value.customerDescription = selectedCompany.customerDescription || '';
-    form.value.customerId = selectedCompany.customerId || '';
+    form.value.customerId = selectedCompany.customerId || selectedCompany.id ||'';
     
     //更新 addressModel 以使 address-selector 组件正确显示
     addressModel.value = {
@@ -2338,11 +2371,16 @@ const handleCompanyChange = (companyId: string) => {
   }
 };
 
-onMounted(() => {
 
-  loadUserList();
-  getTransferListInfo();
-  getList();
+onMounted(() => {
+  // 并行加载所有初始数据，提升首屏渲染速度
+  Promise.all([
+    loadUserList(),
+    getCustomerListInfo(),
+    getList()
+  ]).catch(err => {
+    console.error('页面初始化数据加载出错', err);
+  });
 });
 </script>
 

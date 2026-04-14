@@ -48,12 +48,12 @@
       <template #header>
         <el-row :gutter="10" class="mb8" justify="space-between">
           <div class="flex items-center">
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['customerInformationLog:customerInformationLog:add']">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
+          </el-col> -->
+          <!-- <el-col :span="1.5">
             <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['customerInformationLog:customerInformationLog:edit']">修改</el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="1.5">
             <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['customerInformationLog:customerInformationLog:remove']">删除</el-button>
           </el-col>
@@ -80,80 +80,97 @@
       <el-table v-loading="loading" border :data="customerInformationLogList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="签约日期" align="center" prop="signDate" width="100">
+        <el-table-column label="录入人" align="center" prop="transferPerson" width="80" show-overflow-tooltip />
+        <el-table-column label="签单日期" align="center" prop="signDate" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="编号" align="center" prop="contractNo" show-overflow-tooltip />
-        <el-table-column label="客户名称" align="center" prop="customerName" show-overflow-tooltip />
-        <el-table-column label="负责人" align="center" prop="principal" />
-        <el-table-column label="负责人电话" align="center" prop="principalPhone" width="100px" show-overflow-tooltip />
-        <el-table-column label="法务支持" align="center" prop="lawyerId" />
-        <el-table-column label="甩单人" align="center" prop="transferPerson" />
-        <el-table-column label="杀单手" align="center" prop="closer" />
-        <el-table-column label="签约类型" align="center" prop="contractType" />
-        <el-table-column label="套餐类型" align="center" prop="packageType">
+        <el-table-column label="二次收费类型" align="center" width="100px" prop="packageType">
           <template #default="scope">
-            <dict-tag :options="combo_type" :value="scope.row.packageType"/>
+            <dict-tag :options="dc_secondary_combo" :value="scope.row.packageType"/>
           </template>
         </el-table-column>
-        <el-table-column label="合同金额" align="center" prop="contractAmount" width="140" />
-        <el-table-column label="实收金额" align="center" prop="actualReceipt" width="140" />
-        <el-table-column label="尾款金额" align="center" prop="balance" width="140" />
-        <el-table-column label="到期时间" align="center" prop="expireDate" width="180">
+        <!-- <el-table-column label="编号" align="center" prop="contractNo" show-overflow-tooltip /> -->
+        <el-table-column label="客户名称" align="center" prop="customerName" width="180px" show-overflow-tooltip />
+        <el-table-column label="负责人" align="center" prop="principal" show-overflow-tooltip />
+        <el-table-column label="负责人电话" align="center" prop="principalPhone" width="100px" show-overflow-tooltip />
+        <!-- <el-table-column label="法务支持" align="center" prop="lawyerId" /> -->
+        <!-- <el-table-column label="甩单人" align="center" prop="transferPerson" /> -->
+        <!-- <el-table-column label="杀单手" align="center" prop="closer" /> -->
+        <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
+        <el-table-column label="客户类型" align="center" width="80" prop="customerType">
+          <template #default="scope">
+            <dict-tag :options="dc_customer_type" :value="scope.row.customerType" />
+          </template>
+        </el-table-column>
+        
+        <el-table-column label="合同金额" align="center" prop="contractAmount" width="120" />
+        <el-table-column label="实收金额" align="center" prop="actualReceipt" width="120" />
+        <el-table-column label="尾款金额" align="center" prop="balance" width="120" />
+        <el-table-column label="服务开始时间" align="center" prop="startDate" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="服务结束时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="是否转为意向客户" align="center" prop="isIntention">
-          <template #default="scope">
-            <dict-tag :options="dc_false_true" :value="scope.row.isIntention"/>
+        <el-table-column label="合同编号" align="center" prop="contractCode" />
+        <el-table-column label="立案账号" align="center" prop="caseFillingAccount" />
+        <el-table-column label="立案密码" align="center" prop="caseFillingPwd" />
+        <el-table-column label="归属城市" align="center" prop="customerCity">
+        <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
           </template>
         </el-table-column>
-        <el-table-column label="是否转为风险客户" align="center" prop="isRisk">
+        <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
           <template #default="scope">
             <dict-tag :options="dc_false_true" :value="scope.row.isRisk"/>
           </template>
         </el-table-column>
-        <el-table-column label="是否转为退费客户" align="center" prop="isRefund">
+        <el-table-column label="退费客户" align="center" prop="isRefund" width="100">
           <template #default="scope">
             <dict-tag :options="dc_false_true" :value="scope.row.isRefund"/>
           </template>
         </el-table-column>
-        <el-table-column label="合同编号" align="center" prop="contractCode" />
+        <el-table-column label="转介绍意向客户" align="center" prop="isIntention" width="120">
+          <template #default="scope">
+            <dict-tag :options="dc_false_true" :value="scope.row.isIntention" />
+          </template>
+        </el-table-column>
         <el-table-column label="备注" align="center" prop="remarks" />
-        <el-table-column label="续费/尾款动作(1-续费 2-付尾款 3-其他)" align="center" prop="actionType" />
-        <el-table-column label="客户id" align="center" prop="transferId" show-overflow-tooltip />
-        <el-table-column label="客户总表id" align="center" prop="customerInfoId" show-overflow-tooltip />
-        <el-table-column label="客户总表创建时间" align="center" prop="infoCreateTime" width="120px">
+        <el-table-column label="续费/尾款" align="center" prop="actionType" />
+        <!-- <el-table-column label="客户id" align="center" prop="transferId" show-overflow-tooltip /> -->
+        <!-- <el-table-column label="客户总表id" align="center" prop="customerInfoId" show-overflow-tooltip /> -->
+       <!--  <el-table-column label="客户总表创建时间" align="center" prop="infoCreateTime" width="120px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.infoCreateTime, '{y}-{m}-{d}') }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="客户总表更新时间" align="center" prop="infoUpdateTime" width="120px">
+        </el-table-column> -->
+       <!--  <el-table-column label="客户总表更新时间" align="center" prop="infoUpdateTime" width="120px">
           <template #default="scope">
             <span>{{ parseTime(scope.row.infoUpdateTime, '{y}-{m}-{d}') }}</span>
           </template>
-        </el-table-column>
-        <el-table-column label="客户经理id" align="center" prop="accountManagerId" />
-        <el-table-column label="邀约人id" align="center" prop="inviterId" />
+        </el-table-column> -->
+        <!-- <el-table-column label="客户经理id" align="center" prop="accountManagerId" /> -->
+        <!-- <el-table-column label="邀约人id" align="center" prop="inviterId" /> -->
         <el-table-column label="服务时长" align="center" prop="serviceDuration" />
-        <el-table-column label="合同金额" align="center" prop="contractAmount" />
-        <el-table-column label="客户类型" align="center" prop="customerType">
+        <el-table-column label="法务支持" align="center" width="80" prop="lawyerId" show-overflow-tooltip>
           <template #default="scope">
-            <dict-tag :options="dc_customer_type" :value="scope.row.customerType"/>
+            <span v-if="scope.row.lawyerId">
+              {{ getLawyerNameById(scope.row.lawyerId) }}
+            </span>
           </template>
         </el-table-column>
-        <el-table-column label="立案账号" align="center" prop="caseFillingAccount" />
-        <el-table-column label="立案密码" align="center" prop="caseFillingPwd" />
-        <el-table-column label="客户服务城市" align="center" prop="customerCity" />
-        <el-table-column label="是否分配法务支持" align="center" prop="isAssigned">
+        <el-table-column label="分配法务支持" align="center" prop="isAssigned" width="100">
           <template #default="scope">
             <dict-tag :options="dc_true_or_false" :value="scope.row.isAssigned"/>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200px" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerInformationLog:customerInformationLog:edit']"></el-button>
@@ -359,6 +376,8 @@ import { CustomerInformationLogVO, CustomerInformationLogQuery, CustomerInformat
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { dc_false_true, dc_true_or_false,dc_customer_type, combo_type } = toRefs<any>(proxy?.useDict('dc_false_true', 'dc_true_or_false','dc_customer_type', 'combo_type'));
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
+const { dc_secondary_combo } = toRefs<any>(proxy?.useDict('dc_secondary_combo'));
 
 const customerInformationLogList = ref<CustomerInformationLogVO[]>([]);
 const buttonLoading = ref(false);
