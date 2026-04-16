@@ -133,7 +133,11 @@
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupport" width="80" show-overflow-tooltip />
+        <el-table-column label="二次收费类型" align="center" prop="secondDevelopmentType" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_secondary_combo" :value="scope.row.secondDevelopmentType ?? ''" />
+          </template>
+        </el-table-column>
         <el-table-column label="公司名称" align="center" prop="companyName" width="180" show-overflow-tooltip />
         <el-table-column label="公司地址" align="center" prop="companyAddress" width="150" show-overflow-tooltip>
           <template #default="scope">
@@ -176,11 +180,7 @@
             <dict-tag :options="contract_type" :value="scope.row.contractType ?? ''" />
           </template>
         </el-table-column> -->
-        <el-table-column label="二次收费类型" align="center" prop="secondDevelopmentType" width="100" show-overflow-tooltip>
-          <template #default="scope">
-            <dict-tag :options="dc_secondary_combo" :value="scope.row.secondDevelopmentType ?? ''" />
-          </template>
-        </el-table-column>
+        <el-table-column label="法务支持" align="center" prop="legalSupport" width="80" show-overflow-tooltip />
         <el-table-column label="客户服务城市" align="center" prop="customerCity" width="100" show-overflow-tooltip >
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity ?? ''" />

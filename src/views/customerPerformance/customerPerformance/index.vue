@@ -171,6 +171,11 @@
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
           </template>
         </el-table-column>
+        <el-table-column label="二次收费类型" align="center" width="100px" prop="secondDevelopmentType">
+          <template #default="scope">
+            <dict-tag :options="dc_secondary_combo" :value="scope.row.secondDevelopmentType ?? ''" />
+          </template>
+        </el-table-column>
         <el-table-column label="业绩所属人" align="center" prop="user_name" width="100px" show-overflow-tooltip />
         <el-table-column label="业绩所属金额" align="center" prop="balance" width="140px"/>
         <el-table-column label="业绩所属城市" align="center" prop="city">
@@ -194,7 +199,12 @@
         </template>
         </el-table-column>
         <el-table-column label="分配人" align="center" prop="creater_name" show-overflow-tooltip />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="分配时间" align="center" prop="create_time" width="80">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.update_time, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="160px" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:edit']"></el-button>
@@ -404,7 +414,9 @@ import { CustomerPerformanceVO, CustomerPerformanceQuery, CustomerPerformanceFor
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { dc_sercive_city,combo_type } = toRefs<any>(proxy?.useDict('dc_sercive_city','combo_type'));
-const customerPerformanceList = ref<CustomerPerformanceVO[]>([]);
+const { dc_secondary_combo } = toRefs<any>(proxy?.useDict('dc_secondary_combo'));
+
+  const customerPerformanceList = ref<CustomerPerformanceVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
