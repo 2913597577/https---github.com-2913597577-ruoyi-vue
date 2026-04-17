@@ -108,7 +108,7 @@
             <span>{{ parseTime(scope.row.auditTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="合同操作" align="center" prop="contractUrl" width="100" show-overflow-tooltip>
+       <!--  <el-table-column label="合同操作" align="center" prop="contractUrl" width="100" show-overflow-tooltip>
           <template #default="scope">
             <div class="contract-cell">
               <image-preview v-if="scope.row.contractUrl" :src="scope.row.contractUrl" :width="20" :height="20" />
@@ -118,10 +118,32 @@
               </el-button>
             </div>
           </template>
-
-          <!-- v-hasPermi="['myCustomer:customerTransfer:contractDownload']"
-
-          v-hasPermi="['myCustomer:customerTransfer:contractUpload']" -->
+        </el-table-column> -->
+        <el-table-column label="合同操作" align="center" prop="contractUrl" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <div class="contract-cell">
+              <!-- 有合同时显示查看图标 -->
+              <div v-if="scope.row.contractUrl" 
+                   class="image-trigger" 
+                   @click="handlePreviewContract(scope.row.contractUrl)">
+                <el-icon :size="20" style="cursor: pointer; color: #409EFF;">
+                  <Picture />
+                </el-icon>
+                <span style="font-size: 12px; margin-left: 4px;">查看</span>
+              </div>
+              
+              <!-- 无合同时显示上传图标 (样式与查看保持完全一致) -->
+              <div v-else 
+                   class="image-trigger" 
+                   @click="handleUpload(scope.row)" 
+                   v-hasPermi="['myCustomer:customerTransfer:upload']">
+                <el-icon :size="20" style="cursor: pointer; color: #F56C6C;">
+                  <Document />
+                </el-icon>
+                <span style="font-size: 12px; margin-left: 4px;  color: #F56C6C;">上传</span>
+              </div>
+            </div>
+          </template>
         </el-table-column>
         <el-table-column label="录入人" align="center" prop="inviterId" width="80" show-overflow-tooltip >
           <template #default="scope">
@@ -244,6 +266,12 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+<!-- 合同图片预览组件 -->
+<el-image-viewer 
+      v-if="showContractViewer" 
+      :url-list="[contractPreviewUrl]" 
+      @close="closeContractViewer" 
+    />
 
  <!-- 新增和修改按钮弹窗内容 -->
 <template>
@@ -1473,10 +1501,10 @@ import {
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
 import { ElMessage } from 'element-plus';
 import { nextTick } from 'vue';
+import { Picture, PictureFilled, Document } from '@element-plus/icons-vue';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-
 const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const { dc_accounting_company } = toRefs<any>(proxy?.useDict('dc_accounting_company'));
 const { dc_legal_affairs } = toRefs<any>(proxy?.useDict('dc_legal_affairs'));
@@ -1807,6 +1835,21 @@ const invoiceStatusList = [
   { value: 1, label: '已开票' }
 ];
 
+// 合同图片预览相关状态
+const showContractViewer = ref(false);
+const contractPreviewUrl = ref('');
+
+// 点击触发的方法
+const handlePreviewContract = (url: string) => {
+  contractPreviewUrl.value = url;
+  showContractViewer.value = true;
+};
+
+// 关闭预览的方法
+const closeContractViewer = () => {
+  showContractViewer.value = false;
+  contractPreviewUrl.value = '';
+};
 
 //添加金额格式化处理函数
 const formatCurrency = (value) => {
@@ -2652,6 +2695,17 @@ onMounted(() => {
       font-weight: bold;
     }
   }
+}
+
+.image-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.image-trigger:hover {
+  opacity: 0.8;
 }
 
 </style>

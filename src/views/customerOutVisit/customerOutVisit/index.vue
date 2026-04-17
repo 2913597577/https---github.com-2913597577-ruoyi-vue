@@ -120,10 +120,7 @@
           </template>
         </el-table-column>
         <el-table-column label="出访定位" align="center" prop="visitAddress" width="120" show-overflow-tooltip />
-        <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100" show-overflow-tooltip>
-          <!--  <template #default="scope">
-            <image-preview :src="scope.row.placePic1Url" :width="20" :height="20" />
-          </template> -->
+       <!--  <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100" show-overflow-tooltip>
         <template #default="scope">
          <el-image 
          v-if="scope.row.placePic1Url"
@@ -147,8 +144,22 @@
       </template>
     </el-image>
           </template>
+        </el-table-column> -->
+        <el-table-column label="出访照片" align="center" prop="placePic1Url" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <!-- 只有当有图片URL时才显示可点击的图标 -->
+            <div v-if="scope.row.placePic1Url" 
+                 class="image-trigger" 
+                 @click="handlePreviewImage(scope.row.placePic1Url)">
+              <el-icon :size="20" style="cursor: pointer; color: #409EFF;">
+                <Picture />
+              </el-icon>
+              <span style="font-size: 12px; margin-left: 4px;">查看</span>
+            </div>
+            <span v-else>-</span>
+          </template>
         </el-table-column>
-        <el-table-column label="出访记录表" align="center" prop="outRecord" width="100" show-overflow-tooltip>
+        <!-- <el-table-column label="出访记录表" align="center" prop="outRecord" width="100" show-overflow-tooltip>
           <template #default="scope">
             <div class="contract-cell">
               <el-button v-if="scope.row.outRecord" link type="primary" icon="download"
@@ -156,6 +167,20 @@
                 下载记录表
               </el-button>
             </div>
+          </template>
+        </el-table-column> -->
+        <el-table-column label="出访记录表" align="center" prop="outRecord" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <!-- 只有当有记录表ID时才显示可点击的图标 -->
+            <div v-if="scope.row.outRecord" 
+                 class="file-trigger" 
+                 @click="handleViewContract(scope.row)">
+              <el-icon :size="20" style="cursor: pointer; color: #67C23A;">
+                <Document />
+              </el-icon>
+              <span style="font-size: 12px; margin-left: 4px;">下载</span>
+            </div>
+            <span v-else>-</span>
           </template>
         </el-table-column>
         <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
@@ -183,7 +208,12 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
-
+     <!-- 图片预览组件 (放在 template 底部，与 el-dialog 同级) -->
+    <el-image-viewer 
+      v-if="showImageViewer" 
+      :url-list="[previewImageUrl]" 
+      @close="closeImageViewer" 
+    />
  <!-- 搜索按钮弹窗内容 -->
  <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
   <!-- <template> -->
@@ -353,6 +383,7 @@ import { listCustomerOutVisit, getCustomerOutVisit, delCustomerOutVisit, addCust
 import { CustomerOutVisitVO, CustomerOutVisitQuery, CustomerOutVisitForm } from '@/api/customerOutVisit/customerOutVisit/types';
 import { useRoute } from 'vue-router';
 import { Picture, PictureFilled } from '@element-plus/icons-vue';
+import { Document } from '@element-plus/icons-vue'; // 添加 Document
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -450,6 +481,22 @@ const { queryParams, form, rules } = toRefs(data);
 
 // 1. 图像占位图（base64 或本地路径）
 //const imagePlaceholder;
+// 1. 定义预览相关的状态
+const showImageViewer = ref(false);
+const previewImageUrl = ref('');
+
+// 2. 点击触发的方法
+const handlePreviewImage = (url: string) => {
+  previewImageUrl.value = url;
+  showImageViewer.value = true;
+};
+
+// 3. 关闭预览的方法
+const closeImageViewer = () => {
+  showImageViewer.value = false;
+  previewImageUrl.value = '';
+};
+
 
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
@@ -987,5 +1034,28 @@ onMounted(async () => {
 .image-error {
   background-color: #f5f7fa;
   color: #909399;
+}
+
+.image-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.image-trigger:hover {
+  opacity: 0.8;
+}
+
+.image-trigger,
+.file-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.image-trigger:hover,
+.file-trigger:hover {
+  opacity: 0.8;
 }
 </style>
