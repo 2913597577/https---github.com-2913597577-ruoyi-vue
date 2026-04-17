@@ -136,37 +136,33 @@
         <!-- <el-table-column label="备注1" align="center" prop="remark1" />
         <el-table-column label="备注2" align="center" prop="remark2" />
         <el-table-column label="备注3" align="center" prop="remark3" /> -->
-        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="320"
+        <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="360"
           fixed="right">
           <template #default="scope">
-            <el-tooltip content="接工单" placement="top">
-              <el-button v-if="scope.row.processingStatus == 0" link type="success" icon="Menu"
+              <el-button v-if="scope.row.processingStatus == 0" link type="success" icon="Menu" size="small"
                 @click="handleAccept(scope.row)" v-hasPermi="['customerJobOrder:customerJobOrder:receive']">接工单</el-button>
-            </el-tooltip>
-            <el-tooltip content="新合同上传" placement="top">
-              <el-button link type="primary" icon="Upload" @click="handleUpdate(scope.row)"
+
+              <el-button link type="primary" icon="DocumentAdd" size="small" @click="handleUpdate(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:edit']">新合同上传</el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
+           
               <el-button size="small" link type="danger" icon="Delete" @click="handleDelete(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:remove']">删除</el-button>
-            </el-tooltip>
+          
             <!-- <el-tooltip content="处理" placement="top">
               <el-button link type="primary" icon="Download" @click="handleProcess(scope.row)"
                 v-hasPermi="['customerJobOrder:customerJobOrder:process']">下载</el-button>
             </el-tooltip> -->
-            <el-tooltip content="合同下载" placement="top">
               <el-dropdown @command="(command) => handleProcessCommand({ row: scope.row, type: command })">
-                <el-button size="small" link type="warning" icon="Download"
+                <el-button size="small" link type="warning" icon="DocumentCopy"
                   v-hasPermi="['customerJobOrder:customerJobOrder:process']">合同下载</el-button>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item command="pre">原合同</el-dropdown-item>
-                    <el-dropdown-item command="new">新合同</el-dropdown-item>
+                    <el-dropdown-item command="pre" icon="Document">原合同</el-dropdown-item>
+                    <el-dropdown-item command="new" icon="DocumentChecked">新合同</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-            </el-tooltip>
+
           </template>
         </el-table-column>
       </el-table>
@@ -939,3 +935,20 @@ onMounted(async () => {
 });
 
 </script>
+
+<style scoped>
+:deep(.operation-column) {
+  .el-button {
+    margin-right: 0px; /* 调整间距 */
+  }
+  
+  .el-dropdown {
+    margin-left: 14px; /* 调整间距 */
+    display: inline-block; /* 确保 margin 生效 */
+    vertical-align: middle;
+  }
+}
+
+</style>
+
+ 

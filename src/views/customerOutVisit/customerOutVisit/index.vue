@@ -1047,7 +1047,6 @@ onMounted(async () => {
   }
 });
 
-
 </script>
 
 <style scoped>
