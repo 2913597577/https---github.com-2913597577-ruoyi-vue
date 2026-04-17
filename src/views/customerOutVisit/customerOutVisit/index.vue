@@ -150,7 +150,7 @@
             <!-- 只有当有图片URL时才显示可点击的图标 -->
             <div v-if="scope.row.placePic1Url" 
                  class="image-trigger" 
-                 @click="handlePreviewImage(scope.row.placePic1Url)">
+                 @click="handlePreviewContract(scope.row.placePic1Url)">
               <el-icon :size="20" style="cursor: pointer; color: #409EFF;">
                 <Picture />
               </el-icon>
@@ -208,12 +208,14 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+    
      <!-- 图片预览组件 (放在 template 底部，与 el-dialog 同级) -->
-    <el-image-viewer 
-      v-if="showImageViewer" 
-      :url-list="[previewImageUrl]" 
-      @close="closeImageViewer" 
-    />
+<el-image-viewer 
+      v-if="showContractViewer" 
+      :url-list="contractPreviewUrl" 
+      @close="closeContractViewer" 
+/>
+
  <!-- 搜索按钮弹窗内容 -->
  <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
   <!-- <template> -->
@@ -481,20 +483,50 @@ const { queryParams, form, rules } = toRefs(data);
 
 // 1. 图像占位图（base64 或本地路径）
 //const imagePlaceholder;
-// 1. 定义预览相关的状态
-const showImageViewer = ref(false);
-const previewImageUrl = ref('');
 
-// 2. 点击触发的方法
-const handlePreviewImage = (url: string) => {
-  previewImageUrl.value = url;
-  showImageViewer.value = true;
+// 合同图片预览相关状态
+const showContractViewer = ref(false);
+// 建议定义为字符串数组，以支持多张图片
+const contractPreviewUrl = ref<string[]>([]); 
+
+// 点击触发的方法
+const handlePreviewContract = (url: any) => {
+  if (!url) {
+    proxy?.$modal.msgWarning("暂无出访图片");
+    return;
+  }
+
+  let urls: string[] = [];
+
+  // 核心处理逻辑：兼容字符串、数组和逗号分隔字符串
+  if (Array.isArray(url)) {
+    // 情况1: 如果已经是数组，直接使用
+    urls = url.filter((item: any) => item); 
+  } else if (typeof url === 'string') {
+    // 情况2: 如果是字符串，检查是否包含逗号
+    if (url.includes(',')) {
+      // 分割逗号，并去除每个URL可能存在的空格，过滤空值
+      urls = url.split(',').map((u: string) => u.trim()).filter((u: string) => u);
+    } else {
+      // 情况3: 单个URL字符串
+      urls = [url];
+    }
+  }
+
+  if (urls.length === 0) {
+     proxy?.$modal.msgWarning("出访图片链接无效");
+     return;
+  }
+
+  contractPreviewUrl.value = urls;
+  showContractViewer.value = true;
 };
 
 // 3. 关闭预览的方法
-const closeImageViewer = () => {
-  showImageViewer.value = false;
-  previewImageUrl.value = '';
+// 关闭预览的方法
+const closeContractViewer = () => {
+  showContractViewer.value = false;
+  contractPreviewUrl.value = []; // 清空数组
 };
 
 
@@ -680,7 +712,7 @@ const handleViewContract = (row: CustomerOutVisitVO) => {
   if (row.outRecord) {
     proxy?.$download.oss(row.outRecord);
   } else {
-    proxy?.$modal.msgWarning(`无合同文件可下载`);
+    proxy?.$modal.msgWarning(`无出访记录表可下载`);
   }
 };
 

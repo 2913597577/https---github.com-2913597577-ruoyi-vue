@@ -292,13 +292,13 @@
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize" @pagination="getList" />
     </el-card>
+  
 <!-- 合同图片预览组件 -->
 <el-image-viewer 
       v-if="showContractViewer" 
-      :url-list="[contractPreviewUrl]" 
+      :url-list="contractPreviewUrl" 
       @close="closeContractViewer" 
     />
-
 
  <!-- 新增和修改按钮弹窗内容 -->
 <template>
@@ -1827,18 +1827,47 @@ const invoiceStatusList = [
 
 // 合同图片预览相关状态
 const showContractViewer = ref(false);
-const contractPreviewUrl = ref('');
+// 建议定义为字符串数组，以支持多张图片
+const contractPreviewUrl = ref<string[]>([]); 
 
 // 点击触发的方法
-const handlePreviewContract = (url: string) => {
-  contractPreviewUrl.value = url;
+const handlePreviewContract = (url: any) => {
+  if (!url) {
+    proxy?.$modal.msgWarning("暂无合同图片");
+    return;
+  }
+
+  let urls: string[] = [];
+
+  // 核心处理逻辑：兼容字符串、数组和逗号分隔字符串
+  if (Array.isArray(url)) {
+    // 情况1: 如果已经是数组，直接使用
+    urls = url.filter((item: any) => item); 
+  } else if (typeof url === 'string') {
+    // 情况2: 如果是字符串，检查是否包含逗号
+    if (url.includes(',')) {
+      // 分割逗号，并去除每个URL可能存在的空格，过滤空值
+      urls = url.split(',').map((u: string) => u.trim()).filter((u: string) => u);
+    } else {
+      // 情况3: 单个URL字符串
+      urls = [url];
+    }
+  }
+
+  if (urls.length === 0) {
+     proxy?.$modal.msgWarning("合同图片链接无效");
+     return;
+  }
+
+  contractPreviewUrl.value = urls;
   showContractViewer.value = true;
 };
+
 
 // 关闭预览的方法
 const closeContractViewer = () => {
   showContractViewer.value = false;
-  contractPreviewUrl.value = '';
+  contractPreviewUrl.value = []; // 清空数组
 };
 
 //添加金额格式化处理函数
