@@ -188,45 +188,51 @@
                 @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="处理状态" prop="processingStatus">
-              <el-select v-model="queryParams.processingStatus" placeholder="请选择工单处理状态" clearable>
+              <el-select v-model="queryParams.processingStatus" placeholder="工单处理状态" style="width: 120px" clearable>
                 <el-option v-for="dict in processing_status" :key="dict.value" :label="dict.label"
                   :value="dict.value" />
               </el-select>
             </el-form-item>
             <el-form-item label="归属城市" prop="remark2">
-              <el-select v-model="queryParams.remark2" placeholder="请选择归属城市" clearable style="width: 240px" >
+              <el-select v-model="queryParams.remark2" placeholder="请选择归属城市" clearable style="width: 120px" >
                 <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
               <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
-                style="width: 240px;" @change="handleLegalSupportChange">
+                style="width: 120px;" @change="handleLegalSupportChange">
                 <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
                   :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
               </el-select>
             </el-form-item>
 
             <el-form-item label="客户名称" prop="customerId">
-              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
+              <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList" style="width: 200px"
                 :props="selectProps" filterable clearable :loading="loading">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
               </el-select-v2>
             </el-form-item>
+            <el-form-item label="原合同名" prop="preContractName">
+              <el-input v-model="queryParams.preContractName" placeholder="请输入原合同名" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="新合同名" prop="newContractName">
+              <el-input v-model="queryParams.newContractName" placeholder="请输入新合同名" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
             <el-form-item label="交付时间" prop="deliveryTime">
-              <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择交付时间" />
+              <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD" style="width: 120px;" placeholder="交付时间" />
             </el-form-item>
-            <el-form-item label="跟踪记录" prop="trackingId">
+            <!-- <el-form-item label="跟踪记录" prop="trackingId">
               <el-input v-model="queryParams.trackingId" placeholder="请输入跟踪记录id" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
+            </el-form-item> -->
             <!-- <el-form-item label="处理人id" prop="contractHandler">
               <el-input v-model="queryParams.contractHandler" placeholder="请输入处理人id" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item> -->
-            <el-form-item label="处理人" prop="contractHandlerName">
-              <el-input v-model="queryParams.contractHandlerName" placeholder="请输入处理人" clearable
+            <el-form-item label="中心接单人" prop="contractHandlerName" label-width="80px">
+              <el-input v-model="queryParams.contractHandlerName" placeholder="法务中心接单人" clearable style="width: 140px;"
                 @keyup.enter="handleQuery" />
             </el-form-item>
            

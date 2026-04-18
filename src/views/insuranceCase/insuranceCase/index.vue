@@ -155,7 +155,7 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
             <el-form-item label="归属城市" prop="remark1">
-              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 240px" >
+              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 120px" >
                 <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
                 </el-option>
               </el-select>
@@ -168,49 +168,51 @@
               </el-select> -->
               <!-- 虚拟加载客户名称 -->
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
-                :props="selectProps" filterable clearable :loading="loading" style="width: 200px">
+                :props="selectProps" filterable clearable :loading="loading" style="width: 180px">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
               </el-select-v2>
             </el-form-item>
-            <el-form-item label="下单日期" prop="orderDate">
-              <el-date-picker clearable v-model="queryParams.orderDate" type="date" 
-              value-format="YYYY-MM-DD"
-                placeholder="请选择下单日期" />
-            </el-form-item>
-            <el-form-item label="工单号" prop="insuranceNumber">
-              <el-input v-model="queryParams.insuranceNumber" placeholder="请输入工单号" clearable
-                @keyup.enter="handleQuery" />
-            </el-form-item>
-            <!-- <el-form-item label="法务支持id" prop="legalSupportId">
-              <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable @keyup.enter="handleQuery" />
-            </el-form-item> -->
             <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
               <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
-                style="width: 100%;" @change="handleLegalSupportChange">
+                style="width: 120px" @change="handleLegalSupportChange">
                 <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
                   :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="下单日期" prop="orderDate">
+              <el-date-picker clearable v-model="queryParams.orderDate" type="date" 
+              value-format="YYYY-MM-DD"
+                placeholder="下单日期" style="width: 120px" />
+            </el-form-item>
+            <el-form-item label="工单号" prop="insuranceNumber">
+              <el-input v-model="queryParams.insuranceNumber" placeholder="请输入工单号" clearable
+              style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <!-- <el-form-item label="法务支持id" prop="legalSupportId">
+              <el-input v-model="queryParams.legalSupportId" placeholder="请输入法务支持id" clearable @keyup.enter="handleQuery" />
+            </el-form-item> -->
+           
             <el-form-item label="原告方" prop="plaintiff">
-              <el-input v-model="queryParams.plaintiff" placeholder="请输入原告方" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.plaintiff" placeholder="请输入原告方" clearable style="width: 160px" @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="被告方" prop="defendant">
-              <el-input v-model="queryParams.defendant" placeholder="请输入被告方" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.defendant" placeholder="请输入被告方" clearable style="width: 160px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="标的额" prop="subjectAmount">
-              <el-input v-model="queryParams.subjectAmount" placeholder="请输入标的额" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="保费 >=" prop="premium">
+              <el-input v-model="queryParams.premium" placeholder="请输入保费 >=" type="number" clearable style="width: 140px" @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="案由" prop="caseReason">
+           
+            <el-form-item label="标的额 >=" prop="subjectAmount">
+              <el-input v-model="queryParams.subjectAmount" placeholder="请输入标的额 >=" type="number" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+           <!--  <el-form-item label="案由" prop="caseReason">
               <el-input v-model="queryParams.caseReason" placeholder="请输入案由" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="法院" prop="jurisdictionCourt">
-              <el-input v-model="queryParams.jurisdictionCourt" placeholder="请输入管辖权法院" clearable
+            </el-form-item> -->
+            <el-form-item label="管辖权法院" prop="jurisdictionCourt" label-width="80px">
+              <el-input v-model="queryParams.jurisdictionCourt" placeholder="请输入管辖权法院" clearable style="width: 160px"
                 @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="保费" prop="premium">
-              <el-input v-model="queryParams.premium" placeholder="请输入保费" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>

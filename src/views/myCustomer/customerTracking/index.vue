@@ -168,19 +168,27 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="90px">
             <el-form-item label="归属城市" prop="remark2">
-              <el-select v-model="queryParams.remark2" placeholder="请选择归属城市" clearable style="width: 200px" >
+              <el-select v-model="queryParams.remark2" placeholder="请选择归属城市" clearable style="width: 120px" >
                 <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
                 </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="客户名称" prop="customerId">
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
-                :props="selectProps" filterable clearable :loading="loading" style="width: 200px">
+                :props="selectProps" filterable clearable :loading="loading" style="width: 180px">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
               </el-select-v2>
             </el-form-item>
+
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+        <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+          style="width: 120px" @change="handleLegalSupportChange">
+          <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+            :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+        </el-select>
+      </el-form-item>
             <!-- <el-form-item label="跟踪状态" prop="cumtomerStatus">
               <el-select v-model="queryParams.cumtomerStatus" placeholder="请选择跟踪状态" clearable>
                 <el-option v-for="dict in cumtomer_status" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -189,7 +197,7 @@
             <el-form-item label="回访时间" prop="trackingTime">
               <el-date-picker clearable v-model="queryParams.trackingTime" type="date" 
                value-format="YYYY-MM-DD"
-                placeholder="请选择回访时间" />
+                placeholder="回访时间" style="width: 120px" />
             </el-form-item>
             <!-- <el-form-item label="提交状态" prop="submitStatus">
               <el-select v-model="queryParams.submitStatus" placeholder="请选择提交状态" clearable>
@@ -199,7 +207,16 @@
             <el-form-item label="下次回访时间" label-width="90px" prop="nextTime">
               <el-date-picker clearable v-model="queryParams.nextTime" type="date" 
                value-format="YYYY-MM-DD"
-                placeholder="请选择下次回访时间" style="width: 200px" />
+                placeholder="下次回访时间" style="width: 120px" />
+            </el-form-item>
+            <el-form-item label="内勤项数计数 >=" prop="interCount" label-width="120px" >
+              <el-input v-model="queryParams.interCount" placeholder="请输入内勤项数计数 >=" type="number" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="回访分类" prop="trackingType">
+              <el-select v-model="queryParams.trackingType" placeholder="请选择回访分类" clearable style="width: 120px" >
+                <el-option v-for="item in dc_follow_classification" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
             </el-form-item>
             <!-- <el-form-item label="日志类型" prop="isReturn">
               <el-select v-model="queryParams.isReturn" placeholder="请选择日志类型" clearable>
@@ -207,7 +224,6 @@
                 <el-option :key=1 label="回访日志" value=1></el-option>
               </el-select>
             </el-form-item> -->
-
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -291,7 +307,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="内勤项数计数" prop="interCount">
-          <el-input v-model="form.interCount" placeholder="请输入内勤项数计数" />
+          <el-input v-model="form.interCount" placeholder="请输入内勤项数计数" type="number" />
         </el-form-item>
         <!-- <el-form-item label="风险提示" prop="remark1">
           <el-input v-model="form.remark1" type="textarea" placeholder="请输入内容" />
@@ -435,7 +451,7 @@ const initFormData: CustomerTrackingForm = {
   remark2: undefined,
   remark3: undefined,
   isReturn: 0,
-  interCount: 0
+  interCount: undefined,
 }
 
 const preFile = ref(null);
@@ -456,7 +472,7 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
     remark3: undefined,
     isReturn: undefined,
     legalSupportId: undefined,
-    interCount: 0,
+    interCount: undefined,
 
     /**
  * 是否回访记录
@@ -486,6 +502,9 @@ const data = reactive<PageData<CustomerTrackingForm, CustomerTrackingQuery>>({
     remark2: [
       { required: true, message: "请选择客户归属城市", trigger: "blur" }
     ],
+    interCount: [
+      { required: true, message: "请输入内勤项数计数", trigger: "blur" }
+    ]
 
   }
 });

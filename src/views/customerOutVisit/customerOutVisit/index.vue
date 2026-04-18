@@ -224,9 +224,9 @@
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px"> 
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true"> 
             <el-form-item label="归属城市" prop="remark1">
-              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 240px" >
+              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 120px" >
                 <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
                 </el-option>
               </el-select>
@@ -239,38 +239,44 @@
               </el-select> -->
               <!-- 虚拟加载客户名称 -->
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
-                :props="selectProps" filterable clearable :loading="loading" style="width: 200px">
+                :props="selectProps" filterable clearable :loading="loading" style="width: 180px">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
               </el-select-v2>
             </el-form-item>
-
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+        <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+          style="width: 120px" @change="handleLegalSupportChange">
+          <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+            :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+        </el-select>
+      </el-form-item>
             <!-- <el-form-item label="法务支持姓名" prop="legalSupportName">
               <el-input v-model="queryParams.legalSupportName" placeholder="请输入法务支持姓名" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
             <el-form-item label="出访时间" prop="visitTime">
               <el-date-picker clearable v-model="queryParams.visitTime" type="date" 
                value-format="YYYY-MM-DD"
-              placeholder="请选择出访时间" />
+              placeholder="出访时间"  style="width: 120px"/>
             </el-form-item>
-            <el-form-item label="下次出访时间" prop="nextVisitTime">
+            <el-form-item label="下次出访时间" prop="nextVisitTime" label-width="100px">
               <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" 
                value-format="YYYY-MM-DD"
-              placeholder="请选择下次出访时间" />
+              placeholder="下次出访时间" style="width: 120px" />
             </el-form-item>
-            <el-form-item label="是否本月第一次出访" prop="isFirstVisit">
-              <el-select v-model="queryParams.isFirstVisit" placeholder="请选择是否本月第一次出访" clearable>
+            <el-form-item label="是否本月第一次出访" prop="isFirstVisit" label-width="120px">
+              <el-select v-model="queryParams.isFirstVisit" placeholder="是否本月第一次出访" style="width: 100px" clearable>
                 <el-option v-for="dict in dc_true_or_false" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
-            <el-form-item label="是否计入外勤项数" prop="isOutCount">
-              <el-select v-model="queryParams.isOutCount" placeholder="请选择是否计入外勤项数" clearable>
+            <el-form-item label="是否计入外勤项数" prop="isOutCount" label-width="120px">
+              <el-select v-model="queryParams.isOutCount" placeholder="是否计入外勤项数"  style="width: 100px" clearable>
                 <el-option v-for="dict in dc_true_or_false" :key="dict.value" :label="dict.label" :value="dict.value" />
               </el-select>
             </el-form-item>
-            <el-form-item label="面访地点" prop="visitAddress">
-              <el-input v-model="queryParams.visitAddress" placeholder="请输入面访地点" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="出访定位" prop="visitAddress">
+              <el-input v-model="queryParams.visitAddress" placeholder="请输入出访定位" clearable style="width: 200px" @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
