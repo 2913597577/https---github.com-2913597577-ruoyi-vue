@@ -1010,6 +1010,12 @@
               <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" style="width: 140px" clearable 
               @keyup.enter="handleQuery" />
             </el-form-item>
+            <el-form-item label="录入人" prop="inviterId" label-width="80px">
+              <el-select filterable v-model="queryParams.inviterId" placeholder="请选择录入人" clearable  style="width: 140px">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+            </el-form-item>
             <el-form-item label="地址(仅区或县)" prop="district" label-width="100px">
               <el-input v-model="queryParams.district" placeholder="请输入公司所在区或县" style="width: 140px" clearable 
               @keyup.enter="handleQuery" />

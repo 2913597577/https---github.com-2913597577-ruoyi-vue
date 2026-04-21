@@ -149,12 +149,7 @@
                 </template>
               </el-select-v2>
             </el-form-item>
-            <el-form-item label="案件类型" prop="caseType">
-              <el-select v-model="queryParams.caseType" placeholder="请选择案件类型" clearable>
-                <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label"
-                  :value="dict.value" />
-              </el-select>
-            </el-form-item>
+           
             <!-- <el-form-item label="客户id" prop="customerId">
               <el-input v-model="queryParams.customerId" placeholder="请输入客户id" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
@@ -165,6 +160,35 @@
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
               </el-select-v2>
+            </el-form-item>
+            <el-form-item label="归属城市" prop="remark1">
+              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 120px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+        <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+          style="width: 120px" @change="handleLegalSupportChange">
+          <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+            :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+        </el-select>
+            </el-form-item>
+            <el-form-item label="案件类型" prop="caseType">
+              <el-select v-model="queryParams.caseType" placeholder="请选择案件类型" style="width: 120px" clearable>
+                <el-option v-for="dict in customer_case_type" :key="dict.value" :label="dict.label"
+                  :value="dict.value" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="跟进日期" prop="trackingTime">
+              <el-date-picker clearable v-model="queryParams.trackingTime" type="date" 
+               value-format="YYYY-MM-DD"
+                placeholder="跟进日期" style="width: 120px" />
+            </el-form-item>
+            <el-form-item label="下次跟进日期" label-width="90px" prop="nextTrackingTime">
+              <el-date-picker clearable v-model="queryParams.nextTrackingTime" type="date" 
+               value-format="YYYY-MM-DD"
+                placeholder="下次跟进日期" style="width: 120px" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>

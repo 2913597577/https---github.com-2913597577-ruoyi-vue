@@ -165,7 +165,7 @@
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="流转单编号" align="center" prop="transferId" /> -->
         <!-- <el-table-column label="业绩所属用户id" align="center" prop="userId" /> -->
-        <el-table-column label="客户名称" align="center" prop="companyName" width="140px" show-overflow-tooltip />
+        <el-table-column label="客户名称" align="center" prop="companyName" width="160px" show-overflow-tooltip />
         <el-table-column label="服务类型" align="center" prop="serviceType" width="100px" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
@@ -178,22 +178,22 @@
         </el-table-column>
         <el-table-column label="业绩所属人" align="center" prop="user_name" width="100px" show-overflow-tooltip />
         <el-table-column label="业绩所属金额" align="center" prop="balance" width="140px"/>
-        <el-table-column label="业绩所属城市" align="center" prop="city">
+        <el-table-column label="业绩所属城市" align="center" prop="city" width="100px">
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
           </template>
       </el-table-column>
-        <el-table-column label="客户服务城市" align="center" prop="serviceCity">
+        <el-table-column label="客户服务城市" align="center" prop="serviceCity" width="100px">
             <template #default="scope">
               <dict-tag :options="dc_sercive_city" :value="scope.row.serviceCity" />
             </template>
         </el-table-column>
-        <el-table-column label="签单时间" align="center" prop="serviceStart" width="120">
+        <el-table-column label="服务开始时间" align="center" prop="serviceStart" width="120">
         <template #default="scope">
           <span>{{ scope.row.serviceStart ? parseTime(scope.row.serviceStart, '{y}-{m}-{d}') : '' }}</span>
         </template>
         </el-table-column>
-        <el-table-column label="服务到期时间" align="center" prop="serviceEnd" width="120">
+        <el-table-column label="服务结束时间" align="center" prop="serviceEnd" width="120">
           <template #default="scope">
           <span>{{ scope.row.serviceEnd ? parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') : '' }}</span>
         </template>
@@ -227,7 +227,7 @@
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="100px">
             <!-- 流转单id改为多选下拉 -->
-            <el-form-item label="对接客户" prop="transferId">
+            <el-form-item label="对接客户" prop="companyName">
              <!--  <el-select 
                 v-model="queryParams.transferId" 
                 placeholder="请选择对接客户" 
@@ -241,7 +241,7 @@
                   :value="item.customer_id">
                 </el-option>
               </el-select> -->
-              <el-select-v2 v-model="queryParams.transferId" placeholder="请选择客户" :options="customerList" :props="selectProps"
+              <el-select-v2 v-model="queryParams.companyName"  multiple  placeholder="请选择客户" :options="customerList" :props="selectProps"
           filterable clearable :loading="loading">
           <template #empty>
             <div class="empty-state">未找到匹配的客户</div>
@@ -250,15 +250,16 @@
             </el-form-item>
             
             <!-- 业绩所属用户id改为多选下拉 -->
-            <el-form-item label="业绩所属员工" prop="userId" label-width="100px">
+            <el-form-item label="业绩所属人" prop="userId" label-width="100px">
               <el-select 
                 v-model="queryParams.userId" 
-                placeholder="请选择业绩所属员工" 
+                placeholder="业绩所属人" 
                 clearable 
                 multiple 
                 filterable
                 collapse-tags
                 collapse-tags-tooltip
+                style="width: 120px;"
                 @change="handleQuery">
                  <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId">
@@ -267,37 +268,59 @@
             </el-form-item>
 
                         <!-- 邀请人ID改为多选下拉 -->
-            <el-form-item label="签单人" prop="inviterId">
+            <el-form-item label="分配人" prop="inviterId">
               <el-select 
                 v-model="queryParams.inviterId" 
-                placeholder="请选择签单人" 
+                placeholder="分配人" 
                 clearable 
                 multiple 
                 filterable
                 collapse-tags
                 collapse-tags-tooltip
+                style="width: 120px;"
                 @change="handleQuery">
                 <el-option v-for="user in userList" :key="user.userId"
                       :label="user.nickName + '(' + user.userName + ')'" :value="user.userId">
                 </el-option>
               </el-select>
             </el-form-item>
-            
+            <!-- <el-form-item label="分配时间" prop="create_time">
+              <el-date-picker
+                v-model="queryParams.create_time"
+                type="date"
+                placeholder="分配时间"
+                value-format="YYYY-MM-DD" style="width: 120px;">
+              </el-date-picker>
+            </el-form-item> -->
             <!-- 服务类型改为多选下拉 -->
             <el-form-item label="服务类型" prop="serviceType">
               <el-select 
                 v-model="queryParams.serviceType" 
-                placeholder="请选择服务类型" 
+                placeholder="服务类型" 
                 clearable 
                 multiple 
                 collapse-tags
                 collapse-tags-tooltip
+                style="width: 120px;"
                 @change="handleQuery">
                 <el-option v-for="dict in combo_type" :key="dict.value" :value="dict.value" :label="dict.label">
                 </el-option>
               </el-select>
             </el-form-item>
-    
+            <el-form-item label="二次收费类型" prop="secondDevelopmentType">
+              <el-select 
+                v-model="queryParams.secondDevelopmentType" 
+                placeholder="二次收费类型"
+                clearable 
+                multiple 
+                collapse-tags
+                collapse-tags-tooltip
+                style="width: 120px;"
+                @change="handleQuery">
+                <el-option v-for="dict in dc_secondary_combo" :key="dict.value" :value="dict.value" :label="dict.label">
+                </el-option>
+              </el-select>
+            </el-form-item>
             <!-- 业绩所属城市改为多选下拉 -->
             <el-form-item label="业绩所属城市" prop="city" label-width="100px">
               <el-select 
@@ -308,8 +331,8 @@
                 filterable
                 collapse-tags
                 collapse-tags-tooltip
+                style="width: 120px;"
                 @change="handleQuery"
-                style="width: 200px;"
                 >
                 <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
@@ -317,16 +340,16 @@
             </el-form-item>
             
             <!-- 服务城市改为多选下拉 -->
-            <el-form-item label="服务城市" prop="serviceCity">
+            <el-form-item label="客户服务城市" prop="serviceCity">
               <el-select 
                 v-model="queryParams.serviceCity" 
-                placeholder="请选择服务城市" 
+                placeholder="请选择客户服务城市"
                 clearable 
                 multiple 
                 filterable
                 collapse-tags
                 collapse-tags-tooltip
-                style="width: 200px;"
+                style="width: 120px;"
                 @change="handleQuery">
                 <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
@@ -335,22 +358,24 @@
             
             <!-- 服务时间保持日期范围选择器 -->
             <!-- 签单时间 -->
-            <el-form-item label="签单时间" prop="serviceStart">
+            <el-form-item label="服务开始时间" prop="serviceStart">
               <el-date-picker
                 v-model="queryParams.serviceStart"
                 type="date"
-                placeholder="请选择签单时间"
-                value-format="YYYY-MM-DD">
+                placeholder="服务开始时间"
+                value-format="YYYY-MM-DD"
+                style="width: 120px;">
               </el-date-picker>
             </el-form-item>
 
             <!-- 服务结束时间 -->
-            <el-form-item label="服务到期时间" prop="serviceEnd" label-width="100px">
+            <el-form-item label="服务结束时间" prop="serviceEnd" label-width="100px">
               <el-date-picker
                 v-model="queryParams.serviceEnd"
                 type="date"
-                placeholder="请选择服务结束时间"
-                value-format="YYYY-MM-DD">
+                placeholder="服务结束时间"
+                value-format="YYYY-MM-DD"
+                style="width: 120px;">
               </el-date-picker>
             </el-form-item>
             
@@ -375,10 +400,10 @@
         <el-form-item label="业绩所属用户id" prop="userId">
           <el-input v-model="form.userId" placeholder="请输入业绩所属用户id" />
         </el-form-item> -->
-        <el-form-item label="业绩所属员工" prop="userId">
+        <el-form-item label="业绩所属人" prop="userId">
          <el-select 
                 v-model="form.userId" 
-                placeholder="请选择业绩所属员工" 
+                placeholder="请选择业绩所属人" 
                 clearable 
                 >
                  <el-option v-for="user in userList" :key="user.userId"
@@ -411,6 +436,7 @@ import { getCustomerByUserId } from '@/api/common';
 import { listUser } from '@/api/customerInfo/customerInfo';
 import { listCustomerPerformance, getCustomerPerformance, delCustomerPerformance, addCustomerPerformance, updateCustomerPerformance, listCustomerPerformanceByPage } from '@/api/customerPerformance/customerPerformance';
 import { CustomerPerformanceVO, CustomerPerformanceQuery, CustomerPerformanceForm } from '@/api/customerPerformance/customerPerformance/types';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { dc_sercive_city,combo_type } = toRefs<any>(proxy?.useDict('dc_sercive_city','combo_type'));
@@ -490,7 +516,7 @@ const searchDialogVisible = ref(false)
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
   label: 'customer_name',
-  value: 'customer_id'
+  value: 'customer_name'
 }
 
 
@@ -504,7 +530,7 @@ const loadCustomerList = async () => {
   }
 }
 
-const loadUserList = async () => {
+/* const loadUserList = async () => {
   try {
     // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
     const response = await listUser();
@@ -513,8 +539,19 @@ const loadUserList = async () => {
     proxy?.$modal.msgError('加载人员失败，请稍后重试');
     console.error('人员列表加载异常：', error);
   }
-};
+}; */
 
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+   // console.log('法务支持人员列表：', response);
+    userList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载人员失败，请稍后重试');
+    console.error('人员列表加载异常：', error);
+  }
+};
 
 
 /** 查询业绩归属登记列表 */
@@ -657,7 +694,8 @@ return sums;
 
 
 onMounted(() => {
-  loadUserList();
+  //loadUserList();
+  loadLawyerSupportList();
   loadCustomerList();
   getList();
 });

@@ -167,7 +167,7 @@
         </el-table-column>
         <el-table-column label="分配法务支持" align="center" prop="isAssigned" width="100">
           <template #default="scope">
-            <dict-tag :options="dc_true_or_false" :value="scope.row.isAssigned"/>
+            <dict-tag :options="dc_false_true" :value="scope.row.isAssigned" />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200px" fixed="right">
@@ -190,37 +190,86 @@
       <transition :enter-active-class="proxy?.animate.searchAnimate.enter" :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="120px">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" >
+            <el-form-item label="客户名称" prop="customerInfoId">
+              <!-- <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable style="width: 140px" @keyup.enter="handleQuery" /> -->
+              <el-select-v2 v-model="queryParams.customerInfoId" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable style="width: 200px"  :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
+            </el-form-item>
             <el-form-item label="负责人" prop="principal">
-              <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.principal" placeholder="请输入负责人" style="width: 120px" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="法务支持" prop="lawyerId">
-              <el-input v-model="queryParams.lawyerId" placeholder="请输入法务法务支持" clearable @keyup.enter="handleQuery" />
-            </el-form-item>
-            <el-form-item label="套餐类型" prop="packageType">
-              <el-select v-model="queryParams.packageType" placeholder="请选择套餐类型" clearable >
-                <el-option v-for="dict in combo_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
+           
+            <el-form-item label="二次收费类型" prop="packageType" label-width="90px">
+              <el-select v-model="queryParams.packageType" placeholder="请选择套餐类型" style="width: 120px" clearable >
+                <el-option v-for="dict in dc_secondary_combo" :key="dict.value" :label="dict.label" :value="dict.value"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="是否转为意向客户" prop="isIntention">
-              <el-input v-model="queryParams.isIntention" placeholder="请输入是否转为意向客户" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="是否转为意向客户" prop="isIntention" label-width="110px">
+              <!-- <el-input v-model="queryParams.isIntention" placeholder="请输入是否转为意向客户" style="width: 120px" clearable @keyup.enter="handleQuery" /> -->
+              <el-select v-model="queryParams.isIntention" placeholder="是否转为意向客户" style="width: 120px" clearable >
+                <el-option v-for="dict in dc_false_true" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
             </el-form-item>
-            <el-form-item label="是否转为风险客户" prop="isRisk">
-              <el-input v-model="queryParams.isRisk" placeholder="请输入是否转为风险客户" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="是否转为风险客户" prop="isRisk" label-width="110px">
+              <!-- <el-input v-model="queryParams.isRisk" placeholder="请输入是否转为风险客户" style="width: 120px" clearable @keyup.enter="handleQuery" /> -->
+              <el-select v-model="queryParams.isRisk" placeholder="是否转为风险客户" style="width: 120px" clearable >
+                <el-option v-for="dict in dc_false_true" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
             </el-form-item>
-            <el-form-item label="是否转为退费客户" prop="isRefund">
-              <el-input v-model="queryParams.isRefund" placeholder="请输入是否转为退费客户" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="是否转为退费客户" prop="isRefund" label-width="110px">
+              <!-- <el-input v-model="queryParams.isRefund" placeholder="请输入是否转为退费客户" style="width: 120px" clearable @keyup.enter="handleQuery" /> -->
+              <el-select v-model="queryParams.isRefund" placeholder="是否转为退费客户" style="width: 120px" clearable >
+                <el-option v-for="dict in dc_false_true" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="开始时间" prop="startDate">
+              <el-date-picker clearable v-model="queryParams.startDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择开始时间" style="width: 140px" />
+            </el-form-item>
+            <el-form-item label="到期时间" prop="expireDate">
+              <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择到期时间" style="width: 140px" />
+            </el-form-item>
+            <el-form-item label="合同金额 >=" prop="contractAmount" label-width="80px">
+              <el-input v-model="queryParams.contractAmount" placeholder="请输入合同金额 >=" type="number" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="实收金额 >=" prop="actualReceipt" label-width="80px">
+              <el-input v-model="queryParams.actualReceipt" placeholder="请输入实收金额 >=" type="number" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="尾款金额 >=" prop="balance" label-width="80px">
+              <el-input v-model="queryParams.balance" placeholder="请输入尾款金额 >=" type="number" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="签单日期" prop="signDate">
+              <el-date-picker clearable v-model="queryParams.signDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择签单日期" style="width: 120px" />
             </el-form-item>
             <el-form-item label="客户类型" prop="customerType">
-              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型  A-0 B-1 C-2 D-3" clearable >
+              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable style="width: 120px">
                 <el-option v-for="dict in dc_customer_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="客户服务城市" prop="customerCity">
-              <el-input v-model="queryParams.customerCity" placeholder="请输入客户服务城市" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="归属城市" prop="customerCity">
+              <el-select v-model="queryParams.customerCity" placeholder="请选择归属城市" clearable style="width: 140px">
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
-            <el-form-item label="是否分配法务支持" prop="isAssigned">
-              <el-input v-model="queryParams.isAssigned" placeholder="请输入是否分配法务支持 0-未分配 1-已分配" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="是否分配法务支持" prop="isAssigned" label-width="110px">
+              <!-- <el-input v-model="queryParams.isAssigned" placeholder="请输入是否分配法务支持" clearable style="width: 120px" @keyup.enter="handleQuery" /> -->
+              <el-select v-model="queryParams.isAssigned" placeholder="是否分配法务支持" style="width: 120px" clearable >
+                <el-option v-for="dict in dc_false_true" :key="dict.value" :label="dict.label" :value="dict.value"/>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="录入人(法务支持)" prop="transferPerson" label-width="110px">
+              <el-select filterable v-model="queryParams.transferPerson" placeholder="请选择法务支持" clearable  style="width: 140px">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.nickName" filterable></el-option>
+          </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -373,6 +422,8 @@
 <script setup name="CustomerInformationLog" lang="ts">
 import { listCustomerInformationLog, getCustomerInformationLog, delCustomerInformationLog, addCustomerInformationLog, updateCustomerInformationLog } from '@/api/customerInformationLog/customerInformationLog';
 import { CustomerInformationLogVO, CustomerInformationLogQuery, CustomerInformationLogForm } from '@/api/customerInformationLog/customerInformationLog/types';
+import { getCustomerByUserId } from '@/api/common';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { dc_false_true, dc_true_or_false,dc_customer_type, combo_type } = toRefs<any>(proxy?.useDict('dc_false_true', 'dc_true_or_false','dc_customer_type', 'combo_type'));
@@ -391,6 +442,7 @@ const route = useRoute();
 
 const queryFormRef = ref<ElFormInstance>();
 const customerInformationLogFormRef = ref<ElFormInstance>();
+const customerList = ref<any[]>([]);
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -478,6 +530,11 @@ const { queryParams, form, rules } = toRefs(data);
 //查找相关
 const searchDialogVisible = ref(false)
 
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'customer_id'
+}
 
 /** 查询客户信息记录列表 */
 const getList = async () => {
@@ -608,7 +665,32 @@ const getSummaries = (param) => {
 return sums;
 }
 
+// 1. 法务支持人员列表（加载接口数据）
+const lawyerList = ref([]);
 
+/** 2. 加载法务支持人员列表（调用用户提供的接口） */
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    console.log('原始客户列表数据:', res.data); // 检查数据结构
+    customerList.value = res.data;
+  } catch (error) { 
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
 
 watch(
   () => route.query.customerInfoId,
@@ -629,8 +711,22 @@ watch(
   },
   { immediate: true } // 立即执行一次
 );
-onMounted(() => {
-  getList();
+
+
+onMounted(async () => {
+  try {
+    // 并行加载下拉框所需的基础数据
+    await Promise.all([
+      loadLawyerSupportList(),
+      loadCustomerList()
+    ]);
+    
+    // 加载表格数据
+    await getList();
+  } catch (error) {
+    console.error('页面初始化失败:', error);
+    proxy?.$modal.msgError('页面数据加载失败，请刷新重试');
+  }
 });
 </script>
 

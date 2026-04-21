@@ -116,6 +116,7 @@
           </template>
         </el-table-column>
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
+
         <el-table-column label="债务人" align="center" prop="debtorName" width="100" show-overflow-tooltip />
         <el-table-column label="欠款金额" align="center" prop="debtAmount" width="200" />
         <el-table-column label="剩余欠款" align="center" prop="remainingAmount" width="200" />
@@ -175,9 +176,9 @@
       :leave-active-class="proxy?.animate.searchAnimate.leave">
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
-          <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="90px">
+          <el-form ref="queryFormRef" :model="queryParams" :inline="true" >
             <el-form-item label="归属城市" prop="remark1">
-              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 240px" >
+              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 120px" >
                 <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
                 </el-option>
               </el-select>
@@ -190,31 +191,38 @@
               </el-select> -->
               <!-- 虚拟加载客户名称 -->
               <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList"
-                :props="selectProps" filterable clearable :loading="loading" style="width: 200px">
+                :props="selectProps" filterable clearable :loading="loading" style="width: 180px">
                 <template #empty>
                   <div class="empty-state">未找到匹配的客户</div>
                 </template>
               </el-select-v2>
             </el-form-item>
-            <el-form-item label="欠款人" prop="debtorName">
-              <el-input v-model="queryParams.debtorName" placeholder="请输入欠款人" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+        <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+          style="width: 120px" @change="handleLegalSupportChange">
+          <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+            :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+        </el-select>
             </el-form-item>
-            <el-form-item label="欠款金额" prop="debtAmount">
-              <el-input v-model="queryParams.debtAmount" type="number" placeholder="请输入欠款金额" clearable @keyup.enter="handleQuery" />
+            <el-form-item label="债务人" prop="debtorName">
+              <el-input v-model="queryParams.debtorName" placeholder="请输入债务人"  style="width: 120px" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="剩余欠款" prop="remainingAmount">
-              <el-input v-model="queryParams.remainingAmount" type="number" placeholder="请输入剩余欠款" clearable
+            <el-form-item label="欠款金额 >=" prop="debtAmount" label-width="80px">
+              <el-input v-model="queryParams.debtAmount" type="number" placeholder="欠款金额 >=" style="width: 120px" clearable @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="剩余欠款 >=" prop="remainingAmount" label-width="80px">
+              <el-input v-model="queryParams.remainingAmount" type="number" placeholder="剩余欠款 >=" style="width: 120px" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="联系电话" prop="contactPhone">
-              <el-input v-model="queryParams.contactPhone" type="number" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.contactPhone" type="number" placeholder="请输入联系电话"  style="width: 120px" clearable @keyup.enter="handleQuery" />
             </el-form-item>
             <el-form-item label="身份证号" prop="idCard">
-              <el-input v-model="queryParams.idCard" placeholder="请输入身份证号" type="number" clearable @keyup.enter="handleQuery" />
+              <el-input v-model="queryParams.idCard" placeholder="请输入身份证号" type="number" style="width: 180px" clearable @keyup.enter="handleQuery" />
             </el-form-item>
-            <el-form-item label="需求接收时间" prop="requestReceiveTime">
+            <el-form-item label="需求接收时间" prop="requestReceiveTime" label-width="90px">
               <el-date-picker clearable v-model="queryParams.requestReceiveTime" type="date" value-format="YYYY-MM-DD"
-                placeholder="请选择需求接收时间" />
+                placeholder="需求接收时间" style="width: 120px" />
             </el-form-item>
             <!-- <el-form-item label="备注" prop="evidenceNotes">
               <el-input v-model="queryParams.evidenceNotes" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
@@ -222,20 +230,20 @@
             <el-form-item label="立案日期" prop="filingDate">
               <el-date-picker clearable v-model="queryParams.filingDate" type="date" 
                value-format="YYYY-MM-DD"
-                placeholder="请选择立案日期" />
+                placeholder="立案日期" style="width: 120px" />
             </el-form-item>
-            <el-form-item label="立案系统账号" prop="filingSystemAccount">
-              <el-input v-model="queryParams.filingSystemAccount" placeholder="请输入立案系统账号" clearable
-                @keyup.enter="handleQuery" />
+            <el-form-item label="立案系统账号" prop="filingSystemAccount" label-width="90px">
+              <el-input v-model="queryParams.filingSystemAccount" placeholder="立案系统账号" clearable
+              style="width: 120px" @keyup.enter="handleQuery" />
             </el-form-item>
          <!--    <el-form-item label="立案密码" prop="filingPassword">
               <el-input v-model="queryParams.filingPassword" placeholder="请输入立案密码" clearable
                 @keyup.enter="handleQuery" />
             </el-form-item> -->
-            <el-form-item label="下次联系时间" prop="nextContactTime">
+            <el-form-item label="下次联系时间" prop="nextContactTime" label-width="90px">
               <el-date-picker clearable v-model="queryParams.nextContactTime" type="date" 
                value-format="YYYY-MM-DD"
-                placeholder="请选择下次联系时间" />
+                placeholder="下次联系时间" style="width: 120px" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>

@@ -674,7 +674,7 @@
     </el-dialog>
 
  <!-- 搜索按钮弹窗内容 -->
- <el-dialog v-model="searchDialogVisible" title="筛选" width="900px" append-to-body draggable>
+ <el-dialog v-model="searchDialogVisible" title="筛选" width="880px" append-to-body draggable>
   <!-- <template> -->
   <div class="p-2">
     <transition :enter-active-class="proxy?.animate.searchAnimate.enter"
@@ -682,11 +682,22 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">  
           <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="80px">
-            <el-form-item label="客户名称" prop="customerName">
-              <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            <el-form-item label="客户名称" prop="id">
+              <!-- <el-input v-model="queryParams.customerName" placeholder="请输入客户名称" clearable style="width: 140px" @keyup.enter="handleQuery" /> -->
+              <el-select-v2 v-model="queryParams.id" placeholder="请选择客户" :options="customerList"
+                :props="selectProps" filterable clearable style="width: 240px"  :loading="loading">
+                <template #empty>
+                  <div class="empty-state">未找到匹配的客户</div>
+                </template>
+              </el-select-v2>
             </el-form-item>
+            
             <el-form-item label="负责人" prop="principal">
               <el-input v-model="queryParams.principal" placeholder="请输入负责人" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="签单日期" prop="signDate">
+              <el-date-picker clearable v-model="queryParams.signDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="请选择签单日期" style="width: 140px" />
             </el-form-item>
             <el-form-item label="负责人电话" prop="principalPhone"  label-width="80px">
               <el-input v-model="queryParams.principalPhone" type="number" placeholder="请输入负责人电话" clearable style="width: 140px" @keyup.enter="handleQuery" />
@@ -724,10 +735,10 @@
                 </el-option>
               </el-select>
             </el-form-item> -->
-            <el-form-item label="录入时间" prop="signDate">
+           <!--  <el-form-item label="录入时间" prop="signDate">
               <el-date-picker clearable v-model="queryParams.signDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择签约时间" style="width: 140px" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="开始时间" prop="startDate">
               <el-date-picker clearable v-model="queryParams.startDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择开始时间" style="width: 140px" />
@@ -736,18 +747,7 @@
               <el-date-picker clearable v-model="queryParams.expireDate" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" style="width: 140px" />
             </el-form-item>
-            <el-form-item label="法务支持" prop="lawyerId">
-              <el-select filterable v-model="queryParams.lawyerId" placeholder="请选择法务支持" clearable  style="width: 140px">
-            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
-              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
-          </el-select>
-            </el-form-item>
-            <el-form-item label="客户类型" prop="customerType">
-              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable style="width: 140px" >
-                <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value" align="center">
-                </el-option>
-              </el-select>
-            </el-form-item>
+           
             <el-form-item label="合同金额 >=" prop="contractAmount">
               <el-input v-model="queryParams.contractAmount" placeholder="请输入合同金额 >=" type="number" clearable style="width: 140px" @keyup.enter="handleQuery" />
             </el-form-item>
@@ -756,6 +756,12 @@
             </el-form-item>
             <el-form-item label="尾款金额 >=" prop="balance">
               <el-input v-model="queryParams.balance" placeholder="请输入尾款金额 >=" type="number" clearable style="width: 140px" @keyup.enter="handleQuery" />
+            </el-form-item>
+            <el-form-item label="客户类型" prop="customerType">
+              <el-select v-model="queryParams.customerType" placeholder="请选择客户类型" clearable style="width: 140px" >
+                <el-option v-for="item in dc_customer_type" :key="item.value" :label="item.label" :value="item.value" align="center">
+                </el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="归属城市" prop="customerCity">
               <el-select v-model="queryParams.customerCity" placeholder="请选择归属城市" clearable style="width: 140px" >
@@ -768,6 +774,12 @@
                 <el-option v-for="item in combo_type" :key="item.value" :label="item.label" :value="item.value" align="center">
                 </el-option>
               </el-select>
+            </el-form-item>
+            <el-form-item label="法务支持" prop="lawyerId">
+              <el-select filterable v-model="queryParams.lawyerId" placeholder="请选择法务支持" clearable  style="width: 140px">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -984,7 +996,7 @@ import { addCustomerRiskRefund } from '@/api/customerRiskRefund/customerRiskRefu
 import { addIntention } from '@/api/customerIntention/customerIntention';
 import { CustomerIntentionForm, CustomerIntentionQuery, CustomerIntentionVO } from '@/api/customerIntention/customerIntention/types';
 import { useRouter } from 'vue-router';
-
+import { getCustomerByUserId } from '@/api/common';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -1011,7 +1023,7 @@ const customerInfoDialog = reactive<DialogOption>({
   title: ''
 });
 const contract = ref(null);
-
+const customerList = ref<any[]>([]);
 const dialog = reactive<DialogOption>({
   visible: false,
   title: ''
@@ -1251,6 +1263,12 @@ const CustomerRiskRefundFormdata = reactive<PageData<CustomerRiskRefundForm, Cus
     ]
   }
 });
+
+// select 的 props 定义为常量，避免递归更新
+const selectProps = {
+  label: 'customer_name',
+  value: 'customer_id'
+}
 
 // 解构风险/退费表单数据（避免和原客户表单冲突）
 const {
@@ -1891,6 +1909,17 @@ const formatCurrency = (value) => {
   getList();
 }); */
 
+const loadCustomerList = async () => {
+  try {
+    const res = await getCustomerByUserId();
+    //console.log('原始客户列表数据:', res.data); // 检查数据结构
+    customerList.value = res.data;
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+    proxy?.$modal.msgError('获取客户列表失败');
+  }
+}
+
 // ========== 1. 添加初始化状态标记 ==========
 const isInitialized = ref(false);
 const isDataLoaded = ref(false);
@@ -1902,6 +1931,7 @@ onMounted(async () => {
     // 并行加载所有必要数据
     await Promise.all([
       loadLawyerSupportList(),  // 表格显示法务名称
+      loadCustomerList(),
       loadSellerList(),         // 其他功能需要
       getList()                 // 表格数据
     ]);

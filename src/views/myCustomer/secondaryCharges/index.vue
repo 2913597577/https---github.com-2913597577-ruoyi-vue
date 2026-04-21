@@ -997,6 +997,12 @@
               <el-input v-model="queryParams.companyName" placeholder="请输入公司名称" style="width: 140px" clearable 
               @keyup.enter="handleQuery" />
             </el-form-item>
+            <el-form-item label="录入人" prop="inviterId" label-width="80px">
+              <el-select filterable v-model="queryParams.inviterId" placeholder="请选择录入人" clearable  style="width: 140px">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+            </el-form-item>
             <el-form-item label="地址(仅区或县)" prop="district" label-width="100px">
               <el-input v-model="queryParams.district" placeholder="请输入公司所在区或县" style="width: 140px" clearable 
               @keyup.enter="handleQuery" />
@@ -1035,10 +1041,10 @@
             <!-- <el-form-item label="签约类型" prop="signType" label-width="68px">
               <el-input v-model="queryParams.contractType" placeholder="请输入签约类型" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
-        <el-form-item label="套餐类型" prop="serviceType" >
-              <el-select v-model="queryParams.serviceType" placeholder="请选择套餐类型" clearable
+        <el-form-item label="二次收费类型" prop="secondDevelopmentType" label-width="90px">
+              <el-select v-model="queryParams.secondDevelopmentType" placeholder="二次收费类型" clearable
                 @keyup.enter="handleQuery" style="width: 140px">
-                <el-option v-for="item in combo_type" :key="item.value" :label="item.label"
+                <el-option v-for="item in dc_secondary_combo" :key="item.value" :label="item.label"
                   :value="item.value" align="center" ></el-option>
               </el-select>
             </el-form-item>
@@ -1499,6 +1505,7 @@ import {
   updateCustomerTransfer
 } from '@/api/myCustomer/customerTransfer';
 import { CustomerTransferForm, CustomerTransferQuery, CustomerTransferVO } from '@/api/myCustomer/customerTransfer/types';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { ElMessage } from 'element-plus';
 import { nextTick } from 'vue';
 import { Picture, PictureFilled, Document } from '@element-plus/icons-vue';
@@ -1525,6 +1532,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const userList = ref([]); // 用户列表
+const lawyerList = ref([]);
 
 const queryFormRef = ref<ElFormInstance>();
 const customerTransferFormRef = ref<ElFormInstance>();
@@ -2443,11 +2451,34 @@ const handleCompanyChange = (companyId: string) => {
   }
 };
 
+/** 加载法务支持人员列表（调用用户提供的接口） */
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
+
+// 添加获取法务人员姓名的方法
+const getLawyerNameById = (lawyerId: string | number) => {
+  //console.log('lawyerId:', lawyerId);
+  if (!lawyerId) return '';
+   // 临时调试：打印第一个法务人员的ID类型和当前查找ID的类型
+  const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
+  //console.log('lawyer:', lawyer);
+  return lawyer ? `${lawyer.nickName}` : '';
+};
 
 onMounted(() => {
   // 并行加载所有初始数据，提升首屏渲染速度
   Promise.all([
     loadUserList(),
+    loadLawyerSupportList(),
     getCustomerListInfo(),
     getList()
   ]).catch(err => {
