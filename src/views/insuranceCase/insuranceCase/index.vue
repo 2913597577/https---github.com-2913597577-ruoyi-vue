@@ -326,9 +326,10 @@ import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { listInsuranceCase, getInsuranceCase, delInsuranceCase, addInsuranceCase, updateInsuranceCase } from '@/api/insuranceCase/insuranceCase';
 import { InsuranceCaseVO, InsuranceCaseQuery, InsuranceCaseForm } from '@/api/insuranceCase/insuranceCase/types';
 import { useRoute } from 'vue-router';
+import * as XLSX from 'xlsx';
+
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
-
 
 const route = useRoute();
 const insuranceCaseList = ref<InsuranceCaseVO[]>([]);
@@ -598,11 +599,60 @@ const loadLawyerSupportList = async () => {
 };
 
 /** 导出按钮操作 */
-const handleExport = () => {
+/* const handleExport = () => {
   proxy?.download('insuranceCase/insuranceCase/export', {
     ...queryParams.value
   }, `insuranceCase_${new Date().getTime()}.xlsx`)
 }
+ */
+/** 导出按钮操作 */
+const handleExport = async () => {
+  try {
+    // 1. 获取全量数据 (不分页)
+    // 注意：这里重新请求接口，设置 pageSize 为大数值，确保导出所有符合当前筛选条件的数据
+    const res = await listInsuranceCase({ 
+      ...queryParams.value, 
+      pageNum: 1, 
+      pageSize: 100000 
+    });
+    
+    const list = res.rows || [];
+
+    // 2. 转换数据格式，将 customerId 转为 customerName，并处理字典项
+    const exportData = list.map(item => ({
+      '客户名称': getCustomerNameById(item.customerId), // ✅ 核心：使用前端函数转换名称
+      '法务支持': item.legalSupportName,
+      '下单日期': item.orderDate,
+      '保费': item.premium,
+      '工单号': item.insuranceNumber,
+      '案由': item.caseReason,
+      '标的额': item.subjectAmount,
+      '原告方': item.plaintiff,
+      '被告方': item.defendant,
+      '管辖权法院': item.jurisdictionCourt,
+      '备注': item.remark,
+      // 处理归属城市字典
+      '归属城市': item.remark1 !== null && item.remark1 !== undefined 
+        ? (dc_sercive_city.value?.find((d: any) => d.value == item.remark1)?.label || item.remark1) 
+        : ''
+    }));
+
+    // 3. 生成 Worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // 4. 生成 Workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "保险记录表");
+
+    // 5. 触发浏览器下载
+    XLSX.writeFile(wb, `保险记录表_${new Date().getTime()}.xlsx`);
+    
+  } catch (error) {
+    console.error('导出失败:', error);
+    proxy?.$modal.msgError('导出失败');
+  }
+}
+
 
 /* watch(
   () => route.query.customerId,

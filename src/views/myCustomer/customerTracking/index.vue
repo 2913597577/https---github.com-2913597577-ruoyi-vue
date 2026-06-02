@@ -412,7 +412,7 @@ import { CustomerTrackingVO, CustomerTrackingQuery, CustomerTrackingForm } from 
 import { addCustomerJobOrder } from '@/api/customerJobOrder/customerJobOrder';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { useRoute } from 'vue-router';  // 用于接收路由参数
-
+import * as XLSX from 'xlsx'; // 引入 xlsx
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -711,11 +711,60 @@ const handleDelete = async (row?: CustomerTrackingVO) => {
 }
 
 /** 导出按钮操作 */
-const handleExport = () => {
+/* const handleExport = () => {
   proxy?.download('myCustomer/customerTracking/export', {
     ...queryParams.value
   }, `customerTracking_${new Date().getTime()}.xlsx`)
+} */
+
+/** 导出按钮操作 */
+const handleExport = async () => {
+  try {
+    // 1. 获取全量数据 (不分页)
+    // 注意：这里重新请求接口，设置 pageSize 为大数值，确保导出所有符合当前筛选条件的数据
+    const res = await listCustomerTracking({ 
+      ...queryParams.value, 
+      pageNum: 1, 
+      pageSize: 100000 
+    });
+    
+    const list = res.rows || [];
+
+    // 2. 转换数据格式，将 customerId 转为 customerName，并处理字典项
+    const exportData = list.map(item => ({
+      '客户名称': getCustomerNameById(item.customerId), // ✅ 核心：使用前端函数转换名称
+      '法务支持': item.legalSupportName,
+      '回访时间': item.trackingTime,
+      '回访内容': item.customerRemark,
+      '下次回访时间': item.nextTime,
+      '内勤项数计数': item.interCount,
+      // 处理回访分类字典 (假设 dc_follow_classification 已加载)
+      '回访分类': item.trackingType !== null && item.trackingType !== undefined 
+        ? (dc_follow_classification.value?.find((d: any) => d.value == item.trackingType)?.label || item.trackingType) 
+        : '',
+      // 处理归属城市字典
+      '归属城市': item.remark2 !== null && item.remark2 !== undefined 
+        ? (dc_sercive_city.value?.find((d: any) => d.value == item.remark2)?.label || item.remark2) 
+        : ''
+    }));
+
+    // 3. 生成 Worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // 4. 生成 Workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "客户回访记录");
+
+    // 5. 触发浏览器下载
+    XLSX.writeFile(wb, `客户回访记录_${new Date().getTime()}.xlsx`);
+    
+  } catch (error) {
+    console.error('导出失败:', error);
+    proxy?.$modal.msgError('导出失败');
+  }
 }
+
+
 
 const loadCustomerList = async () => {
   try {

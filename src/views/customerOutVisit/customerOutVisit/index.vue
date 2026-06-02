@@ -398,6 +398,7 @@ import { useRoute } from 'vue-router';
 import { Picture, PictureFilled } from '@element-plus/icons-vue';
 import { Document } from '@element-plus/icons-vue'; // 添加 Document
 
+
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { dc_true_or_false } = toRefs<any>(proxy?.useDict('dc_true_or_false'));
@@ -563,7 +564,7 @@ const getSummaries = (param) => {
     if (column.property === 'isOutCount' || column.property === 'isFirstVisit') {
       // 统计 isOutCount 为 0 (代表"是") 的数量
       // 使用 == 0 可以同时兼容数字 0 和字符串 "0"
-      const count = data.filter(item => item.isOutCount == 0).length;
+      const count = data.filter(item => item[column.property] == 0).length;
       
       sums[index] = count;
     } else {
