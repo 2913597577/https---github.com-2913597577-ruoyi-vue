@@ -227,6 +227,11 @@
             <!-- <el-form-item label="备注" prop="evidenceNotes">
               <el-input v-model="queryParams.evidenceNotes" placeholder="请输入备注" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
+            <el-form-item label="月份筛选" prop="requestReceiveMonth">
+              <el-date-picker clearable v-model="queryParams.requestReceiveMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+        </el-form-item>
             <el-form-item label="立案日期" prop="filingDate">
               <el-date-picker clearable v-model="queryParams.filingDate" type="date" 
                value-format="YYYY-MM-DD"
@@ -314,7 +319,7 @@
           <el-input v-model="form.idCard" type="number" placeholder="请输入身份证号" />
         </el-form-item>
         <el-form-item label="需求接收时间" prop="requestReceiveTime">
-          <el-date-picker clearable v-model="form.requestReceiveTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.requestReceiveTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择需求接收时间">
           </el-date-picker>
         </el-form-item>
@@ -322,7 +327,7 @@
           <el-input v-model="form.evidenceNotes" type="textarea" placeholder="请输入证据情况等备注" />
         </el-form-item>
         <el-form-item label="立案日期" prop="filingDate">
-          <el-date-picker clearable v-model="form.filingDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.filingDate" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择立案日期">
           </el-date-picker>
         </el-form-item>
@@ -333,7 +338,7 @@
           <el-input v-model="form.filingPassword" placeholder="请输入立案密码" />
         </el-form-item>
         <el-form-item label="下次跟进时间" prop="nextContactTime">
-          <el-date-picker clearable v-model="form.nextContactTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.nextContactTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择下次跟进时间">
           </el-date-picker>
         </el-form-item>

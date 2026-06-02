@@ -185,6 +185,12 @@
                value-format="YYYY-MM-DD"
                 placeholder="跟进日期" style="width: 120px" />
             </el-form-item>
+            <el-form-item label="月份筛选" prop="trackingMonth">
+              <el-date-picker clearable v-model="queryParams.trackingMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+           </el-form-item>
+
             <el-form-item label="下次跟进日期" label-width="90px" prop="nextTrackingTime">
               <el-date-picker clearable v-model="queryParams.nextTrackingTime" type="date" 
                value-format="YYYY-MM-DD"
@@ -247,12 +253,12 @@
           <el-input v-model="form.caseProgress" type="textarea" placeholder="请输入案件进展内容" />
         </el-form-item>
         <el-form-item label="跟进日期" prop="trackingTime">
-          <el-date-picker clearable v-model="form.trackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.trackingTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择根据日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="下次跟进日期" prop="nextTrackingTime">
-          <el-date-picker clearable v-model="form.nextTrackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.nextTrackingTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择下次跟进日期">
           </el-date-picker>
         </el-form-item>

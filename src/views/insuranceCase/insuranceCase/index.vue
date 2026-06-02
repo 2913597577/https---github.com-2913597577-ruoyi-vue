@@ -186,6 +186,11 @@
               value-format="YYYY-MM-DD"
                 placeholder="下单日期" style="width: 120px" />
             </el-form-item>
+            <el-form-item label="月份筛选" prop="orderMonth">
+              <el-date-picker clearable v-model="queryParams.orderMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+        </el-form-item>
             <el-form-item label="工单号" prop="insuranceNumber">
               <el-input v-model="queryParams.insuranceNumber" placeholder="请输入工单号" clearable
               style="width: 140px" @keyup.enter="handleQuery" />
@@ -270,7 +275,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="下单日期" prop="orderDate">
-          <el-date-picker clearable v-model="form.orderDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.orderDate" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择下单日期">
           </el-date-picker>
         </el-form-item>

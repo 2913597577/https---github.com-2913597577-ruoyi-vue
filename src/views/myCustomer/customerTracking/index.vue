@@ -85,7 +85,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerTrackingList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" border :data="customerTrackingList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
@@ -199,6 +199,11 @@
                value-format="YYYY-MM-DD"
                 placeholder="回访时间" style="width: 120px" />
             </el-form-item>
+            <el-form-item label="月份筛选" prop="trackingMonth">
+              <el-date-picker clearable v-model="queryParams.trackingMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+        </el-form-item>
             <!-- <el-form-item label="提交状态" prop="submitStatus">
               <el-select v-model="queryParams.submitStatus" placeholder="请选择提交状态" clearable>
                 <el-option v-for="dict in submit_status" :key="dict.value" :label="dict.label" :value="dict.value" />
@@ -291,10 +296,11 @@
           </el-select>
         </el-form-item> -->
         <el-form-item label="回访时间" prop="trackingTime">
-          <el-date-picker clearable v-model="form.trackingTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.trackingTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择回访时间">
           </el-date-picker>
         </el-form-item>
+        
         <!-- <el-form-item label="提交状态" prop="submitStatus">
           <el-select v-model="form.submitStatus" placeholder="请选择提交状态">
             <el-option v-for="dict in submit_status" :key="dict.value" :label="dict.label"
@@ -302,7 +308,7 @@
           </el-select>
         </el-form-item> -->
         <el-form-item label="下次回访时间" prop="nextTime">
-          <el-date-picker clearable v-model="form.nextTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.nextTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择下次回访时间">
           </el-date-picker>
         </el-form-item>
@@ -535,6 +541,42 @@ const jobOrderForm = ref({
 const selectProps = {
   label: 'customer_name',
   value: 'customer_id'
+}
+
+//列表最后一行添加合计
+const getSummaries = (param) => {
+  const { columns, data } = param;
+  const sums = [];
+  columns.forEach((column, index) => {
+    if (index === 1) {
+      sums[index] = '合计';
+      return;
+  }
+
+  // 处理需要合计的列，这里应该根据实际业务需求修改列名
+    const values = data.map(item => Number(item[column.property]));
+    if (column.label == "内勤项数计数") {
+    if (!values.every(value => isNaN(value))) {
+    sums[index] = values.reduce((prev, curr) => {
+          const value = Number(curr);
+   if (!isNaN(value)) {
+   return prev + curr;
+    } else {
+      return prev;
+   }
+  }, 0);
+    
+    sums[index] = new Intl.NumberFormat('zh-CN', {
+    style: 'decimal',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(sums[index]);
+ } else {
+        //  sums[index] = 'N/A';
+}
+  }
+});
+return sums;
 }
 
 const lawyerList = ref([]);
@@ -843,3 +885,21 @@ onMounted(async () => {
 });
 
 </script>
+
+<style scoped>
+::v-deep .el-table__footer-wrapper {
+  font-weight: bold;
+  font-size: 14px;
+  
+  .el-table__cell {
+    background-color: #f5f7fa !important;
+    font-size: 14px;
+    color:#1890ff;
+    &:first-child {
+      color: #303133;
+      font-weight: bold;
+    }
+  }
+}
+</style>
+

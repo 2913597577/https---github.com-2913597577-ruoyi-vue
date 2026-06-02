@@ -224,6 +224,11 @@
             <el-form-item label="交付时间" prop="deliveryTime">
               <el-date-picker clearable v-model="queryParams.deliveryTime" type="date" value-format="YYYY-MM-DD" style="width: 120px;" placeholder="交付时间" />
             </el-form-item>
+            <el-form-item label="月份筛选" prop="deliveryMonth">
+              <el-date-picker clearable v-model="queryParams.deliveryMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+        </el-form-item>
             <!-- <el-form-item label="跟踪记录" prop="trackingId">
               <el-input v-model="queryParams.trackingId" placeholder="请输入跟踪记录id" clearable @keyup.enter="handleQuery" />
             </el-form-item> -->
@@ -415,7 +420,7 @@
           <el-input v-model="addForm.remark1" placeholder="请输入客户所属方" />
         </el-form-item>
         <el-form-item label="交付时间" prop="deliveryTime">
-          <el-date-picker clearable v-model="addForm.deliveryTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="addForm.deliveryTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择交付时间">
           </el-date-picker>
         </el-form-item>

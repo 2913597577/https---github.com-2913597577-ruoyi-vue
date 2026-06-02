@@ -81,7 +81,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerOutVisitList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" border :data="customerOutVisitList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
@@ -260,6 +260,11 @@
                value-format="YYYY-MM-DD"
               placeholder="出访时间"  style="width: 120px"/>
             </el-form-item>
+            <el-form-item label="月份筛选" prop="visitMonth">
+              <el-date-picker clearable v-model="queryParams.visitMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+        </el-form-item>
             <el-form-item label="下次出访时间" prop="nextVisitTime" label-width="100px">
               <el-date-picker clearable v-model="queryParams.nextVisitTime" type="date" 
                value-format="YYYY-MM-DD"
@@ -337,12 +342,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="出访时间" prop="visitTime">
-          <el-date-picker clearable v-model="form.visitTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.visitTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择出访时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="下次出访时间" prop="nextVisitTime">
-          <el-date-picker clearable v-model="form.nextVisitTime" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.nextVisitTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择下次出访时间">
           </el-date-picker>
         </el-form-item>
@@ -540,6 +545,34 @@ const closeContractViewer = () => {
 const selectProps = {
   label: 'customer_name',
   value: 'customer_id'
+}
+
+//列表最后一行添加合计
+const getSummaries = (param) => {
+  const { columns, data } = param;
+  const sums = [];
+  
+  columns.forEach((column, index) => {
+    // 1. 在第一列显示“合计”
+    if (index === 1) {
+      sums[index] = '合计';
+      return;
+    }
+
+    // 2. 针对“计入外勤项数”列进行统计
+    if (column.property === 'isOutCount' || column.property === 'isFirstVisit') {
+      // 统计 isOutCount 为 0 (代表"是") 的数量
+      // 使用 == 0 可以同时兼容数字 0 和字符串 "0"
+      const count = data.filter(item => item.isOutCount == 0).length;
+      
+      sums[index] = count;
+    } else {
+      // 其他列不显示内容
+      sums[index] = '';
+    }
+  });
+
+  return sums;
 }
 
 /** 查询客户出访记录列表 */
@@ -1094,5 +1127,20 @@ onMounted(async () => {
 .image-trigger:hover,
 .file-trigger:hover {
   opacity: 0.8;
+}
+
+::v-deep .el-table__footer-wrapper {
+  font-weight: bold;
+  font-size: 14px;
+  
+  .el-table__cell {
+    background-color: #f5f7fa !important;
+    font-size: 14px;
+    color:#1890ff;
+    &:first-child {
+      color: #303133;
+      font-weight: bold;
+    }
+  }
 }
 </style>

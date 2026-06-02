@@ -420,6 +420,12 @@
                 </el-option>
               </el-select>
         </el-form-item>
+        <!-- <el-form-item label="客户服务城市" prop="serviceCity">
+           <el-select v-model="form.serviceCity" placeholder="请选择服务城市" clearable >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -468,6 +474,7 @@ const initFormData: CustomerPerformanceForm = {
   userName: undefined,
   balance: undefined,
   city: undefined,
+  serviceCity: undefined,
 }
 const data = reactive<PageData<CustomerPerformanceForm, CustomerPerformanceQuery>>({
   form: {...initFormData},
