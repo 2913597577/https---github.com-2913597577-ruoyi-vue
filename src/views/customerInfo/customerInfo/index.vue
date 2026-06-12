@@ -164,6 +164,15 @@
         <!-- <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" /> -->
         <!-- <el-table-column label="杀单手" align="center" width="100" prop="closer" /> -->
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
+        <el-table-column label="续费" align="center" prop="actionType" width="100" show-overflow-tooltip >
+           <template #default="scope">
+            <!-- 详情按钮：点击携带当前行id跳转 -->
+            <el-button link type="primary" icon="View" size="small"
+              @click="handleCustomerInfoLog(scope.row.id)" style="padding: 0 6px;">
+              详情
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="合同编号" align="center" prop="contractCode" width="100" show-overflow-tooltip />
         
         <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="80" show-overflow-tooltip />
@@ -174,15 +183,6 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="续费" align="center" prop="actionType" width="100" show-overflow-tooltip >
-           <template #default="scope">
-            <!-- 详情按钮：点击携带当前行id跳转 -->
-            <el-button link type="primary" icon="View" size="small"
-              @click="handleCustomerInfoLog(scope.row.id)" style="padding: 0 6px;">
-              详情
-            </el-button>
-          </template>
-        </el-table-column>
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
          <!--  <template #default="scope"> -->
             <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
@@ -781,6 +781,18 @@
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
             </el-form-item>
+            <el-form-item label="服务到期筛选" prop="expireDateRange" label-width="90px">
+           <el-date-picker 
+            v-model="expireDateRange" 
+            type="daterange" 
+            range-separator="-" 
+            start-placeholder="开始日期" 
+            end-placeholder="结束日期" 
+            value-format="YYYY-MM-DD" 
+            style="width: 240px" 
+            @change="handleExpireDateChange"
+           />
+           </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -1126,6 +1138,9 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+// 添加到期时间范围变量
+const expireDateRange = ref<[string, string] | []>([]);
 
 //列表最后一行添加合计
 const getSummaries = (param) => {
@@ -1587,6 +1602,22 @@ const reset = () => {
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
+
+// 处理到期时间范围
+if (expireDateRange.value && expireDateRange.value.length === 2) {
+    queryParams.value.params = {
+      ...queryParams.value.params,
+      beginExpireDate: expireDateRange.value[0],
+      endExpireDate: expireDateRange.value[1]
+    };
+  } else {
+    // 如果清空了时间范围，确保移除参数
+    if (queryParams.value.params) {
+      delete queryParams.value.params.beginExpireDate;
+      delete queryParams.value.params.endExpireDate;
+    }
+  }
+
   getList();
 }
 /** 查找按钮操作 */
@@ -1597,6 +1628,15 @@ const handleSearch = () => {
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
+
+  // 重置自定义的时间范围变量
+  expireDateRange.value = [];
+  // 清除 params 中的时间范围参数
+  if (queryParams.value.params) {
+    delete queryParams.value.params.beginExpireDate;
+    delete queryParams.value.params.endExpireDate;
+  }
+
   handleQuery();
 }
 

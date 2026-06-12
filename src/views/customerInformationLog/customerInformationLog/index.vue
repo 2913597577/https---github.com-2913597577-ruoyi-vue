@@ -271,6 +271,18 @@
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.nickName" filterable></el-option>
           </el-select>
             </el-form-item>
+            <el-form-item label="服务到期筛选" prop="expireDateRange" label-width="90px">
+           <el-date-picker 
+            v-model="expireDateRange" 
+            type="daterange" 
+            range-separator="-" 
+            start-placeholder="开始日期" 
+            end-placeholder="结束日期" 
+            value-format="YYYY-MM-DD" 
+            style="width: 240px" 
+            @change="handleExpireDateChange"
+           />
+           </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -527,8 +539,11 @@ const data = reactive<PageData<CustomerInformationLogForm, CustomerInformationLo
 
 const { queryParams, form, rules } = toRefs(data);
 
+// 添加到期时间范围变量
+const expireDateRange = ref<[string, string] | []>([]);
+
 //查找相关
-const searchDialogVisible = ref(false)
+const searchDialogVisible = ref(false);
 
 // select 的 props 定义为常量，避免递归更新
 const selectProps = {
@@ -565,12 +580,37 @@ const reset = () => {
 /** 搜索按钮操作 */
 const handleQuery = () => {
   queryParams.value.pageNum = 1;
+
+  // 处理到期时间范围
+ if (expireDateRange.value && expireDateRange.value.length === 2) {
+    queryParams.value.params = {
+      ...queryParams.value.params,
+      beginExpireDate: expireDateRange.value[0],
+      endExpireDate: expireDateRange.value[1]
+    };
+  } else {
+    // 如果清空了时间范围，确保移除参数
+    if (queryParams.value.params) {
+      delete queryParams.value.params.beginExpireDate;
+      delete queryParams.value.params.endExpireDate;
+    }
+  }
+
   getList();
 }
 
 /** 重置按钮操作 */
 const resetQuery = () => {
   queryFormRef.value?.resetFields();
+
+  // 重置自定义的时间范围变量
+  expireDateRange.value = [];
+  // 清除 params 中的时间范围参数
+  if (queryParams.value.params) {
+    delete queryParams.value.params.beginExpireDate;
+    delete queryParams.value.params.endExpireDate;
+  }
+
   handleQuery();
 }
 
