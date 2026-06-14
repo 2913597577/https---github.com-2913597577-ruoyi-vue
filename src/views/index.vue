@@ -138,6 +138,30 @@
       </el-col>
     </el-row>
 
+    <el-card class="todo-card">
+      <div class="todo-header" @click="$router.push('/legalSupport/customerAllTracking')">
+        <h3>今日待办事项 <i class="el-icon-arrow-right" style="font-size: 14px;"></i></h3>
+      </div>
+      <div class="todo-content">
+        <div v-if="!neededInfo || neededInfo.length === 0" class="no-todo">
+          <i class="el-icon-check"></i>
+          <p>暂无待办事项</p>
+        </div>
+        <div v-else class="todo-list">
+          <div 
+            v-for="(item, index) in neededInfo" 
+            :key="index" 
+            class="todo-item"
+            @click="$router.push('/legalSupport/customerAllTracking')"
+            style="cursor: pointer;"
+          >
+            <span class="client-id">客户: {{ item.customerName }}</span>
+            <span class="task-content">事项内容: {{ item.remark }}</span>
+          </div>
+        </div>
+      </div>
+    </el-card>
+
     <el-divider style="margin: 10px 0;" />
   </div>
 </template>
@@ -148,6 +172,7 @@ import * as echarts from 'echarts'
 import { getCustomerType, getCustomerCategory, getRiskRefundData } from '@/api/common'
 import { getServiceData } from '@/api/common'
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo'
+import { getLegalSupportPerformance } from '@/api/common'
 
 
 const chartRef = ref()
@@ -157,6 +182,11 @@ const showFilterDialog = ref(false) // 控制筛选弹窗显示
 let chartInstance: any = null
 let barChartInstance: any = null
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+
+//今日待办事项
+const neededInfo = ref<any[]>([])
+
+
 
 // 数据统计筛选表单
 const filterForm = reactive({
@@ -192,6 +222,20 @@ const daysInMonth = computed(() => {
   return Array.from({ length: date.getDate() }, (_, i) => i + 1)
 })
 
+// 获取今日待办事项
+const fetchPerformanceData = async () => {
+  try {
+    const response = await getLegalSupportPerformance()
+    if (response && response.data) {
+      
+      // 解析待办事项数据
+      neededInfo.value = response.data.neededInfo
+    }
+  } catch (error) {
+    console.error('获取待办事项失败:', error)
+    neededInfo.value = [] // 获取失败时清空待办事项列表
+  }
+}
 // 获取服务数据
 const fetchServiceData = async () => {
   try {
@@ -378,6 +422,7 @@ onMounted(() => {
   loadLawyerSupportList()
   fetchServiceData() // 加载服务数据
   //fetchRiskRefundData() // 加载退费风险数据
+  fetchPerformanceData() // 加载待办事项数据
 })
 </script>
 
@@ -472,6 +517,85 @@ onMounted(() => {
 
   .mb-4 {
     margin-bottom: 1rem;
+  }
+}
+
+.home {
+  // ... 原有样式
+
+  .todo-card {
+    margin-top: 10px;
+    
+    .todo-header {
+      cursor: pointer;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ebeef5;
+      margin-bottom: 10px;
+      
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        color: #303133;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        
+        &:hover {
+          color: #409EFF;
+        }
+      }
+    }
+
+    .todo-content {
+      max-height: 300px;
+      overflow-y: auto;
+
+      .no-todo {
+        text-align: center;
+        color: #909399;
+        padding: 20px 0;
+        
+        i {
+          font-size: 24px;
+          margin-bottom: 10px;
+          display: block;
+        }
+      }
+
+      .todo-list {
+        .todo-item {
+          padding: 8px 10px;
+          border-bottom: 1px dashed #ebeef5;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          transition: background-color 0.3s;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          &:hover {
+            background-color: #f5f7fa;
+          }
+
+          .client-id {
+            font-weight: bold;
+            color: #606266;
+            font-size: 14px;
+          }
+
+          .task-content {
+            color: #909399;
+            font-size: 13px;
+            // 文字过长省略
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
   }
 }
 </style>

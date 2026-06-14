@@ -3,34 +3,34 @@
     <!-- 顶部统计卡片 -->
     <el-row :gutter="20">
       <!-- 左侧统计信息 -->
-      <el-col :span="16">
+      <el-col :span="24">
         <el-card class="statistic-card">
           <div class="statistic-header">
             <h3>客户信息统计</h3>
           </div>
           <div class="statistic-content">
             <div class="stat-item">
-              <span class="label">客户数量：</span>
-               <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.customerTotal }}</span>
-              <span class="label">近30天未跟进客户：</span>
+              <span class="label">客户总数量：</span>
+              <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.customerTotal }}</span>
+              <span class="label">近15天未跟进客户数量：</span>
               <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.outstandingTotal }}</span>
             </div>
             <div class="stat-item">
               <span class="label">意向客户数量：</span>
               <span class="value" @click="$router.push('/customer/customerIntention')">{{ customerCount.intentionTotal }}</span>
-              <span class="label">临期客户数量：</span>
+              <span class="label">临期客户（7天后到期）数量：</span>
               <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.expiringTotal }}</span>
               <span class="label">尾款客户数量：</span>
               <span class="value" @click="$router.push('/customer/customerInfo')">{{ customerCount.balanceTotal }}</span>
             </div>
             <div class="stat-item">
-              <span class="label">本月内勤数量：</span>
+              <span class="label">本月回访数量：</span>
               <span class="value" @click="$router.push('/legalSupport/customerTracking')" >{{ customerCount.trackingTotal }}</span>
-              <span class="label">外勤数量：</span>
+              <span class="label">本月出访数量：</span>
               <span class="value" @click="$router.push('/legalSupport/customerOutVisit')">{{ customerCount.outVisitTotal }}</span>
-              <span class="label">保单数量：</span>
+              <span class="label">本月保单数量：</span>
               <span class="value" @click="$router.push('/legalSupport/insuranceCase')">{{ customerCount.insuranceTotal }}</span>
-              <span class="label">工单数量：</span>
+              <span class="label">本月下工单数量：</span>
               <span class="value" @click="$router.push('/legalSupport/customerJobOrder')">{{ customerCount.jobOrderTotal }}</span>
             </div>
           </div>
@@ -117,7 +117,7 @@
       </el-col>
 
       <!-- 右侧待办事项 -->
-      <el-col :span="8">
+     <!--  <el-col :span="8">
         <el-card class="todo-card">
           <div class="todo-header" @click="$router.push('/legalSupport/customerAllTracking')">
             <h3>今日待办事项</h3>
@@ -135,7 +135,7 @@
             </div>
           </div>
         </el-card>
-      </el-col>
+      </el-col> -->
     </el-row>
   </div>
 </template>
@@ -148,7 +148,7 @@ import { getLegalSupportPerformance } from '@/api/common'
 // 统计数据
 const customerCount = ref<any>({})
 const performanceCount = ref<any>({})
-const neededInfo = ref<any[]>([])
+//const neededInfo = ref<any[]>([])
 const packageType = ref<any>([])
 const router = useRouter()
 
@@ -166,7 +166,7 @@ const fetchPerformanceData = async () => {
       packageType.value = response.data.packageType
 
       // 解析待办事项数据
-      neededInfo.value = response.data.neededInfo
+      //neededInfo.value = response.data.neededInfo
     }
   } catch (error) {
     console.error('获取业绩统计失败:', error)

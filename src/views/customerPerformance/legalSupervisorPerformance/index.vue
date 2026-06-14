@@ -11,13 +11,13 @@
             <div class="stat-item">
               <span class="label">客户数量：</span>
               <span class="value">{{ customerStats.customerTotal }}</span>
-              <span class="label">近20天未跟进客户：</span>
+              <span class="label">近15天未跟进客户：</span>
               <span class="value">{{ customerStats.outStandingTotal }}</span>
             </div>
             <div class="stat-item">
               <span class="label">意向客户数量：</span>
               <span class="value">{{ customerStats.intentionTotal }}</span>
-              <span class="label">前2后2临期客户数量：</span>
+              <span class="label">前7后7临期客户数量：</span>
               <span class="value">{{ customerStats.expiringTotal }}</span>
               <span class="label">尾款客户数量：</span>
               <span class="value">{{ customerStats.balanceTotal }}</span>
