@@ -74,6 +74,18 @@
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['customerInfo:customerInfo:export']">导出</el-button>
           </el-col>
+          <!-- 专门的批量分配法务支持按钮 -->
+           <el-col :span="1.5">
+            <el-button 
+             type="info" 
+             plain 
+             icon="Menu" 
+             :disabled="multiple" 
+              @click="handleAssign()" 
+              v-hasPermi="['customerInfo:customerInfo:assign']">
+              批量分配
+             </el-button>
+            </el-col>
         </div>
         <div class="flex items-center">
           <el-col :span="1.5">
@@ -809,8 +821,8 @@
     <el-dialog :title="intentionDialog.title" v-model="intentionDialog.visible" width="550px" append-to-body draggable>
       <el-form ref="customerIntentionFormRef" :model="intentionForm" :rules="intentionRules" label-width="120px" class="intention-customer-form">
         <el-form-item label="提报日期" prop="submissionDate">
-          <el-date-picker clearable v-model="intentionForm.submissionDate" type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss" placeholder="请选择提报日期" required />
+          <el-date-picker clearable v-model="intentionForm.submissionDate" type="date"
+            value-format="YYYY-MM-DD" placeholder="请选择提报日期" required />
         </el-form-item>
         <!-- <el-form-item label="法务支持" prop="legalSupport">
           <el-input v-model="intentionForm.legalSupport" placeholder="请输入法务支持姓名" required />
@@ -858,7 +870,7 @@
       </template>
     </el-dialog>
     <!-- 新增分配法务支持弹窗 -->
-    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="550px" append-to-body draggable>
+    <el-dialog title="分配法务支持人员" v-model="assignDialog.visible" width="650px" append-to-body draggable>
       <el-form ref="assignFormRef" :model="assignForm" :rules="assignRules" label-width="120px" class="assign-legalsupport-form">
     <!-- 新增客户名称显示行 -->
     <el-form-item label="客户名称" prop="customerName">
@@ -1742,7 +1754,8 @@ const lawyerList = ref([]);
 // 2. 分配弹窗状态
 const assignDialog = reactive({
   visible: false,
-  currentRow: null as CustomerInfoVO | null // 当前操作的客户行数据
+  currentRow: null as CustomerInfoVO | null, // 当前操作的客户行数据(单行操作)
+  ids: [] as Array<string | number> // 新增：存储批量操作的ID列表（批量操作）
 });
 // 3. 分配表单数据
 const assignForm = reactive({
@@ -1765,21 +1778,50 @@ const assignLoading = ref(false);
 
 // ---------------------- 分配相关方法 ----------------------
 /** 1. 打开分配弹窗（点击表格“分配”按钮触发） */
-const handleAssign = async (row: CustomerInfoVO) => {
+const handleAssign = async (row?: CustomerInfoVO) => {
     // 检查数据是否加载完成
    if (!isDataLoaded.value) {
     proxy?.$modal.msgWarning('数据加载中，请稍后再试');
     return;
     }
 
-  // 记录当前客户行数据
-  assignDialog.currentRow = row;
-  // 初始化表单：填充当前客户ID
-  //assignForm.customerId = row.transferId; // 客户ID（与表格row.transferId匹配）
-  assignForm.lawyerId = row.lawyerId; // 清空上次选择的法务人员
-  assignForm.id = row.id; // 当前客户记录的主键ID（用于分配接口）
-  // 加载法务支持人员列表（调用接口）
-  //await loadLawyerSupportList();
+ // 判断是批量还是单个
+ if (ids.value.length > 0) {
+    // 批量模式：使用选中的 IDs
+    assignDialog.ids = [...ids.value];
+    // 【修改点】构造批量显示的文本
+    const selectedRows = customerInfoList.value.filter(item => ids.value.includes(item.id));
+        const totalCount = selectedRows.length;
+        
+        // 提取前几个客户名称用于展示，例如前2个
+        const previewNames = selectedRows.slice(0, 2).map(item => item.customerName).join(', ');
+        const displayName = totalCount > 2 ? `${previewNames}...等共${totalCount}个客户` : previewNames;
+        
+        // 提取负责人，如果都一样显示一个，否则显示"多人"
+        const principals = [...new Set(selectedRows.map(item => item.principal))];
+        const displayPrincipal = principals.length === 1 ? principals[0] : `共${totalCount}位负责人`;
+
+        // 赋值给 currentRow 用于模板显示
+        assignDialog.currentRow = {
+            customerName: displayName,
+            principal: displayPrincipal,
+            // 其他字段保持默认或空，因为批量操作不依赖单行具体数据
+        } as any; 
+        
+        // 批量操作时，法务ID置空，让用户重新选择
+        assignForm.lawyerId = undefined; 
+
+  } else if (row) {
+    // 单个模式：使用传入的 row
+    assignDialog.ids = [row.id];
+    assignDialog.currentRow = row;
+    // 单个模式保留原有的法务ID，方便查看或修改
+    assignForm.lawyerId = row.lawyerId; 
+  } else {
+    proxy?.$modal.msgWarning('请至少选择一条数据进行分配');
+    return;
+  }
+
   // 显示弹窗
   assignDialog.visible = true;
 };
@@ -1807,8 +1849,8 @@ const submitAssignForm = async () => {
   }
 
    // 检查必要数据
-   if (!assignForm.id) {
-    proxy?.$modal.msgError('客户ID不能为空');
+   if (!assignDialog.ids || assignDialog.ids.length === 0) {
+    proxy?.$modal.msgError('未选择任何客户');
     return;
   }
   if (!assignForm.lawyerId) {
@@ -1819,17 +1861,21 @@ const submitAssignForm = async () => {
 
   try {
     assignLoading.value = true;
-    await assign(
-      assignForm.id, // 当前客户ID
-      assignForm.lawyerId   // 选中的法务人员ID
-    );
+
+    // 【修复点】循环调用接口进行批量分配
+    // 注意：如果后端支持批量接口（如 batchAssign(ids, lawyerId)），请优先使用后端批量接口
+    const promises = assignDialog.ids.map(id => assign(id, assignForm.lawyerId));
+    await Promise.all(promises);
 
     // 操作成功反馈
-    proxy?.$modal.msgSuccess('法务支持人员分配成功');
+    // 操作成功反馈
+    proxy?.$modal.msgSuccess(`成功为 ${assignDialog.ids.length} 个客户分配法务支持`);
+    
     // 关闭弹窗并重置表单
     assignDialog.visible = false;
+    assignDialog.ids = [];
     assignForm.lawyerId = undefined;
-    assignForm.id = undefined;
+
     // 可选：刷新客户列表（更新已分配的法务信息）
     await getList();
   } catch (error) {
@@ -1839,6 +1885,7 @@ const submitAssignForm = async () => {
     assignLoading.value = false;
   }
 };
+
 //  新增：跟踪记录详情跳转函数
 const handleTrackingDetail = (id: number | string) => {
   // 跳转到目标路由，并通过query参数传递id

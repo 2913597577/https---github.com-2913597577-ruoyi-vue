@@ -115,7 +115,7 @@
             <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" />
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
 
         <el-table-column label="债务人" align="center" prop="debtorName" width="100" show-overflow-tooltip />
         <el-table-column label="欠款金额" align="center" prop="debtAmount" width="200" />

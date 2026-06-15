@@ -78,7 +78,7 @@
       <el-table v-loading="loading" border :data="caseProgressList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
-        <el-table-column label="案件名称" align="center" prop="caseId" width="240" show-overflow-tooltip>
+        <el-table-column label="案件名称" align="center" prop="caseId" width="280" show-overflow-tooltip>
         <template #default="scope">
             <span>{{ getCaseDetailNameById(scope.row.caseId) }}</span>
           </template>
@@ -101,7 +101,7 @@
           </template>
         </el-table-column>
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
-        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" /> 
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip/> 
         <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />

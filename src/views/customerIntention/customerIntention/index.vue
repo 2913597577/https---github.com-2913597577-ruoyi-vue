@@ -100,8 +100,8 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="意向客户" align="center" prop="intendedCustomer" width="180" show-overflow-tooltip />
-        <el-table-column label="类型" align="center" prop="type" width="100" show-overflow-tooltip>
+        <el-table-column label="意向客户名称" align="center" prop="intendedCustomer" width="180" show-overflow-tooltip />
+        <el-table-column label="签约类型" align="center" prop="type" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_intention_type" :value="scope.row.type ?? ''" />
           </template>
@@ -184,6 +184,21 @@
     <!-- 添加或修改客户意向登记对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="customerIntentionFormRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="意向客户归属城市" prop="remark1" label-width="110px">
+                <el-select
+                  v-model="form.remark1"
+                  placeholder="请选择归属城市"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+        </el-form-item>
         <el-form-item label="来源" prop="source" label-width="90px">
           <el-input v-model="form.source" placeholder="请输入来源" />
         </el-form-item>
@@ -216,7 +231,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="提报日期" prop="submissionDate">
-          <el-date-picker clearable v-model="form.submissionDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+          <el-date-picker clearable v-model="form.submissionDate" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择提报日期">
           </el-date-picker>
         </el-form-item>

@@ -61,7 +61,7 @@
       <el-table v-loading="loading" border :data="customerIntentionTrackingList"
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="意向客户" align="center" prop="customerName" show-overflow-tooltip />
+        <el-table-column label="意向客户名称" align="center" prop="intentionName" show-overflow-tooltip />
         <el-table-column label="跟踪时间" align="center" prop="trackingDate">
         <template #default="scope">
             <span>{{ parseTime(scope.row.trackingDate, '{y}-{m}-{d}') }}</span>
@@ -73,6 +73,18 @@
             <span>{{ parseTime(scope.row.nextTrackingDate, '{y}-{m}-{d}') }}</span>
         </template>
        </el-table-column>
+       <el-table-column label="法务支持" align="center" prop="legalSupportId" width="100" show-overflow-tooltip>
+        <template #default="scope">
+            <span v-if="scope.row.legalSupportId">
+              {{ getLawyerNameById(scope.row.legalSupportId) }}
+            </span>
+          </template>
+        </el-table-column>
+       <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
           width="240" fixed="right">
           <template #default="scope">
@@ -95,13 +107,26 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="意向客户" prop="intentionId" label-width="68px">
+            <el-form-item label="意向客户名称" prop="intentionId" label-width="90px">
               <el-select v-model="queryParams.intentionId" placeholder="请输入意向客户" filterable clearable>
                 <el-option v-for="item in customerList" :key="item.intention_id" :label="item.intended_customer"
                   :value="item.intention_id">
                 </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="归属城市" prop="remark1">
+              <el-select v-model="queryParams.remark1" placeholder="请选择归属城市" clearable style="width: 120px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="法务支持" prop="legalSupportId" label-width="68px">
+        <el-select filterable v-model="queryParams.legalSupportId" placeholder="请选择法务支持人员" clearable
+          style="width: 120px" @change="handleLegalSupportChange">
+          <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+            :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+        </el-select>
+      </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -116,7 +141,29 @@
     <!-- 添加或修改意向客户跟踪记录对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body>
       <el-form ref="customerIntentionTrackingFormRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="意向客户" prop="intentionId">
+        <el-form-item label="意向客户归属城市" prop="remark1" label-width="120px">
+                <el-select
+                  v-model="form.remark1"
+                  placeholder="请选择归属城市"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+        </el-form-item>
+        <el-form-item label="法务支持" prop="legalSupportId" label-width="90px">
+          <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
+            @change="handleLegalSupportChange">
+            <el-option v-for="lawyer in lawyerList" :key="lawyer.userId"
+              :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="意向客户名称" prop="intentionId">
           <el-select v-model="form.intentionId" placeholder="请输入意向客户" filterable clearable @change="handleChange">
             <el-option v-for="item in customerList" :key="item.intention_id" :label="item.intended_customer"
               :value="item.intention_id">
@@ -127,12 +174,12 @@
           <el-input v-model="form.customerRemark" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="跟踪时间" prop="trackingDate">
-         <el-date-picker clearable v-model="form.trackingDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+         <el-date-picker clearable v-model="form.trackingDate" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择跟踪时间" required>
           </el-date-picker>
         </el-form-item>
         <el-form-item label="下次跟踪时间" prop="nextTrackingDate">
-         <el-date-picker clearable v-model="form.nextTrackingDate" type="datetime" value-format="YYYY-MM-DD HH:mm:ss"
+         <el-date-picker clearable v-model="form.nextTrackingDate" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择下次跟踪时间">
           </el-date-picker>
         </el-form-item>
@@ -152,8 +199,10 @@
 import { getIntentionCustomerByUserId } from '@/api/common';
 import { listCustomerIntentionTracking, getCustomerIntentionTracking, delCustomerIntentionTracking, addCustomerIntentionTracking, updateCustomerIntentionTracking } from '@/api/customerIntentionTracking/customerIntentionTracking';
 import { CustomerIntentionTrackingVO, CustomerIntentionTrackingQuery, CustomerIntentionTrackingForm } from '@/api/customerIntentionTracking/customerIntentionTracking/types';
+import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { useRoute } from 'vue-router';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
 const customerIntentionTrackingList = ref<CustomerIntentionTrackingVO[]>([]);
 const buttonLoading = ref(false);
@@ -163,6 +212,19 @@ const ids = ref<Array<string | number>>([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
+const lawyerList = ref([]);
+
+const loadLawyerSupportList = async () => {
+  try {
+    // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
+    const response = await listLawyerSupport();
+    console.log('法务支持人员列表：', response);
+    lawyerList.value = response.rows;
+  } catch (error) {
+    proxy?.$modal.msgError('加载法务支持人员失败，请稍后重试');
+    console.error('法务人员列表加载异常：', error);
+  }
+};
 
 const route = useRoute();
 const queryFormRef = ref<ElFormInstance>();
@@ -191,10 +253,18 @@ const data = reactive<PageData<CustomerIntentionTrackingForm, CustomerIntentionT
     customerName: undefined,
     trackingDate:undefined,
     nextTrackingDate: undefined,
+    remark1: undefined,      // 添加这一行
+    legalSupportId: undefined, // 添加这一行
     params: {
     }
   },
   rules: {
+    remark1: [
+      { required: true, message: "请选择归属城市", trigger: "change" }
+    ],
+    legalSupportId: [
+      { required: true, message: "请选择法务支持人员", trigger: "change" }
+    ],
     intentionId: [
       { required: true, message: "请选择意向客户", trigger: "change" }
     ],
@@ -323,21 +393,30 @@ const loadIntentionCustomerList = async () => {
 }
 
 const handleChange = (intentionId: string) => {
-  console.log('Selected Intention ID:', intentionId);
+  //console.log('Selected Intention ID:', intentionId);
   if (intentionId) {
     // 获取选中的意向客户信息
     const selectedCustomer = customerList.value.find(customer => customer.intention_id === intentionId);
     if (selectedCustomer) {
       // 设置意向客户ID到 intentionId 字段，customerName 用于显示
       form.value.intentionId = intentionId;
-      form.value.customerName = selectedCustomer.intended_customer;
+      form.value.intentionName = selectedCustomer.intended_customer;
     }
   } else {
     // 清空选择时重置相关字段
     form.value.intentionId = undefined;
-    form.value.customerName = undefined;
+    form.value.intentionName = undefined;
   }
 }
+
+// 添加获取法务人员姓名的方法
+const getLawyerNameById = (lawyerId: string | number) => {
+  //console.log('lawyerId:', lawyerId);
+  if (!lawyerId) return '';
+  const lawyer = lawyerList.value.find(item => item.userId === lawyerId);
+  //console.log('lawyer:', lawyer);
+  return lawyer ? `${lawyer.nickName}` : '';
+};
 
 // 监听 intentionCustomerId 的变化
 watch(
@@ -363,6 +442,7 @@ watch(
 onMounted(async () => {
 
   await loadIntentionCustomerList();
+  await loadLawyerSupportList();
   await getList();
 });
 </script>
