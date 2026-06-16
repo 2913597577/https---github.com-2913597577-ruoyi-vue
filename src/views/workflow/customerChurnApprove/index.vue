@@ -56,7 +56,7 @@
             <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="原因" align="center" prop="remark" />
+        <el-table-column label="原因" align="center" prop="remark" show-overflow-tooltip />
         <el-table-column align="center" label="流程状态" min-width="70">
           <template #default="scope">
             <dict-tag :options="wf_business_status" :value="scope.row.status"></dict-tag>

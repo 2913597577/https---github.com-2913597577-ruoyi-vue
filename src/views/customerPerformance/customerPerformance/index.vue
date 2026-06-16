@@ -378,7 +378,11 @@
                 style="width: 120px;">
               </el-date-picker>
             </el-form-item>
-            
+            <el-form-item label="分配时间月份筛选" prop="updateTimeMonth" label-width="110px">
+              <el-date-picker clearable v-model="queryParams.updateTimeMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+        </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>

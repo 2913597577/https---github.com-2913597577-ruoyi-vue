@@ -139,7 +139,7 @@
     </el-row>
 
     <el-card class="todo-card">
-      <div class="todo-header" @click="$router.push('/legalSupport/customerAllTracking')">
+      <div class="todo-header">
         <h3>今日待办事项 <i class="el-icon-arrow-right" style="font-size: 14px;"></i></h3>
       </div>
       <div class="todo-content">
@@ -152,11 +152,14 @@
             v-for="(item, index) in neededInfo" 
             :key="index" 
             class="todo-item"
-            @click="$router.push('/legalSupport/customerAllTracking')"
+            @click="handleTodoClick(item)"
             style="cursor: pointer;"
           >
-            <span class="client-id">客户: {{ item.customerName }}</span>
-            <span class="task-content">事项内容: {{ item.remark }}</span>
+            <span class="client-id">客户名称: {{ item.customerName }}</span>
+            <span class="task-content" style="color: #ff6b35">待办事项: {{ item.remark }}</span>
+            <span class="task-content">待办时间: {{ parseTime(item.nextTrackingTime, '{y}-{m}-{d}') }}</span>
+            <span class="task-content">法务支持: {{ getLegalSupportName(item.legalSupportId) }}</span>
+            <span class="task-content">归属城市: {{ getCityLabel(item.city) }}</span>
           </div>
         </div>
       </div>
@@ -173,15 +176,21 @@ import { getCustomerType, getCustomerCategory, getRiskRefundData } from '@/api/c
 import { getServiceData } from '@/api/common'
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo'
 import { getLegalSupportPerformance } from '@/api/common'
+import { parseTime } from '@/utils/ruoyi' // 1. 引入 parseTime
+import { el } from 'element-plus/es/locale/index.mjs'
 
+import { useRouter } from 'vue-router' // 确保已导入
+const router = useRouter()
 
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 const chartRef = ref()
 const barChartRef = ref()
 const totalCustomers = ref(0)
 const showFilterDialog = ref(false) // 控制筛选弹窗显示
 let chartInstance: any = null
 let barChartInstance: any = null
-const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+
 
 //今日待办事项
 const neededInfo = ref<any[]>([])
@@ -236,6 +245,7 @@ const fetchPerformanceData = async () => {
     neededInfo.value = [] // 获取失败时清空待办事项列表
   }
 }
+
 // 获取服务数据
 const fetchServiceData = async () => {
   try {
@@ -364,7 +374,34 @@ const initBarChart = () => {
    }
  });
 
+//根据字典值获取城市名称的函数
+const getCityLabel = (value: string | number | undefined) => {
+  if (!value && value !== 0) return '-';
+  
+  // 因为使用了 toRefs，dc_sercive_city 是一个 Ref，所以必须用 .value
+  const list = dc_sercive_city.value;
+  
+  if (!list || !Array.isArray(list) || list.length === 0) {
+    return String(value); 
+  }
+
+  const dictItem = list.find((item: any) => {
+    return item.dictValue == value || item.value == value;
+  });
+
+  return dictItem ? (dictItem.dictLabel || dictItem.label || String(value)) : String(value);
+};
+
+
 const lawyerList = ref([]);
+
+// 新增：根据 ID 获取法务支持名称的函数
+const getLegalSupportName = (id: string | number | undefined) => {
+  if (!id) return '-';
+  // 使用 == 兼容字符串和数字类型的 ID 匹配
+  const lawyer = lawyerList.value.find((item: any) => item.userId == id);
+  return lawyer ? (lawyer.nickName || lawyer.userName) : '未知';
+};
 const loadLawyerSupportList = async () => {
   try {
     // 调用接口：system/user/list?pageNum=1&pageSize=10&deptId=1969581806504747009
@@ -413,6 +450,40 @@ const loadCustomerCategoryData = () => {
     barChartInstance.setOption(option)
   })
 }
+
+/**
+ * 处理待办事项点击跳转
+ * @param item 待办事项对象
+ */
+ const handleTodoClick = (item: any) => {
+  if (!item.customerId) {
+    proxy?.$modal.msgWarning('该待办事项未关联客户Id');
+    return;
+  }
+
+  let path = '/index'; 
+  const remark = item.remark || '';
+
+  if (remark.includes('回访记录表')) {
+    path = '/legalSupport/customerTracking';
+  } else if (remark.includes('意向客户跟踪')) {
+    path = '/customer/customerIntentionTracking';
+  } else if (remark.includes('出访记录表')) {
+    path = '/legalSupport/customerOutVisit';
+  } else if (remark.includes('案件回访表')) {
+    path = '/legalSupport/caseProgress';
+  } else if (remark.includes('下工单表')) {
+    path = '/legalSupport/customerJobOrder';
+  }
+
+  // 跳转
+  router.push({
+    path: path,
+    query: {
+     // customerId: item.customerId
+    }
+  });
+};
 
 onMounted(() => {
   initChart()
@@ -527,7 +598,7 @@ onMounted(() => {
     margin-top: 10px;
     
     .todo-header {
-      cursor: pointer;
+      cursor: default;
       padding-bottom: 10px;
       border-bottom: 1px solid #ebeef5;
       margin-bottom: 10px;
@@ -540,9 +611,6 @@ onMounted(() => {
         align-items: center;
         justify-content: space-between;
         
-        &:hover {
-          color: #409EFF;
-        }
       }
     }
 

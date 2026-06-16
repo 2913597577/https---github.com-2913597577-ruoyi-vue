@@ -87,6 +87,11 @@
         <el-table-column label="出访目标" align="center" prop="visitGoal" />
         <!-- <el-table-column label="已完成的月度业绩目标" align="center" prop="achievedPerformanceGoal" />
         <el-table-column label="已完成的月度出访目标" align="center" prop="achievedVisitGoal" /> -->
+        <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -153,6 +158,21 @@
     <!-- 添加或修改业绩任务对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body draggable>
       <el-form ref="performanceTaskFormRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="客户归属城市" prop="remark1" label-width="100px">
+                <el-select
+                  v-model="form.remark1"
+                  placeholder="请选择归属城市"
+                  style="width: 100%"
+                  clearable
+                >
+                  <el-option
+                    v-for="dict in dc_sercive_city"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+        </el-form-item>
         <el-form-item label="法务支持" prop="legalSupportId">
            <el-select filterable v-model="form.legalSupportId" placeholder="请选择法务支持人员" clearable style="width: 100%;"
             @change="handleLegalSupportChange">
@@ -199,8 +219,9 @@ import { listPerformanceTask, getPerformanceTask, delPerformanceTask, addPerform
 import { PerformanceTaskVO, PerformanceTaskQuery, PerformanceTaskForm } from '@/api/performanceTask/performanceTask/types';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const { dc_sercive_city } = toRefs<any>(proxy?.useDict('dc_sercive_city'));
 
-const performanceTaskList = ref<PerformanceTaskVO[]>([]);
+  const performanceTaskList = ref<PerformanceTaskVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -245,6 +266,9 @@ const data = reactive<PageData<PerformanceTaskForm, PerformanceTaskQuery>>({
   rules: {
     id: [
       { required: true, message: "主键ID不能为空", trigger: "blur" }
+    ],
+    remark1: [
+      { required: true, message: "归属城市不能为空", trigger: "blur" }
     ],
     legalSupportId: [
       { required: true, message: "法务支持id不能为空", trigger: "blur" }

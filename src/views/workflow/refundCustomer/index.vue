@@ -55,7 +55,7 @@
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="客户名称" align="center" prop="customerName" show-overflow-tooltip />
         <el-table-column label="客户对接人" align="center" prop="principal" width="90px"/>
-        <el-table-column label="对接人电话" align="center" prop="principalPhone" width="90px" />
+        <el-table-column label="对接人电话" align="center" prop="principalPhone" width="90px" show-overflow-tooltip />
         <el-table-column label="原合同号" align="center" prop="contractNo" width="100px"/>
         <el-table-column label="大成负责人" align="center" prop="inviterId" width="90px"/>
         <el-table-column label="法务支持" align="center" prop="lawyerId" />
@@ -81,7 +81,7 @@
           </template>
         </el-table-column> -->
         <el-table-column label="退费原因" align="center" prop="reasons" width="140px" show-overflow-tooltip />
-        <el-table-column label="退款方式" align="center" prop="refundMethod">
+        <el-table-column label="退款方式" align="center" prop="refundMethod" show-overflow-tooltip>
         <template #default="scope">
             <dict-tag :options="dc_refund_method" :value="scope.row.refundMethod"></dict-tag>
           </template>

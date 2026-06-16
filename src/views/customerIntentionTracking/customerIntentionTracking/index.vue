@@ -274,6 +274,9 @@ const data = reactive<PageData<CustomerIntentionTrackingForm, CustomerIntentionT
     trackingDate: [
       { required: true, message: "请选择跟踪时间", trigger: "change" }
     ],
+    nextTrackingDate: [
+      { required: true, message: "请选择下次跟踪时间", trigger: "change" }
+    ]
   }
 });
 

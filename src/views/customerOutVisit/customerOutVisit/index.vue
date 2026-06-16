@@ -397,6 +397,7 @@ import { CustomerOutVisitVO, CustomerOutVisitQuery, CustomerOutVisitForm } from 
 import { useRoute } from 'vue-router';
 import { Picture, PictureFilled } from '@element-plus/icons-vue';
 import { Document } from '@element-plus/icons-vue'; // 添加 Document
+import { onMounted, watch } from 'vue'
 
 
 const route = useRoute();
@@ -1065,6 +1066,28 @@ watch(
   }
 );
 
+// 【关键】监听路由 query 的变化
+/* watch(
+  () => route.query,
+  () => {
+    // 当 query 变化时（比如 customerId 变了），重新执行处理逻辑
+    handleRouteParams()
+  }
+) */
+// 定义一个处理参数的函数
+const handleRouteParams = () => {
+  if (route.query.customerId) {
+    // 1. 赋值给查询条件
+    queryParams.value.customerId = route.query.customerId
+    // 2. 触发查询
+    getList()
+  } else {
+    // 如果没有参数，重置或执行默认查询
+    queryParams.value.customerId = undefined
+    getList()
+  }
+}
+
 // 4. 优化 onMounted
 onMounted(async () => {
   try {
@@ -1074,6 +1097,8 @@ onMounted(async () => {
     await Promise.all([
       loadCustomerList(), // 预加载客户列表（可选）
       loadLawyerSupportList(),
+       // 首次进入时执行
+       //handleRouteParams(),
       getList()
     ]);
     

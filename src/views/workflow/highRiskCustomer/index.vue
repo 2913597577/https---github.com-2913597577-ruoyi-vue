@@ -53,7 +53,7 @@
         <el-table-column v-if="false" label="主键" align="center" prop="id" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
         <el-table-column label="客户名称" align="center" prop="customerName" show-overflow-tooltip />
-        <el-table-column label="证据情况" align="center" prop="evidenceText" />
+        <el-table-column label="证据情况" align="center" prop="evidenceText" show-overflow-tooltip />
         <el-table-column label="风险发现日期" align="center" width="120" prop="riskDiscoveryDate" />
         <el-table-column label="是否提及退费" align="center">
           <template #default="scope">
