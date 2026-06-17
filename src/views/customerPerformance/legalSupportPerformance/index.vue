@@ -47,14 +47,15 @@
               <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.monthPerformanceGoal }}</span>
               <span class="label">已完成金额：</span>
               <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ formatCurrency(performanceCount.monthAchievedBalance) }}</span>
-              <span class="label">出访任务：</span>
+              <span class="label">本月出访任务：</span>
               <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.monthVisitGoal }}</span>
               <span class="label">出访完成：</span>
               <span class="value" @click="$router.push('/legalSupport/customerOutVisit')">{{ customerCount.outVisitTotal }}</span>
             </div>
             <div class="performance-item">
-              <span class="label">年度业绩累积金额：</span>
+              <span class="label">本年业绩任务累积金额：</span>
               <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ formatCurrency(performanceCount.yearAchievedBalance) }}</span>
+              <span class="label">本年已完成业绩累积金额：</span>
               <span class="label">年度排名：</span>
               <span class="value">{{ performanceCount.yearPerformanceRank }}</span>
             </div>

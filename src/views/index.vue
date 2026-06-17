@@ -140,7 +140,13 @@
 
     <el-card class="todo-card">
       <div class="todo-header">
-        <h3>今日待办事项 <i class="el-icon-arrow-right" style="font-size: 14px;"></i></h3>
+      <h3>
+      <span style="display: flex; align-items: center; font-size: 17px;">
+      今日待办事项: 
+      <span style="color: #ff6b35; font-weight: bold; margin-left: 12px; font-size: 20px;">{{ neededInfo.length }}</span>
+      <i class="el-icon-arrow-right" style="font-size: 18px; margin-left: 8px;"></i>
+    </span>
+      </h3>
       </div>
       <div class="todo-content">
         <div v-if="!neededInfo || neededInfo.length === 0" class="no-todo">
