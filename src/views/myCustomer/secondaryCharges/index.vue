@@ -1063,6 +1063,11 @@
               <el-date-picker clearable v-model="queryParams.serviceEnd" type="date" value-format="YYYY-MM-DD"
                 placeholder="请选择结束时间" style="width: 140px" />
             </el-form-item>
+            <el-form-item label="签单按月筛选" prop="signDateMonth" label-width="90px">
+              <el-date-picker clearable v-model="queryParams.signDateMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+           </el-form-item>
             <el-form-item label="服务到期筛选" prop="expireDateRange" label-width="90px">
            <el-date-picker 
             v-model="expireDateRange" 
@@ -1091,23 +1096,23 @@
     <el-dialog v-model="auditDialogVisible" title="审核" width="720px" append-to-body draggable>
       <el-form :model="auditForm" label-width="100px" class="audit-signature-form">
         <el-form-item label="公司名称" prop="companyName" class="audit-form-item">
-            <el-input v-model="currentRow.companyName" readonly />
+            <el-input v-model="currentRow.companyName" disabled />
         </el-form-item>
 
       <el-row>
         <el-col :span="8">
         <el-form-item label="合同金额" prop="contractAmount" class="audit-form-item">
-            <el-input :value="formatCurrency(currentRow.contractAmount)" readonly />
+            <el-input :value="formatCurrency(currentRow.contractAmount)" disabled />
         </el-form-item>
          </el-col>
       <el-col :span="8">
          <el-form-item label="实收金额" prop="actualPayment" class="audit-form-item">
-            <el-input :value="formatCurrency(currentRow.actualPayment)" readonly />
+            <el-input :value="formatCurrency(currentRow.actualPayment)" disabled />
         </el-form-item>
          </el-col>
         <el-col :span="8">
          <el-form-item label="尾款金额" prop="balanceStatus" class="audit-form-item">
-            <el-input :value="formatCurrency(currentRow.balanceStatus)" readonly />
+            <el-input :value="formatCurrency(currentRow.balanceStatus)" disabled />
         </el-form-item>
          </el-col>
        </el-row>
@@ -1150,7 +1155,7 @@
               <el-form-item label="开票内容" prop="invoiceContent" class="audit-form-item">
                 <el-input
                   v-model="currentRow.invoiceContent" 
-                  readonly
+                  disabled
                 />
               </el-form-item>
             </el-col>
@@ -1183,7 +1188,7 @@
                     v-model="performance.balance"
                     :placeholder="`请分配业绩金额`"
                     type="number"
-                    readonly
+                    disabled
                   >
                   </el-input>
                 </el-form-item>

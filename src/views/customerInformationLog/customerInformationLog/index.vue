@@ -173,10 +173,10 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200px" fixed="right">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerInformationLog:customerInformationLog:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerInformationLog:customerInformationLog:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerInformationLog:customerInformationLog:remove']"></el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerInformationLog:customerInformationLog:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -271,6 +271,11 @@
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.nickName" filterable></el-option>
           </el-select>
             </el-form-item>
+            <el-form-item label="签单按月筛选" prop="signDateMonth" label-width="90px">
+              <el-date-picker clearable v-model="queryParams.signDateMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+           </el-form-item>
             <el-form-item label="服务到期筛选" prop="expireDateRange" label-width="90px">
            <el-date-picker 
             v-model="expireDateRange" 
@@ -283,6 +288,7 @@
             @change="handleExpireDateChange"
            />
            </el-form-item>
+           
             <el-form-item>
               <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
               <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -299,8 +305,8 @@
         <el-form-item label="签约日期" prop="signDate">
           <el-date-picker clearable
             v-model="form.signDate"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+            type="date"
+            value-format="YYYY-MM-DD"
             placeholder="请选择签约日期">
           </el-date-picker>
         </el-form-item>
@@ -316,8 +322,8 @@
         <el-form-item label="负责人电话" prop="principalPhone">
           <el-input v-model="form.principalPhone" placeholder="请输入负责人电话" />
         </el-form-item>
-        <el-form-item label="法务法务支持" prop="lawyerId">
-          <el-input v-model="form.lawyerId" placeholder="请输入法务法务支持" />
+        <el-form-item label="法务支持" prop="lawyerId">
+          <el-input v-model="form.lawyerId" placeholder="请输入法务支持" />
         </el-form-item>
         <el-form-item label="甩单人" prop="transferPerson">
           <el-input v-model="form.transferPerson" placeholder="请输入甩单人" />
@@ -341,21 +347,29 @@
         <el-form-item label="尾款金额" prop="balance">
           <el-input v-model="form.balance" placeholder="请输入尾款金额" />
         </el-form-item>
+        <el-form-item label="开始时间" prop="startDate">
+          <el-date-picker clearable
+            v-model="form.startDate"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择开始时间">
+          </el-date-picker>
+        </el-form-item>
         <el-form-item label="到期时间" prop="expireDate">
           <el-date-picker clearable
             v-model="form.expireDate"
-            type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+            type="date"
+            value-format="YYYY-MM-DD"
             placeholder="请选择到期时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="是否转为意向客户" prop="isIntention">
+        <el-form-item label="是否转为意向客户" prop="isIntention" label-width="110px">
           <el-input v-model="form.isIntention" placeholder="请输入是否转为意向客户" />
         </el-form-item>
-        <el-form-item label="是否转为风险客户" prop="isRisk">
+        <el-form-item label="是否转为风险客户" prop="isRisk" label-width="110px">
           <el-input v-model="form.isRisk" placeholder="请输入是否转为风险客户" />
         </el-form-item>
-        <el-form-item label="是否转为退费客户" prop="isRefund">
+        <el-form-item label="是否转为退费客户" prop="isRefund" label-width="110px">
           <el-input v-model="form.isRefund" placeholder="请输入是否转为退费客户" />
         </el-form-item>
         <el-form-item label="合同编号" prop="contractCode">
@@ -364,13 +378,13 @@
         <el-form-item label="备注" prop="remarks">
             <el-input v-model="form.remarks" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="客户id" prop="transferId">
+        <!-- <el-form-item label="客户id" prop="transferId">
           <el-input v-model="form.transferId" placeholder="请输入客户id" />
-        </el-form-item>
-        <el-form-item label="客户总表id" prop="customerInfoId">
+        </el-form-item> -->
+        <el-form-item label="客户id" prop="customerInfoId">
           <el-input v-model="form.customerInfoId" placeholder="请输入客户总表id" />
         </el-form-item>
-        <el-form-item label="客户总表创建时间" prop="infoCreateTime">
+       <!--  <el-form-item label="客户总表创建时间" prop="infoCreateTime">
           <el-date-picker clearable
             v-model="form.infoCreateTime"
             type="datetime"
@@ -385,7 +399,7 @@
             value-format="YYYY-MM-DD HH:mm:ss"
             placeholder="请选择客户总表更新时间">
           </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="客户经理id" prop="accountManagerId">
           <el-input v-model="form.accountManagerId" placeholder="请输入客户经理id" />
         </el-form-item>
@@ -398,8 +412,8 @@
         <el-form-item label="合同金额" prop="contractAmount">
           <el-input v-model="form.contractAmount" placeholder="请输入合同金额" />
         </el-form-item>
-        <el-form-item label="客户类型  A-0 B-1 C-2 D-3" prop="customerType">
-          <el-select v-model="form.customerType" placeholder="请选择客户类型  A-0 B-1 C-2 D-3">
+        <el-form-item label="客户类型" prop="customerType">
+          <el-select v-model="form.customerType" placeholder="请选择客户类型">
             <el-option
                 v-for="dict in dc_customer_type"
                 :key="dict.value"
@@ -414,11 +428,11 @@
         <el-form-item label="立案密码" prop="caseFillingPwd">
           <el-input v-model="form.caseFillingPwd" placeholder="请输入立案密码" />
         </el-form-item>
-        <el-form-item label="客户服务城市" prop="customerCity">
+        <el-form-item label="客户服务城市" prop="customerCity" label-width="110px">
           <el-input v-model="form.customerCity" placeholder="请输入客户服务城市" />
         </el-form-item>
-        <el-form-item label="是否分配法务支持 0-未分配 1-已分配" prop="isAssigned">
-          <el-input v-model="form.isAssigned" placeholder="请输入是否分配法务支持 0-未分配 1-已分配" />
+        <el-form-item label="是否分配法务支持" prop="isAssigned">
+          <el-input v-model="form.isAssigned" placeholder="请输入是否分配法务支持" />
         </el-form-item>
       </el-form>
       <template #footer>

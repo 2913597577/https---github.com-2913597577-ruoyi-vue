@@ -273,11 +273,11 @@
               <el-date-picker 
                 clearable 
                 v-model="form.signDate" 
-                type="datetime" 
-                value-format="YYYY-MM-DD HH:mm:ss"
+                type="date" 
+                value-format="YYYY-MM-DD"
                 placeholder="请选择签约日期" 
                 style="width: 100%"
-                readonly
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -287,7 +287,7 @@
                 :value="getLawyerNameById(form.lawyerId)" 
                 placeholder="请输入法务支持" 
                 style="width: 100%"
-                readonly
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -313,7 +313,7 @@
                 v-model="form.customerName" 
                 placeholder="请输入客户名称" 
                 style="width: 100%"
-        
+                :disabled="!isSuperAdminOrManager"
               />
             </el-form-item>
           </el-col>
@@ -342,6 +342,7 @@
                 v-model="form.principal" 
                 placeholder="请输入负责人" 
                 style="width: 100%"
+                :disabled="!isSuperAdminOrManager"
               />
             </el-form-item>
           </el-col>
@@ -351,6 +352,7 @@
                 v-model="form.principalPhone" 
                 placeholder="请输入负责人电话" 
                 style="width: 100%"
+                :disabled="!isSuperAdminOrManager"
               />
             </el-form-item>
           </el-col>
@@ -362,6 +364,7 @@
                 v-model="form.customerCity" 
                 placeholder="请选择服务城市" 
                 style="width: 100%"
+                :disabled="!isSuperAdminOrManager"
               >
                 <el-option 
                   v-for="dict in dc_sercive_city" 
@@ -385,6 +388,7 @@
                 v-model="form.contractCode" 
                 placeholder="请输入合同编号" 
                 style="width: 100%"
+                 :disabled="!isSuperAdminOrManager"
               />
             </el-form-item>
           </el-col>
@@ -392,9 +396,9 @@
             <el-form-item label="合同OssID" prop="contractNo" class="form-item">
               <el-input 
                 v-model="form.contractNo" 
-                placeholder="请输入合同编号" 
+                placeholder="请输入合同OssID" 
                 style="width: 100%"
-                readonly
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -408,6 +412,7 @@
                 placeholder="请输入合同金额" 
                 style="width: 100%"
                 type="number"
+                disabled
               >
                 <template #append>元</template>
               </el-input>
@@ -421,6 +426,7 @@
                 placeholder="请输入实收金额" 
                 style="width: 100%"
                 type="number"
+                disabled
               >
                 <template #append>元</template>
               </el-input>
@@ -435,6 +441,7 @@
                 placeholder="请输入尾款金额" 
                 style="width: 100%"
                 type="number"
+                disabled
               >
                 <template #append>元</template>
               </el-input>
@@ -446,6 +453,7 @@
                 v-model="form.serviceDuration" 
                 placeholder="请输入服务时长" 
                 style="width: 100%"
+                :disabled="!isSuperAdminOrManager"
               >
                 <template #append>月</template>
               </el-input>
@@ -454,14 +462,28 @@
         </el-row>
         <el-row :gutter="20" class="form-row">
           <el-col :span="12">
+            <el-form-item label="开始时间" prop="startDate" class="form-item">
+              <el-date-picker 
+                clearable 
+                v-model="form.startDate" 
+                type="date" 
+                value-format="YYYY-MM-DD"
+                placeholder="请选择开始时间" 
+                style="width: 100%"
+                disabled
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="到期时间" prop="expireDate" class="form-item">
               <el-date-picker 
                 clearable 
                 v-model="form.expireDate" 
-                type="datetime" 
-                value-format="YYYY-MM-DD HH:mm:ss"
+                type="date" 
+                value-format="YYYY-MM-DD"
                 placeholder="请选择到期时间" 
                 style="width: 100%"
+                disabled
               />
             </el-form-item>
           </el-col>
@@ -589,10 +611,10 @@
       <el-form ref="transferFormRef" :model="transferForm" label-width="100px" class="customer-flow-form">
          <!-- 显示客户名称 -->
     <el-form-item label="客户名称" class="customerflow-form-item">
-      <el-input v-model="transferDialog.currentRow.customerName" readonly />
+      <el-input v-model="transferDialog.currentRow.customerName" disabled />
     </el-form-item>
     <el-form-item label="负责人" class="customerflow-form-item">
-      <el-input v-model="transferDialog.currentRow.principal" readonly />
+      <el-input v-model="transferDialog.currentRow.principal" disabled />
     </el-form-item>
         <!-- 流转类型单选框 -->
         <el-form-item label="流转类型" prop="transferType" 
@@ -793,6 +815,11 @@
               :label="lawyer.nickName + '(' + lawyer.userName + ')'" :value="lawyer.userId" filterable></el-option>
           </el-select>
             </el-form-item>
+            <el-form-item label="签单按月筛选" prop="signDateMonth" label-width="90px">
+              <el-date-picker clearable v-model="queryParams.signDateMonth" type="month" 
+               value-format="YYYY-MM"
+                placeholder="请选择月份" style="width: 120px" />
+           </el-form-item>
             <el-form-item label="服务到期筛选" prop="expireDateRange" label-width="90px">
            <el-date-picker 
             v-model="expireDateRange" 
@@ -874,10 +901,10 @@
       <el-form ref="assignFormRef" :model="assignForm" :rules="assignRules" label-width="120px" class="assign-legalsupport-form">
     <!-- 新增客户名称显示行 -->
     <el-form-item label="客户名称" prop="customerName">
-      <el-input v-model="assignDialog.currentRow.customerName" readonly class="assigncustomer-form-item"/>
+      <el-input v-model="assignDialog.currentRow.customerName" disabled class="assigncustomer-form-item"/>
     </el-form-item>
     <el-form-item label="负责人" prop="principal">
-        <el-input v-model="assignDialog.currentRow.principal" readonly class="assigncustomer-form-item"/>
+        <el-input v-model="assignDialog.currentRow.principal" disabled class="assigncustomer-form-item"/>
     </el-form-item>
     <!-- <el-form-item label="负责人电话" prop="principalPhone">
         <el-input v-model="assignDialog.currentRow.principalPhone" readonly class="assigncustomer-form-item"/>
@@ -1021,6 +1048,7 @@ import { addIntention } from '@/api/customerIntention/customerIntention';
 import { CustomerIntentionForm, CustomerIntentionQuery, CustomerIntentionVO } from '@/api/customerIntention/customerIntention/types';
 import { useRouter } from 'vue-router';
 import { getCustomerByUserId } from '@/api/common';
+import { useUserStore } from '@/store/modules/user';
 
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -1150,6 +1178,17 @@ const data = reactive<PageData<CustomerInfoForm, CustomerInfoQuery>>({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+//获取用户角色权限
+const userStore = useUserStore();
+// 假设 roles 是一个字符串数组，例如 ['admin', 'LegalSupport_Manager']
+const userRoles = computed(() => userStore.roles || []);
+//定义权限判断函数
+// Admin 或 LegalSupport_Manager 拥有全量编辑权限
+const isSuperAdminOrManager = computed(() => {
+  return userRoles.value.includes('superadmin') || userRoles.value.includes('LegalSupport_Manager') || userRoles.value.includes('LegalSupport_Leader');
+});
+
 
 // 添加到期时间范围变量
 const expireDateRange = ref<[string, string] | []>([]);
