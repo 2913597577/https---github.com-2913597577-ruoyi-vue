@@ -141,7 +141,7 @@
             <dict-tag :options="dc_false_true" :value="scope.row.isIntention" />
           </template>
         </el-table-column>
-        <el-table-column label="备注" align="center" prop="remarks" />
+        <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip />
         <el-table-column label="续费/尾款" align="center" prop="actionType" />
         <!-- <el-table-column label="客户id" align="center" prop="transferId" show-overflow-tooltip /> -->
         <!-- <el-table-column label="客户总表id" align="center" prop="customerInfoId" show-overflow-tooltip /> -->

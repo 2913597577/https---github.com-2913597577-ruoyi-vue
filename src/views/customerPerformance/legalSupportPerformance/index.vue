@@ -42,11 +42,11 @@
             <h3>我的业绩展示</h3>
           </div>
           <div class="performance-content">
-            <div class="performance-item">
+            <!-- <div class="performance-item">
               <span class="label">本月业绩任务：</span>
               <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.monthPerformanceGoal }}</span>
               <span class="label">已完成金额：</span>
-              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ formatCurrency(performanceCount.monthAchievedBalance) }}</span>
+              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ performanceCount.monthPerformanceAchieved }}</span>
               <span class="label">本月出访任务：</span>
               <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.monthVisitGoal }}</span>
               <span class="label">出访完成：</span>
@@ -54,15 +54,84 @@
             </div>
             <div class="performance-item">
               <span class="label">本年业绩任务累积金额：</span>
-              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ formatCurrency(performanceCount.yearAchievedBalance) }}</span>
+              <span class="value" @click="$router.push('/salesStatistics/performanceTask')">{{ performanceCount.yearPerformanceGoal }}</span>
               <span class="label">本年已完成业绩累积金额：</span>
+              <span class="value" @click="$router.push('/salesStatistics/customerPerformance')">{{ performanceCount.yearPerformanceAchieved }}</span>
               <span class="label">年度排名：</span>
               <span class="value">{{ performanceCount.yearPerformanceRank }}</span>
-            </div>
+            </div> -->
+            
+             <!-- 新增：两个表格区域 -->
+             <div class="table-sections" style="margin-top: 30px;"> 
+              <!-- 表格1：本月业绩任务 -->
+              <div class="table-box">
+                <h4 style="margin-bottom: 10px; color: #303133;">本月业绩任务明细</h4>
+                <el-table :data="performanceCount.monthPerformanceGoal" border stripe style="width: 100%" height="250">
+                  <el-table-column prop="legal_support_name" label="姓名" width="120"></el-table-column>
+                  <el-table-column prop="sum1" label="业绩目标" width="200">
+                    <template #default="scope">
+                      {{ formatCurrency(scope.row.sum1) }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="sum2" label="出访目标" width="200"></el-table-column>
+                  <el-table-column prop="remark1" label="归属城市" width="120"></el-table-column>
+                </el-table>
+              </div>
+              <!-- 表格2：已完成金额 -->
+              <div class="table-box" style="margin-top: 20px;">
+                <h4 style="margin-bottom: 10px; color: #303133;">本月已完成业绩明细</h4>
+                <el-table :data="performanceCount.monthPerformanceAchieved" border stripe style="width: 100%" height="250">
+                  <el-table-column prop="username" label="姓名" width="120"></el-table-column>
+                  <el-table-column prop="monthBalance" label="完成金额" width="200">
+                    <template #default="scope">
+                      <span style="color: #67c23a; font-weight: bold;">{{ formatCurrency(scope.row.monthBalance) }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="performanceRank" label="本月排名" width="200"></el-table-column>
+                  <el-table-column prop="city" label="归属城市" width="120"></el-table-column>
+                </el-table>
+              </div>
 
+              <!-- 表格3：本年业绩任务 -->
+               <div class="table-box">
+                <h4 style="margin-bottom: 10px; color: #303133;">本年业绩任务明细</h4>
+                <el-table :data="performanceCount.yearPerformanceGoal" border stripe style="width: 100%" height="250">
+                  <el-table-column prop="legal_support_name" label="姓名" width="120"></el-table-column>
+                  <el-table-column prop="sum1" label="业绩目标" width="200">
+                    <template #default="scope">
+                      {{ formatCurrency(scope.row.sum1) }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="sum2" label="出访目标" width="200"></el-table-column>
+                  <el-table-column prop="remark1" label="归属城市" width="120"></el-table-column>
+                </el-table>
+              </div>
+              <!-- 表格4：已完成金额 -->
+              <div class="table-box" style="margin-top: 20px;">
+                <h4 style="margin-bottom: 10px; color: #303133;">本年已完成业绩明细</h4>
+                <el-table :data="performanceCount.yearPerformanceAchieved" border stripe style="width: 100%" height="265">
+                  <el-table-column prop="username" label="姓名" width="120"></el-table-column>
+                  <el-table-column prop="monthBalance" label="完成金额" width="200">
+                    <template #default="scope">
+                      <span style="color: #67c23a; font-weight: bold;">{{ formatCurrency(scope.row.monthBalance) }}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="performanceRank" label="本月排名" width="200"></el-table-column>
+                  <el-table-column prop="city" label="归属城市" width="120"></el-table-column>
+                </el-table>
+              </div>
+            </div>
+            </div>
+          </el-card>
+
+           <!-- 卡片3：套餐类型对比图表 (新增独立卡片) -->
+        <el-card class="chart-card" style="margin-top: 20px;">
+          <div class="performance-header">
+            <h4>客户套餐类型</h4>
+          </div>
+          <div class="performance-content">
             <!-- 套餐类型对比图表 -->
             <div class="chart-container">
-              <h4>套餐类型对比</h4>
               <div class="chart-wrapper">
                 <el-progress
                   type="circle"
@@ -115,6 +184,7 @@
             </div>
           </div>
         </el-card>
+
       </el-col>
 
       <!-- 右侧待办事项 -->
@@ -151,6 +221,12 @@ const customerCount = ref<any>({})
 const performanceCount = ref<any>({})
 //const neededInfo = ref<any[]>([])
 const packageType = ref<any>([])
+
+// 新增：用于存储两个表格的数据
+//const taskList = ref<any[]>([])      // 本月业绩任务列表
+//const completedList = ref<any[]>([]) // 本月已完成金额列表
+
+
 const router = useRouter()
 
 // 获取法务支持业绩统计
@@ -164,10 +240,16 @@ const fetchPerformanceData = async () => {
       // 解析业绩统计数据
       performanceCount.value = response.data.performanceCount
 
+      console.log("performanceCount:", performanceCount.value);
+
       packageType.value = response.data.packageType
 
       // 解析待办事项数据
       //neededInfo.value = response.data.neededInfo
+       // 假设后端返回字段名为 performanceTaskList 和 performanceCompletedList
+      // 请根据实际接口返回的字段名调整以下赋值
+      //taskList.value = response.data.performanceCount || []
+      //completedList.value = response.data.performanceCompletedList || []
     }
   } catch (error) {
     console.error('获取业绩统计失败:', error)
@@ -230,7 +312,8 @@ const formatCurrency = (value) => {
   .performance-header,
   .todo-header {
     
-    padding: 15px 20px;
+    padding: 1px 20px;
+    border-radius: 8px;
     border-bottom: 1px solid #ebeef5;
     background-color: #f5f7fa;
     color:#1890ff;
