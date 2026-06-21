@@ -74,6 +74,23 @@ export const getLegalSupportPerformance = () => {
     method: 'get'
   })
   }
+// 获取法务支持业绩统计(支持按月份筛选)
+export function listMonthLegalSupportPerformance(query?: any) {
+  return request({
+    url: '/common/getMonthlyPerformanceAmount', // 请替换为实际的后端接口地址
+    method: 'get', // 关键：改为 post
+    params: query      // 关键：POST 请求参数通常放在 data 中
+  })
+}
+// 获取法务支持业绩统计(支持按年份筛选)
+export function listYearLegalSupportPerformance(query?: any) {
+  return request({
+    url: '/common/getYearlyPerformanceAmount', // 请替换为实际的后端接口地址
+    method: 'get', // 关键：改为 post
+    params: query      // 关键：POST 请求参数通常放在 data 中
+  })
+}
+
 // 获取客户流转单列表
   export const getTransferList = () => {
   return request({

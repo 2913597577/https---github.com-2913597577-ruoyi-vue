@@ -39,8 +39,8 @@
         <!-- 业绩展示框 -->
         <el-card class="performance-card" style="margin-top: 20px;">
           <div class="performance-header">
-            <h3>我的业绩展示</h3>
-          </div>
+        <h3>我的业绩展示</h3>
+        </div>  
           <div class="performance-content">
             <!-- <div class="performance-item">
               <span class="label">本月业绩任务：</span>
@@ -65,8 +65,14 @@
              <div class="table-sections" style="margin-top: 30px;"> 
               <!-- 表格1：本月业绩任务 -->
               <div class="table-box">
-                <h4 style="margin-bottom: 10px; color: #303133;">本月业绩任务明细</h4>
-                <el-table :data="performanceCount.monthPerformanceGoal" border stripe style="width: 100%" height="250">
+                <!-- 修改此处：使用 flex 布局让标题和按钮同行显示，并两端对齐 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h4 style="margin: 0; color: #303133;">本月业绩任务明细</h4>
+                  <el-button type="primary" icon="Search" size="small" @click="showMonthFilterDialog = true">
+                    筛选
+                  </el-button>
+                </div>
+                <el-table :data="performanceMonthCount.monthPerformanceGoal" border stripe style="width: 100%" height="265">
                   <el-table-column prop="legal_support_name" label="姓名" width="120"></el-table-column>
                   <el-table-column prop="sum1" label="业绩目标" width="200">
                     <template #default="scope">
@@ -75,27 +81,42 @@
                   </el-table-column>
                   <el-table-column prop="sum2" label="出访目标" width="200"></el-table-column>
                   <el-table-column prop="remark1" label="归属城市" width="120"></el-table-column>
+                  <el-table-column label="月份" width="120">
+                    <template #default>
+                  {{ performanceMonthCount.month || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`  }}
+                  </template>
+                  </el-table-column> 
                 </el-table>
               </div>
               <!-- 表格2：已完成金额 -->
               <div class="table-box" style="margin-top: 20px;">
                 <h4 style="margin-bottom: 10px; color: #303133;">本月已完成业绩明细</h4>
-                <el-table :data="performanceCount.monthPerformanceAchieved" border stripe style="width: 100%" height="250">
-                  <el-table-column prop="username" label="姓名" width="120"></el-table-column>
+                <el-table :data="performanceMonthCount.monthPerformanceAchieved" border stripe style="width: 100%" height="265">
+                  <el-table-column prop="performanceRank" label="本月排名" width="120"></el-table-column>
+                  <el-table-column prop="username" label="姓名" width="200"></el-table-column>
                   <el-table-column prop="monthBalance" label="完成金额" width="200">
                     <template #default="scope">
-                      <span style="color: #67c23a; font-weight: bold;">{{ formatCurrency(scope.row.monthBalance) }}</span>
+                      <span style="color: #ff6b35; font-weight: bold;">{{ formatCurrency(scope.row.monthBalance) }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="performanceRank" label="本月排名" width="200"></el-table-column>
                   <el-table-column prop="city" label="归属城市" width="120"></el-table-column>
+                  <el-table-column label="月份" width="120">
+                    <template #default>
+                  {{ performanceMonthCount.month || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}` }}
+                  </template>
+                  </el-table-column> 
                 </el-table>
               </div>
 
               <!-- 表格3：本年业绩任务 -->
-               <div class="table-box">
-                <h4 style="margin-bottom: 10px; color: #303133;">本年业绩任务明细</h4>
-                <el-table :data="performanceCount.yearPerformanceGoal" border stripe style="width: 100%" height="250">
+               <div class="table-box" style="margin-top: 40px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h4 style="margin: 0; color: #303133;">本年业绩任务明细</h4>
+                  <el-button type="primary" icon="Search" size="small" @click="showYearFilterDialog = true">
+                    筛选
+                  </el-button>
+                </div>
+                <el-table :data="performanceYearCount.yearPerformanceGoal" border stripe style="width: 100%" height="265">
                   <el-table-column prop="legal_support_name" label="姓名" width="120"></el-table-column>
                   <el-table-column prop="sum1" label="业绩目标" width="200">
                     <template #default="scope">
@@ -104,25 +125,84 @@
                   </el-table-column>
                   <el-table-column prop="sum2" label="出访目标" width="200"></el-table-column>
                   <el-table-column prop="remark1" label="归属城市" width="120"></el-table-column>
+                  <el-table-column label="年份" width="120">
+                    <template #default>
+                  {{ performanceYearCount.year || new Date().getFullYear() }}
+                  </template>
+                  </el-table-column>
                 </el-table>
               </div>
               <!-- 表格4：已完成金额 -->
               <div class="table-box" style="margin-top: 20px;">
                 <h4 style="margin-bottom: 10px; color: #303133;">本年已完成业绩明细</h4>
-                <el-table :data="performanceCount.yearPerformanceAchieved" border stripe style="width: 100%" height="265">
-                  <el-table-column prop="username" label="姓名" width="120"></el-table-column>
+                <el-table :data="performanceYearCount.yearPerformanceAchieved" border stripe style="width: 100%" height="265">
+                  <el-table-column prop="performanceRank" label="本年排名" width="120"></el-table-column>
+                  <el-table-column prop="username" label="姓名" width="200"></el-table-column>
                   <el-table-column prop="monthBalance" label="完成金额" width="200">
                     <template #default="scope">
-                      <span style="color: #67c23a; font-weight: bold;">{{ formatCurrency(scope.row.monthBalance) }}</span>
+                      <span style="color: #ff6b35; font-weight: bold;">{{ formatCurrency(scope.row.monthBalance) }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="performanceRank" label="本月排名" width="200"></el-table-column>
                   <el-table-column prop="city" label="归属城市" width="120"></el-table-column>
+                  <el-table-column label="年份" width="120">
+                    <template #default>
+                  {{ performanceYearCount.year || new Date().getFullYear() }}
+                  </template>
+                  </el-table-column> 
                 </el-table>
               </div>
             </div>
             </div>
           </el-card>
+
+ <!-- 新增：月份业绩数据筛选弹窗 -->
+ <el-dialog v-model="showMonthFilterDialog" title="月份业绩数据筛选" width="500px" append-to-body draggable @open="clearMonthFilter">
+            <el-form :model="filterMonthForm" label-width="80px" size="small">
+             
+               <!-- 修改此处：使用 el-date-picker -->
+     <el-form-item label="请选择月份">
+       <el-date-picker 
+         v-model="filterMonthForm.month" 
+         type="month" 
+         value-format="YYYY-MM"
+         placeholder="请选择月份" 
+         style="width: 100%" 
+       />
+     </el-form-item>
+            </el-form>
+
+            <template #footer>
+              <div class="dialog-footer">
+                <!-- <el-button @click="showMonthFilterDialog = false">取消</el-button> -->
+                <el-button @click="resetMonthFilter">重置</el-button>
+                <el-button type="primary" @click="handleMonthFilterConfirm">确定</el-button>
+              </div>
+            </template>
+          </el-dialog>
+
+<!-- 新增：年份业绩数据筛选弹窗 -->
+<el-dialog v-model="showYearFilterDialog" title="年份业绩数据筛选" width="500px" append-to-body draggable  @open="clearYearFilter">
+            <el-form :model="filterYearForm" label-width="80px" size="small">
+                <el-form-item label="请选择年份">
+       <el-date-picker 
+         v-model="filterYearForm.year" 
+         type="year" 
+         value-format="YYYY"
+         placeholder="请选择年份" 
+         style="width: 100%" 
+       />
+     </el-form-item>
+
+            </el-form>
+
+            <template #footer>
+              <div class="dialog-footer">
+                <!-- <el-button @click="showYearFilterDialog = false">取消</el-button> -->
+                <el-button @click="resetYearFilter">重置</el-button>
+                <el-button type="primary" @click="handleYearFilterConfirm">确定</el-button>
+              </div>
+            </template>
+          </el-dialog>
 
            <!-- 卡片3：套餐类型对比图表 (新增独立卡片) -->
         <el-card class="chart-card" style="margin-top: 20px;">
@@ -212,15 +292,46 @@
 </template>
 
 <script setup name="legalSupportPerformance" lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router' // 修改此行
 import { getLegalSupportPerformance } from '@/api/common'
+import { listMonthLegalSupportPerformance } from '@/api/common'
+import { listYearLegalSupportPerformance } from '@/api/common'
+
+// 1. 定义弹窗显示状态
+const showMonthFilterDialog = ref(false)
+const showYearFilterDialog = ref(false)
+
+// 2. 定义筛选表单
+const filterMonthForm = reactive({
+  month: undefined as string | undefined
+})
+
+const filterYearForm = reactive({
+  year: undefined as string | undefined,
+})
+
 
 // 统计数据
 const customerCount = ref<any>({})
-const performanceCount = ref<any>({})
+//const performanceCount = ref<any>({})
 //const neededInfo = ref<any[]>([])
 const packageType = ref<any>([])
+// 【新增】月份筛选后的业绩数据
+const performanceMonthCount = ref<any>({
+  monthPerformanceGoal: [],
+  monthPerformanceAchieved: [],
+  month: '' // 用于显示月份
+})
+
+// 【新增】年份筛选后的业绩数据
+const performanceYearCount = ref<any>({
+  yearPerformanceGoal: [],
+  yearPerformanceAchieved: [],
+  year: ''
+})
+
+
 
 // 新增：用于存储两个表格的数据
 //const taskList = ref<any[]>([])      // 本月业绩任务列表
@@ -232,15 +343,19 @@ const router = useRouter()
 // 获取法务支持业绩统计
 const fetchPerformanceData = async () => {
   try {
+    
+    const params: any = {}
+   
     const response = await getLegalSupportPerformance()
     if (response && response.data) {
       // 解析客户统计数据
       customerCount.value = response.data.customerCount
 
       // 解析业绩统计数据
-      performanceCount.value = response.data.performanceCount
+      performanceMonthCount.value = response.data.performanceCount
+      performanceYearCount.value = response.data.performanceCount
 
-      console.log("performanceCount:", performanceCount.value);
+      //console.log("performanceCount:", performanceCount.value);
 
       packageType.value = response.data.packageType
 
@@ -256,9 +371,90 @@ const fetchPerformanceData = async () => {
   }
 }
 
+
+// 3. 修改获取数据的方法，支持传入筛选参数(月份)
+const listMonthPerformanceData = async () => {
+  try {
+    const params: any = {}
+    
+    // 如果选择了月份，直接传入 (格式为 YYYY-MM)
+    if (filterMonthForm.month) {
+      params.month = filterMonthForm.month
+    }
+    
+    const response = await listMonthLegalSupportPerformance(params)
+    if (response && response.data) {
+      performanceMonthCount.value = response.data
+      //console.log("performanceCount:", performanceMonthCount.value);
+    }
+  } catch (error) {
+    console.error('获取业绩统计失败:', error)
+  }
+}
+
+// 3. 修改获取数据的方法，支持传入筛选参数(月份)
+const listYearPerformanceData = async () => {
+  try {
+    const params: any = {}
+    
+    // 如果选择了月份，直接传入 (格式为 YYYY-MM)
+    if (filterMonthForm.month) {
+      params.month = filterMonthForm.month
+    }
+    
+    // 如果选择了年份，传入年份
+    if (filterYearForm.year) {
+      params.year = filterYearForm.year
+    }
+
+    const response = await listYearLegalSupportPerformance(params)
+    if (response && response.data) {
+      performanceYearCount.value = response.data
+      //console.log("performanceCount:", performanceYearCount.value);
+    }
+  } catch (error) {
+    console.error('获取业绩统计失败:', error)
+  }
+}
+
+// 4. 修改月份筛选确认逻辑
+const handleMonthFilterConfirm = () => {
+  listMonthPerformanceData()
+  //showMonthFilterDialog.value = false
+}
+
+// 5. 新增：重置月份筛选
+const resetMonthFilter = () => {
+  filterMonthForm.month = undefined
+  //listMonthPerformanceData()
+  //showMonthFilterDialog.value = false
+}
+
+const clearMonthFilter = () => {
+  filterMonthForm.month = undefined
+}
+// 6. 修改年份筛选确认逻辑 (补充之前缺失的部分)
+const handleYearFilterConfirm = () => {
+  listYearPerformanceData()
+  //showYearFilterDialog.value = false
+}
+
+// 7. 重置年份筛选
+const resetYearFilter = () => {
+  filterMonthForm.month = undefined
+  filterYearForm.year = undefined
+  //listYearPerformanceData()
+  //showYearFilterDialog.value = false
+}
+const clearYearFilter = () => {
+  filterMonthForm.month = undefined
+  filterYearForm.year = undefined
+}
 // 页面加载时获取数据
 onMounted(() => {
   fetchPerformanceData()
+  //listMonthPerformanceData(),
+  //listYearPerformanceData()
 })
 
 // 计算套餐类型百分比
@@ -302,6 +498,7 @@ const formatCurrency = (value) => {
 
   .statistic-card,
   .performance-card,
+  .chart-card,
   .todo-card {
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);

@@ -25,7 +25,7 @@
           <template #header>
             <div class="card-header">
               <span>{{ statisticsTitle }}</span>
-              <el-button type="primary" size="small" @click="showFilterDialog = true" style="margin-left: 10px;">
+              <el-button type="primary" icon="Search" size="small" @click="showFilterDialog = true" style="margin-left: 10px;">
                 筛选
               </el-button>
             </div>
@@ -62,7 +62,7 @@
     </el-row>
 
     <!-- 筛选弹窗 -->
-    <el-dialog v-model="showFilterDialog" title="数据筛选" width="500px" append-to-body>
+    <el-dialog v-model="showFilterDialog" title="数据筛选" width="500px" append-to-body draggable>
       <el-form :model="filterForm" label-width="60px" size="small">
         <el-form-item label="年份">
           <el-select v-model="filterForm.year" placeholder="请选择年份" clearable style="width: 100%">
@@ -125,11 +125,11 @@
               <el-row :gutter="10">
                 <!-- 左侧柱状图 -->
                 <el-col :sm="12" :lg="12">
-                  <div ref="barChartRef" style="width: 100%; height: 300px;"></div>
+                  <div ref="barChartRef" style="width: 120%; height: 300px;"></div>
                 </el-col>
                 <!-- 右侧饼状图 -->
                 <el-col :sm="12" :lg="12">
-                  <div ref="chartRef" style="width: 100%; height: 300px;"></div>
+                  <div ref="chartRef" style="width: 150%; height: 300px;"></div>
                 </el-col>
               </el-row>
             </el-col>

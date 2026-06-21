@@ -71,7 +71,9 @@
                 <el-table-column prop="userName" label="姓名" width="120" />
                 <el-table-column prop="monthAchievedBalance" label="业绩金额" width="120">
                   <template #default="scope">
+                    <span style="color: #ff6b35; font-weight: bold;">
                     {{ formatCurrency(scope.row.monthAchievedBalance) }}
+                  </span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="monthPerformanceRank" label="排名" width="80" />
@@ -282,9 +284,11 @@ onUnmounted(() => {
 
   .statistic-header,
   .performance-header {
-    padding: 15px 20px;
+    padding: 1px 20px;
+    border-radius: 8px;
     border-bottom: 1px solid #ebeef5;
     background-color: #f5f7fa;
+    color:#1890ff;
   }
 
   .statistic-content,
@@ -308,9 +312,9 @@ onUnmounted(() => {
   }
 
   .value {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
-    color: #1890ff;
+    color: #ff6b35;
     margin-right: 20px;
   }
 
@@ -337,7 +341,7 @@ onUnmounted(() => {
     .annual-amount {
       font-size: 24px;
       font-weight: bold;
-      color: #1890ff;
+      color: #ff6b35;
     }
   }
 
