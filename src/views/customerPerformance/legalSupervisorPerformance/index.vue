@@ -129,7 +129,8 @@
                   <template #default="scope">
                     <span style="color: #7cb342; font-weight: bold;">
                     <!-- {{ formatCurrency(scope.row.monthAchievedBalance) }} -->
-                    {{getMonthRank(scope.row) }}
+                    <!-- {{getMonthRank(scope.row) }} -->
+                    {{ scope.$index + 1 }}
                   </span>
                   </template>
                   </el-table-column>
@@ -148,7 +149,7 @@
              <!-- 成员年度业绩排名 -->
              <div class="ranking-item">
               <h4>各成员年度业绩排名</h4>
-              <el-table :data="memberRankings" stripe style="width: 100%; font-size: 12px;">
+              <el-table :data="yearMemberRankings" stripe style="width: 100%; font-size: 12px;">
                 <el-table-column prop="userName" label="姓名" width="120" />
                 <el-table-column prop="monthAchievedBalance" label="业绩金额" width="120">
                   <template #default="scope">
@@ -162,7 +163,8 @@
                   <template #default="scope">
                     <span style="color: #7cb342; font-weight: bold;">
                     <!-- {{ formatCurrency(scope.row.monthAchievedBalance) }} -->
-                    {{getYearRank(scope.row) }}
+                    <!-- {{getYearRank(scope.row) }} -->
+                    {{ scope.$index + 1 }}
                   </span>
                   </template>
               </el-table-column>
@@ -240,11 +242,38 @@ const teamYearVisitRate = computed(() => {
   return Math.round((teamPerformance.value.teamYearAchievedVisit / teamPerformance.value.teamYearVisitGoal) * 100)
 })
 
-const memberRankings = computed(() => {
+/* const memberRankings = computed(() => {
   return [...teamPerformanceList.value]
     .sort((a, b) => (a.monthPerformanceRank || 999) - (b.monthPerformanceRank || 999))
     .slice(0, 20)
+}) */
+
+const memberRankings = computed(() => {
+  // 1. 复制数组，避免修改原数据
+  const list = [...teamPerformanceList.value]
+  
+  // 2. 根据月度业绩金额降序排序 (由大到小)
+  list.sort((a, b) => {
+    const amountA = getMonthAchieved(a)
+    const amountB = getMonthAchieved(b)
+    return amountB - amountA
+  })
+  
+  // 3. 取前50名
+  return list.slice(0, 50)
 })
+
+const yearMemberRankings = computed(() => {
+  const list = [...teamPerformanceList.value]
+  // 根据年度业绩金额降序排序
+  list.sort((a, b) => {
+    const amountA = getYearAchieved(a)
+    const amountB = getYearAchieved(b)
+    return amountB - amountA
+  })
+  return list.slice(0, 50)
+})
+
 
 // 获取法务主管业绩数据
 const fetchSupervisorData = async () => {
