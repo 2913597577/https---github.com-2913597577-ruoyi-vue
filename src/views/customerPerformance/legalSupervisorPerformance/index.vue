@@ -32,17 +32,17 @@
       <el-col :span="24">
         <el-card class="performance-card">
           <div class="performance-header">
-            <h3>业绩展示</h3>
+            <h3>团队业绩展示</h3>
           </div>
           <div class="performance-content">
             <!-- 团队任务进度 -->
             <div class="progress-item">
               <h4>团队月度业绩完成率</h4>
               <el-progress
-                :percentage="teamPerformanceRate"
+                :percentage="teamMonthPerformanceRate"
                 :format="(percent) => `${percent}%`"
-                color="#1890ff"
-                :stroke-width="20"
+                color="#67c23a"
+                :stroke-width="3"
               />
               <div class="progress-info">
                 <span>已完成：{{ formatCurrency(teamPerformance.teamMonthAchievedBalance) }}</span>
@@ -50,9 +50,51 @@
               </div>
             </div>
 
+             <!-- 团队任务进度 -->
+            <!--  <div class="progress-item">
+              <h4>团队月度出访完成率</h4>
+              <el-progress
+                :percentage="teamMonthVisitRate"
+                :format="(percent) => `${percent}%`"
+                color="#67c23a"
+                :stroke-width="3"
+              />
+              <div class="progress-info">
+                <span>已完成：{{ formatCurrency(teamPerformance.teamMonthAchievedVisit) }}</span>
+                <span>目标：{{ formatCurrency(teamPerformance.teamMonthVisitGoal) }}</span>
+              </div>
+            </div> -->
+
+            <div class="progress-item">
+              <h4>团队年度业绩完成率</h4>
+              <el-progress
+                :percentage="teamYearPerformanceRate"
+                :format="(percent) => `${percent}%`"
+                color="#67c23a"
+                :stroke-width="3"
+              />
+              <div class="progress-info">
+                <span>已完成：{{ formatCurrency(teamPerformance.teamYearAchievedBalance) }}</span>
+                <span>目标：{{ formatCurrency(teamPerformance.teamYearPerformanceGoal) }}</span>
+              </div>
+            </div>
+
+          <!--   <div class="progress-item">
+              <h4>团队年度出访完成率</h4>
+              <el-progress
+                :percentage="teamYearVisitRate"
+                :format="(percent) => `${percent}%`"
+                color="#67c23a"
+                :stroke-width="3"
+              />
+              <div class="progress-info">
+                <span>已完成：{{ formatCurrency(teamPerformance.teamYearAchievedVisit) }}</span>
+                <span>目标：{{ formatCurrency(teamPerformance.teamYearVisitGoal) }}</span>
+              </div>
+            </div> -->
             <!-- 年度业绩 -->
             <div class="annual-performance">
-              <h4>年度累计业绩</h4>
+              <h4>本年度已完成业绩累计</h4>
               <div class="annual-amount">
                 {{ formatCurrency(teamPerformance.teamYearAchievedBalance) }}
               </div>
@@ -60,25 +102,83 @@
 
             <!-- 成员任务完成柱状图 -->
             <div class="chart-item">
-              <h4>团队内各成员任务完成情况柱状图</h4>
-              <div ref="chartRef" class="chart-container"></div>
+              <h4>月度任务完成情况</h4>
+              <div ref="chartRefMonth" class="chart-container"></div>
             </div>
 
-            <!-- 成员业绩排名 -->
+             <!-- 成员任务完成柱状图 -->
+             <div class="chart-item">
+              <h4>年度任务完成情况</h4>
+              <div ref="chartRefYear" class="chart-container"></div>
+            </div>
+
+            <!-- 成员月度业绩排名 -->
             <div class="ranking-item">
-              <h4>团队内成员业绩排名</h4>
-              <el-table :data="memberRankings" stripe style="width: 100%">
+              <h4>各成员月度业绩排名</h4>
+              <el-table :data="memberRankings" stripe style="width: 100%; font-size: 12px;">
                 <el-table-column prop="userName" label="姓名" width="120" />
                 <el-table-column prop="monthAchievedBalance" label="业绩金额" width="120">
                   <template #default="scope">
                     <span style="color: #ff6b35; font-weight: bold;">
-                    {{ formatCurrency(scope.row.monthAchievedBalance) }}
+                    <!-- {{ formatCurrency(scope.row.monthAchievedBalance) }} -->
+                    {{ formatCurrency(getMonthAchieved(scope.row)) }} 
                   </span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="monthPerformanceRank" label="排名" width="80" />
+                <el-table-column prop="monthPerformanceRank" label="排名" width="80">
+                  <template #default="scope">
+                    <span style="color: #7cb342; font-weight: bold;">
+                    <!-- {{ formatCurrency(scope.row.monthAchievedBalance) }} -->
+                    {{getMonthRank(scope.row) }}
+                  </span>
+                  </template>
+                  </el-table-column>
+                  <el-table-column prop="city" label="归属城市" width="120">
+                    <template #default="scope">
+                    {{ scope.row.monthPerformanceAchieved?.[0]?.city || '-' }}
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="月份" width="120">
+                    <template #default="scope">
+                  {{ scope.row.monthPerformanceAchieved?.[0]?.month || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}` }}
+                  </template>
+                  </el-table-column> 
               </el-table>
             </div>
+             <!-- 成员年度业绩排名 -->
+             <div class="ranking-item">
+              <h4>各成员年度业绩排名</h4>
+              <el-table :data="memberRankings" stripe style="width: 100%; font-size: 12px;">
+                <el-table-column prop="userName" label="姓名" width="120" />
+                <el-table-column prop="monthAchievedBalance" label="业绩金额" width="120">
+                  <template #default="scope">
+                    <span style="color: #ff6b35; font-weight: bold;">
+                    <!-- {{ formatCurrency(scope.row.monthAchievedBalance) }} -->
+                    {{ formatCurrency(getYearAchieved(scope.row)) }}
+                  </span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="yearPerformanceRank" label="排名" width="80">
+                  <template #default="scope">
+                    <span style="color: #7cb342; font-weight: bold;">
+                    <!-- {{ formatCurrency(scope.row.monthAchievedBalance) }} -->
+                    {{getYearRank(scope.row) }}
+                  </span>
+                  </template>
+              </el-table-column>
+              <el-table-column prop="city" label="归属城市" width="120">
+                    <template #default="scope">
+                    {{ scope.row.yearPerformanceAchieved?.[0]?.city || '-' }}
+                    </template>
+              </el-table-column>
+              <el-table-column label="年份" width="120">
+                    <template #default="scope">
+                  {{  scope.row.yearPerformanceAchieved?.[0]?.year || new Date().getFullYear() }}
+                  </template>
+                  </el-table-column> 
+              </el-table>
+            </div>
+
           </div>
         </el-card>
       </el-col>
@@ -87,14 +187,20 @@
 </template>
 
 <script setup name="legalSupervisorPerformance" lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'  // 添加了watch导入
+import { ref, onMounted, computed, watch, onUnmounted } from 'vue'  // 添加了watch导入
 import { getPerformance } from '@/api/common'
 import * as echarts from 'echarts'
 
 // 数据响应式变量
 const performanceData = ref<any>({})
-const chartRef = ref<HTMLDivElement | null>(null)
-const chartInstance = ref<echarts.ECharts | null>(null)
+//const chartRef = ref<HTMLDivElement | null>(null)
+  
+const chartRefMonth = ref<HTMLDivElement | null>(null)
+const chartRefYear = ref<HTMLDivElement | null>(null)
+
+const chartInstanceMonth = ref<echarts.ECharts | null>(null)
+const chartInstanceYear = ref<echarts.ECharts | null>(null)
+
 
 // 计算属性
 const customerStats = computed(() => {
@@ -115,15 +221,29 @@ const teamPerformanceList = computed(() => {
   return performanceData.value.teamPerformanceList || []
 })
 
-const teamPerformanceRate = computed(() => {
+const teamMonthPerformanceRate = computed(() => {
   if (!teamPerformance.value.teamMonthPerformanceGoal) return 0
   return Math.round((teamPerformance.value.teamMonthAchievedBalance / teamPerformance.value.teamMonthPerformanceGoal) * 100)
+})
+const teamMonthVisitRate = computed(() => {
+  if (!teamPerformance.value.teamMonthVisitGoal) return 0
+  return Math.round((teamPerformance.value.teamMonthAchievedVisit / teamPerformance.value.teamMonthVisitGoal) * 100)
+})
+
+const teamYearPerformanceRate = computed(() => {
+  if (!teamPerformance.value.teamYearPerformanceGoal) return 0
+  return Math.round((teamPerformance.value.teamYearAchievedBalance / teamPerformance.value.teamYearPerformanceGoal) * 100)
+})
+
+const teamYearVisitRate = computed(() => {
+  if (!teamPerformance.value.teamYearVisitGoal) return 0
+  return Math.round((teamPerformance.value.teamYearAchievedVisit / teamPerformance.value.teamYearVisitGoal) * 100)
 })
 
 const memberRankings = computed(() => {
   return [...teamPerformanceList.value]
     .sort((a, b) => (a.monthPerformanceRank || 999) - (b.monthPerformanceRank || 999))
-    .slice(0, 10)
+    .slice(0, 20)
 })
 
 // 获取法务主管业绩数据
@@ -133,6 +253,7 @@ const fetchSupervisorData = async () => {
     if (response && response.data) {
       performanceData.value = response.data
       
+      console.log("获取到的业绩数据:", performanceData.value)
       // 校验数据
       performanceData.value.teamPerformanceList?.forEach((member: any) => {
         if (member.monthPerformanceGoal === '0' || member.monthPerformanceGoal === 0) {
@@ -164,88 +285,243 @@ const formatCurrency = (value: string | number) => {
   return '¥' + parseFloat(value.toString()).toFixed(2)
 }
 
-// 初始化图表
-const initChart = () => {
-  if (!chartRef.value) return
-  
-  const data = teamPerformanceList.value.map((member: any) => ({
-    name: member.userName,
-    achievement: parseFloat(member.monthAchievedBalance || '0'),
-    visit: parseFloat(member.monthVisitGoal || '0')
-  }))
-  
-  const option = {
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      },
-      formatter: (params: any) => {
-        const value = params[0].value
-        return `${params[0].name}<br/>业绩任务: ¥${value[1].toFixed(2)}<br/>出访任务: ${value[2]}`
-      }
-    },
-    grid: {
-      left: '5%',
-      right: '5%',
-      bottom: '15%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data: data.map(item => item.name),
-      axisLabel: {
-        rotate: 45,
-        interval: 0
-      }
-    },
-    yAxis: {
-      type: 'value',
-      name: '金额/次数',
-      axisLabel: {
-        formatter: '{value}'
-      }
-    },
-    series: [
-      {
-        name: '业绩任务',
-        type: 'bar',
-        barWidth: '30%',
-        data: data.map(item => item.achievement),
-        itemStyle: {
-          color: '#1890ff'
-        }
-      },
-      {
-        name: '出访任务',
-        type: 'bar',
-        barWidth: '30%',
-        data: data.map(item => item.visit),
-        itemStyle: {
-          color: '#f56a00'
-        }
-      }
-    ]
+// 新增：获取月度完成业绩
+const getMonthAchieved = (member: any) => {
+  // 判断数组是否存在且不为空
+  if (member.monthPerformanceAchieved && member.monthPerformanceAchieved.length > 0) {
+    // 假设数组第一个对象中包含 monthBalance 或 balance 字段，请根据实际后端字段名调整
+    return member.monthPerformanceAchieved[0].monthBalance || member.monthPerformanceAchieved[0].balance || 0;
   }
-  
-  if (chartInstance.value) {
-    chartInstance.value.dispose()
-    chartInstance.value = echarts.init(chartRef.value)
-  } else {
-    chartInstance.value = echarts.init(chartRef.value)
-  }
-  chartInstance.value.setOption(option)
+  return 0;
 }
 
-// 监听数据变化
+// 获取月度排名 (通常直接在根节点，但为了统一处理也可以写个函数)
+const getMonthRank = (member: any) => {
+  // 优先取根节点的 rank
+  if (member.monthPerformanceRank) {
+    return member.monthPerformanceRank;
+  }
+  // 如果根节点没有，再尝试从数组里找（备选方案）
+  if (member.monthPerformanceAchieved && member.monthPerformanceAchieved.length > 0) {
+    return member.monthPerformanceAchieved[0].performanceRank || '-';
+  }
+  return '-';
+}
+// 新增：获取年度完成业绩
+const getYearAchieved = (member: any) => {
+  // 判断数组是否存在且不为空
+  if (member.yearPerformanceAchieved && member.yearPerformanceAchieved.length > 0) {
+    // 假设数组第一个对象中包含 yearBalance 或 balance 字段，请根据实际后端字段名调整
+    return member.yearPerformanceAchieved[0].monthBalance || member.yearPerformanceAchieved[0].balance || 0;
+  }
+  return 0;
+}
+// 获取年度排名 (通常直接在根节点，但为了统一处理也可以写个函数)
+const getYearRank = (member: any) => {
+  // 优先取根节点的 rank
+  if (member.yearPerformanceRank) {
+    return member.yearPerformanceRank;
+  }
+  // 如果根节点没有，再尝试从数组里找（备选方案）
+  if (member.yearPerformanceAchieved && member.yearPerformanceAchieved.length > 0) {
+    return member.yearPerformanceAchieved[0].performanceRank || '-';
+  }
+  return '-';
+}
+
+// 初始化图表
+const initChart = () => {
+  // --- 1. 初始化月度图表 ---
+  if (chartRefMonth.value) {
+    const monthData = teamPerformanceList.value.map((member: any) => {
+    // 安全获取月度完成业绩：取数组第一个元素的 monthBalance 字段，如果没有则为 0
+    const achievedObj = member.monthPerformanceAchieved && member.monthPerformanceAchieved.length > 0 
+      ? member.monthPerformanceAchieved[0] 
+      : null;
+    const achievement = achievedObj ? parseFloat(achievedObj.monthBalance || '0') : 0;
+
+    // 安全获取月度目标：取数组第一个元素的 sum1 字段，如果没有则为 0
+    const goalObj = member.monthPerformanceGoal && member.monthPerformanceGoal.length > 0 
+      ? member.monthPerformanceGoal[0] 
+      : null;
+    const goal = goalObj ? parseFloat(goalObj.sum1 || '0') : 0;
+
+    return {
+      name: member.userName,
+      achievement: achievement,
+      goal: goal
+    };
+  });
+    // 销毁旧实例防止内存泄漏
+    if (chartInstanceMonth.value) {
+      chartInstanceMonth.value.dispose()
+    }
+    
+    chartInstanceMonth.value = echarts.init(chartRefMonth.value)
+    
+    const monthOption = {
+      title: { text: '月度任务完成情况', left: 'center', textStyle: { fontSize: 14 } },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' }
+      },
+      legend: { data: ['完成业绩', '业绩目标'], bottom: 0 },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '10%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: monthData.map(item => item.name),
+        axisLabel: { rotate: 45, interval: 0, fontSize: 10,      // 设置字号变小，例如 10px 或 12px
+          fontWeight: 'bold' }
+      },
+      yAxis: {
+        type: 'value',
+        name: '金额'
+      },
+      series: [
+        {
+          name: '完成业绩',
+          type: 'bar',
+          data: monthData.map(item => item.achievement),
+          itemStyle: { color: '#1890ff' },
+          // 添加 label 配置以显示数值
+          label: {
+            show: true,
+            position: 'top', // 数值显示在柱子顶部
+            formatter: (params: any) => {
+              // 格式化显示为货币形式，如 ¥1,234.56
+              return '¥' + params.value.toLocaleString(); 
+            },
+            fontSize: 10,
+            color: '#333'
+          }
+        },
+        {
+          name: '业绩目标',
+          type: 'bar',
+          data: monthData.map(item => item.goal),
+          itemStyle: { color: '#f56a00' },
+          // 添加 label 配置以显示数值
+          label: {
+            show: true,
+            position: 'top',
+            formatter: (params: any) => {
+              return '¥' + params.value.toLocaleString();
+            },
+            fontSize: 10,
+            color: '#333'
+          }
+        }
+      ]
+    }
+    chartInstanceMonth.value.setOption(monthOption)
+  }
+
+  // --- 2. 初始化年度图表 (补充部分) ---
+  if (chartRefYear.value) {
+    // 映射年度数据
+    const yearData = teamPerformanceList.value.map((member: any) => {
+    // 安全获取年度完成业绩
+    const yearAchievedObj = member.yearPerformanceAchieved && member.yearPerformanceAchieved.length > 0 
+      ? member.yearPerformanceAchieved[0] 
+      : null;
+    // 注意：请确认年度完成业绩在数组对象中的具体字段名，这里暂用 yearBalance 或 balance，需根据实际调整
+    const achievement = yearAchievedObj ? parseFloat(yearAchievedObj.monthBalance || yearAchievedObj.balance || '0') : 0;
+
+    // 安全获取年度目标
+    const yearGoalObj = member.yearPerformanceGoal && member.yearPerformanceGoal.length > 0 
+      ? member.yearPerformanceGoal[0] 
+      : null;
+    // 注意：请确认年度目标在数组对象中的具体字段名，这里暂用 sum1 或 goal，需根据实际调整
+    const goal = yearGoalObj ? parseFloat(yearGoalObj.sum1 || yearGoalObj.goal || '0') : 0;
+
+    return {
+      name: member.userName,
+      achievement: achievement,
+      goal: goal
+    };
+  });
+
+    // 销毁旧实例
+    if (chartInstanceYear.value) {
+      chartInstanceYear.value.dispose()
+    }
+
+    chartInstanceYear.value = echarts.init(chartRefYear.value)
+
+    const yearOption = {
+      title: { text: '年度任务完成情况', left: 'center', textStyle: { fontSize: 14 } },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' }
+      },
+      legend: { data: ['完成业绩', '业绩目标'], bottom: 0 },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '10%',
+        top: '15%', // 增加顶部空间防止标题遮挡
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: yearData.map(item => item.name),
+        axisLabel: { rotate: 45, interval: 0, fontSize: 10,      // 设置字号变小，例如 10px 或 12px
+          fontWeight: 'bold' }
+      
+      },
+      yAxis: {
+        type: 'value',
+        name: '金额'
+      },
+      series: [
+        {
+          name: '完成业绩',
+          type: 'bar',
+          data: yearData.map(item => item.achievement),
+          itemStyle: { color: '#7cb342' },
+           // 添加 label 配置
+          label: {
+            show: true,
+            position: 'top',
+            formatter: (params: any) => {
+              return '¥' + params.value.toLocaleString();
+            },
+            fontSize: 10,
+            color: '#333'
+          }// 年度使用绿色区分
+        },
+        {
+          name: '业绩目标',
+          type: 'bar',
+          data: yearData.map(item => item.goal),
+          itemStyle: { color: '#e6a23c' },
+          // 添加 label 配置
+          label: {
+            show: true,
+            position: 'top',
+            formatter: (params: any) => {
+              return '¥' + params.value.toLocaleString();
+            },
+            fontSize: 10,
+            color: '#333'
+          }
+        }
+      ]
+    }
+    chartInstanceYear.value.setOption(yearOption)
+  }
+}
+
 watch(
   () => performanceData.value,
-  () => {
-    if (chartInstance.value) {
-      chartInstance.value.dispose()
-      chartInstance.value = null
-    }
-    if (teamPerformanceList.value.length > 0) {
+  (newVal) => {
+    if (newVal && teamPerformanceList.value.length > 0) {
+      // 使用 nextTick 确保 DOM 更新后再渲染图表
       setTimeout(() => {
         initChart()
       }, 100)
@@ -256,19 +532,20 @@ watch(
 
 onMounted(() => {
   fetchSupervisorData()
-  // 延迟初始化图表，等待数据加载
-  setTimeout(() => {
-    initChart()
-  }, 300)
 })
 
-// 组件销毁时清理图表
 onUnmounted(() => {
-  if (chartInstance.value) {
-    chartInstance.value.dispose()
-    chartInstance.value = null
+  // 5. 清理所有图表实例
+  if (chartInstanceMonth.value) {
+    chartInstanceMonth.value.dispose()
+    chartInstanceMonth.value = null
+  }
+  if (chartInstanceYear.value) {
+    chartInstanceYear.value.dispose()
+    chartInstanceYear.value = null
   }
 })
+
 </script>
 
 <style lang="scss" scoped>

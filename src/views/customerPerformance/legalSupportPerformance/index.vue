@@ -92,7 +92,12 @@
               <div class="table-box" style="margin-top: 20px;">
                 <h4 style="margin-bottom: 10px; color: #303133;">本月已完成业绩明细</h4>
                 <el-table :data="performanceMonthCount.monthPerformanceAchieved" border stripe style="width: 100%" height="265">
-                  <el-table-column prop="performanceRank" label="本月排名" width="120"></el-table-column>
+                  <el-table-column prop="performanceRank" label="本月排名" width="120">
+                    <template #default="scope">
+                    <span style="color: #7cb342; font-weight: bold;">{{ scope.row.performanceRank }}</span>
+                    </template>
+                  </el-table-column>
+                  
                   <el-table-column prop="username" label="姓名" width="200"></el-table-column>
                   <el-table-column prop="monthBalance" label="完成金额" width="200">
                     <template #default="scope">
@@ -136,7 +141,11 @@
               <div class="table-box" style="margin-top: 20px;">
                 <h4 style="margin-bottom: 10px; color: #303133;">本年已完成业绩明细</h4>
                 <el-table :data="performanceYearCount.yearPerformanceAchieved" border stripe style="width: 100%" height="265">
-                  <el-table-column prop="performanceRank" label="本年排名" width="120"></el-table-column>
+                  <el-table-column prop="performanceRank" label="本年排名" width="120">
+                    <template #default="scope">
+                    <span style="color: #7cb342; font-weight: bold;">{{ scope.row.performanceRank }}</span>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="username" label="姓名" width="200"></el-table-column>
                   <el-table-column prop="monthBalance" label="完成金额" width="200">
                     <template #default="scope">
@@ -355,7 +364,7 @@ const fetchPerformanceData = async () => {
       performanceMonthCount.value = response.data.performanceCount
       performanceYearCount.value = response.data.performanceCount
 
-      //console.log("performanceCount:", performanceCount.value);
+      console.log("performanceMonthCount:", performanceMonthCount.value);
 
       packageType.value = response.data.packageType
 
