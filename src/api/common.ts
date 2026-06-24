@@ -78,16 +78,16 @@ export const getLegalSupportPerformance = () => {
 export function listMonthLegalSupportPerformance(query?: any) {
   return request({
     url: '/common/getMonthlyPerformanceAmount', // 请替换为实际的后端接口地址
-    method: 'get', // 关键：改为 post
-    params: query      // 关键：POST 请求参数通常放在 data 中
+    method: 'get', 
+    params: query 
   })
 }
 // 获取法务支持业绩统计(支持按年份筛选)
 export function listYearLegalSupportPerformance(query?: any) {
   return request({
     url: '/common/getYearlyPerformanceAmount', // 请替换为实际的后端接口地址
-    method: 'get', // 关键：改为 post
-    params: query      // 关键：POST 请求参数通常放在 data 中
+    method: 'get', 
+    params: query 
   })
 }
 
@@ -115,9 +115,47 @@ export const getPerformance = () => {
   })
   }
 
+  // 获取团队业绩统计(支持按月份筛选)
+export function listMonthTeamPerformance(query?: any) {
+  return request({
+    url: '/common/getMonthlyTeamPerformance', // 请替换为实际的后端接口地址
+    method: 'get', 
+    params: query
+  })
+}
+
+// 获取团队业绩统计(支持按年份筛选)
+export function listYearTeamPerformance(query?: any) {
+  return request({
+    url: '/common/getYearlyTeamPerformance', // 请替换为实际的后端接口地址
+    method: 'get', 
+    params: query
+  })
+} 
+
+// 获取业绩管理模块数据
   export const getLeaderPerformance = () => {
   return request({
     url: '/common/getLeaderPerformance',
     method: 'get'
   })
   }
+
+   // 获取业绩管理模块(支持按月份筛选)
+export function listMonthLeaderPerformance(query?: any) {
+  return request({
+    url: '/common/getMonthlyLeaderPerformance', // 请替换为实际的后端接口地址
+    method: 'get', 
+    params: query
+  })
+}
+
+ // 获取业绩管理模块(支持按年份筛选)
+ export function listYearLeaderPerformance(query?: any) {
+  return request({
+    url: '/common/getYearlyLeaderPerformance', // 请替换为实际的后端接口地址
+    method: 'get', 
+    params: query
+  })
+}
+

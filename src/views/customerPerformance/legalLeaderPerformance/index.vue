@@ -5,7 +5,7 @@
       <el-col :span="24">
         <el-card class="statistic-card">
           <div class="statistic-header">
-            <h3>客户统计</h3>
+            <h3>区域客户信息统计</h3>
           </div>
           <div class="statistic-content">
             <div v-for="(cityData, cityCode) in cityPerformanceData" :key="cityCode" class="city-stat-item">
@@ -34,7 +34,7 @@
                   :percentage="calculateCityPerformanceRate(cityData.teamPerformance)"
                   :format="(percent) => `${percent}%`"
                   color="#1890ff"
-                  :stroke-width="20"
+                  :stroke-width="3"
                 />
                 <div class="progress-info">
                   <span>已完成：{{ formatCurrency(cityData.teamPerformance?.teamMonthAchievedBalance || 0) }}</span>
@@ -52,7 +52,7 @@
       <el-col :span="24">
         <el-card class="performance-card">
           <div class="performance-header">
-            <h3>业绩展示</h3>
+            <h3>区域业绩展示</h3>
           </div>
           <div class="performance-content">
             <!-- 各城市业绩情况 -->
@@ -195,9 +195,11 @@ onMounted(() => {
 
   .statistic-header,
   .performance-header {
-    padding: 15px 20px;
+    padding: 1px 20px;
+    border-radius: 8px;
     border-bottom: 1px solid #ebeef5;
     background-color: #f5f7fa;
+    color:#1890ff;
   }
 
   .statistic-content,
@@ -244,9 +246,9 @@ onMounted(() => {
   }
 
   .value {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
-    color: #1890ff;
+    color: #ff6b35;
     margin-right: 20px;
   }
 
