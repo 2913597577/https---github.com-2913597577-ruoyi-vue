@@ -246,7 +246,6 @@
          style="width: 100%" 
        />
      </el-form-item>
-
             </el-form>
 
             <template #footer>
@@ -576,7 +575,7 @@ const resetYearFilter = () => {
   //showYearFilterDialog.value = false
 }
 const clearYearFilter = () => {
-  filterMonthForm.month = undefined
+  //filterMonthForm.month = undefined
   filterYearForm.year = undefined
 }
 
