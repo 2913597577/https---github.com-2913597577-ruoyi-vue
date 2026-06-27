@@ -569,7 +569,7 @@ const handleYearFilterConfirm = () => {
 
 // 7. 重置年份筛选
 const resetYearFilter = () => {
-  filterMonthForm.month = undefined
+  //filterMonthForm.month = undefined
   filterYearForm.year = undefined
   //listYearPerformanceData()
   //showYearFilterDialog.value = false

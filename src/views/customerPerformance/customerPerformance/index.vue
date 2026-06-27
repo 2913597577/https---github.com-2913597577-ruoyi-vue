@@ -166,6 +166,11 @@
         <!-- <el-table-column label="流转单编号" align="center" prop="transferId" /> -->
         <!-- <el-table-column label="业绩所属用户id" align="center" prop="userId" /> -->
         <el-table-column label="客户名称" align="center" prop="companyName" width="160px" show-overflow-tooltip />
+        <el-table-column label="签单日期" align="center" prop="signDate" width="80">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.sign_date, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="服务类型" align="center" prop="serviceType" width="100px" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />

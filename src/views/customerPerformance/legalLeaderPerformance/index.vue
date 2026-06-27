@@ -86,7 +86,7 @@
                   筛选
                 </el-button>
               </div>
-              <el-table :data="cityPerformanceList" stripe style="width: 100%">
+              <el-table :data="monthCityPerformanceList" stripe style="width: 100%">
                 <el-table-column prop="cityName" label="城市" width="120" />
                 <el-table-column prop="monthAchievedBalance" label="本月完成业绩" width="150">
                   <template #default="scope">
@@ -163,7 +163,7 @@
                   筛选
               </el-button>
               </div>
-              <el-table :data="cityPerformanceList" stripe style="width: 100%">
+              <el-table :data="yearCityPerformanceList" stripe style="width: 100%">
                 <el-table-column prop="cityName" label="城市" width="120" />
                 <el-table-column prop="yearAchievedBalance" label="年度完成业绩" width="150">
                   <template #default="scope">
@@ -298,11 +298,13 @@ const staticCityPerformanceData = ref<any>({})
 // 数据响应式变量
 const cityPerformanceData = ref<any>({})
 const cityPerformanceList = ref<any[]>([])
-// 【新增】独立存储月度成员列表
+// 【新增】独立存储月度成员列表 个人月度业绩排名
 const monthPerformanceList = ref<any[]>([])
-// 【新增】独立存储年度成员列表
+// 【新增】独立存储年度成员列表 个人年度业绩排名
 const yearPerformanceList = ref<any[]>([])
 
+const monthCityPerformanceList = ref<any[]>([]) // 专用于“区域月度业绩情况”表格
+const yearCityPerformanceList = ref<any[]>([])  // 专用于“区域年度业绩情况”表格
 
 // 1. 定义弹窗显示状态
 const showMonthFilterDialog = ref(false)
@@ -318,19 +320,6 @@ const filterYearForm = reactive({
 })
 
 
-// 【新增】月份筛选后的业绩数据
-const performanceMonthCount = ref<any>({
-  monthPerformanceGoal: [],
-  monthPerformanceAchieved: [],
-  month: '' // 用于显示月份
-})
-
-// 【新增】年份筛选后的业绩数据
-const performanceYearCount = ref<any>({
-  yearPerformanceGoal: [],
-  yearPerformanceAchieved: [],
-  year: ''
-})
 
 // 【新增】计算属性：获取按客户数量降序排列的城市代码列表
 // 【修改】顶部卡片排序基于 staticCityPerformanceData
@@ -368,8 +357,12 @@ const fetchLeaderData = async () => {
       
       //console.log('获取区域业绩数据:', cityPerformanceData.value)
 
-     // 2. 构建城市业绩列表 (表格用)
-      updateCityPerformanceList(response.data)
+     // 1. 构建基础列表数据
+     const listData = buildCityList(response.data)
+      
+      // 2. 分别赋值给月度和年度列表（初始状态两者数据一致）
+      monthCityPerformanceList.value = [...listData]
+      yearCityPerformanceList.value = [...listData]
       
       // 3. 填充个人列表
       updatePersonalLists(response.data)
@@ -379,13 +372,12 @@ const fetchLeaderData = async () => {
     console.error('获取区域业绩失败:', error)
   }
 }
-// 【新增】辅助函数：更新下方表格的城市业绩列表
-const updateCityPerformanceList = (data: any) => {
+
+// 【新增】提取构建列表的逻辑，方便复用
+const buildCityList = (data: any) => {
   const cityValues = Object.entries(data)
-  
-  cityPerformanceList.value = cityValues.map(([code, city]: [string, any]) => {
+  return cityValues.map(([code, city]: [string, any]) => {
     const perf = city.teamPerformance || {}
-    
     return {
       cityCode: code,
       cityName: city.cityName || getCityName(code),
@@ -433,13 +425,15 @@ const listMonthLeaderData = async () => {
       
       //console.log('获取月度区域业绩数据:', cityPerformanceData.value)
 
-      // 1. 更新基础列表
-      updateCityPerformanceList(response.data)
+      // 1. 构建新的月度列表数据
+      const newList = buildCityList(response.data)
+      
+      // 2. 【关键】按本月业绩排序
+      newList.sort((a, b) => (b.monthAchievedBalance || 0) - (a.monthAchievedBalance || 0))
+      
+      // 3. 【关键】只更新月度列表，年度列表保持原样不变
+      monthCityPerformanceList.value = newList
 
-      // 2. 【新增】按本月完成业绩 (monthAchievedBalance) 降序排序
-      cityPerformanceList.value.sort((a, b) => {
-        return (b.monthAchievedBalance || 0) - (a.monthAchievedBalance || 0)
-      })
 
       // 3. 更新个人月度列表
       const cityValues = Object.entries(response.data)
@@ -480,13 +474,14 @@ const listYearLeaderData = async () => {
       cityPerformanceData.value = response.data
       
       //console.log('获取年度区域业绩数据:', cityPerformanceData.value)
-      // 1. 更新基础列表
-      updateCityPerformanceList(response.data)
-
-     // 2. 【新增】按年度完成业绩 (yearAchievedBalance) 降序排序
-     cityPerformanceList.value.sort((a, b) => {
-       return (b.yearAchievedBalance || 0) - (a.yearAchievedBalance || 0)
-     })
+       // 1. 构建新的年度列表数据
+       const newList = buildCityList(response.data)
+      
+      // 2. 【关键】按年度业绩排序
+      newList.sort((a, b) => (b.yearAchievedBalance || 0) - (a.yearAchievedBalance || 0))
+      
+      // 3. 【关键】只更新年度列表，月度列表保持原样不变
+      yearCityPerformanceList.value = newList
 
       // 3. 更新个人年度列表
       const cityValues = Object.entries(response.data)
@@ -540,7 +535,7 @@ const handleYearFilterConfirm = () => {
 
 // 7. 重置年份筛选
 const resetYearFilter = () => {
-  filterMonthForm.month = undefined
+  //filterMonthForm.month = undefined
   filterYearForm.year = undefined
   //listYearPerformanceData()
   //showYearFilterDialog.value = false
