@@ -107,7 +107,7 @@ export function listYearLegalSupportPerformance(query?: any) {
     })
     }
 
-  // 获取团队业绩统计
+  // 获取法务支持团队业绩统计
 export const getPerformance = () => {
   return request({
     url: '/common/getPerformance',
@@ -115,7 +115,7 @@ export const getPerformance = () => {
   })
   }
 
-  // 获取团队业绩统计(支持按月份筛选)
+  // 获取法务支持团队业绩统计(支持按月份筛选)
 export function listMonthTeamPerformance(query?: any) {
   return request({
     url: '/common/getMonthlyTeamPerformance', // 请替换为实际的后端接口地址
@@ -124,7 +124,7 @@ export function listMonthTeamPerformance(query?: any) {
   })
 }
 
-// 获取团队业绩统计(支持按年份筛选)
+// 获取法务支持团队业绩统计(支持按年份筛选)
 export function listYearTeamPerformance(query?: any) {
   return request({
     url: '/common/getYearlyTeamPerformance', // 请替换为实际的后端接口地址
@@ -133,7 +133,7 @@ export function listYearTeamPerformance(query?: any) {
   })
 } 
 
-// 获取业绩管理模块数据
+// 获取法务支持业绩管理模块数据
   export const getLeaderPerformance = () => {
   return request({
     url: '/common/getLeaderPerformance',
@@ -141,7 +141,7 @@ export function listYearTeamPerformance(query?: any) {
   })
   }
 
-   // 获取业绩管理模块(支持按月份筛选)
+   // 获取法务支持业绩管理模块(支持按月份筛选)
 export function listMonthLeaderPerformance(query?: any) {
   return request({
     url: '/common/getMonthlyLeaderPerformance', // 请替换为实际的后端接口地址
@@ -150,10 +150,37 @@ export function listMonthLeaderPerformance(query?: any) {
   })
 }
 
- // 获取业绩管理模块(支持按年份筛选)
+ // 获取法务支持业绩管理模块(支持按年份筛选)
  export function listYearLeaderPerformance(query?: any) {
   return request({
     url: '/common/getYearlyLeaderPerformance', // 请替换为实际的后端接口地址
+    method: 'get', 
+    params: query
+  })
+}
+
+
+// 获取销售中心业绩管理模块数据
+  export const getSalescenterLeaderPerformance = () => {
+  return request({
+    url: '/common/getSalescenterLeaderPerformance',
+    method: 'get'
+  })
+  }
+
+   // 获取销售中心业绩管理模块(支持按月份筛选)
+export function listMonthSalescenterLeaderPerformance(query?: any) {
+  return request({
+    url: '/common/getMonthlySalescenterLeaderPerformance', // 请替换为实际的后端接口地址
+    method: 'get', 
+    params: query
+  })
+}
+
+ // 获取销售中心业绩管理模块(支持按年份筛选)
+ export function listYearSalescenterLeaderPerformance(query?: any) {
+  return request({
+    url: '/common/getYearlySalescenterLeaderPerformance', // 请替换为实际的后端接口地址
     method: 'get', 
     params: query
   })
