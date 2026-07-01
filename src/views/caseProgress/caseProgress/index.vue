@@ -573,17 +573,18 @@ const isInitialized = ref(false);
 
 // ========== 2. 改造 watch，避免初始化时重复调用 ==========
 watch(
-  () => route.query.customerId,
-  async (newCustomerId) => {
-    // ✅ 跳过初始化时的调用（onMounted 已处理）
+  // 1. 修改这里：监听 caseId 而不是 customerId
+  () => route.query.caseId,
+  async (newCaseId) => {
+    // 如果初始化未完成，先不处理（由 onMounted 统一处理）
     if (!isInitialized.value) return;
-    
-    if (newCustomerId) {
-      queryParams.value.customerId = newCustomerId;
-      await handleQuery();
+
+    if (newCaseId) {
+      queryParams.value.caseId = newCaseId;
+      await handleQuery(); // 携带新 ID 重新搜索
     } else {
-      queryParams.value.customerId = undefined;
-      await getList();
+      queryParams.value.caseId = undefined;
+      await getList(); // 清空 ID，恢复全量列表
     }
   }
 );

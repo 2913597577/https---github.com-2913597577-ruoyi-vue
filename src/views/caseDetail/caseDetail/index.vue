@@ -105,7 +105,7 @@
           <template #default="scope">
             <!-- 详情按钮：点击携带当前行id跳转 -->
             <el-button link type="primary" icon="View" size="default"
-              @click="handleTrackingDetail(scope.row.customerId)" style="padding: 0 6px;">
+              @click="handleTrackingDetail(scope.row.id)" style="padding: 0 6px;">
               详情
             </el-button>
           </template>
@@ -120,7 +120,7 @@
         <el-table-column label="债务人" align="center" prop="debtorName" width="100" show-overflow-tooltip />
         <el-table-column label="欠款金额" align="center" prop="debtAmount" width="200" />
         <el-table-column label="剩余欠款" align="center" prop="remainingAmount" width="200" />
-        <el-table-column label="联系电话" align="center" prop="contactPhone" width="100" />
+        <el-table-column label="联系电话" align="center" prop="contactPhone" width="100" show-overflow-tooltip />
         <el-table-column label="身份证号" align="center" prop="idCard" width="140" show-overflow-tooltip />
         <el-table-column label="需求接收时间" align="center" prop="requestReceiveTime" width="100">
           <template #default="scope">
@@ -604,11 +604,19 @@ const handleExport = () => {
 const router = useRouter();
 //  新增：跟踪记录详情跳转函数
 const handleTrackingDetail = (id: number | string) => {
+  console.log('Click Detail, ID:', id); 
   // 跳转到目标路由，并通过query参数传递id
   router.push({
-    path: '/legalSupport/caseProgress',  // 目标路由路径（需与实际路由配置一致）
-    query: { CustomerId: id }  // 传递id参数（键名可自定义，如customerId）
+    path: '/legalSupport/caseProgress',
+    query: { caseId: id }
+  }).catch(err => {
+    console.error('跳转失败:', err);
+    // 忽略重复导航的错误 (NavigationDuplicated)
+    if (err.name !== 'NavigationDuplicated') {
+      proxy?.$modal.msgError('页面跳转失败: ' + err.message);
+    }
   });
+  
 };
 
 const lawyerList = ref([]);

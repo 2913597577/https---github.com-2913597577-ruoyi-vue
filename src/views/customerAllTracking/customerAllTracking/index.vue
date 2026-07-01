@@ -124,20 +124,20 @@
           <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="法务支持" align="center" prop="legalSupportName" width="120" />
-      <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="140">
+      <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
+      <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="120">
         <template #default="scope">
           <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime, '{y}-{m}-{d}') : '' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="跟踪内容" align="center" prop="remark" width="240" show-overflow-tooltip />
-      <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="140">
+      <el-table-column label="跟踪内容" align="center" prop="remark" width="260" show-overflow-tooltip />
+      <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="120">
         <template #default="scope">
           <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') : '' }}</span>
         </template>
       </el-table-column>
       
-      <el-table-column label="跟踪类型" align="center" prop="trackingType" width="200">
+      <el-table-column label="跟踪类型" align="center" prop="trackingType" width="120">
         <template #default="scope">
           <el-tag v-if="scope.row.trackingType === 1">回访</el-tag>
           <el-tag v-else-if="scope.row.trackingType === 2" type="success">出访</el-tag>
@@ -146,6 +146,11 @@
           <el-tag v-else-if="scope.row.trackingType === 5" type="info">案件</el-tag>
         </template>
       </el-table-column>
+       <el-table-column label="归属城市" align="center" prop="city" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
+          </template>
+        </el-table-column>
       <!-- <el-table-column label="操作" align="center" width="180">
         <template #default="scope">
           <el-button type="primary" link icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
@@ -165,7 +170,13 @@
       <div v-show="showSearch" class="mb-[10px]">
       <el-card shadow="hover">
     <!-- 查询条件 -->
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="90px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
+       <el-form-item label="归属城市" prop="city">
+              <el-select v-model="queryParams.city" placeholder="请选择归属城市" clearable style="width: 120px" >
+                <el-option v-for="item in dc_sercive_city" :key="item.value" :label="item.label" :value="item.value" >
+                </el-option>
+              </el-select>
+            </el-form-item>
       <el-form-item label="客户名称" prop="customerId">
         <el-select-v2 v-model="queryParams.customerId" placeholder="请选择客户" :options="customerList" :props="selectProps"
           filterable clearable :loading="loading">
@@ -265,6 +276,7 @@ import { getCustomerByUserId } from '@/api/common';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
 import { Loading } from '@element-plus/icons-vue';
 
+
 // 定义变量
 const loading = ref(true);
 const showSearch = ref(true);
@@ -274,10 +286,20 @@ const title = ref('');
 const open = ref(false);
 const router = useRouter();
 const route = useRoute();
+
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
+const {dc_sercive_city} = toRefs<any>(proxy?.useDict('dc_sercive_city'));
+
 // 查询参数
 const queryParams = reactive<TrackingQueryParams>({
   pageNum: 0,
-  pageSize: 20
+  pageSize: 20,
+  city: undefined, // ✅ 新增：初始化 city 字段
+  customerId: undefined, // ✅ 建议同时初始化其他筛选字段，保持结构完整
+  legalSupportId: undefined,
+  trackingType: undefined,
+  trackingTime: undefined,
+  nextTrackingTime: undefined
 });
 
 // 表单数据

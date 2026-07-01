@@ -18,8 +18,9 @@ export interface TrackingQueryParams {
   trackingType?: number;
   trackingTime?: string;
   nextTrackingTime?: string;
-  pageNum: number;
-  pageSize: number;
+  city?: string | number; // ✅ 确保这里有定义
+  pageNum?: number;
+  pageSize?: number;
 }
 
 export interface TrackingResponse {

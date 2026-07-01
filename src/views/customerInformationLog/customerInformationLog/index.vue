@@ -77,7 +77,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerInformationLogList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+      <el-table v-loading="loading" border :data="customerInformationLogList"  height="650" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="录入人" align="center" prop="transferPerson" width="80" show-overflow-tooltip />

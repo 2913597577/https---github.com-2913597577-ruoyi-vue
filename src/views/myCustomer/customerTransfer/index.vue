@@ -95,7 +95,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerTransferList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+      <el-table v-loading="loading" border :data="customerTransferList"  height="650" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
           <template #default="scope">

@@ -48,27 +48,27 @@
         <el-row :gutter="10" class="mb8" justify="space-between">
           <div class="flex items-center">
           <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['PerformanceTask:PerformanceTask:add']">新增</el-button>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:add']">新增</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['PerformanceTask:PerformanceTask:edit']">修改</el-button>
+            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:edit']">修改</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['PerformanceTask:PerformanceTask:remove']">删除</el-button>
+            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:remove']">删除</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['PerformanceTask:PerformanceTask:export']">导出</el-button>
+            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:export']">导出</el-button>
           </el-col>
           </div>
           <div class="flex items-center">
           <el-col :span="1.5">
             <el-button type="primary"  icon="Search" @click="handleSearch"
-              v-hasPermi="['PerformanceTask:PerformanceTask:search']">筛选
+              v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:search']">筛选
             </el-button>
           </el-col>
           <el-col :span="1.5">
             <el-button   icon="Refresh" @click="getList"
-              v-hasPermi="['PerformanceTask:PerformanceTask:refresh']">刷新
+              v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:refresh']">刷新
             </el-button>
           </el-col>
         </div>
@@ -95,10 +95,10 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['PerformanceTask:PerformanceTask:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:edit']"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['PerformanceTask:PerformanceTask:remove']"></el-button>
+              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:remove']"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>

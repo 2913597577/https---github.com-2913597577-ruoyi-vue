@@ -102,6 +102,12 @@ export interface CustomerInfoVO {
 
   isAssigned: number;
 
+   /**
+   * 客户二次收费表中数量
+   */
+  logCount?: number;
+
+
 }
 
 export interface CustomerInfoForm extends BaseEntity {
@@ -211,6 +217,12 @@ export interface CustomerInfoForm extends BaseEntity {
   isRisk?: number;
   isRefund?: number;
   isHighRisk?: number;
+
+   /**
+   * 客户二次收费表中数量
+   */
+  logCount?: number;
+
 
 }
 

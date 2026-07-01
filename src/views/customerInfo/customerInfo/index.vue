@@ -103,7 +103,7 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerInfoList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries" >
+      <el-table v-loading="loading" border :data="customerInfoList"  height="650" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries" >
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="跟踪记录" align="center" width="80" show-overflow-tooltip>
@@ -122,8 +122,8 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="录入人" align="center" prop="transferPerson" width="80" show-overflow-tooltip />
-        <el-table-column label="签单日期" align="center" prop="signDate" width="120">
+      
+        <el-table-column label="签单日期" align="center" prop="signDate" width="90" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
           </template>
@@ -133,6 +133,8 @@
         <el-table-column label="负责人" align="center" width="80" prop="principal" show-overflow-tooltip />
         <el-table-column label="负责人电话" align="center" width="100" prop="principalPhone" show-overflow-tooltip />
         <!-- <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip /> -->
+        
+        <el-table-column label="录入人" align="center" prop="transferPerson" width="80" show-overflow-tooltip />
         <el-table-column label="服务开始时间" align="center" prop="startDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
@@ -141,6 +143,19 @@
         <el-table-column label="服务结束时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+         <el-table-column label="二次收费记录" align="center" prop="actionType" width="100" show-overflow-tooltip >
+           <!-- <template #default="scope">
+            <el-button link type="primary" icon="View" size="small"
+              @click="handleCustomerInfoLog(scope.row.id)" style="padding: 0 6px;">
+              详情
+            </el-button>
+          </template> -->
+          <template #default="scope">
+            <el-link type="success" :underline="false" @click="handleCustomerInfoLog(scope.row.id)" style="font-size: 12px;">
+              {{ scope.row.logCount || 0 }}
+            </el-link>
           </template>
         </el-table-column>
         <el-table-column label="客户类型" align="center" width="80" prop="customerType">
@@ -153,14 +168,15 @@
             <dict-tag :options="contract_type" :value="scope.row.contractType" />
           </template>
         </el-table-column> -->
+        
+        <el-table-column label="合同金额" width="120" align="center" prop="contractAmount" show-overflow-tooltip />
+        <el-table-column label="实收金额" width="120" align="center" prop="actualReceipt" show-overflow-tooltip />
+        <el-table-column label="尾款金额" width="120" align="center" prop="balance" show-overflow-tooltip />
         <el-table-column label="套餐类型" align="center" prop="packageType" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="combo_type" :value="scope.row.packageType" />
           </template>
         </el-table-column>
-        <el-table-column label="合同金额" width="140" align="center" prop="contractAmount" show-overflow-tooltip />
-        <el-table-column label="实收金额" width="140" align="center" prop="actualReceipt" show-overflow-tooltip />
-        <el-table-column label="尾款金额" width="140" align="center" prop="balance" show-overflow-tooltip />
         <!-- <el-table-column label="合同编号" align="center" prop="contractCode" width="120" show-overflow-tooltip>
         <template #default="scope">
          <div class="contract-cell">
@@ -176,25 +192,7 @@
         <!-- <el-table-column label="甩单人" align="center" width="100" prop="transferPerson" /> -->
         <!-- <el-table-column label="杀单手" align="center" width="100" prop="closer" /> -->
         <!-- <el-table-column label="签约类型" align="center" prop="contractType" /> -->
-        <el-table-column label="续费" align="center" prop="actionType" width="100" show-overflow-tooltip >
-           <template #default="scope">
-            <!-- 详情按钮：点击携带当前行id跳转 -->
-            <el-button link type="primary" icon="View" size="small"
-              @click="handleCustomerInfoLog(scope.row.id)" style="padding: 0 6px;">
-              详情
-            </el-button>
-          </template>
-        </el-table-column>
         <el-table-column label="合同编号" align="center" prop="contractCode" width="100" show-overflow-tooltip />
-        
-        <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="80" show-overflow-tooltip />
-        <el-table-column label="立案密码" align="center" prop="caseFillingPwd" width="80" show-overflow-tooltip />
-        <el-table-column label="归属城市" align="center" prop="customerCity" width="100" show-overflow-tooltip>
-          <template #default="scope">
-            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
-          </template>
-        </el-table-column>
-
         <el-table-column label="风险客户" align="center" prop="isRisk" width="100">
          <!--  <template #default="scope"> -->
             <!-- 处理布尔值、数字0/1或字符串"0"/"1"的情况 -->
@@ -220,6 +218,13 @@
             <dict-tag :options="dc_false_true" :value="scope.row.isIntention ?? ''" />
           </template>
         </el-table-column>
+         <el-table-column label="归属城市" align="center" prop="customerCity" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
+          </template>
+        </el-table-column>
+         <el-table-column label="立案账号" align="center" prop="caseFillingAccount" width="80" show-overflow-tooltip />
+        <el-table-column label="立案密码" align="center" prop="caseFillingPwd" width="80" show-overflow-tooltip />
         <el-table-column label="尾款备注" align="center" prop="remarks" width="100" show-overflow-tooltip />
         <el-table-column label="续费跟进登记" align="center" prop="closer" width="100" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="320px"
@@ -820,6 +825,9 @@
                value-format="YYYY-MM"
                 placeholder="请选择月份" style="width: 120px" />
            </el-form-item>
+            <el-form-item label="二次收费记录 >=" prop="logCount" label-width="110px">
+              <el-input v-model="queryParams.logCount" placeholder="二次收费记录 >=" type="number" clearable style="width: 100px" @keyup.enter="handleQuery" />
+            </el-form-item>
             <el-form-item label="服务到期筛选" prop="expireDateRange" label-width="90px">
            <el-date-picker 
             v-model="expireDateRange" 
@@ -1927,12 +1935,17 @@ const submitAssignForm = async () => {
 
 //  新增：跟踪记录详情跳转函数
 const handleTrackingDetail = (id: number | string) => {
-  // 跳转到目标路由，并通过query参数传递id
+  console.log('跳转前的ID:', id); // 检查这里是否有值，是否是 undefined
+  if (!id) {
+    proxy?.$modal.msgWarning("客户ID不存在");
+    return;
+  }
   router.push({
-    path: '/legalSupport/customerAllTracking',  // 目标路由路径（需与实际路由配置一致）
-    query: { customerId: id }  // 传递id参数（键名可自定义，如customerId）
+    path: '/legalSupport/customerAllTracking',
+    query: { customerId: id }
   });
 };
+
 
 const handleCustomerInfoLog = (id: number | string) => {
   // 跳转到目标路由，并通过query参数传递id
