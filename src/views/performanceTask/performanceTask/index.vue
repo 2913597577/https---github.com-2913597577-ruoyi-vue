@@ -77,7 +77,16 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="performanceTaskList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="performanceTaskList" 
+        height="650" 
+       @selection-change="handleSelectionChange" 
+       show-summary 
+       :summary-method="getSummaries"
+       :row-class-name="tableRowClassName"
+        row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
@@ -444,6 +453,14 @@ const getSummaries = (param) => {
 return sums;
 }
 
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: PerformanceTaskVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
 
 onMounted(() => {
   loadLawyerSupportList()
@@ -468,5 +485,10 @@ onMounted(() => {
     }
   }
 }
-
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
+}
 </style>

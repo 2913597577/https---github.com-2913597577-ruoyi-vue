@@ -85,7 +85,16 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerTrackingList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="customerTrackingList" 
+       height="650" 
+       @selection-change="handleSelectionChange" 
+       show-summary 
+       :summary-method="getSummaries"
+       :row-class-name="tableRowClassName"
+        row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
@@ -824,6 +833,14 @@ const viewDialog = reactive({
 
 const viewCustomerTrackings = ref<CustomerTrackingVO[]>([]);
 
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: CustomerTrackingVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
 // 查看按钮处理函数
 const handleView = async (row: CustomerTrackingVO) => {
   const customerId = row.customerId;
@@ -949,6 +966,13 @@ onMounted(async () => {
       font-weight: bold;
     }
   }
+}
+
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
 }
 </style>
 

@@ -74,7 +74,16 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerRiskRefundList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="customerRiskRefundList" 
+       height="650" 
+       @selection-change="handleSelectionChange" 
+       show-summary 
+       :summary-method="getSummaries"
+       :row-class-name="tableRowClassName"
+        row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="主键ID" align="center" prop="id" v-if="true" /> -->
         <el-table-column label="客户名称" align="center" prop="customerName" width="120" show-overflow-tooltip />
@@ -481,6 +490,16 @@ const handleExport = () => {
     ...queryParams.value
   }, `customerRiskRefund_${new Date().getTime()}.xlsx`)
 }
+
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: CustomerRiskRefundVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
+
 const lawyerList = ref([]);
 const loadLawyerSupportList = async () => {
   try {
@@ -537,5 +556,12 @@ onMounted(() => {
       font-weight: bold;
     }
   }
+}
+
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
 }
 </style>

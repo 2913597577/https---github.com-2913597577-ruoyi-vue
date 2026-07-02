@@ -107,7 +107,11 @@
       </template>
 
     <!-- 数据表格 -->
-    <el-table v-loading="loading" :data="trackingList" border>
+    <el-table 
+     v-loading="loading" 
+     :data="trackingList" 
+     height="650" 
+     border>
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="跟踪记录" align="center" width="120" show-overflow-tooltip>
         <template #default="scope">
@@ -483,6 +487,7 @@ const loadLawyerSupportList = async () => {
     console.error('法务人员列表加载异常：', error);
   }
 };
+
 // 新增：跟踪记录详情跳转函数
 const handleTrackingDetail = (data) => {
 
@@ -590,6 +595,7 @@ watch(
     await handleQuery();
   }
 );
+
 
 // 3. 优化 onMounted，并行加载所有数据，并添加加载进度提示
 onMounted(async () => {

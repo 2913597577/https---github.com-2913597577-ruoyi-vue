@@ -94,7 +94,14 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerJobOrderList" @selection-change="handleSelectionChange">
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="customerJobOrderList" 
+       height="650" 
+       @selection-change="handleSelectionChange"
+       :row-class-name="tableRowClassName"
+        row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="工单状态" align="center" prop="processingStatus" width="100">
           <template #default="scope">
@@ -877,7 +884,14 @@ const getCustomerNameById = (customerId: string | number) => {
   return customer ? customer.customer_name : '';
 };
 
-
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: CustomerJobOrderVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
 /* watch(
   () => route.query.customerId,
   async (newCustomerId) => {
@@ -959,7 +973,12 @@ onMounted(async () => {
     vertical-align: middle;
   }
 }
-
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
+}
 </style>
 
  

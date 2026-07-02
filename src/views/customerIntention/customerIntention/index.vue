@@ -77,7 +77,16 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerIntentionList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries" >
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="customerIntentionList" 
+       height="650" 
+       @selection-change="handleSelectionChange" 
+       show-summary 
+       :summary-method="getSummaries" 
+       :row-class-name="tableRowClassName"
+        row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="跟踪记录" align="center" width="100" show-overflow-tooltip>
           <template #default="scope">
@@ -490,6 +499,14 @@ const getLawyerNameById = (lawyerId: string | number) => {
   return lawyer ? `${lawyer.nickName}` : '';
 };
 
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: CustomerIntentionVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
 
 onMounted(() => {
   loadLawyerSupportList();
@@ -512,5 +529,12 @@ onMounted(() => {
       font-weight: bold;
     }
   }
+}
+
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
 }
 </style>

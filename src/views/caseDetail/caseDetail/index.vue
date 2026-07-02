@@ -97,7 +97,16 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="caseDetailList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="caseDetailList" 
+       height="650" 
+       @selection-change="handleSelectionChange" 
+       show-summary 
+       :summary-method="getSummaries"
+       :row-class-name="tableRowClassName"
+        row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <!-- <el-table-column label="自增主键" align="center" prop="id" v-if="true" />
         <el-table-column label="客户id(客户编号)" align="center" prop="customerId" /> -->
@@ -690,6 +699,14 @@ const getSummaries = (param) => {
 return sums;
 }
 
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: CaseDetailVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
 /* watch(
   () => route.query.customerId,
   async (newCustomerId) => {
@@ -776,5 +793,10 @@ onMounted(async () => {
     }
   }
 }
-
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
+}
 </style>

@@ -58,8 +58,14 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerIntentionTrackingList"
-        @selection-change="handleSelectionChange">
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="customerIntentionTrackingList"
+        height="650"
+        @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
+         row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="意向客户名称" align="center" prop="intentionName" show-overflow-tooltip />
         <el-table-column label="跟踪时间" align="center" prop="trackingDate">
@@ -412,6 +418,14 @@ const handleChange = (intentionId: string) => {
   }
 }
 
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: CustomerIntentionTrackingVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
 // 添加获取法务人员姓名的方法
 const getLawyerNameById = (lawyerId: string | number) => {
   //console.log('lawyerId:', lawyerId);
@@ -449,3 +463,14 @@ onMounted(async () => {
   await getList();
 });
 </script>
+
+<style scoped>
+
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
+}
+
+</style>

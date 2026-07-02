@@ -51,7 +51,14 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="employeePositionChangeList" @selection-change="handleSelectionChange">
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="employeePositionChangeList" 
+       height="650" 
+       @selection-change="handleSelectionChange"
+       :row-class-name="tableRowClassName"
+        row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column v-if="false" label="主键" align="center" prop="id" />
         <el-table-column label="申请日期" align="center" prop="applyDate" width="120" />
@@ -270,7 +277,25 @@ const handleCancelProcessApply = async (id: string) => {
   proxy?.$modal.msgSuccess('撤销成功');
 };
 
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: DcEmployeePositionChangeVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
+
 onMounted(() => {
   getList();
 });
 </script>
+
+<style scoped>
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
+}
+</style>

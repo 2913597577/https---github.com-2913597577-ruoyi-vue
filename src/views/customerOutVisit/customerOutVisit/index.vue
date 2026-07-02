@@ -81,7 +81,16 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerOutVisitList" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+      <el-table 
+       v-loading="loading" 
+       border 
+       :data="customerOutVisitList" 
+       height="650" 
+       @selection-change="handleSelectionChange" 
+       show-summary 
+       :summary-method="getSummaries"
+       :row-class-name="tableRowClassName"
+        row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="主键ID" align="center" prop="id" v-if="false" />
         <!-- <el-table-column label="客户id" align="center" prop="customerId" /> -->
@@ -1038,6 +1047,15 @@ onMounted(() => {
 });
  */
 
+ // 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: CustomerOutVisitVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
+
 // 1. 添加状态变量
 const isInitialized = ref(false);
 const isCustomerListLoaded = ref(false);
@@ -1168,5 +1186,12 @@ onMounted(async () => {
       font-weight: bold;
     }
   }
+}
+
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
 }
 </style>

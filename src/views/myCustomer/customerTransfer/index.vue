@@ -95,7 +95,16 @@
         </el-row>
       </template>
 
-      <el-table v-loading="loading" border :data="customerTransferList"  height="650" @selection-change="handleSelectionChange" show-summary :summary-method="getSummaries">
+      <el-table 
+      v-loading="loading" 
+      border 
+      :data="customerTransferList"  
+      height="650" 
+      @selection-change="handleSelectionChange" 
+      show-summary 
+      :summary-method="getSummaries"
+      :row-class-name="tableRowClassName"
+       row-key="id">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="财务确认" align="center" prop="financeConfirmed" width="80" show-overflow-tooltip>
           <template #default="scope">
@@ -1952,6 +1961,15 @@ const getSummaries = (param) => {
 return sums;
 }
 
+// 选中多行之后，颜色高亮显示
+const tableRowClassName = ({ row }: { row: CustomerTransferVO }) => {
+  // 如果当前行的 id 在选中的 ids 数组中，返回一个特定的类名
+  if (ids.value.includes(row.id)) {
+    return 'selected-row';
+  }
+  return '';
+};
+
 /** 查询客户信息录入列表 */
 const getList = async () => {
   loading.value = true;
@@ -2740,5 +2758,10 @@ onMounted(() => {
 .image-trigger:hover {
   opacity: 0.8;
 }
-
+:deep(.el-table__body .el-table__row.selected-row > td) {
+  background-color: #e6f7ff !important;
+}
+:deep(.el-table__body .el-table__row.selected-row:hover > td) {
+  background-color: #e6f7ff !important;
+}
 </style>
