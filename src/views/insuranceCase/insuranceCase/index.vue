@@ -138,6 +138,11 @@
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px" 
           fixed="right">
           <template #default="scope">
+            <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                 v-hasPermi="['insuranceCase:insuranceCase:edit']">修改</el-button>
@@ -326,6 +331,42 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 新增：查看客户保险案件列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="950px" append-to-body draggable>
+      <el-table :data="viewCaseList" border v-loading="viewLoading">
+        <!-- <el-table-column label="工单号" align="center" prop="insuranceNumber" width="120" show-overflow-tooltip /> -->
+       <!--  <el-table-column label="客户名称" align="center" prop="customerId" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column> -->
+        <el-table-column label="下单日期" align="center" prop="orderDate" width="90">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="保费" align="center" prop="premium" width="100" />
+        <el-table-column label="案由" align="center" prop="caseReason" width="160" show-overflow-tooltip />
+        <el-table-column label="标的额" align="center" prop="subjectAmount" width="100" />
+        <el-table-column label="原告方" align="center" prop="plaintiff" width="120" show-overflow-tooltip />
+        <el-table-column label="被告方" align="center" prop="defendant" width="120" show-overflow-tooltip />
+        <!-- <el-table-column label="管辖权法院" align="center" prop="jurisdictionCourt" width="120" show-overflow-tooltip /> -->
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
+        <!-- <el-table-column label="备注" align="center" prop="remark" show-overflow-tooltip /> -->
+      <el-table-column label="归属城市" align="center" width="100">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -669,6 +710,50 @@ const tableRowClassName = ({ row }: { row: InsuranceCaseVO }) => {
     return 'selected-row';
   }
   return '';
+};
+
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewCaseList = ref<InsuranceCaseVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 查看按钮处理函数
+const handleView = async (row: InsuranceCaseVO) => {
+  if (!row.customerId) {
+    proxy?.$modal.msgWarning('该记录缺少客户ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  // 标题显示客户名称
+  const customerName = getCustomerNameById(row.customerId);
+  viewDialog.title = `【${customerName}】的保险记录`;
+
+  try {
+    // 调用列表接口，传入 customerId 作为筛选条件
+    const res = await listInsuranceCase({ 
+      customerId: row.customerId,
+      pageNum: 1,
+      pageSize: 100 // 获取该客户下较多的记录
+    });
+    
+    viewCaseList.value = res.rows || [];
+    
+    if (viewCaseList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该客户的其他保险案件记录');
+    }
+  } catch (error) {
+    console.error('获取保险案件失败:', error);
+    proxy?.$modal.msgError('获取保险案件失败');
+    viewCaseList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
 };
 
 /* watch(

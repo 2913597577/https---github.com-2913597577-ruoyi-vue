@@ -200,6 +200,11 @@
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip width="200px"
           fixed="right">
           <template #default="scope">
+            <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
             <!--修改按钮-->
             <el-tooltip content="修改">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -395,6 +400,51 @@
         </div>
       </template>
     </el-dialog>
+
+ <!-- 新增：查看客户出访记录列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="900px" append-to-body draggable>
+      <el-table :data="viewOutVisitList" border v-loading="viewLoading">
+        <el-table-column label="出访时间" align="center" width="120">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.visitTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+       <!--  <el-table-column label="客户名称" align="center" width="150">
+           <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column> -->
+         <el-table-column label="出访内容" align="center" prop="visitPurpose" show-overflow-tooltip />
+        <el-table-column label="下次出访时间" align="center" width="120">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.nextVisitTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+         <el-table-column label="法务支持" align="center" width="100" prop="legalSupportName" show-overflow-tooltip />
+       <!--  <el-table-column label="是否首次" align="center" width="80">
+          <template #default="scope">
+            <dict-tag :options="dc_true_or_false" :value="scope.row.isFirstVisit" />
+          </template>
+        </el-table-column> -->
+        <el-table-column label="归属城市" align="center" width="100">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
+        <el-table-column label="出访照片" align="center" width="100">
+          <template #default="scope">
+             <el-button link type="primary" size="small" icon="Picture" @click="handlePreviewContract(scope.row.placePic1Url)" v-if="scope.row.placePic1Url">查看</el-button>
+             <span v-else>-</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -707,6 +757,50 @@ const handleDelete = async (row?: CustomerOutVisitVO) => {
   proxy?.$modal.msgSuccess("删除成功!");
   await getList();
 }
+
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewOutVisitList = ref<CustomerOutVisitVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 修改查看按钮处理函数
+const handleView = async (row: CustomerOutVisitVO) => {
+  if (!row.customerId) {
+    proxy?.$modal.msgWarning('该记录缺少客户ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  viewDialog.title = `【${getCustomerNameById(row.customerId)}】的出访记录`;
+
+  try {
+    // 调用列表接口，传入 customerId 作为筛选条件
+    // 注意：这里复用 listCustomerOutVisit 接口，通过 queryParams 传递筛选条件
+    const res = await listCustomerOutVisit({ 
+      customerId: row.customerId,
+      pageNum: 1,
+      pageSize: 100 // 获取该客户下较多的记录，或者根据后端分页逻辑调整
+    });
+    
+    viewOutVisitList.value = res.rows || [];
+    
+    if (viewOutVisitList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该客户的其他出访记录');
+    }
+  } catch (error) {
+    console.error('获取出访记录失败:', error);
+    proxy?.$modal.msgError('获取出访记录失败');
+    viewOutVisitList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
+};
+
 
 const loadCustomerList = async () => {
   try {

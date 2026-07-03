@@ -377,6 +377,10 @@
 
     <!-- 查看客户跟踪记录对话框 -->
     <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body draggable>
+      <!-- 新增：导出按钮 -->
+      <div style="margin-bottom: 10px; text-align: right;">
+        <el-button type="warning" size="small" plain icon="Download" @click="exportViewTracking">导出</el-button>
+      </div>
       <el-table :data="viewCustomerTrackings" border>
         <el-table-column label="回访时间" align="center" width="100">
           <template #default="scope">
@@ -851,13 +855,53 @@ const handleView = async (row: CustomerTrackingVO) => {
   try {
     const res = await listCustomerTracking({ customerId });
     viewCustomerTrackings.value = res.rows;
-    viewDialog.title = `【${customerName}】的跟踪记录`;
+    viewDialog.title = `【${customerName}】的回访记录`;
     viewDialog.visible = true;
   } catch (error) {
     proxy?.$modal.msgError('获取客户跟踪记录失败');
   }
 };
 
+// 导出弹窗中的跟踪记录
+const exportViewTracking = () => {
+  if (!viewCustomerTrackings.value || viewCustomerTrackings.value.length === 0) {
+    proxy?.$modal.msgWarning('暂无数据可导出');
+    return;
+  }
+
+  try {
+    // 1. 获取客户名称用于文件名
+    // 方法：从第一条数据中获取 customerId，然后转换为客户名称
+    const firstRow = viewCustomerTrackings.value[0];
+    const customerName = firstRow?.customerId ? getCustomerNameById(firstRow.customerId) : '未知客户';
+    
+    // 2. 转换数据格式，使其更适合 Excel展示
+    const exportData = viewCustomerTrackings.value.map(item => ({
+      '回访时间': item.trackingTime ? proxy.parseTime(item.trackingTime, '{y}-{m}-{d}') : '',
+      '回访内容': item.customerRemark || '',
+      '回访分类': item.trackingType !== null && item.trackingType !== undefined 
+        ? (dc_follow_classification.value?.find((d: any) => d.value == item.trackingType)?.label || item.trackingType) 
+        : '',
+      '法务支持': item.legalSupportName || ''
+    }));
+
+    // 3. 生成 Worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // 4. 生成 Workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "客户跟踪记录");
+
+    // 5. 触发浏览器下载，文件名包含客户名称
+    const fileName = `${customerName}_跟踪记录详情_${new Date().getTime()}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    
+    proxy?.$modal.msgSuccess('导出成功');
+  } catch (error) {
+    console.error('导出失败:', error);
+    proxy?.$modal.msgError('导出失败');
+  }
+};
 /* // 监听 intentionCustomerId 的变化
 watch(
   () => route.query.customerId,

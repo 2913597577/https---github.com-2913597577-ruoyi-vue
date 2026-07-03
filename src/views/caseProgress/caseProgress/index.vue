@@ -117,6 +117,11 @@
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
         width="200" fixed="right">
           <template #default="scope">
+            <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                 v-hasPermi="['caseProgress:caseProgress:edit']">修改</el-button>
@@ -277,6 +282,41 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 新增：查看案件进展列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="900px" append-to-body draggable>
+      <el-table :data="viewProgressList" border v-loading="viewLoading">
+        <el-table-column label="跟进日期" align="center" width="120">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.trackingTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+       <!--  <el-table-column label="案件名称" align="center" width="200" show-overflow-tooltip>
+          <template #default="scope">
+            <span>{{ getCaseDetailNameById(scope.row.caseId) }}</span>
+          </template>
+        </el-table-column> -->
+         <el-table-column label="案件进展内容" align="center" prop="caseProgress" show-overflow-tooltip />
+        <el-table-column label="下次跟进日期" align="center" width="120">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="客户名称" align="center" width="120" prop="customerName" show-overflow-tooltip />
+        <el-table-column label="案件类型" align="center" width="100">
+          <template #default="scope">
+            <dict-tag :options="customer_case_type" :value="scope.row.caseType" />
+          </template>
+        </el-table-column>
+        <el-table-column label="法务支持" align="center" width="100" prop="legalSupportName" show-overflow-tooltip />
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -497,6 +537,7 @@ const handleExport = () => {
 }
 
 
+
 const lawyerList = ref([]);
 /**
  * 法务支持选择变化处理
@@ -528,10 +569,53 @@ const loadLawyerSupportList = async () => {
   }
 };
 
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewProgressList = ref<CaseProgressVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 修改查看按钮处理函数
+const handleView = async (row: CaseProgressVO) => {
+  if (!row.caseId) {
+    proxy?.$modal.msgWarning('该记录缺少案件ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  // 标题显示案件名称
+  const caseName = getCaseDetailNameById(row.caseId);
+  viewDialog.title = `${caseName}的案件进展记录`;
+
+  try {
+    // 调用列表接口，传入 caseId 作为筛选条件
+    // 注意：这里复用 listCaseProgress 接口，通过 queryParams 传递筛选条件
+    const res = await listCaseProgress({ 
+      caseId: row.caseId,
+      pageNum: 1,
+      pageSize: 100 // 获取该案件下较多的记录
+    });
+    
+    viewProgressList.value = res.rows || [];
+    
+    if (viewProgressList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该案件的其他进展记录');
+    }
+  } catch (error) {
+    console.error('获取案件进展失败:', error);
+    proxy?.$modal.msgError('获取案件进展失败');
+    viewProgressList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
+};
+
 
 const customerList = ref([]);
-
-
 const loadCustomerList = async () => {
   try {
     const res = await getCustomerByUserId();

@@ -122,11 +122,16 @@
         <el-table-column label="法务支持" align="center" prop="legalSupport" width="100" show-overflow-tooltip />
         <!-- <el-table-column label="法务支持id" align="center" prop="legalSupportId" /> -->
         <!-- <el-table-column label="源合同地址" align="center" prop="preContractAddress" /> -->
+        <el-table-column label="下单日期" align="center" prop="createTime" width="100">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="原合同" align="center" prop="preContractName" width="160" show-overflow-tooltip />
         <!-- <el-table-column label="新合同地址" align="center" prop="newContractAddress" /> -->
         <el-table-column label="新合同" align="center" prop="newContractName" width="160" show-overflow-tooltip />
         <el-table-column label="客户要求" align="center" prop="customerRequirements" width="160" show-overflow-tooltip />
-        <el-table-column label="交付时间" align="center" prop="deliveryTime" width="100" show-overflow-tooltip>
+        <el-table-column label="交付日期" align="center" prop="deliveryTime" width="100" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.deliveryTime, '{y}-{m}-{d}') }}</span>
           </template>
@@ -426,9 +431,9 @@
         <el-form-item label="客户所属方" prop="remark1">
           <el-input v-model="addForm.remark1" placeholder="请输入客户所属方" />
         </el-form-item>
-        <el-form-item label="交付时间" prop="deliveryTime">
+        <el-form-item label="交付日期" prop="deliveryTime">
           <el-date-picker clearable v-model="addForm.deliveryTime" type="date" value-format="YYYY-MM-DD"
-            placeholder="请选择交付时间">
+            placeholder="请选择交付日期">
           </el-date-picker>
         </el-form-item>
         <!-- <el-form-item label="处理人" prop="contractHandlerName">

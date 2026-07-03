@@ -125,19 +125,23 @@
           </template>
         </el-table-column>
         <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
-
+         <el-table-column label="录入日期" align="center" prop="createTime" width="100">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="债务人" align="center" prop="debtorName" width="100" show-overflow-tooltip />
-        <el-table-column label="欠款金额" align="center" prop="debtAmount" width="200" />
-        <el-table-column label="剩余欠款" align="center" prop="remainingAmount" width="200" />
+        <el-table-column label="欠款金额" align="center" prop="debtAmount" width="120" show-overflow-tooltip />
+        <el-table-column label="剩余欠款" align="center" prop="remainingAmount" width="120" show-overflow-tooltip />
         <el-table-column label="联系电话" align="center" prop="contactPhone" width="100" show-overflow-tooltip />
-        <el-table-column label="身份证号" align="center" prop="idCard" width="140" show-overflow-tooltip />
+        <el-table-column label="身份证号" align="center" prop="idCard" width="100" show-overflow-tooltip />
         <el-table-column label="需求接收时间" align="center" prop="requestReceiveTime" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.requestReceiveTime, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column label="标的" align="center" prop="remark" width="100" show-overflow-tooltip />
-        <el-table-column label="证据备注" align="center" prop="evidenceNotes" width="100" show-overflow-tooltip />
+        <el-table-column label="证据备注" align="center" prop="evidenceNotes" width="140" show-overflow-tooltip />
         <el-table-column label="立案日期" align="center" prop="filingDate" width="100">
           <template #default="scope">
             <span>{{ parseTime(scope.row.filingDate, '{y}-{m}-{d}') }}</span>
@@ -152,7 +156,7 @@
         </el-table-column>
         <el-table-column label="法官" align="center" prop="judgeName" width="80" show-overflow-tooltip />
         <el-table-column label="法官电话" align="center" prop="judgePhone" width="100" show-overflow-tooltip />
-        <el-table-column label="案件状态" align="center" prop="caseStatus" />
+        <el-table-column label="案件状态" align="center" prop="caseStatus" show-overflow-tooltip />
         <el-table-column label="归属城市" align="center" prop="remark1" width="100" show-overflow-tooltip>
           <template #default="scope">
             <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
@@ -161,6 +165,11 @@
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
         width="200" fixed="right">
           <template #default="scope">
+            <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                 v-hasPermi="['caseDetail:caseDetail:edit']">修改</el-button>
@@ -368,6 +377,46 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 新增：查看客户案件列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="900px" append-to-body draggable>
+      <el-table :data="viewCaseList" border v-loading="viewLoading">
+        <el-table-column label="债务人" align="center" prop="debtorName" width="100" show-overflow-tooltip />
+        <!-- <el-table-column label="客户名称" align="center" prop="customerId" width="120" show-overflow-tooltip>
+          <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column> -->
+        <el-table-column label="欠款金额" align="center" prop="debtAmount" width="100" />
+        <el-table-column label="剩余欠款" align="center" prop="remainingAmount" width="100" />
+        <el-table-column label="联系电话" align="center" prop="contactPhone" width="110" />
+        <el-table-column label="证据备注" align="center" prop="evidenceNotes" show-overflow-tooltip />
+        <el-table-column label="需求接收时间" align="center" prop="requestReceiveTime" width="110">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.requestReceiveTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+       <!--  <el-table-column label="立案日期" align="center" prop="filingDate" width="100">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.filingDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column> -->
+        <el-table-column label="下次联系时间" align="center" prop="nextContactTime" width="110">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.nextContactTime, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="案件状态" align="center" prop="caseStatus" width="100" show-overflow-tooltip /> -->
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
+       
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -706,6 +755,50 @@ const tableRowClassName = ({ row }: { row: CaseDetailVO }) => {
     return 'selected-row';
   }
   return '';
+};
+
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewCaseList = ref<CaseDetailVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 查看按钮处理函数
+const handleView = async (row: CaseDetailVO) => {
+  if (!row.customerId) {
+    proxy?.$modal.msgWarning('该记录缺少客户ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  // 标题显示客户名称
+  const customerName = getCustomerNameById(row.customerId);
+  viewDialog.title = `【${customerName}】的案件记录`;
+
+  try {
+    // 调用列表接口，传入 customerId 作为筛选条件
+    const res = await listCaseDetail({ 
+      customerId: row.customerId,
+      pageNum: 1,
+      pageSize: 100 // 获取该客户下较多的记录
+    });
+    
+    viewCaseList.value = res.rows || [];
+    
+    if (viewCaseList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该客户的其他案件记录');
+    }
+  } catch (error) {
+    console.error('获取案件记录失败:', error);
+    proxy?.$modal.msgError('获取案件记录失败');
+    viewCaseList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
 };
 /* watch(
   () => route.query.customerId,
