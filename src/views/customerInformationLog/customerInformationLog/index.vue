@@ -117,12 +117,12 @@
         <el-table-column label="合同金额" align="center" prop="contractAmount" width="120" />
         <el-table-column label="实收金额" align="center" prop="actualReceipt" width="120" />
         <el-table-column label="尾款金额" align="center" prop="balance" width="120" />
-        <el-table-column label="服务开始时间" align="center" prop="startDate" width="120" show-overflow-tooltip>
+        <el-table-column label="服务开始日期" align="center" prop="startDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="服务结束时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
+        <el-table-column label="服务结束日期" align="center" prop="expireDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>
@@ -181,6 +181,11 @@
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200px" fixed="right">
           <template #default="scope">
+             <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerInformationLog:customerInformationLog:edit']">修改</el-button>
             </el-tooltip>
@@ -451,6 +456,49 @@
         </div>
       </template>
     </el-dialog>
+
+     <!-- 新增：查看客户信息记录列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="900px" append-to-body draggable>
+      <el-table :data="viewLogList" border v-loading="viewLoading">
+        <el-table-column label="签单日期" align="center" prop="signDate" width="100">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.signDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+         <el-table-column label="二次收费类型" align="center" width="100px" prop="packageType">
+          <template #default="scope">
+            <dict-tag :options="dc_secondary_combo" :value="scope.row.packageType"/>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="客户名称" align="center" prop="customerName" width="150" show-overflow-tooltip /> -->
+        <el-table-column label="负责人" align="center" prop="principal" width="100" />
+        <el-table-column label="合同金额" align="center" prop="contractAmount" width="100" />
+        <el-table-column label="实收金额" align="center" prop="actualReceipt" width="100" />
+        <el-table-column label="尾款金额" align="center" prop="balance" width="100" />
+        <el-table-column label="服务开始日期" align="center" prop="startDate" width="100">
+           <template #default="scope">
+            <span>{{ parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="服务结束日期" align="center" prop="expireDate" width="100">
+           <template #default="scope">
+            <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="归属城市" align="center" prop="customerCity" width="100">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.customerCity" />
+          </template>
+        </el-table-column>
+        <!-- <el-table-column label="备注" align="center" prop="remarks" show-overflow-tooltip /> -->
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+ 
   </div>
 </template>
 
@@ -763,6 +811,53 @@ const loadCustomerList = async () => {
     proxy?.$modal.msgError('获取客户列表失败');
   }
 }
+
+
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewLogList = ref<CustomerInformationLogVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 查看按钮处理函数
+const handleView = async (row: CustomerInformationLogVO) => {
+  if (!row.customerInfoId) {
+    proxy?.$modal.msgWarning('该记录缺少客户ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  // 标题显示客户名称
+  viewDialog.title = `【${row.customerName}】的二次收费记录`;
+
+  try {
+    // 调用列表接口，传入 customerInfoId 作为筛选条件
+    // 注意：根据你之前的反馈，如果后端不支持数组，请直接传 row.customerInfoId
+    // 如果后端支持数组筛选，请改为 customerInfoId: [row.customerInfoId]
+    const res = await listCustomerInformationLog({ 
+      customerInfoId: row.customerInfoId, 
+      pageNum: 1,
+      pageSize: 100 // 获取该客户下较多的记录
+    });
+    
+    viewLogList.value = res.rows || [];
+    
+    if (viewLogList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该客户的其他信息记录');
+    }
+  } catch (error) {
+    console.error('获取信息记录失败:', error);
+    proxy?.$modal.msgError('获取信息记录失败');
+    viewLogList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
+};
+
 
 watch(
   () => route.query.customerInfoId,

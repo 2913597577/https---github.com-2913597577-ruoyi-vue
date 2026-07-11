@@ -103,11 +103,16 @@
         </el-table-column>
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
+            <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:remove']"></el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['salescenterPerformanceTask:salescenterPerformanceTask:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -219,6 +224,27 @@
         </div>
       </template>
     </el-dialog>
+
+     <!-- 新增：查看法务支持业绩任务列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="650px" append-to-body draggable>
+      <el-table :data="viewTaskList" border v-loading="viewLoading">
+        <el-table-column label="销售员工" align="center" prop="salesCenterName" width="120" />
+        <el-table-column label="任务月份" align="center" prop="taskMonth" width="120" />
+        <el-table-column label="业绩目标" align="center" prop="performanceGoal" width="120" />
+        <el-table-column label="出访目标" align="center" prop="visitGoal" width="120" />
+        <el-table-column label="归属城市" align="center" prop="remark1" width="110">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -461,6 +487,49 @@ const tableRowClassName = ({ row }: { row:  PerformanceTaskVO }) => {
   }
   return '';
 };
+
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewTaskList = ref<PerformanceTaskVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 查看按钮处理函数
+const handleView = async (row: PerformanceTaskVO) => {
+  if (!row.salesCenterId) {
+    proxy?.$modal.msgWarning('该记录缺少法务支持ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  viewDialog.title = `【${row.salesCenterName}】的销售业绩任务记录`;
+
+  try {
+    // 调用列表接口，传入 legalSupportId 作为筛选条件
+    const res = await listPerformanceTask({ 
+      salesCenterId: row.salesCenterId, // 直接传入 ID，非数组
+      pageNum: 1,
+      pageSize: 100 // 获取该法务支持下较多的记录
+    });
+    
+    viewTaskList.value = res.rows || [];
+    
+    if (viewTaskList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该法务支持的其他任务记录');
+    }
+  } catch (error) {
+    console.error('获取任务记录失败:', error);
+    proxy?.$modal.msgError('获取任务记录失败');
+    viewTaskList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
+};
+
 
 onMounted(() => {
   loadLawyerSupportList()

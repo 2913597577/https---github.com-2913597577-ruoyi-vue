@@ -94,16 +94,21 @@
           </template> -->
         </el-table-column>
         <el-table-column label="操作人" align="center" prop="remark1" />
-        <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-tooltip content="修改" placement="top">
+            <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
+           <!--  <el-tooltip content="修改" placement="top">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['legalSupportChange:legalSupportChange:edit']"></el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
               <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['legalSupportChange:legalSupportChange:remove']"></el-button>
-            </el-tooltip>
+            </el-tooltip> -->
           </template>
-        </el-table-column> -->
+        </el-table-column>
       </el-table>
 
       <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
@@ -194,6 +199,22 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 新增：查看法务支持变更记录列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body draggable>
+      <el-table :data="viewChangeList" border v-loading="viewLoading">
+        <el-table-column label="客户名称" align="center" prop="customerName" show-overflow-tooltip />
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" show-overflow-tooltip />
+        <el-table-column label="操作人" align="center" prop="remark1" show-overflow-tooltip />
+        <el-table-column label="创建时间" align="center" prop="createTime" width="180" />
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -405,6 +426,49 @@ const tableRowClassName = ({ row }: { row: LegalSupportChangeVO }) => {
   }
   return '';
 };
+
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewChangeList = ref<LegalSupportChangeVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 查看按钮处理函数
+const handleView = async (row: LegalSupportChangeVO) => {
+  if (!row.customerId) {
+    proxy?.$modal.msgWarning('该记录缺少客户ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  viewDialog.title = `【${row.customerName}】的法务支持变更记录`;
+
+  try {
+    // 调用列表接口，传入 customerId 作为筛选条件
+    const res = await listLegalSupportChange({ 
+      customerId: row.customerId, // 直接传入 ID，非数组
+      pageNum: 1,
+      pageSize: 100 // 获取该客户下较多的记录
+    });
+    
+    viewChangeList.value = res.rows || [];
+    
+    if (viewChangeList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该客户的其他变更记录');
+    }
+  } catch (error) {
+    console.error('获取变更记录失败:', error);
+    proxy?.$modal.msgError('获取变更记录失败');
+    viewChangeList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
+};
+
 
 onMounted(() => {
   loadUserList();

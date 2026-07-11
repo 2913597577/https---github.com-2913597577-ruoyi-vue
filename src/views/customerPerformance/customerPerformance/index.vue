@@ -218,13 +218,18 @@
             <span>{{ parseTime(scope.row.update_time, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="160px" fixed="right">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200px" fixed="right">
           <template #default="scope">
+             <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
             <el-tooltip content="修改" placement="top">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:edit']"></el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:edit']">修改</el-button>
             </el-tooltip>
             <el-tooltip content="删除" placement="top">
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:remove']"></el-button>
+              <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['customerPerformance:customerPerformance:remove']">删除</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -452,6 +457,57 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 新增：查看客户业绩列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="900px" append-to-body draggable>
+      <el-table :data="viewPerformanceList" border v-loading="viewLoading">
+        <!-- <el-table-column label="客户名称" align="center" prop="companyName" width="160px" show-overflow-tooltip /> -->
+        <el-table-column label="签单日期" align="center" prop="signDate" width="100">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.sign_date, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="服务类型" align="center" prop="serviceType" width="100px">
+          <template #default="scope">
+            <dict-tag :options="combo_type" :value="scope.row.serviceType ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="二次收费类型" align="center" width="100px" prop="secondDevelopmentType">
+          <template #default="scope">
+            <dict-tag :options="dc_secondary_combo" :value="scope.row.secondDevelopmentType ?? ''" />
+          </template>
+        </el-table-column>
+        <el-table-column label="业绩所属人" align="center" prop="user_name" width="100px" show-overflow-tooltip />
+        <el-table-column label="业绩所属金额" align="center" prop="balance" width="120px"/>
+        <el-table-column label="业绩所属城市" align="center" prop="city" width="100px">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
+          </template>
+        </el-table-column>
+        <el-table-column label="客户服务城市" align="center" prop="serviceCity" width="100px">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.serviceCity" />
+          </template>
+        </el-table-column>
+        <el-table-column label="服务开始时间" align="center" prop="serviceStart" width="110">
+          <template #default="scope">
+            <span>{{ scope.row.serviceStart ? parseTime(scope.row.serviceStart, '{y}-{m}-{d}') : '' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="服务结束时间" align="center" prop="serviceEnd" width="110">
+          <template #default="scope">
+            <span>{{ scope.row.serviceEnd ? parseTime(scope.row.serviceEnd, '{y}-{m}-{d}') : '' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="分配人" align="center" prop="creater_name" width="100" show-overflow-tooltip />
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+<
   </div>
 </template>
 
@@ -723,6 +779,55 @@ const tableRowClassName = ({ row }: { row: CustomerPerformanceVO }) => {
     return 'selected-row';
   }
   return '';
+};
+
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewPerformanceList = ref<CustomerPerformanceVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 查看按钮处理函数
+const handleView = async (row: CustomerPerformanceVO) => {
+  if (!row.companyName) {
+    proxy?.$modal.msgWarning('该记录缺少客户名称');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  viewDialog.title = `【${row.companyName}】的业绩归属记录`;
+
+  try {
+    // 调用列表接口，传入 companyName 作为筛选条件
+    // 注意：这里复用 listCustomerPerformanceByPage 接口，通过 queryParams 传递筛选条件
+    // ✅ 关键：将字符串包装成数组传入，以匹配后端的多选/IN查询逻辑
+    const res = await listCustomerPerformanceByPage({ 
+      companyName:[row.companyName], // 需传入公司名称的数组格式才行
+      pageNum: 1,
+      pageSize: 100 // 获取该客户下较多的记录
+    });
+    
+    // 根据你 getList 中的逻辑处理返回数据
+    if (res.data && res.data.list) {
+      viewPerformanceList.value = res.data.list;
+    } else {
+      viewPerformanceList.value = [];
+    }
+    
+    if (viewPerformanceList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该客户的其他业绩记录');
+    }
+  } catch (error) {
+    console.error('获取业绩记录失败:', error);
+    proxy?.$modal.msgError('获取业绩记录失败');
+    viewPerformanceList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
 };
 
 onMounted(() => {

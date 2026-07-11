@@ -161,6 +161,16 @@
           <el-button type="danger" link icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column> -->
+       <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
+        width="120" fixed="right">
+          <template #default="scope">
+            <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
     </el-table>
     <!-- 分页 -->
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
@@ -267,6 +277,49 @@
         </div>
       </template>
     </el-dialog>
+
+     <!-- 新增：查看客户跟踪记录列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="900px" append-to-body draggable>
+      <el-table :data="viewTrackingList" border v-loading="viewLoading">
+       <!--  <el-table-column label="客户名称" align="center" prop="customerId" width="180" show-overflow-tooltip>
+          <template #default="scope">
+            <span>{{ getCustomerNameById(scope.row.customerId) }}</span>
+          </template>
+        </el-table-column> -->
+        <el-table-column label="跟踪时间" align="center" prop="trackingTime" width="120">
+          <template #default="scope">
+            <span>{{ scope.row.trackingTime ? parseTime(scope.row.trackingTime, '{y}-{m}-{d}') : '' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="跟踪内容" align="center" prop="remark" show-overflow-tooltip />
+        <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingTime" width="120">
+          <template #default="scope">
+            <span>{{ scope.row.nextTrackingTime ? parseTime(scope.row.nextTrackingTime, '{y}-{m}-{d}') : '' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="法务支持" align="center" prop="legalSupportName" width="100" show-overflow-tooltip />
+        <el-table-column label="跟踪类型" align="center" prop="trackingType" width="100">
+          <template #default="scope">
+            <el-tag v-if="scope.row.trackingType === 1">回访</el-tag>
+            <el-tag v-else-if="scope.row.trackingType === 2" type="success">出访</el-tag>
+            <el-tag v-else-if="scope.row.trackingType === 3" type="warning">保险</el-tag>
+            <el-tag v-else-if="scope.row.trackingType === 4" type="danger">工单</el-tag>
+            <el-tag v-else-if="scope.row.trackingType === 5" type="info">案件</el-tag>
+          </template>
+        </el-table-column>
+         <el-table-column label="归属城市" align="center" prop="city" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.city" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -517,10 +570,9 @@ const handleTrackingDetail = (data) => {
       targetPath = "/legalSupport/caseDetail";
       break;
     default:
-      console.error("跳转失败：未知的trackingType", trackingType);
+      console.error("跳转失败：客户不存在", trackingType);
       return; // 未知类型时终止跳转
   }
-
 
   router.push({
     path: targetPath,
@@ -528,6 +580,53 @@ const handleTrackingDetail = (data) => {
   });
 };
 
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewTrackingList = ref<TrackingRecord[]>([]);
+const viewLoading = ref(false);
+
+// 2. 查看按钮处理函数
+const handleView = async (row: TrackingRecord) => {
+  if (!row.customerId) {
+    proxy?.$modal.msgWarning('该记录缺少客户ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  // 标题显示客户名称
+  const customerName = getCustomerNameById(row.customerId);
+  viewDialog.title = `【${customerName}】的跟踪总览记录`;
+
+  try {
+    // 调用列表接口，传入 customerId 作为筛选条件
+    // ✅ 关键：直接传入 ID，非数组格式
+    const res = await getAllTrackingRecords({ 
+      customerId: row.customerId, 
+      pageNum: 1,
+      pageSize: 100 // 获取该客户下较多的记录
+    });
+    
+    // 根据你的 API 返回结构调整数据赋值
+    // 假设返回结构是 { code: 200, data: { data: [], total: 0 } } 或者 { code: 200, rows: [] }
+    // 这里参考你 getList 中的逻辑：response.data.data
+    viewTrackingList.value = res.data?.data || res.rows || [];
+    
+    if (viewTrackingList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该客户的其他跟踪记录');
+    }
+  } catch (error) {
+    console.error('获取跟踪记录失败:', error);
+    proxy?.$modal.msgError('获取跟踪记录失败');
+    viewTrackingList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
+};
 
 /* watch(
   () => route.query.customerId,

@@ -144,12 +144,12 @@
         <!-- <el-table-column label="编号" align="center" width="100" prop="contractNo" show-overflow-tooltip /> -->
         
         <el-table-column label="录入人" align="center" prop="transferPerson" width="80" show-overflow-tooltip />
-        <el-table-column label="服务开始时间" align="center" prop="startDate" width="120" show-overflow-tooltip>
+        <el-table-column label="服务开始日期" align="center" prop="startDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="服务结束时间" align="center" prop="expireDate" width="120" show-overflow-tooltip>
+        <el-table-column label="服务结束日期" align="center" prop="expireDate" width="120" show-overflow-tooltip>
           <template #default="scope">
             <span>{{ parseTime(scope.row.expireDate, '{y}-{m}-{d}') }}</span>
           </template>

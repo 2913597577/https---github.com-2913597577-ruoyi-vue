@@ -93,7 +93,7 @@
                 >
               </el-col>
               <el-col :span="1.5">
-                <el-button link type="primary" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+                <el-button link type="info" size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'waiting'">
                 <el-button link size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>

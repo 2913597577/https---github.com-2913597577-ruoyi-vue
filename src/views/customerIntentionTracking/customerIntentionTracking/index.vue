@@ -94,6 +94,11 @@
         <el-table-column label="操作" align="center" class-name="operation-column" show-overflow-tooltip
           width="240" fixed="right">
           <template #default="scope">
+            <el-tooltip content="查看" placement="top">
+              <el-button link type="info" icon="View" @click="handleView(scope.row)">
+                查看
+              </el-button>
+            </el-tooltip>
             <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
               v-hasPermi="['customerIntentionTracking:customerIntentionTracking:edit']">修改</el-button>
             <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
@@ -198,6 +203,41 @@
         </div>
       </template>
     </el-dialog>
+
+     <!-- 新增：查看意向客户跟踪记录列表弹窗 -->
+    <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="800px" append-to-body draggable>
+      <el-table :data="viewTrackingList" border v-loading="viewLoading">
+        <el-table-column label="跟踪时间" align="center" prop="trackingDate" width="120">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.trackingDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="跟踪内容" align="center" prop="customerRemark" show-overflow-tooltip />
+        <el-table-column label="下次跟踪时间" align="center" prop="nextTrackingDate" width="120">
+          <template #default="scope">
+            <span>{{ parseTime(scope.row.nextTrackingDate, '{y}-{m}-{d}') }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="法务支持" align="center" prop="legalSupportId" width="100" show-overflow-tooltip>
+          <template #default="scope">
+            <span v-if="scope.row.legalSupportId">
+              {{ getLawyerNameById(scope.row.legalSupportId) }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column label="归属城市" align="center" prop="remark1" width="100">
+          <template #default="scope">
+            <dict-tag :options="dc_sercive_city" :value="scope.row.remark1" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="viewDialog.visible = false">关 闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -434,6 +474,51 @@ const getLawyerNameById = (lawyerId: string | number) => {
   //console.log('lawyer:', lawyer);
   return lawyer ? `${lawyer.nickName}` : '';
 };
+
+// 1. 定义查看弹窗相关的响应式变量
+const viewDialog = reactive({
+  visible: false,
+  title: ''
+});
+
+const viewTrackingList = ref<CustomerIntentionTrackingVO[]>([]);
+const viewLoading = ref(false);
+
+// 2. 查看按钮处理函数
+const handleView = async (row: CustomerIntentionTrackingVO) => {
+  if (!row.intentionId) {
+    proxy?.$modal.msgWarning('该记录缺少意向客户ID');
+    return;
+  }
+
+  viewLoading.value = true;
+  viewDialog.visible = true;
+  // 标题显示意向客户名称，如果 row 中没有 intentionName，可以尝试从 customerList 中查找，或者直接显示 ID
+  const customerName = row.intentionName || '未知客户';
+  viewDialog.title = `意向客户【${customerName}】的跟踪记录`;
+
+  try {
+    // 调用列表接口，传入 intentionId 作为筛选条件
+    const res = await listCustomerIntentionTracking({ 
+      intentionId: row.intentionId, // 直接传入 ID，非数组
+      pageNum: 1,
+      pageSize: 100 // 获取该客户下较多的记录
+    });
+    
+    viewTrackingList.value = res.rows || [];
+    
+    if (viewTrackingList.value.length === 0) {
+      proxy?.$modal.msgWarning('未查询到该客户的其他跟踪记录');
+    }
+  } catch (error) {
+    console.error('获取跟踪记录失败:', error);
+    proxy?.$modal.msgError('获取跟踪记录失败');
+    viewTrackingList.value = [];
+  } finally {
+    viewLoading.value = false;
+  }
+};
+
 
 // 监听 intentionCustomerId 的变化
 watch(

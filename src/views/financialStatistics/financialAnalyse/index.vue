@@ -4,7 +4,7 @@
       <div v-show="showSearch" class="mb-[10px]">
         <el-card shadow="hover">
           <el-form ref="queryFormRef" :model="queryParams" :inline="true">
-            <el-form-item label="财务类型" prop="financialType">
+            <el-form-item label="财务类型" prop="financialType" label-width="80px">
               <el-select v-model="queryParams.financialType" placeholder="请选择财务类型" clearable>
                 <el-option v-for="dict in dc_financial_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
               </el-select>
@@ -14,7 +14,7 @@
                 <el-option v-for="dict in dc_sercive_city" :key="dict.value" :label="dict.label" :value="dict.value"/>
               </el-select>
             </el-form-item>
-            <el-form-item label="流水时间范围">
+            <el-form-item label="流水时间范围" label-width="100px">
               <el-date-picker
                 v-model="dateRange"
                 type="daterange"

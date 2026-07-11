@@ -132,7 +132,7 @@
             </el-row>
             <el-row :gutter="10">
               <el-col :span="1.5">
-                <el-button type="primary" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
+                <el-button type="info" link size="small" icon="View" @click="handleView(scope.row)">查看</el-button>
               </el-col>
               <el-col :span="1.5" v-if="scope.row.status === 'pending'">
                 <el-button size="small" type="primary" icon="Notification" @click="handleCancelProcessApply(scope.row.id)">撤销</el-button>
