@@ -845,6 +845,7 @@ const tableRowClassName = ({ row }: { row: CustomerTrackingVO }) => {
   }
   return '';
 };
+
 // 查看按钮处理函数
 const handleView = async (row: CustomerTrackingVO) => {
   const customerId = row.customerId;
@@ -853,11 +854,18 @@ const handleView = async (row: CustomerTrackingVO) => {
 
   // 查询该客户的所有跟踪记录
   try {
-    const res = await listCustomerTracking({ customerId });
+    // ✅ 修改点：显式指定 pageSize 为大数值（如 1000），确保获取足够多的数据用于展示和导出
+    const res = await listCustomerTracking({ 
+      customerId, 
+      pageNum: 1, 
+      pageSize: 1000 
+    });
+    
     viewCustomerTrackings.value = res.rows;
     viewDialog.title = `【${customerName}】的回访记录`;
     viewDialog.visible = true;
   } catch (error) {
+    console.error(error);
     proxy?.$modal.msgError('获取客户跟踪记录失败');
   }
 };

@@ -280,6 +280,10 @@
 
      <!-- 新增：查看客户跟踪记录列表弹窗 -->
     <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="900px" append-to-body draggable>
+       <!-- 新增：导出按钮 -->
+      <div style="margin-bottom: 10px; text-align: right;">
+        <el-button type="warning" size="small" plain icon="Download" @click="exportViewTracking">导出</el-button>
+      </div>
       <el-table :data="viewTrackingList" border v-loading="viewLoading">
        <!--  <el-table-column label="客户名称" align="center" prop="customerId" width="180" show-overflow-tooltip>
           <template #default="scope">
@@ -331,6 +335,7 @@ import { ElForm, ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { getCustomerByUserId } from '@/api/common';
 import { listLawyerSupport } from '@/api/customerInfo/customerInfo';
+import * as XLSX from 'xlsx';
 import { Loading } from '@element-plus/icons-vue';
 
 
@@ -608,7 +613,7 @@ const handleView = async (row: TrackingRecord) => {
     const res = await getAllTrackingRecords({ 
       customerId: row.customerId, 
       pageNum: 1,
-      pageSize: 100 // 获取该客户下较多的记录
+      pageSize: 1000 // 获取该客户下较多的记录
     });
     
     // 根据你的 API 返回结构调整数据赋值
@@ -625,6 +630,70 @@ const handleView = async (row: TrackingRecord) => {
     viewTrackingList.value = [];
   } finally {
     viewLoading.value = false;
+  }
+};
+
+// 导出弹窗中的跟踪记录
+const exportViewTracking = () => {
+  // 1. 校验数据
+  if (!viewTrackingList.value || viewTrackingList.value.length === 0) {
+    proxy?.$modal.msgWarning('暂无数据可导出');
+    return;
+  }
+
+  try {
+    // 2. 获取客户名称用于文件名
+    // 从第一条数据中获取 customerId，然后转换为客户名称
+    const firstRow = viewTrackingList.value[0];
+    const customerName = firstRow?.customerId ? getCustomerNameById(firstRow.customerId) : '未知客户';
+    
+    // 3. 定义跟踪类型映射 (对应模板中的逻辑: 1回访, 2出访, 3保险, 4工单, 5案件)
+    const typeMap: Record<number, string> = {
+      1: '回访',
+      2: '出访',
+      3: '保险',
+      4: '工单',
+      5: '案件'
+    };
+
+    // 4. 转换数据格式，使其更适合 Excel 展示
+    const exportData = viewTrackingList.value.map(item => ({
+      '跟踪时间': item.trackingTime ? parseTime(item.trackingTime, '{y}-{m}-{d}') : '',
+      '跟踪内容': item.remark || '', // 注意：原代码用 customerRemark，这里根据表格列 prop="remark" 改为 remark
+      '下次跟踪时间': item.nextTrackingTime? parseTime(item.nextTrackingTime, '{y}-{m}-{d}') : '',
+      '跟踪类型': item.trackingType !== null && item.trackingType !== undefined 
+        ? (typeMap[item.trackingType] || '未知') 
+        : '',
+      '法务支持': item.legalSupportName || '',
+      '归属城市': item.city ? (dc_sercive_city.value?.find((d: any) => d.value == item.city)?.label || item.city) : ''
+    }));
+
+    // 5. 生成 Worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // 6. 设置列宽 (可选，优化体验)
+    const colWidths = [
+      { wch: 15 }, // 跟踪时间
+      { wch: 60 }, // 跟踪内容
+      { wch: 15 }, // 下次跟踪时间
+      { wch: 10 }, // 跟踪类型
+      { wch: 15 }, // 法务支持
+      { wch: 10 }  // 归属城市
+    ];
+    ws['!cols'] = colWidths;
+
+    // 7. 生成 Workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "客户跟踪总览记录");
+
+    // 8. 触发浏览器下载，文件名包含客户名称
+    const fileName = `${customerName}_跟踪总览记录详情_${new Date().getTime()}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    
+    proxy?.$modal.msgSuccess('导出成功');
+  } catch (error) {
+    console.error('导出失败:', error);
+    proxy?.$modal.msgError('导出失败');
   }
 };
 

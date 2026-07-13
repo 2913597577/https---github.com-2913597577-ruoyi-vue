@@ -403,6 +403,10 @@
 
  <!-- 新增：查看客户出访记录列表弹窗 -->
     <el-dialog :title="viewDialog.title" v-model="viewDialog.visible" width="900px" append-to-body draggable>
+      <!-- 新增：导出按钮 -->
+      <div style="margin-bottom: 10px; text-align: right;">
+        <el-button type="warning" size="small" plain icon="Download" @click="exportViewTracking">导出</el-button>
+      </div>
       <el-table :data="viewOutVisitList" border v-loading="viewLoading">
         <el-table-column label="出访时间" align="center" width="120">
           <template #default="scope">
@@ -457,7 +461,8 @@ import { useRoute } from 'vue-router';
 import { Picture, PictureFilled } from '@element-plus/icons-vue';
 import { Document } from '@element-plus/icons-vue'; // 添加 Document
 import { onMounted, watch } from 'vue'
-
+import * as XLSX from 'xlsx';
+import { parseTime } from '@/utils/ruoyi'; 
 
 const route = useRoute();
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -784,7 +789,7 @@ const handleView = async (row: CustomerOutVisitVO) => {
     const res = await listCustomerOutVisit({ 
       customerId: row.customerId,
       pageNum: 1,
-      pageSize: 100 // 获取该客户下较多的记录，或者根据后端分页逻辑调整
+      pageSize: 1000 // 获取该客户下较多的记录，或者根据后端分页逻辑调整
     });
     
     viewOutVisitList.value = res.rows || [];
@@ -801,6 +806,63 @@ const handleView = async (row: CustomerOutVisitVO) => {
   }
 };
 
+// 导出弹窗中的出访记录
+const exportViewTracking = () => {
+  // 1. 校验数据
+  if (!viewOutVisitList.value || viewOutVisitList.value.length === 0) {
+    proxy?.$modal.msgWarning('暂无数据可导出');
+    return;
+  }
+
+  try {
+    // 2. 获取客户名称用于文件名
+    // 从第一条数据中获取 customerId，然后转换为客户名称
+    const firstRow = viewOutVisitList.value[0];
+    const customerName = firstRow?.customerId ? getCustomerNameById(firstRow.customerId) : '未知客户';
+    
+    // 3. 转换数据格式，使其更适合 Excel 展示
+    const exportData = viewOutVisitList.value.map(item => ({
+      '出访时间': item.visitTime ? parseTime(item.visitTime, '{y}-{m}-{d}') : '',
+      '出访内容': item.visitPurpose || '',
+      '下次出访时间': item.nextVisitTime ? parseTime(item.nextVisitTime, '{y}-{m}-{d}') : '',
+      '法务支持': item.legalSupportName || '',
+      // 处理归属城市字典 (dc_sercive_city 已在组件顶部通过 useDict 加载)
+      '归属城市': item.remark1 !== null && item.remark1 !== undefined 
+        ? (dc_sercive_city.value?.find((d: any) => d.value == item.remark1)?.label || item.remark1) 
+        : '',
+      // 如果需要，也可以导出是否首次出访
+      // '是否首次': item.isFirstVisit == 0 ? '是' : '否' 
+       '出访定位': item.visitAddress || '',
+    }));
+
+    // 4. 生成 Worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // 5. 设置列宽 (可选，优化体验)
+    const colWidths = [
+      { wch: 15 }, // 出访时间
+      { wch: 40 }, // 出访内容
+      { wch: 15 }, // 下次出访时间
+      { wch: 15 }, // 法务支持
+      { wch: 10 },  // 归属城市
+      { wch: 40 } // 出访内容
+    ];
+    ws['!cols'] = colWidths;
+
+    // 6. 生成 Workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "客户出访记录");
+
+    // 7. 触发浏览器下载，文件名包含客户名称
+    const fileName = `${customerName}_出访记录详情_${new Date().getTime()}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    
+    proxy?.$modal.msgSuccess('导出成功');
+  } catch (error) {
+    console.error('导出失败:', error);
+    proxy?.$modal.msgError('导出失败');
+  }
+};
 
 const loadCustomerList = async () => {
   try {
